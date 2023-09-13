@@ -1,7 +1,9 @@
 package ca.ulaval.glo4003;
 
+import ca.ulaval.glo4003.ws.api.HealthResource;
 import ca.ulaval.glo4003.ws.http.CORSResponseFilter;
 import org.eclipse.jetty.server.Server;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
@@ -22,8 +24,17 @@ public class TelephonyWsMain {
   public static void main(String[] args) throws Exception {
 
     LOGGER.info("Setup resources (API)");
+    HealthResource healthResource = createHealthResource();
+
+    final AbstractBinder binder = new AbstractBinder() {
+      @Override
+      protected void configure() {
+        bind(healthResource).to(HealthResource.class);
+      }
+    };
 
     final ResourceConfig config = new ResourceConfig();
+    config.register(binder);
     config.register(new CORSResponseFilter());
     config.packages("ca.ulaval.glo4003.ws.api");
 
@@ -49,5 +60,11 @@ public class TelephonyWsMain {
     } catch (InterruptedException e) {
       LOGGER.error("Error startig up the server", e);
     }
+  }
+
+  private static HealthResource createHealthResource() {
+    LOGGER.info("Setup health resource");
+
+    return new HealthResource();
   }
 }
