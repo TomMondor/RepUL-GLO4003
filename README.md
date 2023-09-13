@@ -30,3 +30,31 @@ de l'injection de dépendance.
     * Exécuter tous les tests (unitaires et d'intégrations) avec `mvn integration-test`
     * Exécuter toutes les vérifications (test, dependency-check, etc...) et produire un artifact pour votre application (se trouvant sous
       `target/application.jar`) avec `mvn verify` que vous pouvez juste invoquer directement avec un `java -jar target/application.jar`
+
+# Checkstyle
+
+Le checkstyle est ce qui permet de faire le formatage du code de façon uniforme.
+Voici les différentes étapes pour l'activer :
+
+```
+File -> Settings -> Plugins
+S'assurer d'installer le plugin CheckStyle-IDEA (Restart l'IDE si demandé)
+
+//Pour faire apparaître les erreurs dans le code
+File -> Settings -> Tools -> Checkstyle
+Dans le tableau Configuration File, cliquer sur Add
+Sélectionner "Use a local Checkstyle file" et sélectionner le fichier checkstyle.xml à la root du projet
+Saisir une description pour le fichier et appuyer sur NEXT
+Une fois la nouvelle configuration ajoutée, la sélectionner dans le tableau
+Appuyer sur APPLY et ensuite sur OK
+
+//Pour le formateur
+File -> Settings -> Editor -> Code Style
+Sélectionner Default copy pour le Scheme
+Cliquer sur les trois petits points (Show Scheme Actions)
+Appuyer sur Rename et renommer pour "Checkstyle"
+Cliquer sur les trois petits points (Show Scheme Actions)
+Appuyer sur "Import Scheme" et "Checkstyle configuration"
+Sélectionner le fichier checkstyle.xml à la root du projet
+//Pour tester le formateur, dans un fichier Java, appuyez sur Ctrl+Alt+Shift+L
+```
