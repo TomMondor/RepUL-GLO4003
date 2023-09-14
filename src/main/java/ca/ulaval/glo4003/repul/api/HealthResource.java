@@ -1,6 +1,6 @@
-package ca.ulaval.glo4003.ws.api;
+package ca.ulaval.glo4003.repul.api;
 
-import ca.ulaval.glo4003.ws.api.dto.HealthDto;
+import ca.ulaval.glo4003.repul.api.dto.HealthDto;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

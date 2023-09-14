@@ -9,16 +9,16 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.ulaval.glo4003.ws.api.HealthResource;
-import ca.ulaval.glo4003.ws.http.CORSResponseFilter;
+import ca.ulaval.glo4003.repul.api.HealthResource;
+import ca.ulaval.glo4003.repul.http.CORSResponseFilter;
 
 /**
  * RESTApi setup without using DI or spring.
  */
 @SuppressWarnings("all")
-public class TelephonyWsMain {
+public class Main {
     public static final String BASE_URI = "http://localhost:8080/";
-    private static final Logger LOGGER = LoggerFactory.getLogger(TelephonyWsMain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -35,7 +35,7 @@ public class TelephonyWsMain {
         final ResourceConfig config = new ResourceConfig();
         config.register(binder);
         config.register(new CORSResponseFilter());
-        config.packages("ca.ulaval.glo4003.ws.api");
+        config.packages("ca.ulaval.glo4003.repul.api");
 
         try {
             LOGGER.info("Setup http server");
