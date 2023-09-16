@@ -20,12 +20,14 @@ public class RepULServerTest {
     @Test
     public void givenApplicationContext_whenRunningServer_shouldRun() {
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+
         executorService.submit(repULServer);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             // The thread has been interrupted
         }
+
         Response response = when().get(fakeHeartbeatContextFixture.getURI() + "api/heartbeat");
         assertEquals(200, response.getStatusCode());
     }
