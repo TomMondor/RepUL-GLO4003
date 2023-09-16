@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.config;
+package ca.ulaval.glo4003;
 
 import java.net.URI;
 
@@ -7,25 +7,24 @@ import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.ulaval.glo4003.Main;
+import ca.ulaval.glo4003.config.ApplicationContext;
 
-public class SubscriptionServer implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+public class RepULServer implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RepULServer.class);
 
     private final ApplicationContext applicationContext;
 
-    public SubscriptionServer(ApplicationContext applicationContext) {
+    public RepULServer(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     public void run() {
-        try {
-            LOGGER.info("Setup http server");
-            final Server server = JettyHttpContainerFactory.createServer(
-                URI.create(applicationContext.getURI()),
-                applicationContext.initializeResourceConfig()
-            );
+        Server server = initializeServer();
+        start(server);
+    }
 
+    private void start(Server server) {
+        try {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     LOGGER.info("Shutting down the application...");
@@ -40,9 +39,13 @@ public class SubscriptionServer implements Runnable {
 
             // block and wait shut down signal, like CTRL+C
             Thread.currentThread().join();
-
         } catch (InterruptedException e) {
             LOGGER.error("Error starting up the server", e);
         }
+    }
+
+    private Server initializeServer() {
+        LOGGER.info("Setup http server");
+        return JettyHttpContainerFactory.createServer(URI.create(applicationContext.getURI()), applicationContext.initializeResourceConfig());
     }
 }

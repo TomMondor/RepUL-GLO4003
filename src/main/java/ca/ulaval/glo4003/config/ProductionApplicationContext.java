@@ -5,13 +5,18 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.ulaval.glo4003.Main;
 import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.http.CORSResponseFilter;
 
 public class ProductionApplicationContext implements ApplicationContext {
     private static final int PORT = 8080;
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductionApplicationContext.class);
+
+    private static HealthResource createHealthResource() {
+        LOGGER.info("Setup health resource");
+
+        return new HealthResource();
+    }
 
     @Override
     public ResourceConfig initializeResourceConfig() {
@@ -25,18 +30,10 @@ public class ProductionApplicationContext implements ApplicationContext {
             }
         };
 
-        return new ResourceConfig().packages("ca.ulaval.glo4003.repul.api")
-            .register(binder)
-            .register(new CORSResponseFilter());
+        return new ResourceConfig().packages("ca.ulaval.glo4003.repul.api").register(binder).register(new CORSResponseFilter());
     }
 
     public String getURI() {
         return String.format("http://localhost:%s/", PORT);
-    }
-
-    private static HealthResource createHealthResource() {
-        LOGGER.info("Setup health resource");
-
-        return new HealthResource();
     }
 }
