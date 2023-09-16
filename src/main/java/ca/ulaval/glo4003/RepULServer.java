@@ -23,6 +23,11 @@ public class RepULServer implements Runnable {
         start(server);
     }
 
+    private Server initializeServer() {
+        LOGGER.info("Setup http server");
+        return JettyHttpContainerFactory.createServer(URI.create(applicationContext.getURI()), applicationContext.initializeResourceConfig());
+    }
+
     private void start(Server server) {
         try {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -42,10 +47,5 @@ public class RepULServer implements Runnable {
         } catch (InterruptedException e) {
             LOGGER.error("Error starting up the server", e);
         }
-    }
-
-    private Server initializeServer() {
-        LOGGER.info("Setup http server");
-        return JettyHttpContainerFactory.createServer(URI.create(applicationContext.getURI()), applicationContext.initializeResourceConfig());
     }
 }

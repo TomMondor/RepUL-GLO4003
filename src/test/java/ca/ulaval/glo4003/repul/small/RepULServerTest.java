@@ -14,11 +14,10 @@ import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RepULServerTest {
-    private final FakeHeartbeatContextFixture fakeHeartbeatContextFixture = new FakeHeartbeatContextFixture();
-    private final RepULServer repULServer = new RepULServer(fakeHeartbeatContextFixture);
-
     @Test
     public void givenApplicationContext_whenRunningServer_shouldRun() {
+        FakeHeartbeatContextFixture fakeHeartbeatContextFixture = new FakeHeartbeatContextFixture();
+        RepULServer repULServer = new RepULServer(fakeHeartbeatContextFixture);
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
         executorService.submit(repULServer);

@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.http.CORSResponseFilter;
 
-public class ProductionApplicationContext implements ApplicationContext {
+public class DevApplicationContext implements ApplicationContext {
     private static final int PORT = 8080;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductionApplicationContext.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DevApplicationContext.class);
 
     private static HealthResource createHealthResource() {
         LOGGER.info("Setup health resource");
