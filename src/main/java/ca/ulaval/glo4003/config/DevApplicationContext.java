@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.api.HealthResource;
+import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
+import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
@@ -33,6 +35,10 @@ public class DevApplicationContext implements ApplicationContext {
         return new HealthResource();
     }
 
+    private static SubscriptionResource createSubscriptionResource(SubscriptionService subscriptionService) {
+        return new SubscriptionResource(subscriptionService);
+    }
+
     public String getURI() {
         return String.format("http://localhost:%s/", PORT);
     }
@@ -42,13 +48,17 @@ public class DevApplicationContext implements ApplicationContext {
         RepULRepository repULRepository = new InMemoryRepULRepository();
         initializeRepUL(repULRepository);
 
+        SubscriptionService subscriptionService = new SubscriptionService();
+
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
+        SubscriptionResource subscriptionResource = createSubscriptionResource(subscriptionService);
 
         final AbstractBinder binder = new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(healthResource).to(HealthResource.class);
+                bind(subscriptionResource).to(SubscriptionResource.class);
             }
         };
 
