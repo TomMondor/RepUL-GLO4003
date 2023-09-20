@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "32b01cfa-793a-4506-9e7b-94ed4f8f1b7d",
+		"_postman_id": "e13a751c-25fc-4698-bd9d-49ff2fe612e1",
 		"name": "RepUL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "21028314"
+		"_exporter_id": "19124741"
 	},
 	"item": [
 		{
@@ -21,6 +21,35 @@
 					"path": [
 						"api",
 						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscriptions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    locationId: \"VACHON\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/subscriptions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"subscriptions"
 					]
 				}
 			},
