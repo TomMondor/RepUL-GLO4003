@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.api.subscription;
 
 import ca.ulaval.glo4003.repul.api.subscription.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
+import ca.ulaval.glo4003.repul.application.subscription.parameter.SubscriptionParams;
 
 import jakarta.validation.Valid;
 import jakarta.ws.rs.POST;
@@ -18,6 +19,8 @@ public class SubscriptionResource {
 
     @POST
     public Response createSubscription(@Valid SubscriptionRequest subscriptionRequest) {
+        SubscriptionParams subscriptionParams = SubscriptionParams.from(subscriptionRequest.locationId);
+        subscriptionService.createSubscription(subscriptionParams);
         return Response.ok().build();
     }
 }
