@@ -19,7 +19,7 @@ public class SubscriptionResource {
 
     @POST
     public Response createSubscription(@Valid SubscriptionRequest subscriptionRequest) {
-        SubscriptionParams subscriptionParams = SubscriptionParams.from(subscriptionRequest.locationId);
+        SubscriptionParams subscriptionParams = SubscriptionParams.from(subscriptionRequest.locationId, subscriptionRequest.dayOfWeek);
         subscriptionService.createSubscription(subscriptionParams);
         return Response.ok().build();
     }
