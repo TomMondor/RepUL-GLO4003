@@ -5,10 +5,10 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.domain.Exception.InvalidLocationException;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
+import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

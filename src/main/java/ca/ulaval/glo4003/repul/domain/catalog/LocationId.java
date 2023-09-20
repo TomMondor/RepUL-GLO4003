@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.domain.catalog;
 
-import ca.ulaval.glo4003.repul.domain.Exception.InvalidLocationIdException;
+import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationIdException;
 
 public record LocationId(String value) {
     public LocationId {

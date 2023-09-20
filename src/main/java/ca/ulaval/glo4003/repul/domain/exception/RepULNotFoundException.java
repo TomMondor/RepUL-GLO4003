@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.domain.Exception;
+package ca.ulaval.glo4003.repul.domain.exception;
 
 public class RepULNotFoundException extends RepULException {
     public RepULNotFoundException() {
