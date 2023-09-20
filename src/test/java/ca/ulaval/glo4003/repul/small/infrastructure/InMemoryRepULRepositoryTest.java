@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.domain.Exception.RepULNotFoundException;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
+import ca.ulaval.glo4003.repul.domain.exception.RepULNotFoundException;
 import ca.ulaval.glo4003.repul.infrastructure.InMemoryRepULRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

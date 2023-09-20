@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.domain.Exception;
+package ca.ulaval.glo4003.repul.domain.exception;
 
 public class InvalidLocationException extends RepULException {
     public InvalidLocationException() {

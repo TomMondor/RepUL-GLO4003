@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import ca.ulaval.glo4003.repul.domain.Exception.InvalidLocationException;
+import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationException;
 
 public class Catalog {
     private final Map<LocationId, PickupLocation> pickupLocations;
