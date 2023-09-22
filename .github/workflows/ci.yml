@@ -19,13 +19,13 @@ jobs:
           cache: 'maven'
 
       - name: Checkstyle
-        run: mvn checkstyle:check
+        run: mvn -ntp checkstyle:check
 
       - name: Compile
-        run: mvn compile
+        run: mvn -ntp compile
 
       - name: Small tests
-        run: mvn test
+        run: mvn -ntp test
 
       - name: All tests
-        run: mvn integration-test
+        run: mvn -ntp integration-test
