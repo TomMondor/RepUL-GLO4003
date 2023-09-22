@@ -34,9 +34,9 @@ public class DevApplicationContext implements ApplicationContext {
     private static final String NAME_FIELD_NAME_IN_JSON = "name";
     private static final String CAPACITY_FIELD_NAME_IN_JSON = "capacity";
     private static final String SEMESTERS_FILE_PATH = "src/main/resources/semesters-232425.json";
-    private static final String SEMESTER_CODE_FIELD_NAME_IN_JSON = "semesterCode";
-    private static final String START_DATE_FIELD_NAME_IN_JSON = "startDate";
-    private static final String END_DATE_FIELD_NAME_IN_JSON = "endDate";
+    private static final String SEMESTER_CODE_FIELD_NAME_IN_JSON = "semester_code";
+    private static final String START_DATE_FIELD_NAME_IN_JSON = "start_date";
+    private static final String END_DATE_FIELD_NAME_IN_JSON = "end_date";
     private static final int PORT = 8080;
     private static final Logger LOGGER = LoggerFactory.getLogger(DevApplicationContext.class);
 
