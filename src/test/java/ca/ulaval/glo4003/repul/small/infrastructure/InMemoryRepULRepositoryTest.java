@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InMemoryRepULRepositoryTest {
-    private static final RepUL A_REPUL = new RepUL(new Catalog(new ArrayList<>()));
+    private static final RepUL A_REPUL = new RepUL(new Catalog(new ArrayList<>(), new ArrayList<>()));
 
     private RepULRepository repULRepository;
 
