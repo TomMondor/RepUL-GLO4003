@@ -10,7 +10,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 
 public class FakeHeartbeatContextFixture implements ApplicationContext {
-    private static final int PORT = 8080;
+    private static final int PORT = 8181;
 
     @Override
     public ResourceConfig initializeResourceConfig() {

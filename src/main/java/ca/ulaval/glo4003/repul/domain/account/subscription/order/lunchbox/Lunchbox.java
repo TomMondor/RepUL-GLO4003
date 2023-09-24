@@ -4,7 +4,7 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLunchboxException;
 
-public record Lunchbox(List<Recipe> recipes, LunchboxType type) {
+public record Lunchbox(List<Recipe> recipes) {
     public Lunchbox {
         if (recipes.isEmpty()) {
             throw new InvalidLunchboxException();
