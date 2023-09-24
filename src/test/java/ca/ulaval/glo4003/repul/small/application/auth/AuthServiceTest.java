@@ -4,13 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import ca.ulaval.glo4003.commons.Email;
 import ca.ulaval.glo4003.repul.application.auth.AuthService;
 import ca.ulaval.glo4003.repul.application.auth.UserRepository;
 import ca.ulaval.glo4003.repul.application.auth.parameter.LoginParams;
 import ca.ulaval.glo4003.repul.application.auth.parameter.RegisterParams;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
-import ca.ulaval.glo4003.repul.domain.account.Email;
 import ca.ulaval.glo4003.repul.domain.exception.UserAlreadyExistsException;
 import ca.ulaval.glo4003.repul.domain.exception.UserNotFoundException;
 
@@ -57,7 +57,7 @@ public class AuthServiceTest {
 
         String token = this.authService.login(VALID_LOGIN_PARAMS);
 
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET)).withClaim("email", A_VALID_EMAIL.email()).build();
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET)).withClaim("email", A_VALID_EMAIL.value()).build();
         verifier.verify(token);
     }
 
@@ -75,7 +75,7 @@ public class AuthServiceTest {
 
         String token = this.authService.register(VALID_REGISTER_PARAMS);
 
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET)).withClaim("email", A_VALID_EMAIL.email()).build();
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET)).withClaim("email", A_VALID_EMAIL.value()).build();
         verifier.verify(token);
     }
 

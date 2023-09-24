@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.repul.infrastructure;
 
 import java.util.HashMap;
 
+import ca.ulaval.glo4003.commons.Email;
 import ca.ulaval.glo4003.repul.application.auth.UserRepository;
-import ca.ulaval.glo4003.repul.domain.account.Email;
 
 public class InMemoryUserRepository implements UserRepository {
     private final HashMap<Email, String> users = new HashMap<>();

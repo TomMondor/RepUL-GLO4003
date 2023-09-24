@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.small.infrastructure;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.domain.account.Email;
+import ca.ulaval.glo4003.commons.Email;
 import ca.ulaval.glo4003.repul.infrastructure.InMemoryUserRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

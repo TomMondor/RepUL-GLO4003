@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.application.auth;
 
-import ca.ulaval.glo4003.repul.domain.account.Email;
+import ca.ulaval.glo4003.commons.Email;
 
 public interface UserRepository {
     String getUserPassword(Email email);
