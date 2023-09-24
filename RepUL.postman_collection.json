@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "e13a751c-25fc-4698-bd9d-49ff2fe612e1",
+		"_postman_id": "d0f69ac4-9711-4bf1-9b28-d53c5eabfc22",
 		"name": "RepUL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19124741"
+		"_exporter_id": "24366551"
 	},
 	"item": [
 		{
@@ -33,7 +33,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    locationId: \"VACHON\"\n}",
+					"raw": "{\n    \"locationId\": \"VACHON\",\n    \"dayOfWeek\": \"TUESDAY\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -50,6 +50,50 @@
 					"path": [
 						"api",
 						"subscriptions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "confirmLunchbox",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/subscriptions/1/confirm",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"subscriptions",
+						"1",
+						"confirm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "declineLunchbox",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/subscriptions/1/decline",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"subscriptions",
+						"1",
+						"decline"
 					]
 				}
 			},
