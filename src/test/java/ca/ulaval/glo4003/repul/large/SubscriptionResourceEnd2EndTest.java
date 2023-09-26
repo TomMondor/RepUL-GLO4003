@@ -38,4 +38,11 @@ public class SubscriptionResourceEnd2EndTest {
 
         assertEquals(200, response.getStatusCode());
     }
+
+    @Test
+    public void whenGetSubscriptions_shouldReturn200() {
+        Response response = when().get(BASE_URL + "/api/subscriptions");
+
+        assertEquals(200, response.getStatusCode());
+    }
 }

@@ -52,7 +52,8 @@ public class DevApplicationContext implements ApplicationContext {
         return new HealthResource();
     }
 
-    private static SubscriptionResource createSubscriptionResource(SubscriptionService subscriptionService) {
+    private static SubscriptionResource createSubscriptionResource() {
+        SubscriptionService subscriptionService = new SubscriptionService();
         return new SubscriptionResource(subscriptionService);
     }
 
@@ -65,11 +66,9 @@ public class DevApplicationContext implements ApplicationContext {
         RepULRepository repULRepository = new InMemoryRepULRepository();
         initializeRepUL(repULRepository);
 
-        SubscriptionService subscriptionService = new SubscriptionService();
-
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
-        SubscriptionResource subscriptionResource = createSubscriptionResource(subscriptionService);
+        SubscriptionResource subscriptionResource = createSubscriptionResource();
 
         final AbstractBinder binder = new AbstractBinder() {
             @Override
