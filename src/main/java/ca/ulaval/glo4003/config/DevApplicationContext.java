@@ -12,10 +12,24 @@ import java.util.Map;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.ulaval.glo4003.commons.api.exception.mapper.CatchallExceptionMapper;
 import ca.ulaval.glo4003.commons.api.exception.mapper.CommonExceptionMapper;
+import ca.ulaval.glo4003.commons.api.exception.mapper.ConstraintViolationExceptionMapper;
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.identitymanagement.api.AuthResource;
+import ca.ulaval.glo4003.identitymanagement.api.exception.IdentityManagementExceptionMapper;
+import ca.ulaval.glo4003.identitymanagement.application.AuthService;
+import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
+import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
+import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
+import ca.ulaval.glo4003.identitymanagement.domain.token.TokenGenerator;
+import ca.ulaval.glo4003.identitymanagement.infrastructure.CryptPasswordEncoder;
+import ca.ulaval.glo4003.identitymanagement.infrastructure.InMemoryUserRepository;
+import ca.ulaval.glo4003.identitymanagement.infrastructure.JWTTokenGenerator;
 import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
@@ -54,8 +68,24 @@ public class DevApplicationContext implements ApplicationContext {
         return new HealthResource();
     }
 
+    private static AuthResource createAuthResource(UniqueIdentifierFactory uniqueIdentifierFactory) {
+        LOGGER.info("Setup auth resource");
+        PasswordEncoder passwordEncoder = new CryptPasswordEncoder();
+        TokenGenerator tokenGenerator = new JWTTokenGenerator();
+
+        UserFactory userFactory = new UserFactory(passwordEncoder);
+
+        UserRepository userRepository = new InMemoryUserRepository();
+
+        AuthService authService = new AuthService(userRepository, userFactory, uniqueIdentifierFactory, tokenGenerator);
+
+        return new AuthResource(authService);
+    }
+
     private static SubscriptionResource createSubscriptionResource() {
+        LOGGER.info("Setup subscription resource");
         SubscriptionService subscriptionService = new SubscriptionService();
+
         return new SubscriptionResource(subscriptionService);
     }
 
@@ -65,23 +95,29 @@ public class DevApplicationContext implements ApplicationContext {
 
     @Override
     public ResourceConfig initializeResourceConfig() {
+        UniqueIdentifierFactory uniqueIdentifierFactory = new UniqueIdentifierFactory();
+
         RepULRepository repULRepository = new InMemoryRepULRepository();
+
         initializeRepUL(repULRepository);
 
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
         SubscriptionResource subscriptionResource = createSubscriptionResource();
+        AuthResource authResource = createAuthResource(uniqueIdentifierFactory);
 
         final AbstractBinder binder = new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(healthResource).to(HealthResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
+                bind(authResource).to(AuthResource.class);
             }
         };
 
-        return new ResourceConfig().packages("ca.ulaval.glo4003.repul.api").register(binder).register(new CORSResponseFilter())
-            .register(new RepULExceptionMapper()).register(new CommonExceptionMapper());
+        return new ResourceConfig().packages("ca.ulaval.glo4003").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
+            .register(new CORSResponseFilter()).register(new IdentityManagementExceptionMapper()).register(new CatchallExceptionMapper())
+            .register(new RepULExceptionMapper()).register(new CommonExceptionMapper()).register(new ConstraintViolationExceptionMapper());
     }
 
     public void initializeRepUL(RepULRepository repULRepository) {

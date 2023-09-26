@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.commons.api.exception.mapper;
 
 import java.util.WeakHashMap;
 
-import ca.ulaval.glo4003.commons.exception.CommonException;
-import ca.ulaval.glo4003.commons.exception.InvalidEmailException;
+import ca.ulaval.glo4003.commons.domain.exception.CommonException;
+import ca.ulaval.glo4003.commons.domain.exception.InvalidEmailException;
 
 import jakarta.ws.rs.core.Response;
 

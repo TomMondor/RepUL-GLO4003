@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.identitymanagement.domain;
 
-import ca.ulaval.glo4003.commons.Email;
-import ca.ulaval.glo4003.commons.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.commons.domain.Email;
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 
 public class UserFactory {
     private final PasswordEncoder passwordEncoder;

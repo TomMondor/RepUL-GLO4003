@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.identitymanagement.domain;
 
-import ca.ulaval.glo4003.commons.Email;
+import ca.ulaval.glo4003.commons.domain.Email;
 
 public interface UserRepository {
     User findByEmail(Email email);

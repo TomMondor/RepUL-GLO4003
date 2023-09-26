@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.domain.account;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.ulaval.glo4003.commons.Email;
+import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 

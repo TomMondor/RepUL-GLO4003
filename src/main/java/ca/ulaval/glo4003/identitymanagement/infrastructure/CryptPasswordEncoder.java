@@ -1,11 +1,12 @@
 package ca.ulaval.glo4003.identitymanagement.infrastructure;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import ca.ulaval.glo4003.identitymanagement.domain.Password;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
 
-public class BCryptPasswordEncoder implements PasswordEncoder {
-    private final org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder encoder =
-        new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+public class CryptPasswordEncoder implements PasswordEncoder {
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
     public Password encode(Password password) {

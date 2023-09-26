@@ -8,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.commons.Email;
-import ca.ulaval.glo4003.commons.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.commons.domain.Email;
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.identitymanagement.domain.Password;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;

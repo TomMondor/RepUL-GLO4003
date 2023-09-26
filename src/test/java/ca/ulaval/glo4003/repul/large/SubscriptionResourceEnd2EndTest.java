@@ -15,13 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubscriptionResourceEnd2EndTest {
     private static final String SUBSCRIPTION_ID = "TODO";
-    private static String baseUrl;
+    private static final ApplicationContext context = new DevApplicationContext();
+
     private ServerFixture server;
 
     @BeforeEach
     public void startServer() throws Exception {
-        ApplicationContext context = new DevApplicationContext();
-        baseUrl = context.getURI();
         server = new ServerFixture(context);
         server.start();
     }
@@ -33,21 +32,21 @@ public class SubscriptionResourceEnd2EndTest {
 
     @Test
     public void whenConfirmingLunchbox_shouldReturn200() {
-        Response response = when().post(baseUrl + "api/subscriptions/" + SUBSCRIPTION_ID + "/confirm");
+        Response response = when().post(context.getURI() + "api/subscriptions/" + SUBSCRIPTION_ID + "/confirm");
 
         assertEquals(200, response.getStatusCode());
     }
 
     @Test
     public void whenDecliningLunchbox_shouldReturn200() {
-        Response response = when().post(baseUrl + "api/subscriptions/" + SUBSCRIPTION_ID + "/decline");
+        Response response = when().post(context.getURI() + "api/subscriptions/" + SUBSCRIPTION_ID + "/decline");
 
         assertEquals(200, response.getStatusCode());
     }
 
     @Test
     public void whenGetSubscriptions_shouldReturn200() {
-        Response response = when().get(baseUrl + "api/subscriptions");
+        Response response = when().get(context.getURI() + "api/subscriptions");
 
         assertEquals(200, response.getStatusCode());
     }

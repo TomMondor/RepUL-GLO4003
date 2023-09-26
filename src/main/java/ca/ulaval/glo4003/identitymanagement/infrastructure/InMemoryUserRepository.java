@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.identitymanagement.infrastructure;
 import java.util.HashMap;
 import java.util.Optional;
 
-import ca.ulaval.glo4003.commons.Email;
+import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.UserNotFoundException;

@@ -1,9 +1,9 @@
-package ca.ulaval.glo4003.commons.small;
+package ca.ulaval.glo4003.commons.small.domain;
 
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.commons.Email;
-import ca.ulaval.glo4003.commons.exception.InvalidEmailException;
+import ca.ulaval.glo4003.commons.domain.Email;
+import ca.ulaval.glo4003.commons.domain.exception.InvalidEmailException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

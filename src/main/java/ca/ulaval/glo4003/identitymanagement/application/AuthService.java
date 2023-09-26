@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.identitymanagement.application;
 
-import ca.ulaval.glo4003.commons.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.identitymanagement.application.request.RegistrationRequest;
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.identitymanagement.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
@@ -22,12 +22,12 @@ public class AuthService {
         this.tokenGenerator = tokenGenerator;
     }
 
-    public Token register(RegistrationRequest registrationRequest) {
-        if (userRepository.exists(registrationRequest.email())) {
+    public Token register(RegistrationQuery registrationQuery) {
+        if (userRepository.exists(registrationQuery.email())) {
             throw new UserAlreadyExistsException();
         }
 
-        User newUser = userFactory.createUser(uniqueIdentifierFactory.generate(), registrationRequest.email(), registrationRequest.password());
+        User newUser = userFactory.createUser(uniqueIdentifierFactory.generate(), registrationQuery.email(), registrationQuery.password());
         userRepository.saveOrUpdate(newUser);
 
         return tokenGenerator.generate(newUser.getUid());

@@ -46,6 +46,12 @@
         </dependency>
 
         <!-- Jersey -->
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-bean-validation</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
         <!-- Jetty 11 needs Servlet 5 -->
         <!-- java.lang.NoClassDefFoundError: jakarta/servlet/ServletInputStream -->
         <dependency>
@@ -72,6 +78,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
             <version>6.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
         </dependency>
 
         <!-- Logging -->

@@ -4,8 +4,8 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import ca.ulaval.glo4003.commons.api.exception.mapper.CommonExceptionMapper;
-import ca.ulaval.glo4003.commons.exception.CommonException;
-import ca.ulaval.glo4003.commons.exception.InvalidEmailException;
+import ca.ulaval.glo4003.commons.domain.exception.CommonException;
+import ca.ulaval.glo4003.commons.domain.exception.InvalidEmailException;
 import ca.ulaval.glo4003.config.ApplicationContext;
 
 import jakarta.ws.rs.GET;

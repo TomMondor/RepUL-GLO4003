@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.identitymanagement.infrastructure;
 
 import java.util.Date;
 
-import ca.ulaval.glo4003.commons.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.identitymanagement.domain.token.Token;
 import ca.ulaval.glo4003.identitymanagement.domain.token.TokenGenerator;
 

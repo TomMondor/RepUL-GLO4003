@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.commons.api.exception.mapper;
 
 import ca.ulaval.glo4003.commons.api.exception.response.ErrorResponse;
-import ca.ulaval.glo4003.commons.exception.CommonException;
+import ca.ulaval.glo4003.commons.domain.exception.CommonException;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;

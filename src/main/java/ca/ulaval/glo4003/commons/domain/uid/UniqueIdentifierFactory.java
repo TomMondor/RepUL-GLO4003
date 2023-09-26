@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.commons.uid;
+package ca.ulaval.glo4003.commons.domain.uid;
 
 import java.util.UUID;
 
