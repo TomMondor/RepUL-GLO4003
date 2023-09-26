@@ -6,7 +6,9 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import ca.ulaval.glo4003.repul.domain.catalog.Amount;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
+import ca.ulaval.glo4003.repul.domain.catalog.IngredientInformation;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.catalog.Semester;
@@ -26,6 +28,8 @@ class CatalogTest {
     private static final String A_SEMESTER_CODE = "E24";
     private static final Date A_START_DATE = new Date(1672531200000L);
     private static final Date AN_END_DATE = new Date(1682899200000L);
+    private static final String AN_INGREDIENT_NAME = "an ingredient name";
+    private static final Amount AN_INGREDIENT_PRICE = new Amount(1.0);
 
     private Catalog catalog;
 
@@ -34,7 +38,8 @@ class CatalogTest {
         List<PickupLocation> pickupLocations = List.of(new PickupLocation(new LocationId(A_LOCATION_ID), A_NAME, A_TOTAL_CAPACITY),
             new PickupLocation(new LocationId(ANOTHER_LOCATION_ID), ANOTHER_NAME, ANOTHER_TOTAL_CAPACITY));
         List<Semester> semesters = List.of(new Semester(new SemesterCode(A_SEMESTER_CODE), A_START_DATE, AN_END_DATE));
-        catalog = new Catalog(pickupLocations, semesters);
+        List<IngredientInformation> ingredients = List.of(new IngredientInformation(AN_INGREDIENT_NAME, AN_INGREDIENT_PRICE));
+        catalog = new Catalog(pickupLocations, semesters, ingredients);
     }
 
     @Test

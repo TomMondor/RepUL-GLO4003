@@ -1,8 +1,11 @@
 package ca.ulaval.glo4003.config;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +20,9 @@ import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
+import ca.ulaval.glo4003.repul.domain.catalog.Amount;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
+import ca.ulaval.glo4003.repul.domain.catalog.IngredientInformation;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.catalog.Semester;
@@ -34,6 +39,7 @@ public class DevApplicationContext implements ApplicationContext {
     private static final String NAME_FIELD_NAME_IN_JSON = "name";
     private static final String CAPACITY_FIELD_NAME_IN_JSON = "capacity";
     private static final String SEMESTERS_FILE_PATH = "src/main/resources/semesters-232425.json";
+    private static final String INGREDIENTS_FILE_PATH = "src/main/resources/ingredients.csv";
     private static final String SEMESTER_CODE_FIELD_NAME_IN_JSON = "semester_code";
     private static final String START_DATE_FIELD_NAME_IN_JSON = "start_date";
     private static final String END_DATE_FIELD_NAME_IN_JSON = "end_date";
@@ -86,25 +92,42 @@ public class DevApplicationContext implements ApplicationContext {
         LOGGER.info("Setup catalog");
         List<PickupLocation> pickupLocations = parsePickupLocations();
         List<Semester> semesters = parseSemesters();
-        return new Catalog(pickupLocations, semesters);
+        List<IngredientInformation> ingredientInformations = parseIngredientInformation();
+        return new Catalog(pickupLocations, semesters, ingredientInformations);
     }
 
     private List<PickupLocation> parsePickupLocations() {
-        List<Map<String, Object>> listOfLocationMaps = getListOfMapsFromFilePath(CAMPUS_STATIONS_LOCATION_FILE_PATH);
+        List<Map<String, Object>> listOfLocationMaps = getListOfMapsFromJsonFilePath(CAMPUS_STATIONS_LOCATION_FILE_PATH);
         return listOfLocationMaps.stream()
             .map(map -> new PickupLocation(new LocationId((String) map.get(LOCATION_FIELD_NAME_IN_JSON)), (String) map.get(NAME_FIELD_NAME_IN_JSON),
                 (int) map.get(CAPACITY_FIELD_NAME_IN_JSON))).toList();
     }
 
     private List<Semester> parseSemesters() {
-        List<Map<String, Object>> listOfSemesterMaps = getListOfMapsFromFilePath(SEMESTERS_FILE_PATH);
+        List<Map<String, Object>> listOfSemesterMaps = getListOfMapsFromJsonFilePath(SEMESTERS_FILE_PATH);
         return listOfSemesterMaps.stream()
             .map(map -> new Semester(new SemesterCode((String) map.get(SEMESTER_CODE_FIELD_NAME_IN_JSON)),
                 parseDate((String) map.get(START_DATE_FIELD_NAME_IN_JSON)),
                 parseDate((String) map.get(END_DATE_FIELD_NAME_IN_JSON)))).toList();
     }
 
-    private List<Map<String, Object>> getListOfMapsFromFilePath(String filePath) {
+    private List<IngredientInformation> parseIngredientInformation() {
+        List<IngredientInformation> ingredients = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(INGREDIENTS_FILE_PATH))) {
+            String line;
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                ingredients.add(new IngredientInformation(values[0], new Amount(Double.parseDouble(values[1]))));
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error while reading " + INGREDIENTS_FILE_PATH, e);
+            throw new RuntimeException("Error while reading " + INGREDIENTS_FILE_PATH);
+        }
+        return ingredients;
+    }
+
+    private List<Map<String, Object>> getListOfMapsFromJsonFilePath(String filePath) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             List<Map<String, Object>> listOfMaps =
