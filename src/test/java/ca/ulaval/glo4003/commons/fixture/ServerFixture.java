@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.large;
+package ca.ulaval.glo4003.commons.fixture;
 
 import java.net.URI;
 
@@ -6,13 +6,11 @@ import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 
 import ca.ulaval.glo4003.config.ApplicationContext;
-import ca.ulaval.glo4003.config.DevApplicationContext;
 
-public class TestServer {
+public class ServerFixture {
     private final Server server;
 
-    public TestServer() {
-        ApplicationContext applicationContext = new DevApplicationContext();
+    public ServerFixture(ApplicationContext applicationContext) {
         URI uri = URI.create(applicationContext.getURI());
         server = JettyHttpContainerFactory.createServer(uri, applicationContext.initializeResourceConfig());
     }

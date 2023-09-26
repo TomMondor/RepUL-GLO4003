@@ -15,7 +15,9 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.ulaval.glo4003.commons.api.exception.mapper.CommonExceptionMapper;
 import ca.ulaval.glo4003.repul.api.HealthResource;
+import ca.ulaval.glo4003.repul.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
 import ca.ulaval.glo4003.repul.domain.RepUL;
@@ -78,7 +80,8 @@ public class DevApplicationContext implements ApplicationContext {
             }
         };
 
-        return new ResourceConfig().packages("ca.ulaval.glo4003.repul.api").register(binder).register(new CORSResponseFilter());
+        return new ResourceConfig().packages("ca.ulaval.glo4003.repul.api").register(binder).register(new CORSResponseFilter())
+            .register(new RepULExceptionMapper()).register(new CommonExceptionMapper());
     }
 
     public void initializeRepUL(RepULRepository repULRepository) {
@@ -97,17 +100,15 @@ public class DevApplicationContext implements ApplicationContext {
 
     private List<PickupLocation> parsePickupLocations() {
         List<Map<String, Object>> listOfLocationMaps = getListOfMapsFromJsonFilePath(CAMPUS_STATIONS_LOCATION_FILE_PATH);
-        return listOfLocationMaps.stream()
-            .map(map -> new PickupLocation(new LocationId((String) map.get(LOCATION_FIELD_NAME_IN_JSON)), (String) map.get(NAME_FIELD_NAME_IN_JSON),
+        return listOfLocationMaps.stream().map(
+            map -> new PickupLocation(new LocationId((String) map.get(LOCATION_FIELD_NAME_IN_JSON)), (String) map.get(NAME_FIELD_NAME_IN_JSON),
                 (int) map.get(CAPACITY_FIELD_NAME_IN_JSON))).toList();
     }
 
     private List<Semester> parseSemesters() {
         List<Map<String, Object>> listOfSemesterMaps = getListOfMapsFromJsonFilePath(SEMESTERS_FILE_PATH);
-        return listOfSemesterMaps.stream()
-            .map(map -> new Semester(new SemesterCode((String) map.get(SEMESTER_CODE_FIELD_NAME_IN_JSON)),
-                parseDate((String) map.get(START_DATE_FIELD_NAME_IN_JSON)),
-                parseDate((String) map.get(END_DATE_FIELD_NAME_IN_JSON)))).toList();
+        return listOfSemesterMaps.stream().map(map -> new Semester(new SemesterCode((String) map.get(SEMESTER_CODE_FIELD_NAME_IN_JSON)),
+            parseDate((String) map.get(START_DATE_FIELD_NAME_IN_JSON)), parseDate((String) map.get(END_DATE_FIELD_NAME_IN_JSON)))).toList();
     }
 
     private List<IngredientInformation> parseIngredientInformation() {
@@ -129,9 +130,8 @@ public class DevApplicationContext implements ApplicationContext {
     private List<Map<String, Object>> getListOfMapsFromJsonFilePath(String filePath) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Map<String, Object>> listOfMaps =
-                objectMapper.readValue(new File(filePath), new TypeReference<List<Map<String, Object>>>() {
-                });
+            List<Map<String, Object>> listOfMaps = objectMapper.readValue(new File(filePath), new TypeReference<List<Map<String, Object>>>() {
+            });
             return listOfMaps;
         } catch (IOException e) {
             LOGGER.error("Error while reading " + filePath, e);
