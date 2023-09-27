@@ -6,8 +6,10 @@ import ca.ulaval.glo4003.identitymanagement.domain.exception.IdentityManagementE
 import ca.ulaval.glo4003.identitymanagement.domain.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.InvalidPasswordException;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.InvalidTokenException;
+import ca.ulaval.glo4003.identitymanagement.domain.exception.TokenVerificationFailedException;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.UserAlreadyExistsException;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.UserNotFoundException;
+import ca.ulaval.glo4003.identitymanagement.middleware.exception.MissingAuthorizationHeaderException;
 
 import jakarta.ws.rs.core.Response;
 
@@ -29,6 +31,9 @@ public class ExceptionStatusMapper {
 
         exceptionMapper.put(InvalidTokenException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidPasswordException.class, Response.Status.BAD_REQUEST);
+
         exceptionMapper.put(InvalidCredentialsException.class, Response.Status.UNAUTHORIZED);
+        exceptionMapper.put(MissingAuthorizationHeaderException.class, Response.Status.UNAUTHORIZED);
+        exceptionMapper.put(TokenVerificationFailedException.class, Response.Status.UNAUTHORIZED);
     }
 }

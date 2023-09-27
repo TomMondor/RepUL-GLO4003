@@ -30,10 +30,13 @@ import ca.ulaval.glo4003.identitymanagement.application.AuthService;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
+import ca.ulaval.glo4003.identitymanagement.domain.token.TokenDecoder;
 import ca.ulaval.glo4003.identitymanagement.domain.token.TokenGenerator;
 import ca.ulaval.glo4003.identitymanagement.infrastructure.CryptPasswordEncoder;
 import ca.ulaval.glo4003.identitymanagement.infrastructure.InMemoryUserRepository;
+import ca.ulaval.glo4003.identitymanagement.infrastructure.JWTTokenDecoder;
 import ca.ulaval.glo4003.identitymanagement.infrastructure.JWTTokenGenerator;
+import ca.ulaval.glo4003.identitymanagement.middleware.AuthGuard;
 import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.api.account.AccountResource;
 import ca.ulaval.glo4003.repul.api.catalog.CatalogResource;
@@ -127,6 +130,7 @@ public class DevApplicationContext implements ApplicationContext {
         UniqueIdentifierFactory uniqueIdentifierFactory = new UniqueIdentifierFactory();
         PasswordEncoder passwordEncoder = new CryptPasswordEncoder();
         TokenGenerator tokenGenerator = new JWTTokenGenerator();
+        TokenDecoder tokenDecoder = new JWTTokenDecoder();
 
         UserFactory userFactory = new UserFactory(passwordEncoder);
 
@@ -157,8 +161,9 @@ public class DevApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(new CORSResponseFilter()).register(new IdentityManagementExceptionMapper()).register(new CatchallExceptionMapper())
-            .register(new RepULExceptionMapper()).register(new CommonExceptionMapper()).register(new ConstraintViolationExceptionMapper());
+            .register(new AuthGuard(tokenDecoder)).register(new CORSResponseFilter()).register(new IdentityManagementExceptionMapper())
+            .register(new CatchallExceptionMapper()).register(new RepULExceptionMapper()).register(new CommonExceptionMapper())
+            .register(new ConstraintViolationExceptionMapper());
     }
 
     public void initializeRepUL(RepULRepository repULRepository, UniqueIdentifierFactory uniqueIdentifierFactory) {
