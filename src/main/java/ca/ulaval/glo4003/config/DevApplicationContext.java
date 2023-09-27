@@ -9,6 +9,8 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -41,6 +43,10 @@ import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
 import ca.ulaval.glo4003.repul.domain.account.AccountFactory;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Ingredient;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Quantity;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe;
 import ca.ulaval.glo4003.repul.domain.catalog.Amount;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
 import ca.ulaval.glo4003.repul.domain.catalog.IngredientInformation;
@@ -60,10 +66,18 @@ public class DevApplicationContext implements ApplicationContext {
     private static final String NAME_FIELD_NAME_IN_JSON = "name";
     private static final String CAPACITY_FIELD_NAME_IN_JSON = "capacity";
     private static final String SEMESTERS_FILE_PATH = "src/main/resources/semesters-232425.json";
-    private static final String INGREDIENTS_FILE_PATH = "src/main/resources/ingredients.csv";
     private static final String SEMESTER_CODE_FIELD_NAME_IN_JSON = "semester_code";
     private static final String START_DATE_FIELD_NAME_IN_JSON = "start_date";
     private static final String END_DATE_FIELD_NAME_IN_JSON = "end_date";
+    private static final String INGREDIENTS_FILE_PATH = "src/main/resources/ingredients.csv";
+    private static final String STANDARD_LUNCHBOX_FILE_PATH = "src/main/resources/standard-meal-box.json";
+    private static final String RECIPES_FIELD_NAME_IN_JSON = "recipes";
+    private static final String RECIPE_NAME_FIELD_NAME_IN_JSON = "name";
+    private static final String RECIPE_CALORIES_FIELD_NAME_IN_JSON = "calories";
+    private static final String RECIPE_INGREDIENTS_FIELD_NAME_IN_JSON = "ingredients";
+    private static final String RECIPE_INGREDIENT_NAME_FIELD_NAME_IN_JSON = "ingredient";
+    private static final String RECIPE_INGREDIENT_QUANTITY_FIELD_NAME_IN_JSON = "quantity";
+
     private static final int PORT = 8080;
     private static final Logger LOGGER = LoggerFactory.getLogger(DevApplicationContext.class);
 
@@ -139,7 +153,8 @@ public class DevApplicationContext implements ApplicationContext {
         List<PickupLocation> pickupLocations = parsePickupLocations();
         List<Semester> semesters = parseSemesters();
         List<IngredientInformation> ingredientInformations = parseIngredientInformation();
-        return new Catalog(pickupLocations, semesters, ingredientInformations);
+        Lunchbox standardLunchbox = parseStandardLunchbox();
+        return new Catalog(pickupLocations, semesters, ingredientInformations, standardLunchbox);
     }
 
     private List<PickupLocation> parsePickupLocations() {
@@ -169,6 +184,74 @@ public class DevApplicationContext implements ApplicationContext {
             throw new RuntimeException("Error while reading " + INGREDIENTS_FILE_PATH);
         }
         return ingredients;
+    }
+
+    private Lunchbox parseStandardLunchbox() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object listOfRecipesMaps = objectMapper.readValue(new File(STANDARD_LUNCHBOX_FILE_PATH), new TypeReference<Map<String, Object>>() {
+            }).get(RECIPES_FIELD_NAME_IN_JSON);
+            return new Lunchbox(getRecipesFromJsonList(listOfRecipesMaps));
+        } catch (IOException e) {
+            LOGGER.error("Error while reading " + STANDARD_LUNCHBOX_FILE_PATH, e);
+            throw new RuntimeException("Error while reading " + STANDARD_LUNCHBOX_FILE_PATH);
+        }
+    }
+
+    private List<Recipe> getRecipesFromJsonList(Object listOfRecipes) {
+        List<Recipe> recipes = new ArrayList<>();
+        for (Map<String, Object> map : (List<Map<String, Object>>) listOfRecipes) {
+            recipes.add(getRecipeFromMap(map));
+        }
+        return recipes;
+    }
+
+    private Recipe getRecipeFromMap(Map<String, Object> map) {
+        String recipeName = (String) map.get(RECIPE_NAME_FIELD_NAME_IN_JSON);
+        int recipeCalories = getCaloriesFromString((String) map.get(RECIPE_CALORIES_FIELD_NAME_IN_JSON));
+        List<Map<String, Object>> listOfIngredientsMaps = (List<Map<String, Object>>) map.get(RECIPE_INGREDIENTS_FIELD_NAME_IN_JSON);
+        List<Ingredient> ingredients = new ArrayList<>();
+        for (Map<String, Object> ingredientMap : listOfIngredientsMaps) {
+            String ingredientName = (String) ingredientMap.get(RECIPE_INGREDIENT_NAME_FIELD_NAME_IN_JSON);
+            Quantity ingredientQuantity = getIngredientQuantityFromString((String) ingredientMap.get(RECIPE_INGREDIENT_QUANTITY_FIELD_NAME_IN_JSON));
+            ingredients.add(new Ingredient(ingredientName, ingredientQuantity));
+        }
+        return new Recipe(recipeName, recipeCalories, ingredients);
+    }
+
+    private int getCaloriesFromString(String calories) {
+        try {
+            return Integer.parseInt(calories);
+        } catch (NumberFormatException e) {
+            LOGGER.error("Error while parsing calories", e);
+            throw new RuntimeException("Error while parsing calories");
+        }
+    }
+
+    private Quantity getIngredientQuantityFromString(String quantity) {
+        String[] quantitySplit = splitQuantity(quantity);
+        try {
+            return new Quantity(Double.parseDouble(quantitySplit[0]), quantitySplit[1]);
+        } catch (NumberFormatException e) {
+            LOGGER.error("Error while parsing quantity", e);
+            throw new RuntimeException("Error while parsing quantity");
+        }
+    }
+
+    private String[] splitQuantity(String quantity) {
+        Pattern pattern = Pattern.compile("([0-9]+)\\s*([^0-9]*)$");
+        Matcher matcher = pattern.matcher(quantity.trim());
+
+        String[] result = new String[2];
+        if (matcher.find()) {
+            result[0] = matcher.group(1);
+            result[1] = matcher.group(2);
+        } else {
+            result[0] = quantity.trim();
+            result[1] = "";
+        }
+
+        return result;
     }
 
     private List<Map<String, Object>> getListOfMapsFromJsonFilePath(String filePath) {

@@ -6,6 +6,10 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Ingredient;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Quantity;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe;
 import ca.ulaval.glo4003.repul.domain.catalog.Amount;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
 import ca.ulaval.glo4003.repul.domain.catalog.IngredientInformation;
@@ -31,6 +35,10 @@ class CatalogTest {
     private static final LocalDate AN_END_DATE = A_START_DATE.plusDays(3);
     private static final String AN_INGREDIENT_NAME = "an ingredient name";
     private static final Amount AN_INGREDIENT_PRICE = new Amount(1.0);
+    private static final String A_RECIPE_NAME = "a recipe name";
+    private static final int A_RECIPE_CALORIES = 100;
+    private static final double AN_INGREDIENT_QUANTITY_VALUE = 1.0;
+    private static final String AN_INGREDIENT_QUANTITY_UNIT = "mg";
 
     private Catalog catalog;
 
@@ -40,7 +48,9 @@ class CatalogTest {
             new PickupLocation(new LocationId(ANOTHER_LOCATION_ID), ANOTHER_NAME, ANOTHER_TOTAL_CAPACITY));
         List<Semester> semesters = List.of(new Semester(new SemesterCode(A_SEMESTER_CODE), A_START_DATE, AN_END_DATE));
         List<IngredientInformation> ingredients = List.of(new IngredientInformation(AN_INGREDIENT_NAME, AN_INGREDIENT_PRICE));
-        catalog = new Catalog(pickupLocations, semesters, ingredients);
+        Lunchbox standardLunchbox = new Lunchbox(List.of(new Recipe(A_RECIPE_NAME, A_RECIPE_CALORIES,
+            List.of(new Ingredient(AN_INGREDIENT_NAME, new Quantity(AN_INGREDIENT_QUANTITY_VALUE, AN_INGREDIENT_QUANTITY_UNIT))))));
+        catalog = new Catalog(pickupLocations, semesters, ingredients, standardLunchbox);
     }
 
     @Test
