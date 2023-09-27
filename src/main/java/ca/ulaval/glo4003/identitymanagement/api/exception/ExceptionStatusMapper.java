@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.identitymanagement.api.exception;
 import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.identitymanagement.domain.exception.IdentityManagementException;
+import ca.ulaval.glo4003.identitymanagement.domain.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.InvalidPasswordException;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.InvalidTokenException;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.UserAlreadyExistsException;
@@ -28,5 +29,6 @@ public class ExceptionStatusMapper {
 
         exceptionMapper.put(InvalidTokenException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidPasswordException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidCredentialsException.class, Response.Status.UNAUTHORIZED);
     }
 }

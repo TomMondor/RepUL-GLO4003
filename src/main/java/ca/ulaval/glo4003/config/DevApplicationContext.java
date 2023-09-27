@@ -23,6 +23,7 @@ import ca.ulaval.glo4003.commons.api.exception.mapper.CommonExceptionMapper;
 import ca.ulaval.glo4003.commons.api.exception.mapper.ConstraintViolationExceptionMapper;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.config.http.CORSResponseFilter;
+import ca.ulaval.glo4003.identitymanagement.api.AuthResource;
 import ca.ulaval.glo4003.identitymanagement.api.exception.IdentityManagementExceptionMapper;
 import ca.ulaval.glo4003.identitymanagement.application.AuthFacade;
 import ca.ulaval.glo4003.identitymanagement.application.AuthService;
@@ -87,6 +88,11 @@ public class DevApplicationContext implements ApplicationContext {
         return new HealthResource();
     }
 
+    private static AuthResource createAuthResource(AuthService authService) {
+        LOGGER.info("Setup auth resource");
+        return new AuthResource(authService);
+    }
+
     private static AccountResource createAccountResource(RepULRepository repULRepository, AuthFacade authFacade) {
         LOGGER.info("Setup account resource");
         AccountFactory accountFactory = new AccountFactory();
@@ -125,6 +131,7 @@ public class DevApplicationContext implements ApplicationContext {
 
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
+        AuthResource authResource = createAuthResource(authService);
         SubscriptionResource subscriptionResource = createSubscriptionResource(repULRepository);
         AccountResource accountResource = createAccountResource(repULRepository, authService);
 
@@ -132,6 +139,7 @@ public class DevApplicationContext implements ApplicationContext {
             @Override
             protected void configure() {
                 bind(healthResource).to(HealthResource.class);
+                bind(authResource).to(AuthResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
                 bind(accountResource).to(AccountResource.class);
             }

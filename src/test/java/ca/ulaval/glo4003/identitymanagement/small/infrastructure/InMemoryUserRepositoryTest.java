@@ -4,10 +4,14 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.identitymanagement.domain.Password;
+import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.UserNotFoundException;
@@ -18,12 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(MockitoExtension.class)
 public class InMemoryUserRepositoryTest {
     private static final Email AN_INVALID_EMAIL = new Email("sss@hot.lo");
     private static final UniqueIdentifier A_UID = new UniqueIdentifier(UUID.randomUUID());
     private static final Email AN_EMAIL = new Email("anEmail@ulava.ca");
     private static final Password AN_ENCRYPTED_PASSWORD = new Password("encryptedPassword");
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     public void setup() {
@@ -72,7 +80,7 @@ public class InMemoryUserRepositoryTest {
     }
 
     private User givenExistingUser() {
-        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD);
+        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, passwordEncoder);
         return user;
     }
 }

@@ -14,7 +14,7 @@ public class CryptPasswordEncoder implements PasswordEncoder {
     }
 
     @Override
-    public boolean matches(Password password, Password encodedPassword) {
-        return encoder.matches(password.value(), encodedPassword.value());
+    public boolean matches(Password providedPassword, Password encodedPassword) {
+        return encoder.matches(providedPassword.value(), encodedPassword.value());
     }
 }
