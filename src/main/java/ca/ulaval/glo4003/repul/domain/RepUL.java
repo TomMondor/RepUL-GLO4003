@@ -34,11 +34,12 @@ public class RepUL {
     public void createSubscription(UniqueIdentifier accountId, LocationId locationId, DayOfWeek dayOfWeek) {
         Account account = findAccountById(accountId);
 
+        LocalDate currentDate = LocalDate.now();
         PickupLocation pickupLocation = catalog.getPickupLocation(locationId);
         Lunchbox lunchbox = catalog.getLunchbox();
-        Semester semester = catalog.getCurrentSemester();
+        Semester semester = catalog.getCurrentSemester(currentDate);
         Subscription subscription =
-            subscriptionFactory.createSubscription(LocalDate.now(), semester.endDate(), pickupLocation, lunchbox, dayOfWeek, LunchboxType.STANDARD);
+            subscriptionFactory.createSubscription(currentDate, semester.endDate(), pickupLocation, lunchbox, dayOfWeek, LunchboxType.STANDARD);
 
         account.addSubscription(subscription);
     }

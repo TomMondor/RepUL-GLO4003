@@ -35,8 +35,7 @@ public class Catalog {
         return standardLunchbox;
     }
 
-    public Semester getCurrentSemester() {
-        LocalDate currentDate = LocalDate.now();
+    public Semester getCurrentSemester(LocalDate currentDate) {
         List<Semester> savedSemesters = new ArrayList<>(semesters.values());
         return savedSemesters.stream()
             .filter(semester -> semester.startDate().isBefore(currentDate) && semester.endDate().isAfter(currentDate))
