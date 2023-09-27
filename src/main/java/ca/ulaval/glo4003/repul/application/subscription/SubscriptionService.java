@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.application.subscription;
 
 import java.util.List;
+import java.util.UUID;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.application.subscription.dto.SubscriptionsDTO;
@@ -19,6 +20,12 @@ public class SubscriptionService {
     }
 
     public void createSubscription(SubscriptionParams subscriptionParams) {
+        RepUL repUL = repULRepository.get();
+
+        // TODO: get real user ID
+        repUL.createSubscription(UniqueIdentifier.from(UUID.randomUUID().toString()), subscriptionParams.locationId(), subscriptionParams.dayOfWeek());
+
+        repULRepository.saveOrUpdate(repUL);
     }
 
     public SubscriptionsDTO getSubscriptions() {

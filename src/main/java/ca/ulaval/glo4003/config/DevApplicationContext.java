@@ -46,6 +46,7 @@ import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
 import ca.ulaval.glo4003.repul.domain.account.AccountFactory;
+import ca.ulaval.glo4003.repul.domain.account.subscription.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Ingredient;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Quantity;
@@ -135,7 +136,7 @@ public class DevApplicationContext implements ApplicationContext {
 
         RepULRepository repULRepository = new InMemoryRepULRepository();
 
-        initializeRepUL(repULRepository);
+        initializeRepUL(repULRepository, uniqueIdentifierFactory);
 
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
@@ -160,9 +161,10 @@ public class DevApplicationContext implements ApplicationContext {
             .register(new RepULExceptionMapper()).register(new CommonExceptionMapper()).register(new ConstraintViolationExceptionMapper());
     }
 
-    public void initializeRepUL(RepULRepository repULRepository) {
+    public void initializeRepUL(RepULRepository repULRepository, UniqueIdentifierFactory uniqueIdentifierFactory) {
         Catalog catalog = createCatalog();
-        RepUL repUL = new RepUL(catalog);
+        SubscriptionFactory subscriptionFactory = new SubscriptionFactory(uniqueIdentifierFactory);
+        RepUL repUL = new RepUL(catalog, subscriptionFactory);
         repULRepository.saveOrUpdate(repUL);
     }
 

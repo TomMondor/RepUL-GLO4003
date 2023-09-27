@@ -19,7 +19,7 @@ import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationException;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CatalogTest {
@@ -32,7 +32,9 @@ class CatalogTest {
     private static final int ANOTHER_TOTAL_CAPACITY = 20;
     private static final String A_SEMESTER_CODE = "E24";
     private static final LocalDate A_START_DATE = LocalDate.of(2020, 1, 1);
-    private static final LocalDate AN_END_DATE = A_START_DATE.plusDays(3);
+    private static final LocalDate AN_END_DATE = LocalDate.of(2020, 4, 20);
+    private static final PickupLocation A_PICKUP_LOCATION = new PickupLocation(new LocationId(A_LOCATION_ID), A_NAME, A_TOTAL_CAPACITY);
+    private static final PickupLocation ANOTHER_PICKUP_LOCATION = new PickupLocation(new LocationId(ANOTHER_LOCATION_ID), ANOTHER_NAME, ANOTHER_TOTAL_CAPACITY);
     private static final String AN_INGREDIENT_NAME = "an ingredient name";
     private static final Amount AN_INGREDIENT_PRICE = new Amount(1.0);
     private static final String A_RECIPE_NAME = "a recipe name";
@@ -44,8 +46,7 @@ class CatalogTest {
 
     @BeforeEach
     void setUpCatalog() {
-        List<PickupLocation> pickupLocations = List.of(new PickupLocation(new LocationId(A_LOCATION_ID), A_NAME, A_TOTAL_CAPACITY),
-            new PickupLocation(new LocationId(ANOTHER_LOCATION_ID), ANOTHER_NAME, ANOTHER_TOTAL_CAPACITY));
+        List<PickupLocation> pickupLocations = List.of(A_PICKUP_LOCATION, ANOTHER_PICKUP_LOCATION);
         List<Semester> semesters = List.of(new Semester(new SemesterCode(A_SEMESTER_CODE), A_START_DATE, AN_END_DATE));
         List<IngredientInformation> ingredients = List.of(new IngredientInformation(AN_INGREDIENT_NAME, AN_INGREDIENT_PRICE));
         Lunchbox standardLunchbox = new Lunchbox(List.of(new Recipe(A_RECIPE_NAME, A_RECIPE_CALORIES,
@@ -54,13 +55,15 @@ class CatalogTest {
     }
 
     @Test
-    void givenExistingLocationId_whenValidateLocationId_shouldNotThrow() {
-        assertDoesNotThrow(() -> catalog.validateLocationId(new LocationId(A_LOCATION_ID)));
+    void givenExistingLocationId_whenGetPickupLocation_returnPickupLocation() {
+        PickupLocation pickupLocation = catalog.getPickupLocation(new LocationId(A_LOCATION_ID));
+
+        assertEquals(A_PICKUP_LOCATION, pickupLocation);
     }
 
     @Test
-    void givenMissingLocationId_whenValidateLocationId_shouldThrowInvalidLocationException() {
-        assertThrows(InvalidLocationException.class, () -> catalog.validateLocationId(new LocationId(A_MISSING_LOCATION_ID)));
+    void givenMissingLocationId_whenGetPickupLocation_shouldThrowInvalidLocationException() {
+        assertThrows(InvalidLocationException.class, () -> catalog.getPickupLocation(new LocationId(A_MISSING_LOCATION_ID)));
     }
 }
 

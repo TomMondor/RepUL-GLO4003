@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.repul.domain.catalog;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -7,6 +9,7 @@ import java.util.stream.Collectors;
 
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationException;
+import ca.ulaval.glo4003.repul.domain.exception.SemesterNotFoundException;
 
 public class Catalog {
     private final Map<LocationId, PickupLocation> pickupLocations;
@@ -21,10 +24,23 @@ public class Catalog {
         this.standardLunchbox = standardLunchbox;
     }
 
-    public void validateLocationId(LocationId locationId) {
-        if (!pickupLocations.containsKey(locationId)) {
-            throw new InvalidLocationException();
+    public PickupLocation getPickupLocation(LocationId locationId) {
+        if (pickupLocations.containsKey(locationId)) {
+            return pickupLocations.get(locationId);
         }
+        throw new InvalidLocationException();
+    }
+
+    public Lunchbox getLunchbox() {
+        return standardLunchbox;
+    }
+
+    public Semester getCurrentSemester() {
+        LocalDate currentDate = LocalDate.now();
+        List<Semester> savedSemesters = new ArrayList<>(semesters.values());
+        return savedSemesters.stream()
+            .filter(semester -> semester.startDate().isBefore(currentDate) && semester.endDate().isAfter(currentDate))
+            .findFirst().orElseThrow(SemesterNotFoundException::new);
     }
 
     public List<PickupLocation> getPickupLocations() {

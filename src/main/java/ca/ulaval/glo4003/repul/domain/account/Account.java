@@ -30,6 +30,14 @@ public class Account {
         return accountId;
     }
 
+    public List<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void addSubscription(Subscription subscription) {
+        subscriptions.add(subscription);
+    }
+
     public void confirmNextLunchbox(UniqueIdentifier subscriptionId) {
         Subscription subscription = findSubscriptionById(subscriptionId);
         subscription.confirmNextLunchbox();

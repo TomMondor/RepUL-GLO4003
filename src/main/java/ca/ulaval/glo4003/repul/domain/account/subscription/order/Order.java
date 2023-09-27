@@ -2,28 +2,34 @@ package ca.ulaval.glo4003.repul.domain.account.subscription.order;
 
 import java.time.LocalDate;
 
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.exception.OrderAlreadyStartedException;
 
 public class Order {
     private static final int DAYS_TO_CONFIRM = 2;
-    private final Lunchbox lunchbox;
-    private final OrderId orderId;
-    private final LocalDate deliveryDate;
-    private OrderStatus orderStatus;
 
-    public Order(Lunchbox lunchbox, OrderId orderId, OrderStatus orderStatus, LocalDate deliveryDate) {
-        this.lunchbox = lunchbox;
+    private UniqueIdentifier orderId;
+    private Lunchbox lunchbox;
+    private OrderStatus orderStatus;
+    private final LocalDate deliveryDate;
+
+    public Order(UniqueIdentifier orderId, Lunchbox lunchbox, LocalDate deliveryDate, OrderStatus orderStatus) {
         this.orderId = orderId;
+        this.lunchbox = lunchbox;
         this.orderStatus = orderStatus;
         this.deliveryDate = deliveryDate;
+    }
+
+    public Order(UniqueIdentifier orderId, Lunchbox lunchbox, LocalDate deliveryDate) {
+        this(orderId, lunchbox, deliveryDate, OrderStatus.PENDING);
     }
 
     public Lunchbox getLunchbox() {
         return lunchbox;
     }
 
-    public OrderId getOrderId() {
+    public UniqueIdentifier getOrderId() {
         return orderId;
     }
 
