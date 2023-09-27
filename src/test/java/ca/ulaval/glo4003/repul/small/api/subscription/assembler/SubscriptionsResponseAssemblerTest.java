@@ -1,7 +1,7 @@
-package ca.ulaval.glo4003.repul.small.repul.api.subscription.assembler;
+package ca.ulaval.glo4003.repul.small.api.subscription.assembler;
 
 import java.time.DayOfWeek;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -20,18 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SubscriptionsResponseAssemblerTest {
     private static final PickupLocation A_PICKUP_LOCATION = new PickupLocation(new LocationId("VACHON"), "toto", 10);
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
-    private static final Date A_DATE = new Date();
+    private static final LocalDate A_DATE = LocalDate.now();
     private static final LunchboxType A_LUNCHBOX_TYPE = LunchboxType.STANDARD;
-    private static final SubscriptionsDTO A_SUBSCRIPTION_DTO = new SubscriptionsDTO(
-        List.of(
-            new SubscriptionFixture()
-                .withPickupLocation(A_PICKUP_LOCATION)
-                .withFrequency(A_FREQUENCY)
-                .withLunchboxType(A_LUNCHBOX_TYPE)
-                .withStartDate(A_DATE)
-                .build()
-        )
-    );
+    private static final SubscriptionsDTO A_SUBSCRIPTION_DTO = new SubscriptionsDTO(List.of(
+        new SubscriptionFixture().withPickupLocation(A_PICKUP_LOCATION).withFrequency(A_FREQUENCY).withLunchboxType(A_LUNCHBOX_TYPE).withStartDate(A_DATE)
+            .build()));
 
     private SubscriptionsResponseAssembler subscriptionResponseAssembler;
 

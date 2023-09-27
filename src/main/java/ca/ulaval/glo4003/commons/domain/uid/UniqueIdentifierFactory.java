@@ -6,4 +6,8 @@ public class UniqueIdentifierFactory {
     public UniqueIdentifier generate() {
         return new UniqueIdentifier(UUID.randomUUID());
     }
+
+    public UniqueIdentifier generateFrom(String id) {
+        return new UniqueIdentifier(UUID.fromString(id));
+    }
 }

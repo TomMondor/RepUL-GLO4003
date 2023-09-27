@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -84,11 +84,11 @@ public class DevApplicationContext implements ApplicationContext {
         return new AuthResource(authService);
     }
 
-    private static SubscriptionResource createSubscriptionResource() {
+    private static SubscriptionResource createSubscriptionResource(RepULRepository repULRepository) {
         LOGGER.info("Setup subscription resource");
         PaymentHandler paymentHandler = new EmulatedPaymentHandler();
 
-        SubscriptionService subscriptionService = new SubscriptionService(paymentHandler);
+        SubscriptionService subscriptionService = new SubscriptionService(repULRepository, paymentHandler);
 
         return new SubscriptionResource(subscriptionService);
     }
@@ -107,7 +107,7 @@ public class DevApplicationContext implements ApplicationContext {
 
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
-        SubscriptionResource subscriptionResource = createSubscriptionResource();
+        SubscriptionResource subscriptionResource = createSubscriptionResource(repULRepository);
         AuthResource authResource = createAuthResource(uniqueIdentifierFactory);
 
         final AbstractBinder binder = new AbstractBinder() {
@@ -179,10 +179,10 @@ public class DevApplicationContext implements ApplicationContext {
         }
     }
 
-    private Date parseDate(String date) {
+    private LocalDate parseDate(String date) {
         try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
-        } catch (java.text.ParseException e) {
+            return LocalDate.parse(date);
+        } catch (DateTimeParseException e) {
             LOGGER.error("Error while parsing date", e);
             throw new RuntimeException("Error while parsing date");
         }

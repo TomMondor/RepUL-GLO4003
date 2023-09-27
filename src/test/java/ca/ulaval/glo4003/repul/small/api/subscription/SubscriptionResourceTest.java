@@ -1,7 +1,8 @@
-package ca.ulaval.glo4003.repul.small.repul.api.subscription;
+package ca.ulaval.glo4003.repul.small.api.subscription;
 
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class SubscriptionResourceTest {
-    private static final String SUBSCRIPTION_ID = "TODO";
+    private static final String SUBSCRIPTION_ID = UUID.randomUUID().toString();
     private static final SubscriptionsDTO A_SUBSCRIPTIONS_DTO = new SubscriptionsDTO(List.of());
     private static final String A_LOCATION_ID = "VACHON";
     private static final String A_DAY_OF_WEEK = DayOfWeek.MONDAY.toString();

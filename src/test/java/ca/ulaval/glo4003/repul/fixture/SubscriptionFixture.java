@@ -1,24 +1,24 @@
 package ca.ulaval.glo4003.repul.fixture;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Frequency;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
-import ca.ulaval.glo4003.repul.domain.account.subscription.SubscriptionId;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 
 public class SubscriptionFixture {
-    private SubscriptionId subscriptionId;
+    private UniqueIdentifier subscriptionId;
     private List<Order> orders;
     private Frequency frequency;
     private PickupLocation pickupLocation;
-    private Date startDate;
+    private LocalDate startDate;
     private LunchboxType lunchboxType;
 
-    public SubscriptionFixture withSubscriptionId(SubscriptionId subscriptionId) {
+    public SubscriptionFixture withSubscriptionId(UniqueIdentifier subscriptionId) {
         this.subscriptionId = subscriptionId;
         return this;
     }
@@ -38,7 +38,7 @@ public class SubscriptionFixture {
         return this;
     }
 
-    public SubscriptionFixture withStartDate(Date startDate) {
+    public SubscriptionFixture withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
@@ -49,13 +49,6 @@ public class SubscriptionFixture {
     }
 
     public Subscription build() {
-        return new Subscription(
-            subscriptionId,
-            orders,
-            frequency,
-            pickupLocation,
-            startDate,
-            lunchboxType
-        );
+        return new Subscription(subscriptionId, orders, frequency, pickupLocation, startDate, lunchboxType);
     }
 }

@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.domain.catalog;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public record Semester(SemesterCode semesterCode, Date startDate, Date endDate) {
+public record Semester(SemesterCode semesterCode, LocalDate startDate, LocalDate endDate) {
 }

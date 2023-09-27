@@ -2,16 +2,19 @@ package ca.ulaval.glo4003.repul.application.subscription;
 
 import java.util.List;
 
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.application.subscription.dto.SubscriptionsDTO;
 import ca.ulaval.glo4003.repul.application.subscription.parameter.SubscriptionParams;
 import ca.ulaval.glo4003.repul.domain.PaymentHandler;
-import ca.ulaval.glo4003.repul.domain.account.subscription.SubscriptionId;
+import ca.ulaval.glo4003.repul.domain.RepUL;
+import ca.ulaval.glo4003.repul.domain.RepULRepository;
 
 public class SubscriptionService {
-
+    private final RepULRepository repULRepository;
     private final PaymentHandler paymentHandler;
 
-    public SubscriptionService(PaymentHandler paymentHandler) {
+    public SubscriptionService(RepULRepository repULRepository, PaymentHandler paymentHandler) {
+        this.repULRepository = repULRepository;
         this.paymentHandler = paymentHandler;
     }
 
@@ -22,9 +25,19 @@ public class SubscriptionService {
         return new SubscriptionsDTO(List.of());
     }
 
-    public void confirmNextLunchboxForSubscription(SubscriptionId subscriptionId) {
+    public void confirmNextLunchboxForSubscription(UniqueIdentifier accountId, UniqueIdentifier subscriptionId) {
+        RepUL repUL = repULRepository.get();
+
+        repUL.confirmNextLunchboxForSubscription(accountId, subscriptionId);
+
+        repULRepository.saveOrUpdate(repUL);
     }
 
-    public void declineNextLunchboxForSubscription(SubscriptionId subscriptionId) {
+    public void declineNextLunchboxForSubscription(UniqueIdentifier accountId, UniqueIdentifier subscriptionId) {
+        RepUL repUL = repULRepository.get();
+
+        repUL.declineNextLunchboxForSubscription(accountId, subscriptionId);
+
+        repULRepository.saveOrUpdate(repUL);
     }
 }

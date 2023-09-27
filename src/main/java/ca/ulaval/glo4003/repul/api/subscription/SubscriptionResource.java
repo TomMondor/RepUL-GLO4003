@@ -1,13 +1,14 @@
 package ca.ulaval.glo4003.repul.api.subscription;
 
 import java.util.List;
+import java.util.UUID;
 
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.api.subscription.assembler.SubscriptionsResponseAssembler;
 import ca.ulaval.glo4003.repul.api.subscription.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.api.subscription.response.SubscriptionResponse;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
 import ca.ulaval.glo4003.repul.application.subscription.parameter.SubscriptionParams;
-import ca.ulaval.glo4003.repul.domain.account.subscription.SubscriptionId;
 
 import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
@@ -44,14 +45,15 @@ public class SubscriptionResource {
     @POST
     @Path("/{subscriptionId}/confirm")
     public Response confirmLunchbox(@PathParam("subscriptionId") String subscriptionId) {
-        subscriptionService.confirmNextLunchboxForSubscription(new SubscriptionId(subscriptionId));
+        // TODO MODIFY ACCOUNTID UNIQUE IDENTIFIER FOR CORRECT ONE
+        subscriptionService.confirmNextLunchboxForSubscription(new UniqueIdentifier(UUID.randomUUID()), UniqueIdentifier.from(subscriptionId));
         return Response.ok().build();
     }
 
     @POST
     @Path("/{subscriptionId}/decline")
     public Response declineLunchbox(@PathParam("subscriptionId") String subscriptionId) {
-        subscriptionService.declineNextLunchboxForSubscription(new SubscriptionId(subscriptionId));
+        subscriptionService.declineNextLunchboxForSubscription(new UniqueIdentifier(UUID.randomUUID()), UniqueIdentifier.from(subscriptionId));
         return Response.ok().build();
     }
 }

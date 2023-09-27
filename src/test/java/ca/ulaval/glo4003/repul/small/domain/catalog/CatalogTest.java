@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.small.domain.catalog;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,8 @@ import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CatalogTest {
     private static final String A_LOCATION_ID = "a location id";
@@ -26,8 +27,8 @@ class CatalogTest {
     private static final String ANOTHER_NAME = "another name";
     private static final int ANOTHER_TOTAL_CAPACITY = 20;
     private static final String A_SEMESTER_CODE = "E24";
-    private static final Date A_START_DATE = new Date(1672531200000L);
-    private static final Date AN_END_DATE = new Date(1682899200000L);
+    private static final LocalDate A_START_DATE = LocalDate.of(2020, 1, 1);
+    private static final LocalDate AN_END_DATE = A_START_DATE.plusDays(3);
     private static final String AN_INGREDIENT_NAME = "an ingredient name";
     private static final Amount AN_INGREDIENT_PRICE = new Amount(1.0);
 
