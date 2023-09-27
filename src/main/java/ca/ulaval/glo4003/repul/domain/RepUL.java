@@ -6,6 +6,7 @@ import java.util.List;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.Account;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
+import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.exception.AccountNotFoundException;
 
 public class RepUL {
@@ -32,5 +33,9 @@ public class RepUL {
 
     private Account findAccountById(UniqueIdentifier accountId) {
         return accounts.stream().filter(account -> account.getAccountId().equals(accountId)).findFirst().orElseThrow(AccountNotFoundException::new);
+    }
+
+    public List<PickupLocation> getPickupLocations() {
+        return catalog.getPickupLocations();
     }
 }

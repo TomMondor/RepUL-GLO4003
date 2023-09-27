@@ -16,4 +16,12 @@ public class PickupLocation {
     public LocationId getLocationId() {
         return locationId;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getRemainingCapacity() {
+        return remainingCapacity;
+    }
 }

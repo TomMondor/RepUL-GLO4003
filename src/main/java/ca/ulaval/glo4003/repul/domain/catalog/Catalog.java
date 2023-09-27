@@ -26,4 +26,8 @@ public class Catalog {
             throw new InvalidLocationException();
         }
     }
+
+    public List<PickupLocation> getPickupLocations() {
+        return pickupLocations.values().stream().toList();
+    }
 }

@@ -36,9 +36,11 @@ import ca.ulaval.glo4003.identitymanagement.infrastructure.InMemoryUserRepositor
 import ca.ulaval.glo4003.identitymanagement.infrastructure.JWTTokenGenerator;
 import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.api.account.AccountResource;
+import ca.ulaval.glo4003.repul.api.catalog.CatalogResource;
 import ca.ulaval.glo4003.repul.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
 import ca.ulaval.glo4003.repul.application.account.AccountService;
+import ca.ulaval.glo4003.repul.application.catalog.CatalogService;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
 import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
@@ -109,6 +111,12 @@ public class DevApplicationContext implements ApplicationContext {
         return new SubscriptionResource(subscriptionService);
     }
 
+    private static CatalogResource createCatalogResource(RepULRepository repULRepository) {
+        LOGGER.info("Setup catalog resource");
+        CatalogService catalogService = new CatalogService(repULRepository);
+        return new CatalogResource(catalogService);
+    }
+
     public String getURI() {
         return String.format("http://localhost:%s/", PORT);
     }
@@ -133,6 +141,7 @@ public class DevApplicationContext implements ApplicationContext {
         HealthResource healthResource = createHealthResource();
         AuthResource authResource = createAuthResource(authService);
         SubscriptionResource subscriptionResource = createSubscriptionResource(repULRepository);
+        CatalogResource catalogResource = createCatalogResource(repULRepository);
         AccountResource accountResource = createAccountResource(repULRepository, authService);
 
         final AbstractBinder binder = new AbstractBinder() {
@@ -142,6 +151,7 @@ public class DevApplicationContext implements ApplicationContext {
                 bind(authResource).to(AuthResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
                 bind(accountResource).to(AccountResource.class);
+                bind(catalogResource).to(CatalogResource.class);
             }
         };
 
