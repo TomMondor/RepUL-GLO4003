@@ -1,6 +1,6 @@
-package ca.ulaval.glo4003.identitymanagement.fixture;
+package ca.ulaval.glo4003.repul.fixture;
 
-import ca.ulaval.glo4003.identitymanagement.api.request.RegistrationRequest;
+import ca.ulaval.glo4003.repul.api.account.request.RegistrationRequest;
 
 public class RegistrationRequestFixture {
     private String idul = "ALMAT69";
@@ -8,7 +8,7 @@ public class RegistrationRequestFixture {
     private String password = "aPassword";
     private String name = "Bob Math";
     private String birthdate = "1969-04-20";
-    private String gender = "Man";
+    private String gender = "MAN";
 
     public RegistrationRequestFixture withIdul(String idul) {
         this.idul = idul;

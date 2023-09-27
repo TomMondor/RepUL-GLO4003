@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.identitymanagement.api.request;
+package ca.ulaval.glo4003.repul.api.account.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

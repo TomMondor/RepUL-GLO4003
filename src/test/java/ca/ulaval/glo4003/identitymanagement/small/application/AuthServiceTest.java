@@ -12,7 +12,6 @@ import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.identitymanagement.application.AuthService;
-import ca.ulaval.glo4003.identitymanagement.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.identitymanagement.domain.Password;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
@@ -54,7 +53,7 @@ public class AuthServiceTest {
     public void givenExistingUser_whenRegistering_shouldThrowUserAlreadyExistsException() {
         given(userRepository.exists(AN_EMAIL)).willReturn(true);
 
-        assertThrows(UserAlreadyExistsException.class, () -> authService.register(new RegistrationQuery(AN_EMAIL, A_PASSWORD)));
+        assertThrows(UserAlreadyExistsException.class, () -> authService.register(AN_EMAIL.value(), A_PASSWORD.value()));
     }
 
     @Test
@@ -64,20 +63,8 @@ public class AuthServiceTest {
         given(uniqueIdentifierFactory.generate()).willReturn(A_UID);
         given(userFactory.createUser(A_UID, AN_EMAIL, A_PASSWORD)).willReturn(userToSave);
 
-        authService.register(new RegistrationQuery(AN_EMAIL, A_PASSWORD));
+        authService.register(AN_EMAIL.value(), A_PASSWORD.value());
 
         verify(userRepository).saveOrUpdate(userToSave);
-    }
-
-    @Test
-    public void givenUserNotYetRegistered_whenRegistering_shouldGenerateToken() {
-        User userToSave = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD);
-        given(userRepository.exists(AN_EMAIL)).willReturn(false);
-        given(uniqueIdentifierFactory.generate()).willReturn(A_UID);
-        given(userFactory.createUser(A_UID, AN_EMAIL, A_PASSWORD)).willReturn(userToSave);
-
-        authService.register(new RegistrationQuery(AN_EMAIL, A_PASSWORD));
-
-        verify(tokenGenerator).generate(A_UID);
     }
 }

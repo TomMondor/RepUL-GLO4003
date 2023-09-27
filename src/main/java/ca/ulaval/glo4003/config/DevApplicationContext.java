@@ -20,8 +20,9 @@ import ca.ulaval.glo4003.commons.api.exception.mapper.CatchallExceptionMapper;
 import ca.ulaval.glo4003.commons.api.exception.mapper.CommonExceptionMapper;
 import ca.ulaval.glo4003.commons.api.exception.mapper.ConstraintViolationExceptionMapper;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.identitymanagement.api.AuthResource;
+import ca.ulaval.glo4003.config.http.CORSResponseFilter;
 import ca.ulaval.glo4003.identitymanagement.api.exception.IdentityManagementExceptionMapper;
+import ca.ulaval.glo4003.identitymanagement.application.AuthFacade;
 import ca.ulaval.glo4003.identitymanagement.application.AuthService;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
@@ -31,12 +32,15 @@ import ca.ulaval.glo4003.identitymanagement.infrastructure.CryptPasswordEncoder;
 import ca.ulaval.glo4003.identitymanagement.infrastructure.InMemoryUserRepository;
 import ca.ulaval.glo4003.identitymanagement.infrastructure.JWTTokenGenerator;
 import ca.ulaval.glo4003.repul.api.HealthResource;
+import ca.ulaval.glo4003.repul.api.account.AccountResource;
 import ca.ulaval.glo4003.repul.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
+import ca.ulaval.glo4003.repul.application.account.AccountService;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
 import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
+import ca.ulaval.glo4003.repul.domain.account.AccountFactory;
 import ca.ulaval.glo4003.repul.domain.catalog.Amount;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
 import ca.ulaval.glo4003.repul.domain.catalog.IngredientInformation;
@@ -44,7 +48,6 @@ import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
-import ca.ulaval.glo4003.repul.http.CORSResponseFilter;
 import ca.ulaval.glo4003.repul.infrastructure.EmulatedPaymentHandler;
 import ca.ulaval.glo4003.repul.infrastructure.InMemoryRepULRepository;
 
@@ -70,18 +73,11 @@ public class DevApplicationContext implements ApplicationContext {
         return new HealthResource();
     }
 
-    private static AuthResource createAuthResource(UniqueIdentifierFactory uniqueIdentifierFactory) {
-        LOGGER.info("Setup auth resource");
-        PasswordEncoder passwordEncoder = new CryptPasswordEncoder();
-        TokenGenerator tokenGenerator = new JWTTokenGenerator();
-
-        UserFactory userFactory = new UserFactory(passwordEncoder);
-
-        UserRepository userRepository = new InMemoryUserRepository();
-
-        AuthService authService = new AuthService(userRepository, userFactory, uniqueIdentifierFactory, tokenGenerator);
-
-        return new AuthResource(authService);
+    private static AccountResource createAccountResource(RepULRepository repULRepository, AuthFacade authFacade) {
+        LOGGER.info("Setup account resource");
+        AccountFactory accountFactory = new AccountFactory();
+        AccountService accountService = new AccountService(repULRepository, accountFactory, authFacade);
+        return new AccountResource(accountService);
     }
 
     private static SubscriptionResource createSubscriptionResource(RepULRepository repULRepository) {
@@ -100,6 +96,14 @@ public class DevApplicationContext implements ApplicationContext {
     @Override
     public ResourceConfig initializeResourceConfig() {
         UniqueIdentifierFactory uniqueIdentifierFactory = new UniqueIdentifierFactory();
+        PasswordEncoder passwordEncoder = new CryptPasswordEncoder();
+        TokenGenerator tokenGenerator = new JWTTokenGenerator();
+
+        UserFactory userFactory = new UserFactory(passwordEncoder);
+
+        UserRepository userRepository = new InMemoryUserRepository();
+
+        AuthService authService = new AuthService(userRepository, userFactory, uniqueIdentifierFactory, tokenGenerator);
 
         RepULRepository repULRepository = new InMemoryRepULRepository();
 
@@ -108,14 +112,14 @@ public class DevApplicationContext implements ApplicationContext {
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
         SubscriptionResource subscriptionResource = createSubscriptionResource(repULRepository);
-        AuthResource authResource = createAuthResource(uniqueIdentifierFactory);
+        AccountResource accountResource = createAccountResource(repULRepository, authService);
 
         final AbstractBinder binder = new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(healthResource).to(HealthResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
-                bind(authResource).to(AuthResource.class);
+                bind(accountResource).to(AccountResource.class);
             }
         };
 

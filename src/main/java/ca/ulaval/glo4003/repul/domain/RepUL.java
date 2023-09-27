@@ -16,8 +16,8 @@ public class RepUL {
         this.catalog = catalog;
     }
 
-    // TODO add good parameters and logic
-    public void register() {
+    public void addAccount(Account account) {
+        accounts.add(account);
     }
 
     public void confirmNextLunchboxForSubscription(UniqueIdentifier accountId, UniqueIdentifier subscriptionId) {

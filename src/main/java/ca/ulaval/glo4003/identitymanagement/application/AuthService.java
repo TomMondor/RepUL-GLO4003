@@ -1,15 +1,15 @@
 package ca.ulaval.glo4003.identitymanagement.application;
 
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.identitymanagement.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.UserAlreadyExistsException;
-import ca.ulaval.glo4003.identitymanagement.domain.token.Token;
 import ca.ulaval.glo4003.identitymanagement.domain.token.TokenGenerator;
 
-public class AuthService {
+public class AuthService implements AuthFacade {
     private final UserRepository userRepository;
     private final UserFactory userFactory;
     private final UniqueIdentifierFactory uniqueIdentifierFactory;
@@ -22,7 +22,9 @@ public class AuthService {
         this.tokenGenerator = tokenGenerator;
     }
 
-    public Token register(RegistrationQuery registrationQuery) {
+    public UniqueIdentifier register(String email, String password) {
+        RegistrationQuery registrationQuery = RegistrationQuery.from(email, password);
+
         if (userRepository.exists(registrationQuery.email())) {
             throw new UserAlreadyExistsException();
         }
@@ -30,6 +32,6 @@ public class AuthService {
         User newUser = userFactory.createUser(uniqueIdentifierFactory.generate(), registrationQuery.email(), registrationQuery.password());
         userRepository.saveOrUpdate(newUser);
 
-        return tokenGenerator.generate(newUser.getUid());
+        return newUser.getUid();
     }
 }

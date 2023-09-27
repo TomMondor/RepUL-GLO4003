@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.http;
+package ca.ulaval.glo4003.config.http;
 
 import java.io.IOException;
 
