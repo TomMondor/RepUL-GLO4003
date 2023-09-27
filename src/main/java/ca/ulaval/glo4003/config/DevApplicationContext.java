@@ -34,6 +34,7 @@ import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
+import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
 import ca.ulaval.glo4003.repul.domain.catalog.Amount;
@@ -44,6 +45,7 @@ import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 import ca.ulaval.glo4003.repul.http.CORSResponseFilter;
+import ca.ulaval.glo4003.repul.infrastructure.EmulatedPaymentHandler;
 import ca.ulaval.glo4003.repul.infrastructure.InMemoryRepULRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -84,7 +86,9 @@ public class DevApplicationContext implements ApplicationContext {
 
     private static SubscriptionResource createSubscriptionResource() {
         LOGGER.info("Setup subscription resource");
-        SubscriptionService subscriptionService = new SubscriptionService();
+        PaymentHandler paymentHandler = new EmulatedPaymentHandler();
+
+        SubscriptionService subscriptionService = new SubscriptionService(paymentHandler);
 
         return new SubscriptionResource(subscriptionService);
     }
