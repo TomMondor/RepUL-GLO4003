@@ -20,10 +20,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OrderTest {
     private static final UniqueIdentifier A_UNIQUE_IDENTIFIER = UniqueIdentifier.from(UUID.randomUUID().toString());
     private static final Recipe A_RECIPE = new Recipe("A_RECIPE", 100, List.of(new Ingredient("Sucre", new Quantity(10, "g"))));
+    private static final LocalDate TODAY = LocalDate.now();
+    private static final Order AN_ORDER_THE_SAME_DAY =
+        new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), TODAY, OrderStatus.PENDING);
+
     private static final Order AN_ORDER_IN_THE_FUTURE =
         new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.PENDING);
     private static final Order AN_ORDER_IN_THE_PAST =
         new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().minusDays(3), OrderStatus.PENDING);
+
+    @Test
+    public void givenOrderToday_whenIsInTheFuture_shouldReturnTrue() {
+        assertTrue(AN_ORDER_THE_SAME_DAY.isInTheFuture());
+    }
 
     @Test
     public void givenOrderInTheFuture_whenIsInTheFuture_shouldReturnTrue() {

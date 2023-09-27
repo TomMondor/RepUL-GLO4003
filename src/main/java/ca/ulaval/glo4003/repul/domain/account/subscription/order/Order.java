@@ -39,7 +39,8 @@ public class Order {
     }
 
     public boolean isInTheFuture() {
-        return deliveryDate.isAfter(LocalDate.now());
+        LocalDate today = LocalDate.now();
+        return deliveryDate.isAfter(today) || deliveryDate.isEqual(today);
     }
 
     public LocalDate getDeliveryDate() {
