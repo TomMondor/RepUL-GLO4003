@@ -161,7 +161,7 @@ public class DevApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(new AuthGuard(tokenDecoder)).register(new CORSResponseFilter()).register(new IdentityManagementExceptionMapper())
+            .register(new AuthGuard(userRepository, tokenDecoder)).register(new CORSResponseFilter()).register(new IdentityManagementExceptionMapper())
             .register(new CatchallExceptionMapper()).register(new RepULExceptionMapper()).register(new CommonExceptionMapper())
             .register(new ConstraintViolationExceptionMapper());
     }

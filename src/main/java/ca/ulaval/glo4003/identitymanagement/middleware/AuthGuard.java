@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
 import ca.ulaval.glo4003.identitymanagement.domain.token.TokenDecoder;
 import ca.ulaval.glo4003.identitymanagement.middleware.exception.MissingAuthorizationHeaderException;
 
@@ -17,9 +18,11 @@ import jakarta.ws.rs.core.Response;
 @Secure
 @Priority(Priorities.AUTHENTICATION)
 public class AuthGuard implements ContainerRequestFilter {
+    private final UserRepository userRepository;
     private final TokenDecoder tokenDecoder;
 
-    public AuthGuard(TokenDecoder tokenDecoder) {
+    public AuthGuard(UserRepository userRepository, TokenDecoder tokenDecoder) {
+        this.userRepository = userRepository;
         this.tokenDecoder = tokenDecoder;
     }
 
@@ -35,6 +38,8 @@ public class AuthGuard implements ContainerRequestFilter {
 
         try {
             UniqueIdentifier uid = tokenDecoder.decode(token);
+
+            userRepository.findByUid(uid);
 
             containerRequestContext.setProperty("uid", uid);
         } catch (Exception e) {

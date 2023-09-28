@@ -39,16 +39,31 @@ public class InMemoryUserRepositoryTest {
     }
 
     @Test
-    public void givenInexistentUser_whenGettingUser_shouldThrowUserNotFoundException() {
+    public void givenInexistentUser_whenGettingUserByEmail_shouldThrowUserNotFoundException() {
         assertThrows(UserNotFoundException.class, () -> this.userRepository.findByEmail(AN_INVALID_EMAIL));
     }
 
     @Test
-    public void givenExistingUser_whenGettingUser_shouldReturnOptionalOfUser() {
+    public void givenExistingUser_whenGettingUserByEmail_shouldReturnUser() {
         User existingUser = givenExistingUser();
         userRepository.saveOrUpdate(existingUser);
 
         User user = this.userRepository.findByEmail(AN_EMAIL);
+
+        assertEquals(existingUser, user);
+    }
+
+    @Test
+    public void givenInexistentUser_whenGettingUserByUid_shouldThrowUserNotFoundException() {
+        assertThrows(UserNotFoundException.class, () -> this.userRepository.findByUid(A_UID));
+    }
+
+    @Test
+    public void givenExistingUser_whenGettingUserByUId_shouldReturnUser() {
+        User existingUser = givenExistingUser();
+        userRepository.saveOrUpdate(existingUser);
+
+        User user = this.userRepository.findByUid(A_UID);
 
         assertEquals(existingUser, user);
     }
