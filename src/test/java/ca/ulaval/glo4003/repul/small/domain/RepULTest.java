@@ -8,13 +8,17 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.RepUL;
+import ca.ulaval.glo4003.repul.domain.account.Account;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.fixture.AccountFixture;
 import ca.ulaval.glo4003.repul.fixture.CatalogFixture;
+import ca.ulaval.glo4003.repul.fixture.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.RepULFixture;
+import ca.ulaval.glo4003.repul.fixture.SubscriptionFixture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -56,7 +60,7 @@ public class RepULTest {
     }
 
     @Test
-    public void givenInexistantAccount_whenFindAccountById_shouldThrowAccountNotFoundException() {
+    public void givenInexistentAccount_whenFindAccountById_shouldThrowAccountNotFoundException() {
         RepUL repUL = new RepULFixture().build();
 
         assertThrows(AccountNotFoundException.class, () -> {
@@ -65,9 +69,24 @@ public class RepULTest {
     }
 
     @Test
-    public void givenExistantAccount_whenFindAccountById_shouldReturnAccount() {
-        RepUL repUL = new RepULFixture().addAccount(new AccountFixture().withAccountId(AN_ACCOUNT_ID).build()).build();
+    public void givenExistentAccount_whenFindAccountById_shouldReturnAccount() {
+        Account expectedAccount = new AccountFixture().withAccountId(AN_ACCOUNT_ID).build();
+        RepUL repUL = new RepULFixture().addAccount(expectedAccount).build();
 
-        repUL.findAccountById(AN_ACCOUNT_ID);
+        Account actualAccount = repUL.findAccountById(AN_ACCOUNT_ID);
+
+        assertEquals(expectedAccount, actualAccount);
+    }
+
+    @Test
+    public void whenGettingAccountCurrentOrders_shouldGetCurrentOrders() {
+        Order order = new OrderFixture().build();
+        Subscription subscription = new SubscriptionFixture().addOrder(order).build();
+        Account account = new AccountFixture().addSubscription(subscription).withAccountId(AN_ACCOUNT_ID).build();
+        RepUL repUL = new RepULFixture().addAccount(account).build();
+
+        List<Order> orders = repUL.getAccountCurrentOrders(AN_ACCOUNT_ID);
+
+        assertEquals(List.of(order), orders);
     }
 }

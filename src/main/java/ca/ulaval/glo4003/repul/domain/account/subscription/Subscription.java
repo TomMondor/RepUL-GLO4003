@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.domain.account.subscription;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
@@ -61,5 +62,9 @@ public class Subscription {
 
     private Order findNextOrder() {
         return orders.stream().filter(Order::isInTheFuture).findFirst().orElseThrow(NoNextOrderInSubscriptionException::new);
+    }
+
+    public Optional<Order> findOptionalNextOrder() {
+        return orders.stream().filter(Order::isInTheFuture).findFirst();
     }
 }

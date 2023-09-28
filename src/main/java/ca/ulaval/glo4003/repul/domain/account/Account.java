@@ -2,10 +2,12 @@ package ca.ulaval.glo4003.repul.domain.account;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
 import ca.ulaval.glo4003.repul.domain.exception.SubscriptionNotFoundException;
 
 public class Account {
@@ -71,5 +73,9 @@ public class Account {
     private Subscription findSubscriptionById(UniqueIdentifier subscriptionId) {
         return subscriptions.stream().filter(subscription -> subscription.getSubscriptionId().equals(subscriptionId)).findFirst()
             .orElseThrow(SubscriptionNotFoundException::new);
+    }
+
+    public List<Order> getCurrentOrders() {
+        return subscriptions.stream().map(Subscription::findOptionalNextOrder).filter(Optional::isPresent).map(Optional::get).toList();
     }
 }

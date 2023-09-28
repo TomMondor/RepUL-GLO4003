@@ -9,6 +9,7 @@ import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.Account;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
 import ca.ulaval.glo4003.repul.domain.account.subscription.SubscriptionFactory;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
@@ -62,6 +63,11 @@ public class RepUL {
 
     public List<PickupLocation> getPickupLocations() {
         return catalog.getPickupLocations();
+    }
+
+    public List<Order> getAccountCurrentOrders(UniqueIdentifier accountId) {
+        Account account = this.findAccountById(accountId);
+        return account.getCurrentOrders();
     }
 
     public List<Subscription> getSubscriptions(UniqueIdentifier accountId) {

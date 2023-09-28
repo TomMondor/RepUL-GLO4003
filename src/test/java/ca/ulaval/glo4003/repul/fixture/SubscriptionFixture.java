@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.fixture;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public class SubscriptionFixture {
 
     public SubscriptionFixture() {
         this.subscriptionId = new UniqueIdentifier(UUID.randomUUID());
-        this.orders = List.of(new OrderFixture().build());
+        this.orders = new ArrayList<>();
         this.frequency = new Frequency(DayOfWeek.FRIDAY);
         this.pickupLocation = new PickupLocation(new LocationId("pickupLocationId"), "pickupLocationName", 18);
         this.startDate = LocalDate.now();

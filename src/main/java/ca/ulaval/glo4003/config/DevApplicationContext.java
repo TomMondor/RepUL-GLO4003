@@ -41,9 +41,11 @@ import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.api.account.AccountResource;
 import ca.ulaval.glo4003.repul.api.catalog.CatalogResource;
 import ca.ulaval.glo4003.repul.api.exception.mapper.RepULExceptionMapper;
+import ca.ulaval.glo4003.repul.api.order.OrderResource;
 import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
 import ca.ulaval.glo4003.repul.application.account.AccountService;
 import ca.ulaval.glo4003.repul.application.catalog.CatalogService;
+import ca.ulaval.glo4003.repul.application.order.OrderService;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
 import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
@@ -115,6 +117,14 @@ public class DevApplicationContext implements ApplicationContext {
         return new SubscriptionResource(subscriptionService);
     }
 
+    private static OrderResource createOrderResource(RepULRepository repULRepository) {
+        LOGGER.info("Setup order resource");
+
+        OrderService orderService = new OrderService(repULRepository);
+
+        return new OrderResource(orderService);
+    }
+
     private static CatalogResource createCatalogResource(RepULRepository repULRepository) {
         LOGGER.info("Setup catalog resource");
         CatalogService catalogService = new CatalogService(repULRepository);
@@ -146,6 +156,7 @@ public class DevApplicationContext implements ApplicationContext {
         HealthResource healthResource = createHealthResource();
         AuthResource authResource = createAuthResource(authService);
         SubscriptionResource subscriptionResource = createSubscriptionResource(repULRepository);
+        OrderResource orderResource = createOrderResource(repULRepository);
         CatalogResource catalogResource = createCatalogResource(repULRepository);
         AccountResource accountResource = createAccountResource(repULRepository, authService);
 
@@ -155,6 +166,7 @@ public class DevApplicationContext implements ApplicationContext {
                 bind(healthResource).to(HealthResource.class);
                 bind(authResource).to(AuthResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
+                bind(orderResource).to(OrderResource.class);
                 bind(accountResource).to(AccountResource.class);
                 bind(catalogResource).to(CatalogResource.class);
             }

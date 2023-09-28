@@ -58,6 +58,13 @@ public class SubscriptionServiceTest {
     }
 
     @Test
+    public void whenCreatingSubscription_shouldSaveOrUpdateRepUL() {
+        subscriptionService.createSubscription(AN_ACCOUNT_ID, SUBSCRIPTION_QUERY);
+
+        verify(repULRepository).saveOrUpdate(mockRepUL);
+    }
+
+    @Test
     public void whenCreatingSubscription_shouldReturnSubscriptionId() {
         when(mockRepUL.createSubscription(any(UniqueIdentifier.class), any(LocationId.class), any(DayOfWeek.class))).thenReturn(A_SUBSCRIPTION_ID);
 
