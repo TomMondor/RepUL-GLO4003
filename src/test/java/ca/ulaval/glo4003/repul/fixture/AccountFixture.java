@@ -1,7 +1,9 @@
 package ca.ulaval.glo4003.repul.fixture;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
@@ -11,11 +13,9 @@ import ca.ulaval.glo4003.repul.domain.account.Gender;
 import ca.ulaval.glo4003.repul.domain.account.IDUL;
 import ca.ulaval.glo4003.repul.domain.account.Name;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
-import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 
 public class AccountFixture {
     private UniqueIdentifier uid;
-    private LocationId defaultShippingLocationId;
     private Name name;
     private Birthdate birthDate;
     private Gender gender;
@@ -23,13 +23,17 @@ public class AccountFixture {
     private Email email;
     private List<Subscription> subscriptions = new ArrayList<>();
 
-    public AccountFixture withAccountId(UniqueIdentifier uid) {
-        this.uid = uid;
-        return this;
+    public AccountFixture() {
+        uid = new UniqueIdentifier(UUID.randomUUID());
+        name = new Name("John Doe");
+        birthDate = new Birthdate(LocalDate.now().minusYears(23));
+        gender = Gender.UNDISCLOSED;
+        idul = new IDUL("thmon420");
+        email = new Email("test@jdoe.com");
     }
 
-    public AccountFixture withDefaultShippingLocationId(LocationId locationId) {
-        this.defaultShippingLocationId = locationId;
+    public AccountFixture withAccountId(UniqueIdentifier uid) {
+        this.uid = uid;
         return this;
     }
 
@@ -63,8 +67,14 @@ public class AccountFixture {
         return this;
     }
 
+    public AccountFixture addSubscription(Subscription subscription) {
+        this.subscriptions.add(subscription);
+        return this;
+    }
+
     public Account build() {
         Account account = new Account(uid, name, birthDate, gender, idul, email);
+        subscriptions.forEach(account::addSubscription);
         return account;
     }
 }
