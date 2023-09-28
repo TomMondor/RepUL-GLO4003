@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.fixture;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
@@ -13,9 +14,9 @@ import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 
 public class CatalogFixture {
-    private List<PickupLocation> pickupLocations = List.of();
-    private List<Semester> semesters = List.of();
-    private List<IngredientInformation> ingredients = List.of();
+    private List<PickupLocation> pickupLocations = new ArrayList();
+    private List<Semester> semesters = new ArrayList();
+    private List<IngredientInformation> ingredients = new ArrayList();
     private Lunchbox standardLunchbox;
 
     public CatalogFixture() {

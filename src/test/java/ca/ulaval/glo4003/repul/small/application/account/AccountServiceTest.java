@@ -13,6 +13,7 @@ import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.identitymanagement.application.AuthFacade;
 import ca.ulaval.glo4003.repul.application.account.AccountService;
+import ca.ulaval.glo4003.repul.application.account.payload.AccountInformationPayload;
 import ca.ulaval.glo4003.repul.application.account.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
@@ -22,7 +23,9 @@ import ca.ulaval.glo4003.repul.domain.account.Birthdate;
 import ca.ulaval.glo4003.repul.domain.account.Gender;
 import ca.ulaval.glo4003.repul.domain.account.IDUL;
 import ca.ulaval.glo4003.repul.domain.account.Name;
+import ca.ulaval.glo4003.repul.fixture.AccountFixture;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -107,5 +110,45 @@ public class AccountServiceTest {
         accountService.register(RegistrationQuery.from(AN_IDUL, AN_EMAIL, A_PASSWORD, A_NAME, A_BIRTHDATE, A_GENDER));
 
         verify(repULRepository).saveOrUpdate(repUL);
+    }
+
+    @Test
+    public void whenGettingAccount_shouldRetrieveRepUL() {
+        RepUL repUL = mock(RepUL.class);
+        Account account = new AccountFixture().build();
+        given(repULRepository.get()).willReturn(repUL);
+        given(repUL.findAccountById(any())).willReturn(account);
+
+        accountService.getAccount(AN_ACCOUNT_ID);
+
+        verify(repULRepository).get();
+    }
+
+    @Test
+    public void whenGettingAccount_shouldFindAccountById() {
+        RepUL repUL = mock(RepUL.class);
+        Account account = new AccountFixture().build();
+        given(repULRepository.get()).willReturn(repUL);
+        given(repUL.findAccountById(any())).willReturn(account);
+
+        accountService.getAccount(AN_ACCOUNT_ID);
+
+        verify(repUL).findAccountById(AN_ACCOUNT_ID);
+    }
+
+    @Test
+    public void whenGettingAccount_shouldReturnAccountInformationPayload() {
+        RepUL repUL = mock(RepUL.class);
+        Account account = new AccountFixture().build();
+        given(repULRepository.get()).willReturn(repUL);
+        given(repUL.findAccountById(any())).willReturn(account);
+
+        AccountInformationPayload payload = accountService.getAccount(AN_ACCOUNT_ID);
+
+        assertEquals(account.getIdul(), payload.idul());
+        assertEquals(account.getName(), payload.name());
+        assertEquals(account.getbirthdate(), payload.birthdate());
+        assertEquals(account.getGender(), payload.gender());
+        assertEquals(account.getEmail(), payload.email());
     }
 }

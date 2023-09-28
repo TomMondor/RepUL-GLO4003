@@ -11,19 +11,39 @@ import ca.ulaval.glo4003.repul.domain.exception.SubscriptionNotFoundException;
 public class Account {
     private final UniqueIdentifier accountId;
     private final Name name;
-    private final Birthdate birthDate;
+    private final Birthdate birthdate;
     private final Gender gender;
     private final IDUL idul;
     private final Email email;
     private final List<Subscription> subscriptions = new ArrayList<>();
 
-    public Account(UniqueIdentifier accountId, Name name, Birthdate birthDate, Gender gender, IDUL idul, Email email) {
+    public Account(UniqueIdentifier accountId, Name name, Birthdate birthdate, Gender gender, IDUL idul, Email email) {
         this.accountId = accountId;
         this.name = name;
-        this.birthDate = birthDate;
+        this.birthdate = birthdate;
         this.gender = gender;
         this.idul = idul;
         this.email = email;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Birthdate getbirthdate() {
+        return birthdate;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public IDUL getIdul() {
+        return idul;
+    }
+
+    public Email getEmail() {
+        return email;
     }
 
     public UniqueIdentifier getAccountId() {

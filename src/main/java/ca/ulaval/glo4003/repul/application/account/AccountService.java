@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.application.account;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.identitymanagement.application.AuthFacade;
+import ca.ulaval.glo4003.repul.application.account.payload.AccountInformationPayload;
 import ca.ulaval.glo4003.repul.application.account.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
@@ -30,5 +31,13 @@ public class AccountService {
         repUL.addAccount(createdAccount);
 
         repULRepository.saveOrUpdate(repUL);
+    }
+
+    public AccountInformationPayload getAccount(UniqueIdentifier accountId) {
+        RepUL repUL = repULRepository.get();
+
+        Account account = repUL.findAccountById(accountId);
+
+        return AccountInformationPayload.fromAccount(account);
     }
 }

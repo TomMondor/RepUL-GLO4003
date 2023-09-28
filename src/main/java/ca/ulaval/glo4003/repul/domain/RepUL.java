@@ -54,7 +54,7 @@ public class RepUL {
         account.declineNextLunchbox(subscriptionId);
     }
 
-    private Account findAccountById(UniqueIdentifier accountId) {
+    public Account findAccountById(UniqueIdentifier accountId) {
         return accounts.stream().filter(account -> account.getAccountId().equals(accountId)).findFirst().orElseThrow(AccountNotFoundException::new);
     }
 
