@@ -1,11 +1,8 @@
 package ca.ulaval.glo4003.repul.application.subscription;
 
-import java.util.List;
-import java.util.UUID;
-
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
-import ca.ulaval.glo4003.repul.application.subscription.dto.SubscriptionsDTO;
-import ca.ulaval.glo4003.repul.application.subscription.parameter.SubscriptionParams;
+import ca.ulaval.glo4003.repul.application.subscription.payload.SubscriptionsPayload;
+import ca.ulaval.glo4003.repul.application.subscription.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
@@ -19,17 +16,20 @@ public class SubscriptionService {
         this.paymentHandler = paymentHandler;
     }
 
-    public void createSubscription(SubscriptionParams subscriptionParams) {
+    public UniqueIdentifier createSubscription(UniqueIdentifier accountId, SubscriptionQuery subscriptionQuery) {
         RepUL repUL = repULRepository.get();
 
-        // TODO: get real user ID
-        repUL.createSubscription(UniqueIdentifier.from(UUID.randomUUID().toString()), subscriptionParams.locationId(), subscriptionParams.dayOfWeek());
+        UniqueIdentifier subscriptionId = repUL.createSubscription(accountId, subscriptionQuery.locationId(), subscriptionQuery.dayOfWeek());
 
         repULRepository.saveOrUpdate(repUL);
+
+        return subscriptionId;
     }
 
-    public SubscriptionsDTO getSubscriptions() {
-        return new SubscriptionsDTO(List.of());
+    public SubscriptionsPayload getSubscriptions(UniqueIdentifier accountId) {
+        RepUL repUL = repULRepository.get();
+
+        return new SubscriptionsPayload(repUL.getSubscriptions(accountId));
     }
 
     public void confirmNextLunchboxForSubscription(UniqueIdentifier accountId, UniqueIdentifier subscriptionId) {

@@ -14,9 +14,9 @@ import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 
 public class CatalogFixture {
-    private List<PickupLocation> pickupLocations = new ArrayList();
-    private List<Semester> semesters = new ArrayList();
-    private List<IngredientInformation> ingredients = new ArrayList();
+    private List<PickupLocation> pickupLocations = new ArrayList<>();
+    private List<Semester> semesters = new ArrayList<>();
+    private List<IngredientInformation> ingredients = new ArrayList<>();
     private Lunchbox standardLunchbox;
 
     public CatalogFixture() {

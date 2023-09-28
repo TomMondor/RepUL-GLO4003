@@ -31,7 +31,7 @@ public class RepUL {
         accounts.add(account);
     }
 
-    public void createSubscription(UniqueIdentifier accountId, LocationId locationId, DayOfWeek dayOfWeek) {
+    public UniqueIdentifier createSubscription(UniqueIdentifier accountId, LocationId locationId, DayOfWeek dayOfWeek) {
         Account account = findAccountById(accountId);
 
         LocalDate currentDate = LocalDate.now();
@@ -42,6 +42,8 @@ public class RepUL {
             subscriptionFactory.createSubscription(currentDate, semester.endDate(), pickupLocation, lunchbox, dayOfWeek, LunchboxType.STANDARD);
 
         account.addSubscription(subscription);
+
+        return subscription.getSubscriptionId();
     }
 
     public void confirmNextLunchboxForSubscription(UniqueIdentifier accountId, UniqueIdentifier subscriptionId) {
@@ -60,5 +62,10 @@ public class RepUL {
 
     public List<PickupLocation> getPickupLocations() {
         return catalog.getPickupLocations();
+    }
+
+    public List<Subscription> getSubscriptions(UniqueIdentifier accountId) {
+        Account account = findAccountById(accountId);
+        return account.getSubscriptions();
     }
 }
