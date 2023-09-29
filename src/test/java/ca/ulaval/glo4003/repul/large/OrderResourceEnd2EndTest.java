@@ -1,5 +1,8 @@
 package ca.ulaval.glo4003.repul.large;
 
+import java.util.List;
+
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 import org.junit.jupiter.api.AfterEach;
@@ -12,10 +15,14 @@ import ca.ulaval.glo4003.config.DevApplicationContext;
 import ca.ulaval.glo4003.identitymanagement.api.request.LoginRequest;
 import ca.ulaval.glo4003.identitymanagement.api.response.LoginResponse;
 import ca.ulaval.glo4003.repul.api.account.request.RegistrationRequest;
+import ca.ulaval.glo4003.repul.api.order.response.OrderResponse;
+import ca.ulaval.glo4003.repul.api.subscription.request.SubscriptionRequest;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.fixture.RegistrationRequestFixture;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OrderResourceEnd2EndTest {
     private static final String ACCOUNT_EMAIL = "myAccountEmail@ulaval.ca";
@@ -27,6 +34,9 @@ public class OrderResourceEnd2EndTest {
 
     private static final ApplicationContext context = new DevApplicationContext();
     private static final String DEFAULT_OFFER_PATH = "api/orders";
+    private static final String SUBSCRIPTION_DAY_OF_WEEK = "MONDAY";
+    private static final String SUBSCRIPTION_LOCATION_ID = "VACHON";
+    private static final String SUBSCRIPTION_LUNCHBOX_TYPE = LunchboxType.STANDARD.toString();
 
     private ServerFixture server;
 
@@ -51,20 +61,31 @@ public class OrderResourceEnd2EndTest {
         assertEquals(200, response.getStatusCode());
     }
 
-//    @Test
-//    public void givenOrder_whenGettingMyOrders_shouldReturnOrder() {
-//        String accountToken = registerAndLoginAccount();
-//        // TODO: ADD ORDER WHEN SUBSCRIPTION CREATION AND ORDER CREATION IS IN MAIN.
-//
-//        Response response = given()
-//            .contentType("application/json")
-//            .header("Authorization", "Bearer " + accountToken)
-//            .get(context.getURI() + DEFAULT_OFFER_PATH + "/me");
-//        JsonPath jsonPath = response.jsonPath();
-//        List<OrderResponse> orders = jsonPath.getList("$", OrderResponse.class);
-//
-//        assertEquals(200, response.getStatusCode());
-//    }
+    @Test
+    public void givenAValidOrder_whenGettingMyOrders_shouldReturnOrder() {
+        String accountToken = registerAndLoginAccount();
+        givenAValidOrder(accountToken);
+
+        Response response =
+            given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(context.getURI() + DEFAULT_OFFER_PATH + "/me");
+        JsonPath jsonPath = response.jsonPath();
+        List<OrderResponse> orders = jsonPath.getList("$", OrderResponse.class);
+
+        assertNotNull(orders.get(0).orderStatus());
+        assertNotNull(orders.get(0).deliveryDate());
+        assertNotNull(orders.get(0).recipeNames());
+        assertNotNull(orders.get(0).recipeNames().get(0));
+    }
+
+    private void givenAValidOrder(String accountToken) {
+        SubscriptionRequest subscriptionRequest = new SubscriptionRequest();
+        subscriptionRequest.dayOfWeek = SUBSCRIPTION_DAY_OF_WEEK;
+        subscriptionRequest.locationId = SUBSCRIPTION_LOCATION_ID;
+        subscriptionRequest.lunchboxType = SUBSCRIPTION_LUNCHBOX_TYPE;
+
+        given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(subscriptionRequest)
+            .post(context.getURI() + "api/subscriptions");
+    }
 
     private String registerAndLoginAccount() {
         RegistrationRequest registrationRequest = createRegistrationRequestWithAccountInformation();

@@ -12,11 +12,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.api.order.OrderResource;
+import ca.ulaval.glo4003.repul.api.order.response.OrderResponse;
 import ca.ulaval.glo4003.repul.application.order.OrderService;
 import ca.ulaval.glo4003.repul.application.order.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.application.order.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.OrderStatus;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe;
 import ca.ulaval.glo4003.repul.fixture.LunchboxFixture;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -68,5 +70,15 @@ public class OrderResourceTest {
         Response response = orderResource.getMyCurrentOrders(requestContext);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void whenGettingMyOrders_shouldReturnOrdersResponse() {
+        List<OrderResponse> expectedOrderResponses = List.of(
+            new OrderResponse(AN_ORDER_DELIVERY_DATE.toString(), AN_ORDER_STATUS.toString(), AN_ORDER_LUNCHBOX.recipes().stream().map(Recipe::name).toList()));
+
+        Response response = orderResource.getMyCurrentOrders(requestContext);
+
+        assertEquals(expectedOrderResponses, response.getEntity());
     }
 }
