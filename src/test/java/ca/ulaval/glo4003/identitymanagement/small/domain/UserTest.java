@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.identitymanagement.domain.Password;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.PasswordNotMatchingException;
 
@@ -28,9 +29,9 @@ public class UserTest {
     private PasswordEncoder passwordEncoder;
 
     @Test
-    public void givenIncorrectCorrectPassword_whenCheckingPassword_shouldThrowPasswordNotMatchingException() {
+    public void givenIncorrectPassword_whenCheckingPassword_shouldThrowPasswordNotMatchingException() {
         given(passwordEncoder.matches(A_WRONG_PASSWORD, AN_ENCRYPTED_PASSWORD)).willReturn(false);
-        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, passwordEncoder);
+        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
 
         assertThrows(PasswordNotMatchingException.class, () -> user.checkPasswordMatches(A_WRONG_PASSWORD));
     }

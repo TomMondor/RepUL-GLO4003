@@ -10,8 +10,8 @@ public class UserFactory {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createUser(UniqueIdentifier uid, Email email, Password password) {
-        return new User(uid, email, encryptPassword(password), passwordEncoder);
+    public User createUser(UniqueIdentifier uid, Email email, Role role, Password password) {
+        return new User(uid, email, encryptPassword(password), role, passwordEncoder);
     }
 
     private Password encryptPassword(Password password) {

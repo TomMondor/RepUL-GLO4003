@@ -10,10 +10,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.TokenVerificationFailedException;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.UserNotFoundException;
+import ca.ulaval.glo4003.identitymanagement.domain.token.DecodedToken;
 import ca.ulaval.glo4003.identitymanagement.domain.token.TokenDecoder;
 import ca.ulaval.glo4003.identitymanagement.middleware.AuthGuard;
 import ca.ulaval.glo4003.identitymanagement.middleware.exception.MissingAuthorizationHeaderException;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.verify;
 public class AuthGuardTest {
     private static final UniqueIdentifier A_UID = new UniqueIdentifier(UUID.randomUUID());
     private static final String A_TOKEN = "valid-token-yolo";
+    private static final DecodedToken A_DECODED_TOKEN = new DecodedToken(A_UID, Role.CLIENT);
     private static final String A_NOT_BEARER_AUTHORIZATION_HEADER = "Ours uehriwhriehwiuhriwhr";
     private static final String A_VALID_BEARER_AUTHORIZATION_HEADER = "Bearer " + A_TOKEN;
     private static final String AN_INVALID_BEARER_AUTHORIZATION_HEADER = "Bearer " + A_TOKEN + "-invalid";
@@ -72,7 +75,7 @@ public class AuthGuardTest {
     @Test
     public void givenBearerToken_whenFilter_shouldDecodeToken() throws IOException {
         given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
-        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_UID);
+        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
 
         authGuard.filter(containerRequestContext);
 
@@ -93,7 +96,7 @@ public class AuthGuardTest {
     public void givenBearerToken_whenFilter_shouldCheckUid() throws IOException {
         given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
         given(userRepository.findByUid(A_UID)).willReturn(mock(User.class));
-        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_UID);
+        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
 
         authGuard.filter(containerRequestContext);
 
@@ -104,20 +107,10 @@ public class AuthGuardTest {
     public void givenBearerTokenWithInvalidUid_whenFilter_shouldAbortRequest() throws IOException {
         given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
         given(userRepository.findByUid(A_UID)).willThrow(new UserNotFoundException());
-        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_UID);
+        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
 
         authGuard.filter(containerRequestContext);
 
         verify(containerRequestContext).abortWith(any());
-    }
-
-    @Test
-    public void givenBearerToken_whenFilter_shouldPutUIDInContext() throws IOException {
-        given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
-        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_UID);
-
-        authGuard.filter(containerRequestContext);
-
-        verify(containerRequestContext).setProperty("uid", A_UID);
     }
 }

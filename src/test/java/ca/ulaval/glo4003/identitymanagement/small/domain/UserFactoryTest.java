@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.identitymanagement.domain.Password;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
 
 import static org.mockito.BDDMockito.given;
@@ -38,7 +39,7 @@ public class UserFactoryTest {
     public void whenCreatingUser_shouldEncryptPassword() {
         given(passwordEncoder.encode(A_PASSWORD)).willReturn(AN_ENCRYPTED_PASSWORD);
 
-        userFactory.createUser(A_UID, AN_EMAIL, A_PASSWORD);
+        userFactory.createUser(A_UID, AN_EMAIL, Role.CLIENT, A_PASSWORD);
 
         verify(passwordEncoder).encode(A_PASSWORD);
     }

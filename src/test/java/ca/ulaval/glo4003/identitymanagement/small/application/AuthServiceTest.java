@@ -15,6 +15,7 @@ import ca.ulaval.glo4003.identitymanagement.application.AuthService;
 import ca.ulaval.glo4003.identitymanagement.application.query.LoginQuery;
 import ca.ulaval.glo4003.identitymanagement.domain.Password;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
@@ -65,10 +66,10 @@ public class AuthServiceTest {
 
     @Test
     public void givenUserNotYetRegistered_whenRegistering_shouldSaveUser() {
-        User userToSave = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, passwordEncoder);
+        User userToSave = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
         given(userRepository.exists(AN_EMAIL)).willReturn(false);
         given(uniqueIdentifierFactory.generate()).willReturn(A_UID);
-        given(userFactory.createUser(A_UID, AN_EMAIL, A_PASSWORD)).willReturn(userToSave);
+        given(userFactory.createUser(A_UID, AN_EMAIL, Role.CLIENT, A_PASSWORD)).willReturn(userToSave);
 
         authService.register(AN_EMAIL.value(), A_PASSWORD.value());
 
@@ -77,7 +78,7 @@ public class AuthServiceTest {
 
     @Test
     public void whenLogin_shouldGetUser() {
-        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, passwordEncoder);
+        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
         given(passwordEncoder.matches(A_PASSWORD, AN_ENCRYPTED_PASSWORD)).willReturn(true);
         given(userRepository.findByEmail(AN_EMAIL)).willReturn(user);
 
@@ -105,12 +106,12 @@ public class AuthServiceTest {
 
     @Test
     public void whenLogin_shouldGenerateToken() {
-        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, passwordEncoder);
+        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
         given(passwordEncoder.matches(A_PASSWORD, AN_ENCRYPTED_PASSWORD)).willReturn(true);
         given(userRepository.findByEmail(AN_EMAIL)).willReturn(user);
 
         authService.login(LoginQuery.from(AN_EMAIL.value(), A_PASSWORD.value()));
 
-        verify(tokenGenerator).generate(A_UID);
+        verify(tokenGenerator).generate(A_UID, Role.CLIENT);
     }
 }

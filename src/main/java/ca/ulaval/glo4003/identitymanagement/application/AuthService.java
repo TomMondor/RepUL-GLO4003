@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.identitymanagement.application.query.LoginQuery;
 import ca.ulaval.glo4003.identitymanagement.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
@@ -32,7 +33,7 @@ public class AuthService implements AuthFacade {
             throw new UserAlreadyExistsException();
         }
 
-        User newUser = userFactory.createUser(uniqueIdentifierFactory.generate(), registrationQuery.email(), registrationQuery.password());
+        User newUser = userFactory.createUser(uniqueIdentifierFactory.generate(), registrationQuery.email(), Role.CLIENT, registrationQuery.password());
         userRepository.saveOrUpdate(newUser);
 
         return newUser.getUid();
@@ -44,7 +45,7 @@ public class AuthService implements AuthFacade {
 
             user.checkPasswordMatches(loginQuery.password());
 
-            Token token = tokenGenerator.generate(user.getUid());
+            Token token = tokenGenerator.generate(user.getUid(), user.getRole());
 
             return token;
         } catch (Exception e) {

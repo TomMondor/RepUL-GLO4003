@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.identitymanagement.domain.Password;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
 import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
 import ca.ulaval.glo4003.identitymanagement.domain.exception.UserNotFoundException;
@@ -95,7 +96,7 @@ public class InMemoryUserRepositoryTest {
     }
 
     private User givenExistingUser() {
-        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, passwordEncoder);
+        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
         return user;
     }
 }
