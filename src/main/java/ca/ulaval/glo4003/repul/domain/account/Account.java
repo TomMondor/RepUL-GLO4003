@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.commons.domain.Email;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.exception.SubscriptionNotFoundException;
 
 public class Account {
@@ -73,6 +74,14 @@ public class Account {
     private Subscription findSubscriptionById(UniqueIdentifier subscriptionId) {
         return subscriptions.stream().filter(subscription -> subscription.getSubscriptionId().equals(subscriptionId)).findFirst()
             .orElseThrow(SubscriptionNotFoundException::new);
+    }
+
+    public List<Lunchbox> getLunchboxesToCook() {
+        List<Lunchbox> lunchboxes = new ArrayList<>();
+        for (Subscription subscription : subscriptions) {
+            lunchboxes.addAll(subscription.getLunchboxesToCook());
+        }
+        return lunchboxes;
     }
 
     public List<Order> getCurrentOrders() {

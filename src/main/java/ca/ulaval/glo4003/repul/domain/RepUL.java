@@ -73,4 +73,12 @@ public class RepUL {
         Account account = findAccountById(accountId);
         return account.getSubscriptions();
     }
+
+    public List<Lunchbox> getLunchboxesToCook() {
+        List<Lunchbox> lunchboxes = new ArrayList<>();
+        for (Account account : accounts) {
+            lunchboxes.addAll(account.getLunchboxesToCook());
+        }
+        return lunchboxes;
+    }
 }

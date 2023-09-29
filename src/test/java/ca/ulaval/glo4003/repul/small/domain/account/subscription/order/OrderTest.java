@@ -45,12 +45,12 @@ public class OrderTest {
     }
 
     @Test
-    public void givenPendingOrder_whenConfirm_shouldUpdateStatusToToPrepare() {
+    public void givenPendingOrder_whenConfirm_shouldUpdateStatusToToCook() {
         Order order = new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.PENDING);
 
         order.confirm();
 
-        assertEquals(OrderStatus.TO_PREPARE, order.getOrderStatus());
+        assertEquals(OrderStatus.TO_COOK, order.getOrderStatus());
     }
 
     @Test
@@ -61,12 +61,12 @@ public class OrderTest {
     }
 
     @Test
-    public void givenDeclinedOrder_whenConfirm_shouldUpdateStatusToPrepare() {
+    public void givenDeclinedOrder_whenConfirm_shouldUpdateStatusToToCook() {
         Order order = new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.DECLINED);
 
         order.confirm();
 
-        assertEquals(OrderStatus.TO_PREPARE, order.getOrderStatus());
+        assertEquals(OrderStatus.TO_COOK, order.getOrderStatus());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class OrderTest {
 
     @Test
     public void givenConfirmedOrder_whenDecline_shouldUpdateStatusToDeclined() {
-        Order order = new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.TO_PREPARE);
+        Order order = new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.TO_COOK);
 
         order.decline();
 

@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.small.domain;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,13 +12,20 @@ import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.account.Account;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.OrderStatus;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Quantity;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.fixture.AccountFixture;
 import ca.ulaval.glo4003.repul.fixture.CatalogFixture;
+import ca.ulaval.glo4003.repul.fixture.IngredientFixture;
+import ca.ulaval.glo4003.repul.fixture.LunchboxFixture;
 import ca.ulaval.glo4003.repul.fixture.OrderFixture;
+import ca.ulaval.glo4003.repul.fixture.RecipeFixture;
 import ca.ulaval.glo4003.repul.fixture.RepULFixture;
 import ca.ulaval.glo4003.repul.fixture.SubscriptionFixture;
 
@@ -61,6 +69,52 @@ public class RepULTest {
         assertEquals(ANOTHER_LOCATION_ID, subscriptions.get(1).getPickupLocation().getLocationId());
         assertEquals(ANOTHER_DAY_OF_WEEK, subscriptions.get(1).getFrequency().dayOfWeek());
         assertEquals(A_LUNCHBOX_TYPE, subscriptions.get(1).getLunchboxType());
+    }
+
+    @Test
+    public void givenALunchboxForTomorrow_whenGetLunchboxesToCook_shouldReturnLunboxToDeliverTomorrow() {
+        Lunchbox lunchboxForTomorrow = new LunchboxFixture().build();
+        Recipe recipe = new RecipeFixture()
+            .withIngredients(List.of(new IngredientFixture()
+                .withName("apple")
+                    .withQuantity(new Quantity(5.00, "")).build())).build();
+        Lunchbox lunchboxForToday = new LunchboxFixture().withRecipes(List.of(recipe)).build();
+        Order orderToDeliverTomorrow = new OrderFixture()
+            .withOrderStatus(OrderStatus.TO_COOK)
+            .withDeliveryDate(LocalDate.now().plusDays(1))
+            .withLunchbox(lunchboxForTomorrow).build();
+        Order orderToDeliverToday = new OrderFixture()
+            .withOrderStatus(OrderStatus.TO_COOK)
+            .withDeliveryDate(LocalDate.now())
+            .withLunchbox(lunchboxForToday).build();
+        Subscription subscription = new SubscriptionFixture()
+            .withOrders(List.of(orderToDeliverTomorrow, orderToDeliverToday))
+            .build();
+        Account account = new AccountFixture().withSubscriptions(List.of(subscription)).build();
+        RepUL repUL = new RepULFixture().addAccount(account).build();
+
+        List<Lunchbox> lunchboxes = repUL.getLunchboxesToCook();
+
+        assertEquals(1, lunchboxes.size());
+        assertEquals(lunchboxForTomorrow, lunchboxes.get(0));
+    }
+
+    @Test
+    public void givenNoLunchboxForTomorrow_whenGetLunchboxesToCook_ShouldReturnEmptyList() {
+        Lunchbox lunchboxForToday = new LunchboxFixture().build();
+        Order orderToDeliverToday = new OrderFixture()
+            .withOrderStatus(OrderStatus.TO_COOK)
+            .withDeliveryDate(LocalDate.now().plusDays(2))
+            .withLunchbox(lunchboxForToday).build();
+        Subscription subscription = new SubscriptionFixture()
+            .withOrders(List.of(orderToDeliverToday))
+            .build();
+        Account account = new AccountFixture().withSubscriptions(List.of(subscription)).build();
+        RepUL repUL = new RepULFixture().addAccount(account).build();
+
+        List<Lunchbox> lunchboxes = repUL.getLunchboxesToCook();
+
+        assertEquals(0, lunchboxes.size());
     }
 
     @Test

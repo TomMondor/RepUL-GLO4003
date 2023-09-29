@@ -50,10 +50,14 @@ public class Order {
     public void confirm() {
         verifyIfOrderIsStarted();
         if (LocalDate.now().isBefore(this.deliveryDate.minusDays(DAYS_TO_CONFIRM))) {
-            orderStatus = OrderStatus.TO_PREPARE;
+            orderStatus = OrderStatus.TO_COOK;
         } else {
             orderStatus = OrderStatus.DECLINED;
         }
+    }
+
+    public boolean isToCookToday() {
+        return deliveryDate.minusDays(1).equals(LocalDate.now());
     }
 
     public void decline() {
@@ -62,7 +66,7 @@ public class Order {
     }
 
     private void verifyIfOrderIsStarted() {
-        if (orderStatus != OrderStatus.DECLINED && orderStatus != OrderStatus.PENDING && orderStatus != OrderStatus.TO_PREPARE) {
+        if (orderStatus != OrderStatus.DECLINED && orderStatus != OrderStatus.PENDING && orderStatus != OrderStatus.TO_COOK) {
             throw new OrderAlreadyStartedException();
         }
     }

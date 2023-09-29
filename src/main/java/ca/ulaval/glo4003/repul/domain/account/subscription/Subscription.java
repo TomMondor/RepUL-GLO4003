@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.OrderStatus;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.exception.NoNextOrderInSubscriptionException;
@@ -62,6 +64,12 @@ public class Subscription {
 
     private Order findNextOrder() {
         return orders.stream().filter(Order::isInTheFuture).findFirst().orElseThrow(NoNextOrderInSubscriptionException::new);
+    }
+
+    public List<Lunchbox> getLunchboxesToCook() {
+        return orders.stream()
+            .filter(order -> order.getOrderStatus().equals(OrderStatus.TO_COOK))
+            .filter(Order::isToCookToday).map(Order::getLunchbox).toList();
     }
 
     public Optional<Order> findOptionalNextOrder() {

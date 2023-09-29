@@ -41,10 +41,12 @@ import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.api.account.AccountResource;
 import ca.ulaval.glo4003.repul.api.catalog.CatalogResource;
 import ca.ulaval.glo4003.repul.api.exception.mapper.RepULExceptionMapper;
+import ca.ulaval.glo4003.repul.api.lunchbox.LunchboxResource;
 import ca.ulaval.glo4003.repul.api.order.OrderResource;
 import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
 import ca.ulaval.glo4003.repul.application.account.AccountService;
 import ca.ulaval.glo4003.repul.application.catalog.CatalogService;
+import ca.ulaval.glo4003.repul.application.lunchbox.LunchboxService;
 import ca.ulaval.glo4003.repul.application.order.OrderService;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
 import ca.ulaval.glo4003.repul.domain.PaymentHandler;
@@ -131,6 +133,12 @@ public class DevApplicationContext implements ApplicationContext {
         return new CatalogResource(catalogService);
     }
 
+    private static LunchboxResource createLunchboxResource(RepULRepository repULRepository) {
+        LOGGER.info("Setup lunchbox resource");
+        LunchboxService lunchboxService = new LunchboxService(repULRepository);
+        return new LunchboxResource(lunchboxService);
+    }
+
     public String getURI() {
         return String.format("http://localhost:%s/", PORT);
     }
@@ -159,6 +167,7 @@ public class DevApplicationContext implements ApplicationContext {
         OrderResource orderResource = createOrderResource(repULRepository);
         CatalogResource catalogResource = createCatalogResource(repULRepository);
         AccountResource accountResource = createAccountResource(repULRepository, authService);
+        LunchboxResource lunchboxResource = createLunchboxResource(repULRepository);
 
         final AbstractBinder binder = new AbstractBinder() {
             @Override
@@ -169,6 +178,7 @@ public class DevApplicationContext implements ApplicationContext {
                 bind(orderResource).to(OrderResource.class);
                 bind(accountResource).to(AccountResource.class);
                 bind(catalogResource).to(CatalogResource.class);
+                bind(lunchboxResource).to(LunchboxResource.class);
             }
         };
 

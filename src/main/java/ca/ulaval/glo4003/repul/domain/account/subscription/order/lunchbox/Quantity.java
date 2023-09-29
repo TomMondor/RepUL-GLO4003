@@ -8,4 +8,11 @@ public record Quantity(double value, String unit) {
             throw new InvalidQuantityException();
         }
     }
+
+    public Quantity add(Quantity quantityToAdd) {
+        if (unit.equals(quantityToAdd.unit())) {
+            return new Quantity(this.value + quantityToAdd.value(), unit);
+        }
+        throw new InvalidQuantityException();
+    }
 }
