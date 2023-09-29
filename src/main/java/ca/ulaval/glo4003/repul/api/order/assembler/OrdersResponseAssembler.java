@@ -8,7 +8,7 @@ import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe
 
 public class OrdersResponseAssembler {
     public List<OrderResponse> toOrdersResponse(OrdersPayload ordersPayload) {
-        return ordersPayload.orders().stream().map(order -> new OrderResponse(order.getDeliveryDate().toString(), order.getOrderStatus().toString(),
-            order.getLunchbox().recipes().stream().map(Recipe::name).toList())).toList();
+        return ordersPayload.orders().stream().map(order -> new OrderResponse(order.deliveryDate().toString(), order.orderStatus().toString(),
+            order.lunchbox().recipes().stream().map(Recipe::name).toList())).toList();
     }
 }

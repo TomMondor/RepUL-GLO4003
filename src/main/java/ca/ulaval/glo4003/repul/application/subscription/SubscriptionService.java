@@ -33,7 +33,7 @@ public class SubscriptionService {
     public SubscriptionsPayload getSubscriptions(UniqueIdentifier accountId) {
         RepUL repUL = repULRepository.get();
 
-        return new SubscriptionsPayload(repUL.getSubscriptions(accountId));
+        return SubscriptionsPayload.from(repUL.getSubscriptions(accountId));
     }
 
     public void confirmNextLunchboxForSubscription(UniqueIdentifier accountId, UniqueIdentifier subscriptionId) {

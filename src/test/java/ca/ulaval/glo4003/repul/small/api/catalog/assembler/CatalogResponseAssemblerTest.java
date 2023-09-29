@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.api.catalog.assembler.CatalogResponseAssembler;
 import ca.ulaval.glo4003.repul.api.catalog.response.LocationResponse;
+import ca.ulaval.glo4003.repul.application.catalog.payload.LocationPayload;
 import ca.ulaval.glo4003.repul.application.catalog.payload.LocationsPayload;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
@@ -17,9 +18,21 @@ public class CatalogResponseAssemblerTest {
     private static final PickupLocation A_PICKUP_LOCATION = new PickupLocation(new LocationId("VACHON"), "vch-1", 10);
     private static final PickupLocation A_SECOND_PICKUP_LOCATION = new PickupLocation(new LocationId("PEPS"), "pep-2", 20);
     private static final PickupLocation A_THIRD_PICKUP_LOCATION = new PickupLocation(new LocationId("DESJARDINS"), "dej-3", 30);
+    private static final LocationPayload A_LOCATION_PAYLOAD = new LocationPayload(
+        A_PICKUP_LOCATION.getLocationId(), A_PICKUP_LOCATION.getName(), A_PICKUP_LOCATION.getTotalCapacity(),
+        A_PICKUP_LOCATION.getRemainingCapacity()
+    );
+    private static final LocationPayload A_SECOND_LOCATION_PAYLOAD = new LocationPayload(
+        A_SECOND_PICKUP_LOCATION.getLocationId(), A_SECOND_PICKUP_LOCATION.getName(), A_SECOND_PICKUP_LOCATION.getTotalCapacity(),
+        A_SECOND_PICKUP_LOCATION.getRemainingCapacity()
+    );
+    private static final LocationPayload A_THIRD_LOCATION_PAYLOAD = new LocationPayload(
+        A_THIRD_PICKUP_LOCATION.getLocationId(), A_THIRD_PICKUP_LOCATION.getName(), A_THIRD_PICKUP_LOCATION.getTotalCapacity(),
+        A_THIRD_PICKUP_LOCATION.getRemainingCapacity()
+    );
     private static final LocationsPayload A_LOCATIONS_PAYLOAD = new LocationsPayload(
         List.of(
-            A_PICKUP_LOCATION, A_SECOND_PICKUP_LOCATION, A_THIRD_PICKUP_LOCATION
+            A_LOCATION_PAYLOAD, A_SECOND_LOCATION_PAYLOAD, A_THIRD_LOCATION_PAYLOAD
         )
     );
 

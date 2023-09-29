@@ -25,7 +25,7 @@ public class SubscriptionsResponseAssemblerTest {
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
     private static final LocalDate A_DATE = LocalDate.now();
     private static final LunchboxType A_LUNCHBOX_TYPE = LunchboxType.STANDARD;
-    private static final SubscriptionsPayload SUBSCRIPTIONS_PAYLOAD = new SubscriptionsPayload(List.of(
+    private static final SubscriptionsPayload SUBSCRIPTIONS_PAYLOAD = SubscriptionsPayload.from(List.of(
         new SubscriptionFixture().withSubscriptionId(A_SUBSCRIPTION_ID).withPickupLocation(A_PICKUP_LOCATION).withFrequency(A_FREQUENCY)
             .withLunchboxType(A_LUNCHBOX_TYPE).withStartDate(A_DATE).build()));
 

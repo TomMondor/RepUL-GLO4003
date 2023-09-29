@@ -24,4 +24,8 @@ public class PickupLocation {
     public int getRemainingCapacity() {
         return remainingCapacity;
     }
+
+    public int getTotalCapacity() {
+        return totalCapacity;
+    }
 }

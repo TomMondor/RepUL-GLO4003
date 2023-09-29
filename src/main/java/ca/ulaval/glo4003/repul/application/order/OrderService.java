@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.application.order;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.application.order.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.application.order.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
@@ -14,6 +15,7 @@ public class OrderService {
 
     public OrdersPayload getAccountCurrentOrders(UniqueIdentifier accountId) {
         RepUL repUL = repULRepository.get();
-        return new OrdersPayload(repUL.getAccountCurrentOrders(accountId));
+        return new OrdersPayload(repUL.getAccountCurrentOrders(accountId).stream()
+            .map(order -> new OrderPayload(order.getLunchbox(), order.getDeliveryDate(), order.getOrderStatus())).toList());
     }
 }

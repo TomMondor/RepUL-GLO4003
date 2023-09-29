@@ -9,8 +9,8 @@ public class CatalogResponseAssembler {
     public List<LocationResponse> toLocationsResponse(LocationsPayload locationsPayload) {
         return locationsPayload.pickupLocations().stream().map(
             pickupLocation -> new LocationResponse(
-                pickupLocation.getLocationId().value(),
-                pickupLocation.getName(),
-                pickupLocation.getRemainingCapacity())).toList();
+                pickupLocation.locationId().value(),
+                pickupLocation.name(),
+                pickupLocation.remainingCapacity())).toList();
     }
 }

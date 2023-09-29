@@ -8,11 +8,11 @@ import ca.ulaval.glo4003.repul.application.subscription.payload.SubscriptionsPay
 public class SubscriptionsResponseAssembler {
     public List<SubscriptionResponse> toSubscriptionsResponse(SubscriptionsPayload subscriptionsPayload) {
         return subscriptionsPayload.subscriptions().stream().map(
-            subscription -> new SubscriptionResponse(
-                subscription.getSubscriptionId().value().toString(),
-                subscription.getFrequency().dayOfWeek().name(),
-                subscription.getPickupLocation().getLocationId().value(),
-                subscription.getLunchboxType().name(),
-                subscription.getStartDate().toString())).toList();
+            subscriptionPayload -> new SubscriptionResponse(
+                subscriptionPayload.subscriptionId().value().toString(),
+                subscriptionPayload.frequency().dayOfWeek().name(),
+                subscriptionPayload.locationPayload().locationId().value(),
+                subscriptionPayload.lunchboxType().name(),
+                subscriptionPayload.startDate().toString())).toList();
     }
 }

@@ -9,12 +9,11 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.api.order.assembler.OrdersResponseAssembler;
 import ca.ulaval.glo4003.repul.api.order.response.OrderResponse;
+import ca.ulaval.glo4003.repul.application.order.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.application.order.payload.OrdersPayload;
-import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.OrderStatus;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.fixture.LunchboxFixture;
-import ca.ulaval.glo4003.repul.fixture.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.RecipeFixture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,9 +25,7 @@ public class OrdersResponseAssemblerTest {
     private static final int DAYS_TO_CONFIRM = 2;
     private static final LocalDate ORDER_DELIVERY_DATE = LocalDate.now().plusDays(DAYS_TO_CONFIRM + 1);
     private static final OrderStatus ORDER_STATUS = OrderStatus.PENDING;
-    private static final Order AN_ORDER =
-        new OrderFixture().withOrderId(AN_ORDER_ID).withLunchbox(A_LUNCHBOX).withDeliveryDate(ORDER_DELIVERY_DATE).withOrderStatus(ORDER_STATUS).build();
-    private static final OrdersPayload AN_ORDERS_PAYLOAD = new OrdersPayload(List.of(AN_ORDER));
+    private static final OrdersPayload AN_ORDERS_PAYLOAD = new OrdersPayload(List.of(new OrderPayload(A_LUNCHBOX, ORDER_DELIVERY_DATE, ORDER_STATUS)));
 
     @Test
     public void givenValidOrdersPayload_whenToOrdersResponse_shouldReturnListOfOrderResponse() {
