@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "c1704858-6c04-475d-a753-31efe55039bd",
+		"_postman_id": "ad52cd83-82a5-4a31-8a4b-5d427795dde6",
 		"name": "RepUL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "21028314"
+		"_exporter_id": "19124741"
 	},
 	"item": [
 		{
@@ -29,11 +29,21 @@
 		{
 			"name": "Subscriptions",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiI3M2I0M2IwYy1hYzZjLTQwZjYtYjdhZi0yYzUyOTYwZDcxNTUiLCJleHAiOjE2OTU5NTYxNDB9.XziKx2fia7yDFTVj1ReH1Dgdob3Ide96jo7Vf1UWr-c",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"locationId\": \"VACHON\",\n    \"dayOfWeek\": \"TUESDAY\"\n}",
+					"raw": "{\n    \"locationId\": \"VACHON\",\n    \"dayOfWeek\": \"TUESDAY\",\n    \"lunchboxType\": \"STANDARD\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

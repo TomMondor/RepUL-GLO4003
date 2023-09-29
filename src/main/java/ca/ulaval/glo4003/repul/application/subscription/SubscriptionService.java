@@ -19,7 +19,11 @@ public class SubscriptionService {
     public UniqueIdentifier createSubscription(UniqueIdentifier accountId, SubscriptionQuery subscriptionQuery) {
         RepUL repUL = repULRepository.get();
 
-        UniqueIdentifier subscriptionId = repUL.createSubscription(accountId, subscriptionQuery.locationId(), subscriptionQuery.dayOfWeek());
+        UniqueIdentifier subscriptionId = repUL.createSubscription(
+            accountId,
+            subscriptionQuery.locationId(),
+            subscriptionQuery.dayOfWeek(),
+            subscriptionQuery.lunchboxType());
 
         repULRepository.saveOrUpdate(repUL);
 

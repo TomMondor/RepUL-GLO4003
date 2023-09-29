@@ -126,6 +126,7 @@ public class SubscriptionResourceEnd2EndTest {
         SubscriptionRequest subscriptionRequest = new SubscriptionRequest();
         subscriptionRequest.dayOfWeek = SUBSCRIPTION_DAY_OF_WEEK;
         subscriptionRequest.locationId = SUBSCRIPTION_LOCATION_ID;
+        subscriptionRequest.lunchboxType = SUBSCRIPTION_LUNCHBOX_TYPE;
 
         Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(subscriptionRequest)
             .post(context.getURI() + "api/subscriptions");

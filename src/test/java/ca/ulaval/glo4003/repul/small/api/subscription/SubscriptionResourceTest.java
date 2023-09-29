@@ -33,6 +33,7 @@ public class SubscriptionResourceTest {
     private static final SubscriptionsPayload A_SUBSCRIPTIONS_PAYLOAD = new SubscriptionsPayload(List.of());
     private static final String A_LOCATION_ID = "VACHON";
     private static final String A_DAY_OF_WEEK = DayOfWeek.MONDAY.toString();
+    private static final String A_LUNCHBOX_TYPE = "STANDARD";
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST = new SubscriptionRequestFixture()
         .withLocationId(A_LOCATION_ID)
         .withDayOfWeek(A_DAY_OF_WEEK)
@@ -70,8 +71,9 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldCreateSubscription() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID);
-        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK))).willReturn(A_SUBSCRIPTION_ID);
-        SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK);
+        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK, A_LUNCHBOX_TYPE)))
+            .willReturn(A_SUBSCRIPTION_ID);
+        SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK, A_LUNCHBOX_TYPE);
 
         subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 
@@ -81,7 +83,8 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldReturn201() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID);
-        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK))).willReturn(A_SUBSCRIPTION_ID);
+        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK, A_LUNCHBOX_TYPE)))
+            .willReturn(A_SUBSCRIPTION_ID);
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -90,7 +93,8 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldReturnSubscriptionId() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID);
-        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK))).willReturn(A_SUBSCRIPTION_ID);
+        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK, A_LUNCHBOX_TYPE)))
+            .willReturn(A_SUBSCRIPTION_ID);
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 
         assertEquals(A_SUBSCRIPTION_ID.value().toString(), ((SubscriptionCreatedResponse) response.getEntity()).subscriptionId());

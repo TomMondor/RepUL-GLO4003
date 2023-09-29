@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.account.Account;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
 import ca.ulaval.glo4003.repul.domain.exception.AccountNotFoundException;
@@ -30,6 +31,7 @@ public class RepULTest {
     private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
     private static final LocationId ANOTHER_LOCATION_ID = new LocationId("MYRAND");
     private static final DayOfWeek ANOTHER_DAY_OF_WEEK = DayOfWeek.TUESDAY;
+    private static final LunchboxType A_LUNCHBOX_TYPE = LunchboxType.STANDARD;
 
     @Test
     public void givenNoSubscriptions_whenGettingSubscriptions_shouldReturnEmptyCollection() {
@@ -47,16 +49,18 @@ public class RepULTest {
             new CatalogFixture().withPickupLocations(List.of(new PickupLocation(A_LOCATION_ID, "", 13), new PickupLocation(ANOTHER_LOCATION_ID, "", 44)))
                 .build()).build();
         repUL.addAccount(new AccountFixture().withAccountId(AN_ACCOUNT_ID).build());
-        repUL.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK);
-        repUL.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, ANOTHER_DAY_OF_WEEK);
+        repUL.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK, A_LUNCHBOX_TYPE);
+        repUL.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, ANOTHER_DAY_OF_WEEK, A_LUNCHBOX_TYPE);
 
         List<Subscription> subscriptions = repUL.getSubscriptions(AN_ACCOUNT_ID);
 
         assertEquals(2, subscriptions.size());
         assertEquals(A_LOCATION_ID, subscriptions.get(0).getPickupLocation().getLocationId());
         assertEquals(A_DAY_OF_WEEK, subscriptions.get(0).getFrequency().dayOfWeek());
+        assertEquals(A_LUNCHBOX_TYPE, subscriptions.get(0).getLunchboxType());
         assertEquals(ANOTHER_LOCATION_ID, subscriptions.get(1).getPickupLocation().getLocationId());
         assertEquals(ANOTHER_DAY_OF_WEEK, subscriptions.get(1).getFrequency().dayOfWeek());
+        assertEquals(A_LUNCHBOX_TYPE, subscriptions.get(1).getLunchboxType());
     }
 
     @Test

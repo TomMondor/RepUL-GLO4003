@@ -8,4 +8,7 @@ public class SubscriptionRequest {
 
     @NotNull(message = "Day of week may not be null")
     public String dayOfWeek;
+
+    @NotNull(message = "Lunchbox type may not be null")
+    public String lunchboxType;
 }

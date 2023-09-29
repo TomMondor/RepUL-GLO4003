@@ -32,15 +32,14 @@ public class RepUL {
         accounts.add(account);
     }
 
-    public UniqueIdentifier createSubscription(UniqueIdentifier accountId, LocationId locationId, DayOfWeek dayOfWeek) {
+    public UniqueIdentifier createSubscription(UniqueIdentifier accountId, LocationId locationId, DayOfWeek dayOfWeek, LunchboxType lunchboxType) {
         Account account = findAccountById(accountId);
 
         LocalDate currentDate = LocalDate.now();
         PickupLocation pickupLocation = catalog.getPickupLocation(locationId);
         Lunchbox lunchbox = catalog.getLunchbox();
         Semester semester = catalog.getCurrentSemester(currentDate);
-        Subscription subscription =
-            subscriptionFactory.createSubscription(currentDate, semester.endDate(), pickupLocation, lunchbox, dayOfWeek, LunchboxType.STANDARD);
+        Subscription subscription = subscriptionFactory.createSubscription(currentDate, semester.endDate(), pickupLocation, lunchbox, dayOfWeek, lunchboxType);
 
         account.addSubscription(subscription);
 
