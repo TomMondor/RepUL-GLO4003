@@ -20,6 +20,8 @@ import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchb
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
+import ca.ulaval.glo4003.repul.domain.catalog.Semester;
+import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 import ca.ulaval.glo4003.repul.fixture.LunchboxFixture;
 import ca.ulaval.glo4003.repul.fixture.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.SubscriptionFixture;
@@ -46,18 +48,20 @@ public class SubscriptionPayloadTest {
 
     private static final PickupLocation SUBSCRIPTION_PICKUP_LOCATION = new PickupLocation(LOCATION_ID, LOCATION_NAME, LOCATION_TOTAL_CAPACITY);
     private static final LocalDate SUBSCRIPTION_START_DATE = LocalDate.now();
+    private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"),
+        SUBSCRIPTION_START_DATE, SUBSCRIPTION_START_DATE.minusYears(1));
     private static final LunchboxType SUBSCRIPTION_LUNCHBOX_TYPE = LunchboxType.STANDARD;
 
     @Test
     public void whenUsingFrom_shouldReturnCorrectSubscriptionPayload() {
         SubscriptionPayload expectedSubscriptionPayload =
             new SubscriptionPayload(SUBSCRIPTION_ID, ORDERS_PAYLOAD, SUBSCRIPTION_FREQUENCY, SUBSCRIPTION_LOCATION_PAYLOAD, SUBSCRIPTION_START_DATE,
-                SUBSCRIPTION_LUNCHBOX_TYPE);
+                SUBSCRIPTION_LUNCHBOX_TYPE, A_SEMESTER);
         Subscription subscription =
             new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER)).withFrequency(SUBSCRIPTION_FREQUENCY)
                 .withPickupLocation(SUBSCRIPTION_PICKUP_LOCATION).withStartDate(SUBSCRIPTION_START_DATE).withLunchboxType(SUBSCRIPTION_LUNCHBOX_TYPE).build();
 
-        SubscriptionPayload actualSubscriptionPayload = SubscriptionPayload.from(subscription);
+        SubscriptionPayload actualSubscriptionPayload = SubscriptionPayload.from(subscription, A_SEMESTER);
 
         assertEquals(expectedSubscriptionPayload, actualSubscriptionPayload);
     }

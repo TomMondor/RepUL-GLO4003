@@ -20,6 +20,10 @@ import ca.ulaval.glo4003.repul.api.subscription.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.api.subscription.response.SubscriptionCreatedResponse;
 import ca.ulaval.glo4003.repul.api.subscription.response.SubscriptionResponse;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
+import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
+import ca.ulaval.glo4003.repul.domain.catalog.Semester;
+import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
+import ca.ulaval.glo4003.repul.fixture.CatalogFixture;
 import ca.ulaval.glo4003.repul.fixture.RegistrationRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.SubscriptionRequestFixture;
 
@@ -38,6 +42,9 @@ public class SubscriptionResourceEnd2EndTest {
     private static final String SUBSCRIPTION_LOCATION_ID = "VACHON";
     private static final String SUBSCRIPTION_LUNCHBOX_TYPE = LunchboxType.STANDARD.toString();
     private static final ApplicationContext context = new DevApplicationContext();
+    private static final Catalog catalog = new CatalogFixture()
+        .withSemesters(List.of(new Semester(new SemesterCode("A23"),
+            LocalDate.now().minusDays(30), LocalDate.now().plusDays(30)))).build();
 
     private ServerFixture server;
     private String accountToken;
@@ -109,6 +116,7 @@ public class SubscriptionResourceEnd2EndTest {
     public void givenAValidSubscription_whenGetSubscriptions_shouldReturnSubscriptionInformation() {
         String subscriptionId = givenAValidSubscription(accountToken);
         String expectedStartDate = LocalDate.now().toString();
+        String expectedSemester = catalog.getCurrentSemester(LocalDate.now()).semesterCode().value();
 
         Response response =
             given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(context.getURI() + "api/subscriptions");
@@ -120,6 +128,7 @@ public class SubscriptionResourceEnd2EndTest {
         assertEquals(SUBSCRIPTION_LOCATION_ID, responseBody.get(0).locationId());
         assertEquals(expectedStartDate, responseBody.get(0).startDate());
         assertEquals(SUBSCRIPTION_LUNCHBOX_TYPE, responseBody.get(0).lunchboxType());
+        assertEquals(expectedSemester, responseBody.get(0).semesterCode());
     }
 
     private String givenAValidSubscription(String accountToken) {

@@ -13,6 +13,8 @@ public class SubscriptionsResponseAssembler {
                 subscriptionPayload.frequency().dayOfWeek().name(),
                 subscriptionPayload.locationPayload().locationId().value(),
                 subscriptionPayload.lunchboxType().name(),
-                subscriptionPayload.startDate().toString())).toList();
+                subscriptionPayload.startDate().toString(),
+                subscriptionPayload.semester().semesterCode().value())
+                ).toList();
     }
 }

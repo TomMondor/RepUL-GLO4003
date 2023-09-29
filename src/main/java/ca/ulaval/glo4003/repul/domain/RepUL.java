@@ -89,4 +89,8 @@ public class RepUL {
         }
         return lunchboxes;
     }
+
+    public Semester getSemester(LocalDate date) {
+        return catalog.getCurrentSemester(date);
+    }
 }

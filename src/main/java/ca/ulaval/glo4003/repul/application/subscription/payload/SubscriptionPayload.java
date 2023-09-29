@@ -8,12 +8,13 @@ import ca.ulaval.glo4003.repul.application.order.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Frequency;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
+import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 
 public record SubscriptionPayload(UniqueIdentifier subscriptionId, OrdersPayload ordersPayload, Frequency frequency, LocationPayload locationPayload,
-                                  LocalDate startDate, LunchboxType lunchboxType) {
-    public static SubscriptionPayload from(Subscription subscription) {
+                                  LocalDate startDate, LunchboxType lunchboxType, Semester semester) {
+    public static SubscriptionPayload from(Subscription subscription, Semester semester) {
         return new SubscriptionPayload(subscription.getSubscriptionId(), OrdersPayload.from(subscription.getOrders()),
             subscription.getFrequency(), LocationPayload.from(subscription.getPickupLocation()), subscription.getStartDate(),
-            subscription.getLunchboxType());
+            subscription.getLunchboxType(), semester);
     }
 }
