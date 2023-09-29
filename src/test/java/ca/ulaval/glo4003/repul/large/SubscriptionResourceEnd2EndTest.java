@@ -107,7 +107,7 @@ public class SubscriptionResourceEnd2EndTest {
 
     @Test
     public void givenAValidSubscription_whenGetSubscriptions_shouldReturnSubscriptionInformation() {
-        givenAValidSubscription(accountToken);
+        String subscriptionId = givenAValidSubscription(accountToken);
         String expectedStartDate = LocalDate.now().toString();
 
         Response response =
@@ -115,6 +115,7 @@ public class SubscriptionResourceEnd2EndTest {
 
         List<SubscriptionResponse> responseBody = response.jsonPath().getList("$", SubscriptionResponse.class);
 
+        assertEquals(subscriptionId, responseBody.get(0).subscriptionId());
         assertEquals(SUBSCRIPTION_DAY_OF_WEEK, responseBody.get(0).dayOfWeek());
         assertEquals(SUBSCRIPTION_LOCATION_ID, responseBody.get(0).locationId());
         assertEquals(expectedStartDate, responseBody.get(0).startDate());

@@ -9,6 +9,7 @@ public class SubscriptionsResponseAssembler {
     public List<SubscriptionResponse> toSubscriptionsResponse(SubscriptionsPayload subscriptionsPayload) {
         return subscriptionsPayload.subscriptions().stream().map(
             subscription -> new SubscriptionResponse(
+                subscription.getSubscriptionId().value().toString(),
                 subscription.getFrequency().dayOfWeek().name(),
                 subscription.getPickupLocation().getLocationId().value(),
                 subscription.getLunchboxType().name(),
