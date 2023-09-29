@@ -18,25 +18,12 @@ public class SubscriptionFactory {
         this.uniqueIdentifierFactory = uniqueIdentifierFactory;
     }
 
-    public Subscription createSubscription(
-        LocalDate startDate,
-        LocalDate endDate,
-        PickupLocation pickupLocation,
-        Lunchbox lunchbox,
-        DayOfWeek dayOfWeek,
-        LunchboxType lunchboxType
-    ) {
+    public Subscription createSubscription(LocalDate startDate, LocalDate endDate, PickupLocation pickupLocation, Lunchbox lunchbox, DayOfWeek dayOfWeek,
+                                           LunchboxType lunchboxType) {
         LocalDate firstOrderDate = getFirstOrderDate(startDate, endDate, dayOfWeek);
         List<Order> orders = createOrdersInSemester(firstOrderDate, endDate, dayOfWeek, lunchbox);
 
-        return new Subscription(
-            uniqueIdentifierFactory.generate(),
-            orders,
-            new Frequency(dayOfWeek),
-            pickupLocation,
-            startDate,
-            lunchboxType
-        );
+        return new Subscription(uniqueIdentifierFactory.generate(), orders, new Frequency(dayOfWeek), pickupLocation, startDate, lunchboxType);
     }
 
     private LocalDate getFirstOrderDate(LocalDate startDate, LocalDate endDate, DayOfWeek dayOfWeek) {

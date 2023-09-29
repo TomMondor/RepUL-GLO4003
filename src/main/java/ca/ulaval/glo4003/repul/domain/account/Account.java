@@ -9,6 +9,7 @@ import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.subscription.Subscription;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.exception.SubscriptionNotFoundException;
 
 public class Account {
@@ -74,6 +75,10 @@ public class Account {
     private Subscription findSubscriptionById(UniqueIdentifier subscriptionId) {
         return subscriptions.stream().filter(subscription -> subscription.getSubscriptionId().equals(subscriptionId)).findFirst()
             .orElseThrow(SubscriptionNotFoundException::new);
+    }
+
+    public LunchboxType getLunchboxTypeFromSubscription(UniqueIdentifier subscriptionId) {
+        return findSubscriptionById(subscriptionId).getLunchboxType();
     }
 
     public List<Lunchbox> getLunchboxesToCook() {

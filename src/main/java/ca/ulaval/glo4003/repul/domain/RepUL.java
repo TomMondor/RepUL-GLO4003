@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.repul.domain.account.subscription.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.Order;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
+import ca.ulaval.glo4003.repul.domain.catalog.Amount;
 import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
@@ -72,6 +73,13 @@ public class RepUL {
     public List<Subscription> getSubscriptions(UniqueIdentifier accountId) {
         Account account = findAccountById(accountId);
         return account.getSubscriptions();
+    }
+
+    public Amount getLunchboxPrice(UniqueIdentifier accountId, UniqueIdentifier subscriptionId) {
+        Account account = findAccountById(accountId);
+        LunchboxType lunchboxType = account.getLunchboxTypeFromSubscription(subscriptionId);
+
+        return catalog.getLunchboxPriceByType(lunchboxType);
     }
 
     public List<Lunchbox> getLunchboxesToCook() {

@@ -6,6 +6,7 @@ import ca.ulaval.glo4003.repul.application.subscription.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
+import ca.ulaval.glo4003.repul.domain.catalog.Amount;
 
 public class SubscriptionService {
     private final RepULRepository repULRepository;
@@ -40,6 +41,8 @@ public class SubscriptionService {
         RepUL repUL = repULRepository.get();
 
         repUL.confirmNextLunchboxForSubscription(accountId, subscriptionId);
+        Amount lunchboxPrice = repUL.getLunchboxPrice(accountId, subscriptionId);
+        paymentHandler.makeTransaction(lunchboxPrice);
 
         repULRepository.saveOrUpdate(repUL);
     }

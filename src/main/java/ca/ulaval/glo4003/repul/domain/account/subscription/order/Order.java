@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
-import ca.ulaval.glo4003.repul.domain.exception.OrderAlreadyStartedException;
+import ca.ulaval.glo4003.repul.domain.exception.OrderNotPendingException;
 
 public class Order {
     private static final int DAYS_TO_CONFIRM = 2;
@@ -48,11 +48,12 @@ public class Order {
     }
 
     public void confirm() {
-        verifyIfOrderIsStarted();
+        verifyIfOrderIsPending();
         if (LocalDate.now().isBefore(this.deliveryDate.minusDays(DAYS_TO_CONFIRM))) {
             orderStatus = OrderStatus.TO_COOK;
         } else {
             orderStatus = OrderStatus.DECLINED;
+            throw new OrderNotPendingException();
         }
     }
 
@@ -61,13 +62,13 @@ public class Order {
     }
 
     public void decline() {
-        verifyIfOrderIsStarted();
+        verifyIfOrderIsPending();
         orderStatus = OrderStatus.DECLINED;
     }
 
-    private void verifyIfOrderIsStarted() {
-        if (orderStatus != OrderStatus.DECLINED && orderStatus != OrderStatus.PENDING && orderStatus != OrderStatus.TO_COOK) {
-            throw new OrderAlreadyStartedException();
+    private void verifyIfOrderIsPending() {
+        if (orderStatus != OrderStatus.PENDING) {
+            throw new OrderNotPendingException();
         }
     }
 

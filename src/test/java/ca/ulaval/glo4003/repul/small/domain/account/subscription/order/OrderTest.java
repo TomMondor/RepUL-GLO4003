@@ -13,7 +13,7 @@ import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Ingred
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Quantity;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe;
-import ca.ulaval.glo4003.repul.domain.exception.OrderAlreadyStartedException;
+import ca.ulaval.glo4003.repul.domain.exception.OrderNotPendingException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,19 +54,17 @@ public class OrderTest {
     }
 
     @Test
-    public void givenStartedOrder_whenConfirm_shouldThrowOrderAlreadyStartedException() {
+    public void givenStartedOrder_whenConfirm_shouldThrowOrderNotPendingException() {
         Order order = new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.TO_DELIVER);
 
-        assertThrows(OrderAlreadyStartedException.class, order::confirm);
+        assertThrows(OrderNotPendingException.class, order::confirm);
     }
 
     @Test
-    public void givenDeclinedOrder_whenConfirm_shouldUpdateStatusToToCook() {
+    public void givenDeclinedOrder_whenConfirm_shouldThrowOrderNotPendingException() {
         Order order = new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.DECLINED);
 
-        order.confirm();
-
-        assertEquals(OrderStatus.TO_COOK, order.getOrderStatus());
+        assertThrows(OrderNotPendingException.class, order::confirm);
     }
 
     @Test
@@ -79,19 +77,17 @@ public class OrderTest {
     }
 
     @Test
-    public void givenStartedOrder_whenDecline_shouldThrowOrderAlreadyStartedException() {
+    public void givenStartedOrder_whenDecline_shouldThrowOrderNotPendingException() {
         Order order = new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.TO_DELIVER);
 
-        assertThrows(OrderAlreadyStartedException.class, order::decline);
+        assertThrows(OrderNotPendingException.class, order::decline);
     }
 
     @Test
-    public void givenConfirmedOrder_whenDecline_shouldUpdateStatusToDeclined() {
+    public void givenConfirmedOrder_whenDecline_shouldThrowOrderNotPendingException() {
         Order order = new Order(A_UNIQUE_IDENTIFIER, new Lunchbox(List.of(A_RECIPE)), LocalDate.now().plusDays(3), OrderStatus.TO_COOK);
 
-        order.decline();
-
-        assertEquals(OrderStatus.DECLINED, order.getOrderStatus());
+        assertThrows(OrderNotPendingException.class, order::decline);
     }
 
     @Test

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.domain.RepUL;
@@ -17,11 +20,14 @@ import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchb
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Quantity;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe;
+import ca.ulaval.glo4003.repul.domain.catalog.Amount;
+import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 import ca.ulaval.glo4003.repul.domain.catalog.PickupLocation;
+import ca.ulaval.glo4003.repul.domain.catalog.Semester;
+import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 import ca.ulaval.glo4003.repul.domain.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.fixture.AccountFixture;
-import ca.ulaval.glo4003.repul.fixture.CatalogFixture;
 import ca.ulaval.glo4003.repul.fixture.IngredientFixture;
 import ca.ulaval.glo4003.repul.fixture.LunchboxFixture;
 import ca.ulaval.glo4003.repul.fixture.OrderFixture;
@@ -31,7 +37,10 @@ import ca.ulaval.glo4003.repul.fixture.SubscriptionFixture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class RepULTest {
     private static final UniqueIdentifier AN_INVALID_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
@@ -39,7 +48,11 @@ public class RepULTest {
     private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
     private static final LocationId ANOTHER_LOCATION_ID = new LocationId("MYRAND");
     private static final DayOfWeek ANOTHER_DAY_OF_WEEK = DayOfWeek.TUESDAY;
-    private static final LunchboxType A_LUNCHBOX_TYPE = LunchboxType.STANDARD;
+    private static final LunchboxType STANDARD_LUNCHBOX_TYPE = LunchboxType.STANDARD;
+    private static final Amount STANDARD_LUNCHBOX_PRICE = new Amount(75.0);
+
+    @Mock
+    private Catalog catalog;
 
     @Test
     public void givenNoSubscriptions_whenGettingSubscriptions_shouldReturnEmptyCollection() {
@@ -53,43 +66,36 @@ public class RepULTest {
 
     @Test
     public void givenSubscriptions_whenGettingSubscriptions_shouldReturnMatchingSubscriptions() {
-        RepUL repUL = new RepULFixture().withCatalog(
-            new CatalogFixture().withPickupLocations(List.of(new PickupLocation(A_LOCATION_ID, "", 13), new PickupLocation(ANOTHER_LOCATION_ID, "", 44)))
-                .build()).build();
+        when(catalog.getCurrentSemester(any())).thenReturn(new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusDays(5)));
+        when(catalog.getPickupLocation(A_LOCATION_ID)).thenReturn(new PickupLocation(A_LOCATION_ID, "", 13));
+        when(catalog.getPickupLocation(ANOTHER_LOCATION_ID)).thenReturn(new PickupLocation(ANOTHER_LOCATION_ID, "", 44));
+        RepUL repUL = new RepULFixture().withCatalog(catalog).build();
         repUL.addAccount(new AccountFixture().withAccountId(AN_ACCOUNT_ID).build());
-        repUL.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK, A_LUNCHBOX_TYPE);
-        repUL.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, ANOTHER_DAY_OF_WEEK, A_LUNCHBOX_TYPE);
+        repUL.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK, STANDARD_LUNCHBOX_TYPE);
+        repUL.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, ANOTHER_DAY_OF_WEEK, STANDARD_LUNCHBOX_TYPE);
 
         List<Subscription> subscriptions = repUL.getSubscriptions(AN_ACCOUNT_ID);
 
         assertEquals(2, subscriptions.size());
         assertEquals(A_LOCATION_ID, subscriptions.get(0).getPickupLocation().getLocationId());
         assertEquals(A_DAY_OF_WEEK, subscriptions.get(0).getFrequency().dayOfWeek());
-        assertEquals(A_LUNCHBOX_TYPE, subscriptions.get(0).getLunchboxType());
+        assertEquals(STANDARD_LUNCHBOX_TYPE, subscriptions.get(0).getLunchboxType());
         assertEquals(ANOTHER_LOCATION_ID, subscriptions.get(1).getPickupLocation().getLocationId());
         assertEquals(ANOTHER_DAY_OF_WEEK, subscriptions.get(1).getFrequency().dayOfWeek());
-        assertEquals(A_LUNCHBOX_TYPE, subscriptions.get(1).getLunchboxType());
+        assertEquals(STANDARD_LUNCHBOX_TYPE, subscriptions.get(1).getLunchboxType());
     }
 
     @Test
     public void givenALunchboxForTomorrow_whenGetLunchboxesToCook_shouldReturnLunboxToDeliverTomorrow() {
         Lunchbox lunchboxForTomorrow = new LunchboxFixture().build();
-        Recipe recipe = new RecipeFixture()
-            .withIngredients(List.of(new IngredientFixture()
-                .withName("apple")
-                    .withQuantity(new Quantity(5.00, "")).build())).build();
+        Recipe recipe =
+            new RecipeFixture().withIngredients(List.of(new IngredientFixture().withName("apple").withQuantity(new Quantity(5.00, "")).build())).build();
         Lunchbox lunchboxForToday = new LunchboxFixture().withRecipes(List.of(recipe)).build();
-        Order orderToDeliverTomorrow = new OrderFixture()
-            .withOrderStatus(OrderStatus.TO_COOK)
-            .withDeliveryDate(LocalDate.now().plusDays(1))
-            .withLunchbox(lunchboxForTomorrow).build();
-        Order orderToDeliverToday = new OrderFixture()
-            .withOrderStatus(OrderStatus.TO_COOK)
-            .withDeliveryDate(LocalDate.now())
-            .withLunchbox(lunchboxForToday).build();
-        Subscription subscription = new SubscriptionFixture()
-            .withOrders(List.of(orderToDeliverTomorrow, orderToDeliverToday))
-            .build();
+        Order orderToDeliverTomorrow =
+            new OrderFixture().withOrderStatus(OrderStatus.TO_COOK).withDeliveryDate(LocalDate.now().plusDays(1)).withLunchbox(lunchboxForTomorrow).build();
+        Order orderToDeliverToday =
+            new OrderFixture().withOrderStatus(OrderStatus.TO_COOK).withDeliveryDate(LocalDate.now()).withLunchbox(lunchboxForToday).build();
+        Subscription subscription = new SubscriptionFixture().withOrders(List.of(orderToDeliverTomorrow, orderToDeliverToday)).build();
         Account account = new AccountFixture().withSubscriptions(List.of(subscription)).build();
         RepUL repUL = new RepULFixture().addAccount(account).build();
 
@@ -102,13 +108,9 @@ public class RepULTest {
     @Test
     public void givenNoLunchboxForTomorrow_whenGetLunchboxesToCook_ShouldReturnEmptyList() {
         Lunchbox lunchboxForToday = new LunchboxFixture().build();
-        Order orderToDeliverToday = new OrderFixture()
-            .withOrderStatus(OrderStatus.TO_COOK)
-            .withDeliveryDate(LocalDate.now().plusDays(2))
-            .withLunchbox(lunchboxForToday).build();
-        Subscription subscription = new SubscriptionFixture()
-            .withOrders(List.of(orderToDeliverToday))
-            .build();
+        Order orderToDeliverToday =
+            new OrderFixture().withOrderStatus(OrderStatus.TO_COOK).withDeliveryDate(LocalDate.now().plusDays(2)).withLunchbox(lunchboxForToday).build();
+        Subscription subscription = new SubscriptionFixture().withOrders(List.of(orderToDeliverToday)).build();
         Account account = new AccountFixture().withSubscriptions(List.of(subscription)).build();
         RepUL repUL = new RepULFixture().addAccount(account).build();
 
@@ -146,5 +148,18 @@ public class RepULTest {
         List<Order> orders = repUL.getAccountCurrentOrders(AN_ACCOUNT_ID);
 
         assertEquals(List.of(order), orders);
+    }
+
+    @Test
+    public void givenSubscription_whenGettingLunchboxPrice_shouldReturnLunchboxPrice() {
+        when(catalog.getLunchboxPriceByType(STANDARD_LUNCHBOX_TYPE)).thenReturn(STANDARD_LUNCHBOX_PRICE);
+        when(catalog.getCurrentSemester(any())).thenReturn(new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusDays(5)));
+        RepUL repUL = new RepULFixture().withCatalog(catalog).build();
+        repUL.addAccount(new AccountFixture().withAccountId(AN_ACCOUNT_ID).build());
+        UniqueIdentifier subscriptionId = repUL.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK, STANDARD_LUNCHBOX_TYPE);
+
+        Amount lunchboxPrice = repUL.getLunchboxPrice(AN_ACCOUNT_ID, subscriptionId);
+
+        assertEquals(STANDARD_LUNCHBOX_PRICE, lunchboxPrice);
     }
 }

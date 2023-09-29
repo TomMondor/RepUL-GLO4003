@@ -31,9 +31,9 @@ public class SubscriptionFactoryTest {
     private static final LocalDate A_START_DATE = LocalDate.of(2020, 1, 1);
     private static final LocalDate A_END_DATE = LocalDate.of(2020, 1, 15);
     private static final PickupLocation A_PICKUP_LOCATION = new PickupLocation(new LocationId("VACHON"), "Doe", 10);
+    private static final LunchboxType LUNCHBOX_TYPE = LunchboxType.STANDARD;
     private static final Lunchbox A_LUNCHBOX = new Lunchbox(List.of(new Recipe("recipe", 100, List.of(new Ingredient("ingredient", new Quantity(1, "kg"))))));
     private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
-    private static final LunchboxType A_LUNCHBOX_TYPE = LunchboxType.STANDARD;
     private static final UniqueIdentifier A_UNIQUE_IDENTIFIER = UniqueIdentifier.from(UUID.randomUUID().toString());
 
     @Mock
@@ -48,22 +48,22 @@ public class SubscriptionFactoryTest {
 
     @Test
     public void whenCreateSubscription_shouldCreateSubscriptionWithParameters() {
-        Subscription subscription = subscriptionFactory.createSubscription(A_START_DATE, A_END_DATE, A_PICKUP_LOCATION,
-            A_LUNCHBOX, A_DAY_OF_WEEK, A_LUNCHBOX_TYPE);
+        Subscription subscription =
+            subscriptionFactory.createSubscription(A_START_DATE, A_END_DATE, A_PICKUP_LOCATION, A_LUNCHBOX, A_DAY_OF_WEEK, LUNCHBOX_TYPE);
 
         assertEquals(A_START_DATE, subscription.getStartDate());
         assertEquals(A_PICKUP_LOCATION, subscription.getPickupLocation());
         assertEquals(A_UNIQUE_IDENTIFIER, subscription.getSubscriptionId());
         assertEquals(A_DAY_OF_WEEK, subscription.getFrequency().dayOfWeek());
-        assertEquals(A_LUNCHBOX_TYPE, subscription.getLunchboxType());
+        assertEquals(LUNCHBOX_TYPE, subscription.getLunchboxType());
     }
 
     @Test
     public void whenCreateSubscription_shouldCreateSubscriptionWithCorrectAmountOfOrders() {
-        int expectedOrderCount =  2;
+        int expectedOrderCount = 2;
 
-        Subscription subscription = subscriptionFactory.createSubscription(A_START_DATE, A_END_DATE, A_PICKUP_LOCATION,
-            A_LUNCHBOX, A_DAY_OF_WEEK, A_LUNCHBOX_TYPE);
+        Subscription subscription =
+            subscriptionFactory.createSubscription(A_START_DATE, A_END_DATE, A_PICKUP_LOCATION, A_LUNCHBOX, A_DAY_OF_WEEK, LUNCHBOX_TYPE);
 
         assertEquals(expectedOrderCount, subscription.getOrders().size());
     }

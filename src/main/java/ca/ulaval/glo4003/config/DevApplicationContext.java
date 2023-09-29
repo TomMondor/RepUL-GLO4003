@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -56,6 +57,7 @@ import ca.ulaval.glo4003.repul.domain.account.AccountFactory;
 import ca.ulaval.glo4003.repul.domain.account.subscription.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Ingredient;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Quantity;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe;
 import ca.ulaval.glo4003.repul.domain.catalog.Amount;
@@ -82,6 +84,7 @@ public class DevApplicationContext implements ApplicationContext {
     private static final String END_DATE_FIELD_NAME_IN_JSON = "end_date";
     private static final String INGREDIENTS_FILE_PATH = "src/main/resources/ingredients.csv";
     private static final String STANDARD_LUNCHBOX_FILE_PATH = "src/main/resources/standard-meal-box.json";
+    private static final Double STANDARD_PRICE = 75.0;
     private static final String RECIPES_FIELD_NAME_IN_JSON = "recipes";
     private static final String RECIPE_NAME_FIELD_NAME_IN_JSON = "name";
     private static final String RECIPE_CALORIES_FIELD_NAME_IN_JSON = "calories";
@@ -201,7 +204,8 @@ public class DevApplicationContext implements ApplicationContext {
         List<Semester> semesters = parseSemesters();
         List<IngredientInformation> ingredientInformations = parseIngredientInformation();
         Lunchbox standardLunchbox = parseStandardLunchbox();
-        return new Catalog(pickupLocations, semesters, ingredientInformations, standardLunchbox);
+        Map<LunchboxType, Amount> lunchboxTypeAmountMap = createLunchboxPriceMapping();
+        return new Catalog(pickupLocations, semesters, ingredientInformations, standardLunchbox, lunchboxTypeAmountMap);
     }
 
     private List<PickupLocation> parsePickupLocations() {
@@ -243,6 +247,13 @@ public class DevApplicationContext implements ApplicationContext {
             LOGGER.error("Error while reading " + STANDARD_LUNCHBOX_FILE_PATH, e);
             throw new RuntimeException("Error while reading " + STANDARD_LUNCHBOX_FILE_PATH);
         }
+    }
+
+    private Map<LunchboxType, Amount> createLunchboxPriceMapping() {
+        Map<LunchboxType, Amount> lunchboxTypeAmountMap = new HashMap<>();
+        lunchboxTypeAmountMap.put(LunchboxType.STANDARD, new Amount(STANDARD_PRICE));
+
+        return lunchboxTypeAmountMap;
     }
 
     private List<Recipe> getRecipesFromJsonList(Object listOfRecipes) {

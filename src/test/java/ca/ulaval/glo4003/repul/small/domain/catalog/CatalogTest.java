@@ -2,12 +2,14 @@ package ca.ulaval.glo4003.repul.small.domain.catalog;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Ingredient;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Quantity;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Recipe;
 import ca.ulaval.glo4003.repul.domain.catalog.Amount;
@@ -45,6 +47,8 @@ class CatalogTest {
     private static final double AN_INGREDIENT_QUANTITY_VALUE = 1.0;
     private static final String AN_INGREDIENT_QUANTITY_UNIT = "mg";
     private static final Semester A_SEMESTER = new Semester(new SemesterCode(A_SEMESTER_CODE), A_START_DATE, AN_END_DATE);
+    private static final LunchboxType STANDARD_LUNCHBOX_TYPE = LunchboxType.STANDARD;
+    private static final Amount STANDARD_LUNCHBOX_PRICE = new Amount(7530.1);
 
     private Catalog catalog;
 
@@ -55,7 +59,8 @@ class CatalogTest {
         List<IngredientInformation> ingredients = List.of(new IngredientInformation(AN_INGREDIENT_NAME, AN_INGREDIENT_PRICE));
         Lunchbox standardLunchbox = new Lunchbox(List.of(new Recipe(A_RECIPE_NAME, A_RECIPE_CALORIES,
             List.of(new Ingredient(AN_INGREDIENT_NAME, new Quantity(AN_INGREDIENT_QUANTITY_VALUE, AN_INGREDIENT_QUANTITY_UNIT))))));
-        catalog = new Catalog(pickupLocations, semesters, ingredients, standardLunchbox);
+        Map<LunchboxType, Amount> lunchboxTypeAmountMap = Map.of(STANDARD_LUNCHBOX_TYPE, STANDARD_LUNCHBOX_PRICE);
+        catalog = new Catalog(pickupLocations, semesters, ingredients, standardLunchbox, lunchboxTypeAmountMap);
     }
 
     @Test
@@ -80,6 +85,13 @@ class CatalogTest {
     @Test
     public void givenDateNotInSemester_whenGetSemester_shouldThrowSemesterNotFoundException() {
         assertThrows(SemesterNotFoundException.class, () -> catalog.getCurrentSemester(A_DATE_NOT_IN_SEMESTER));
+    }
+
+    @Test
+    public void givenStandardLunchboxType_whenGettingLunchboxPriceByType_shouldReturnRightPrice() {
+        Amount lunchboxAmount = catalog.getLunchboxPriceByType(STANDARD_LUNCHBOX_TYPE);
+
+        assertEquals(STANDARD_LUNCHBOX_PRICE, lunchboxAmount);
     }
 }
 

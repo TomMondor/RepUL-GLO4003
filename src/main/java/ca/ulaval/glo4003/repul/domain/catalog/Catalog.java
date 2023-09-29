@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
+import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationException;
 import ca.ulaval.glo4003.repul.domain.exception.SemesterNotFoundException;
 
@@ -16,12 +17,15 @@ public class Catalog {
     private final Map<SemesterCode, Semester> semesters;
     private final Map<String, Amount> ingredientPrices;
     private final Lunchbox standardLunchbox;
+    private final Map<LunchboxType, Amount> lunchboxTypeAmountMap;
 
-    public Catalog(List<PickupLocation> pickupLocations, List<Semester> semesters, List<IngredientInformation> ingredients, Lunchbox standardLunchbox) {
+    public Catalog(List<PickupLocation> pickupLocations, List<Semester> semesters, List<IngredientInformation> ingredients, Lunchbox standardLunchbox,
+                   Map<LunchboxType, Amount> lunchboxTypeAmountMap) {
         this.pickupLocations = pickupLocations.stream().collect(Collectors.toMap(PickupLocation::getLocationId, Function.identity()));
         this.semesters = semesters.stream().collect(Collectors.toMap(Semester::semesterCode, Function.identity()));
         this.ingredientPrices = ingredients.stream().collect(Collectors.toMap(IngredientInformation::name, IngredientInformation::price));
         this.standardLunchbox = standardLunchbox;
+        this.lunchboxTypeAmountMap = lunchboxTypeAmountMap;
     }
 
     public PickupLocation getPickupLocation(LocationId locationId) {
@@ -37,12 +41,15 @@ public class Catalog {
 
     public Semester getCurrentSemester(LocalDate currentDate) {
         List<Semester> savedSemesters = new ArrayList<>(semesters.values());
-        return savedSemesters.stream()
-            .filter(semester -> semester.startDate().isBefore(currentDate) && semester.endDate().isAfter(currentDate))
-            .findFirst().orElseThrow(SemesterNotFoundException::new);
+        return savedSemesters.stream().filter(semester -> semester.startDate().isBefore(currentDate) && semester.endDate().isAfter(currentDate)).findFirst()
+            .orElseThrow(SemesterNotFoundException::new);
     }
 
     public List<PickupLocation> getPickupLocations() {
         return pickupLocations.values().stream().toList();
+    }
+
+    public Amount getLunchboxPriceByType(LunchboxType lunchboxType) {
+        return lunchboxTypeAmountMap.get(lunchboxType);
     }
 }

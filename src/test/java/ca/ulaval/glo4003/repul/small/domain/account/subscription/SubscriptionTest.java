@@ -29,6 +29,7 @@ public class SubscriptionTest {
     private static final PickupLocation PICKUP_LOCATION = new PickupLocation(new LocationId("123"), "123", 10);
     private static final LocalDate START_DATE = LocalDate.now().plusDays(3);
     private static final LunchboxType LUNCHBOX_TYPE = LunchboxType.STANDARD;
+
     @Mock
     private Order order;
 

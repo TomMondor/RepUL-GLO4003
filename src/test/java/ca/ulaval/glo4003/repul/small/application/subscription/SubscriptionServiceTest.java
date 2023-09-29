@@ -16,6 +16,7 @@ import ca.ulaval.glo4003.repul.domain.PaymentHandler;
 import ca.ulaval.glo4003.repul.domain.RepUL;
 import ca.ulaval.glo4003.repul.domain.RepULRepository;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
+import ca.ulaval.glo4003.repul.domain.catalog.Amount;
 import ca.ulaval.glo4003.repul.domain.catalog.LocationId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +31,7 @@ public class SubscriptionServiceTest {
     private static final SubscriptionQuery SUBSCRIPTION_QUERY = new SubscriptionQuery(A_LOCATION_STRING, A_DAY_STRING, A_LUNCHBOX_TYPE);
     private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final Amount AN_AMOUNT = new Amount(15.2);
     private SubscriptionService subscriptionService;
 
     @Mock
@@ -37,11 +39,11 @@ public class SubscriptionServiceTest {
     @Mock
     private RepULRepository repULRepository;
     @Mock
-    private RepUL mockRepUL;
+    private RepUL repUL;
 
     @BeforeEach
     public void createSubscriptionService() {
-        when(repULRepository.get()).thenReturn(mockRepUL);
+        when(repULRepository.get()).thenReturn(repUL);
         subscriptionService = new SubscriptionService(repULRepository, paymentHandler);
     }
 
@@ -56,7 +58,7 @@ public class SubscriptionServiceTest {
     public void whenCreatingSubscription_shouldCreateSubscription() {
         subscriptionService.createSubscription(AN_ACCOUNT_ID, SUBSCRIPTION_QUERY);
 
-        verify(mockRepUL).createSubscription(any(UniqueIdentifier.class), eq(new LocationId(A_LOCATION_STRING)), eq(DayOfWeek.valueOf(A_DAY_STRING)), eq(
+        verify(repUL).createSubscription(any(UniqueIdentifier.class), eq(new LocationId(A_LOCATION_STRING)), eq(DayOfWeek.valueOf(A_DAY_STRING)), eq(
             LunchboxType.valueOf(A_LUNCHBOX_TYPE)));
     }
 
@@ -64,12 +66,12 @@ public class SubscriptionServiceTest {
     public void whenCreatingSubscription_shouldSaveOrUpdateRepUL() {
         subscriptionService.createSubscription(AN_ACCOUNT_ID, SUBSCRIPTION_QUERY);
 
-        verify(repULRepository).saveOrUpdate(mockRepUL);
+        verify(repULRepository).saveOrUpdate(repUL);
     }
 
     @Test
     public void whenCreatingSubscription_shouldReturnSubscriptionId() {
-        when(mockRepUL.createSubscription(any(UniqueIdentifier.class), any(LocationId.class),
+        when(repUL.createSubscription(any(UniqueIdentifier.class), any(LocationId.class),
             any(DayOfWeek.class), any(LunchboxType.class))).thenReturn(A_SUBSCRIPTION_ID);
 
         UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, SUBSCRIPTION_QUERY);
@@ -88,6 +90,64 @@ public class SubscriptionServiceTest {
     public void whenGettingSubscriptions_shouldGetSubscriptions() {
         subscriptionService.getSubscriptions(AN_ACCOUNT_ID);
 
-        verify(mockRepUL).getSubscriptions(AN_ACCOUNT_ID);
+        verify(repUL).getSubscriptions(AN_ACCOUNT_ID);
+    }
+
+    @Test
+    public void whenConfirmingNextLunchboxForSubscription_shouldGetRepUL() {
+        subscriptionService.confirmNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(repULRepository).get();
+    }
+
+    @Test
+    public void whenConfirmingNextLunchboxForSubscription_shouldConfirmNextLunchboxForSubscription() {
+        subscriptionService.confirmNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(repUL).confirmNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+    }
+
+    @Test
+    public void whenConfirmingNextLunchboxForSubscription_shouldGetLunchboxPrice() {
+        subscriptionService.confirmNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(repUL).getLunchboxPrice(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+    }
+
+    @Test
+    public void whenConfirmingNextLunchboxForSubscription_shouldMakeTransactionWithLunchBoxPrice() {
+        when(repUL.getLunchboxPrice(any(UniqueIdentifier.class), any(UniqueIdentifier.class))).thenReturn(AN_AMOUNT);
+
+        subscriptionService.confirmNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(paymentHandler).makeTransaction(AN_AMOUNT);
+    }
+
+    @Test
+    public void whenConfirmingNextLunchboxForSubscription_shouldSaveOrUpdateRepUL() {
+        subscriptionService.confirmNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(repULRepository).saveOrUpdate(repUL);
+    }
+
+    @Test
+    public void whenDecliningNextLunchboxForSubscription_shouldGetRepUL() {
+        subscriptionService.declineNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(repULRepository).get();
+    }
+
+    @Test
+    public void whenDecliningNextLunchboxForSubscription_shouldDeclineNextLunchboxForSubscription() {
+        subscriptionService.declineNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(repUL).declineNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+    }
+
+    @Test
+    public void whenDecliningNextLunchboxForSubscription_shouldSaveOrUpdateRepUL() {
+        subscriptionService.declineNextLunchboxForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(repULRepository).saveOrUpdate(repUL);
     }
 }

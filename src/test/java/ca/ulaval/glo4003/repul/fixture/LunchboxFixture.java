@@ -9,14 +9,9 @@ public class LunchboxFixture {
     private List<Recipe> recipes;
 
     public LunchboxFixture() {
-        this.recipes = List.of(
-            new RecipeFixture().build(),
-            new RecipeFixture().withName("Spaghetti Carbonara").withCalories(10).withIngredients(List.of(
-                new IngredientFixture().withName("cream").build(),
-                new IngredientFixture().withName("tomato").withUnitLessQuantity(2).build(),
-                new IngredientFixture().withName("pasta").withQuantityInGrams(100).build()
-            )).build()
-        );
+        this.recipes = List.of(new RecipeFixture().build(), new RecipeFixture().withName("Spaghetti Carbonara").withCalories(10).withIngredients(
+            List.of(new IngredientFixture().withName("cream").build(), new IngredientFixture().withName("tomato").withUnitLessQuantity(2).build(),
+                new IngredientFixture().withName("pasta").withQuantityInGrams(100).build())).build());
     }
 
     public LunchboxFixture withRecipes(List<Recipe> recipes) {
