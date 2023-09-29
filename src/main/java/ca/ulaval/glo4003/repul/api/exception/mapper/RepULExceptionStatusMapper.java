@@ -3,9 +3,11 @@ package ca.ulaval.glo4003.repul.api.exception.mapper;
 import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.domain.exception.InvalidFrequencyException;
+import ca.ulaval.glo4003.repul.domain.exception.InvalidGenderException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationIdException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLunchboxException;
+import ca.ulaval.glo4003.repul.domain.exception.InvalidLunchboxTypeException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidOrderIdException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidQuantityException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidRecipeException;
@@ -40,5 +42,7 @@ public class RepULExceptionStatusMapper {
         exceptionMapper.put(InvalidRecipeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidSemesterCodeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidSubscriptionIdException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidGenderException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidLunchboxTypeException.class, Response.Status.BAD_REQUEST);
     }
 }

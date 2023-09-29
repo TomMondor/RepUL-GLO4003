@@ -11,6 +11,6 @@ import ca.ulaval.glo4003.repul.domain.account.Name;
 public record RegistrationQuery(IDUL idul, Email email, String password, Name name, Birthdate birthdate, Gender gender) {
     public static RegistrationQuery from(String idul, String email, String password, String name, String birthdate, String gender) {
         return new RegistrationQuery(new IDUL(idul), new Email(email), password, new Name(name), new Birthdate(LocalDate.parse(birthdate)),
-            Gender.valueOf(gender));
+            Gender.from(gender));
     }
 }
