@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ad52cd83-82a5-4a31-8a4b-5d427795dde6",
+		"_postman_id": "11d540b8-2496-402b-a20e-29205f9599ca",
 		"name": "RepUL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19124741"
@@ -236,6 +236,37 @@
 						"api",
 						"accounts",
 						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ToCook",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJjNWNjOTE0MC03NzgzLTRkM2EtYTc3Mi1lNDYwYTBiMDNjYWIiLCJSb2xlIjoiQ09PSyIsImV4cCI6MTY5NjAxMDU0NH0.7Q7TWY2aO_6XqBwEvSITR0nYqIs8Ix4K8RGYzyTPf7U",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/lunchboxes/to-cook",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"lunchboxes",
+						"to-cook"
 					]
 				}
 			},

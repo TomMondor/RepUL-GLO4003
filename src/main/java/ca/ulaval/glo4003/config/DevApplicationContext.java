@@ -22,13 +22,18 @@ import org.slf4j.LoggerFactory;
 import ca.ulaval.glo4003.commons.api.exception.mapper.CatchallExceptionMapper;
 import ca.ulaval.glo4003.commons.api.exception.mapper.CommonExceptionMapper;
 import ca.ulaval.glo4003.commons.api.exception.mapper.ConstraintViolationExceptionMapper;
+import ca.ulaval.glo4003.commons.domain.Email;
+import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.config.http.CORSResponseFilter;
 import ca.ulaval.glo4003.identitymanagement.api.AuthResource;
 import ca.ulaval.glo4003.identitymanagement.api.exception.IdentityManagementExceptionMapper;
 import ca.ulaval.glo4003.identitymanagement.application.AuthFacade;
 import ca.ulaval.glo4003.identitymanagement.application.AuthService;
+import ca.ulaval.glo4003.identitymanagement.domain.Password;
 import ca.ulaval.glo4003.identitymanagement.domain.PasswordEncoder;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.identitymanagement.domain.User;
 import ca.ulaval.glo4003.identitymanagement.domain.UserFactory;
 import ca.ulaval.glo4003.identitymanagement.domain.UserRepository;
 import ca.ulaval.glo4003.identitymanagement.domain.token.TokenDecoder;
@@ -95,6 +100,9 @@ public class DevApplicationContext implements ApplicationContext {
     private static final int PORT = 8080;
     private static final Logger LOGGER = LoggerFactory.getLogger(DevApplicationContext.class);
 
+    protected RepULRepository repULRepository;
+    protected UserRepository userRepository;
+
     private static HealthResource createHealthResource() {
         LOGGER.info("Setup health resource");
 
@@ -155,13 +163,17 @@ public class DevApplicationContext implements ApplicationContext {
 
         UserFactory userFactory = new UserFactory(passwordEncoder);
 
-        UserRepository userRepository = new InMemoryUserRepository();
+        UserRepository userRepository = this.userRepository = new InMemoryUserRepository();
 
         AuthService authService = new AuthService(userRepository, userFactory, uniqueIdentifierFactory, tokenGenerator);
 
-        RepULRepository repULRepository = new InMemoryRepULRepository();
+        RepULRepository repULRepository = this.repULRepository = new InMemoryRepULRepository();
 
         initializeRepUL(repULRepository, uniqueIdentifierFactory);
+
+        // Create user for cook
+        User cookUser = createCookUser();
+        userRepository.saveOrUpdate(cookUser);
 
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
@@ -196,6 +208,17 @@ public class DevApplicationContext implements ApplicationContext {
         SubscriptionFactory subscriptionFactory = new SubscriptionFactory(uniqueIdentifierFactory);
         RepUL repUL = new RepUL(catalog, subscriptionFactory);
         repULRepository.saveOrUpdate(repUL);
+    }
+
+    private User createCookUser() {
+        UserFactory userFactory = new UserFactory(new CryptPasswordEncoder());
+
+        Email email = new Email("cook@ulaval.ca");
+        Password password = new Password("cook");
+        Role role = Role.COOK;
+        UniqueIdentifier uid = new UniqueIdentifierFactory().generate();
+
+        return userFactory.createUser(uid, email, role, password);
     }
 
     private Catalog createCatalog() {

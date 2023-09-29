@@ -66,6 +66,11 @@ public class Order {
         orderStatus = OrderStatus.DECLINED;
     }
 
+    // TODO: delete
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     private void verifyIfOrderIsPending() {
         if (orderStatus != OrderStatus.PENDING) {
             throw new OrderNotPendingException();

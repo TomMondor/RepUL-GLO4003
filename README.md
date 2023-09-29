@@ -39,6 +39,11 @@ Pour lancer l'application:
   * Exécuter toutes les vérifications (test, dependency-check, etc...) et produire un artifact pour votre application (se trouvant sous
     `target/application.jar`) avec `mvn verify` que vous pouvez juste invoquer directement avec un `java -jar target/application.jar`
 
+### Démarer le projet en mode démo
+
+Pour lancer l'application en mode démo, exécuter start.sh ou start.bt en ajoutant l'argument de ligne de commande "--demo".
+Par exemple, sous Mac/Linux: `./start.sh --demo`.
+
 ## Tests 🧪
 
 Afin d'exécuter les tests, vous pouvez:
