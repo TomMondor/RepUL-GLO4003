@@ -13,6 +13,7 @@ import ca.ulaval.glo4003.repul.domain.exception.InvalidQuantityException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidRecipeException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidSemesterCodeException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidSubscriptionIdException;
+import ca.ulaval.glo4003.repul.domain.exception.OrderNotPendingException;
 import ca.ulaval.glo4003.repul.domain.exception.RepULException;
 import ca.ulaval.glo4003.repul.domain.exception.RepULNotFoundException;
 
@@ -44,5 +45,6 @@ public class RepULExceptionStatusMapper {
         exceptionMapper.put(InvalidSubscriptionIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidGenderException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidLunchboxTypeException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(OrderNotPendingException.class, Response.Status.BAD_REQUEST);
     }
 }

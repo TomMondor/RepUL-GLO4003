@@ -12,7 +12,7 @@ public class EmulatedPaymentHandler implements PaymentHandler {
 
     @Override
     public Boolean makeTransaction(Amount amount) {
-        LOGGER.info("Le compte a été débité de {}", amount);
+        LOGGER.info("Le compte a été débité de {}", amount.getValue());
         return true;
     }
 }

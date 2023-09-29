@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.identitymanagement.middleware.Roles;
 import ca.ulaval.glo4003.identitymanagement.middleware.Secure;
 import ca.ulaval.glo4003.repul.api.account.assembler.AccountResponseAssembler;
 import ca.ulaval.glo4003.repul.api.account.request.RegistrationRequest;
@@ -50,6 +52,7 @@ public class AccountResource {
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Secure
+    @Roles(Role.CLIENT)
     @Path("/me")
     public Response me(@Context ContainerRequestContext requestContext) {
         UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty("uid");

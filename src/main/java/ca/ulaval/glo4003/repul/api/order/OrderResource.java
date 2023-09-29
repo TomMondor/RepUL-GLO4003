@@ -3,6 +3,8 @@ package ca.ulaval.glo4003.repul.api.order;
 import java.util.List;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.identitymanagement.middleware.Roles;
 import ca.ulaval.glo4003.identitymanagement.middleware.Secure;
 import ca.ulaval.glo4003.repul.api.order.assembler.OrdersResponseAssembler;
 import ca.ulaval.glo4003.repul.api.order.response.OrderResponse;
@@ -30,6 +32,7 @@ public class OrderResource {
 
     @GET
     @Secure
+    @Roles(Role.CLIENT)
     @Path("/me")
     public Response getMyCurrentOrders(@Context ContainerRequestContext requestContext) {
         UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);

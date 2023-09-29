@@ -3,6 +3,8 @@ package ca.ulaval.glo4003.repul.api.subscription;
 import java.util.List;
 
 import ca.ulaval.glo4003.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.identitymanagement.middleware.Roles;
 import ca.ulaval.glo4003.identitymanagement.middleware.Secure;
 import ca.ulaval.glo4003.repul.api.subscription.assembler.SubscriptionsResponseAssembler;
 import ca.ulaval.glo4003.repul.api.subscription.request.SubscriptionRequest;
@@ -37,6 +39,7 @@ public class SubscriptionResource {
 
     @POST
     @Secure
+    @Roles(Role.CLIENT)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createSubscription(@Context ContainerRequestContext context, @Valid SubscriptionRequest subscriptionRequest) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
@@ -50,6 +53,7 @@ public class SubscriptionResource {
 
     @GET
     @Secure
+    @Roles(Role.CLIENT)
     public Response getSubscriptions(@Context ContainerRequestContext context) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
@@ -62,6 +66,7 @@ public class SubscriptionResource {
     @POST
     @Secure
     @Consumes(MediaType.APPLICATION_JSON)
+    @Roles(Role.CLIENT)
     @Path("/{subscriptionId}/confirm")
     public Response confirmLunchbox(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
@@ -72,6 +77,7 @@ public class SubscriptionResource {
 
     @POST
     @Secure
+    @Roles(Role.CLIENT)
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{subscriptionId}/decline")
     public Response declineLunchbox(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {

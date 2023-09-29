@@ -14,23 +14,17 @@ import ca.ulaval.glo4003.config.DevApplicationContext;
 import ca.ulaval.glo4003.identitymanagement.api.request.LoginRequest;
 import ca.ulaval.glo4003.identitymanagement.api.response.LoginResponse;
 import ca.ulaval.glo4003.identitymanagement.fixture.LoginRequestFixture;
-import ca.ulaval.glo4003.repul.api.account.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.api.lunchbox.response.ToCookResponse;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Ingredient;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
-import ca.ulaval.glo4003.repul.fixture.RegistrationRequestFixture;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LunchboxResourceEnd2EndTest {
     private static final ApplicationContext context = new DevApplicationContext();
-    private static final String ACCOUNT_EMAIL = "myAccountEmail@ulaval.ca";
-    private static final String ACCOUNT_PASSWORD = "secret123";
-    private static final String ACCOUNT_IDUL = "ALMAT69";
-    private static final String ACCOUNT_NAME = "Bob Math";
-    private static final String ACCOUNT_BIRTHDATE = "1969-04-20";
-    private static final String ACCOUNT_GENDER = "MAN";
+    private static final String COOK_ACCOUNT_EMAIL = "cook@ulaval.ca";
+    private static final String COOK_ACCOUNT_PASSWORD = "cook";
 
     private ServerFixture server;
 
@@ -47,7 +41,7 @@ public class LunchboxResourceEnd2EndTest {
 
     @Test
     public void whenGettingLunchboxToCook_shouldReturn200WithEmptyLunchboxAndIngredient() {
-        String accountToken = registerAndLoginAccount();
+        String accountToken = loginCookAccount();
 
         Response response = given().header("Authorization", "Bearer " + accountToken).get(context.getURI() + "api/lunchboxes/to-cook");
 
@@ -56,16 +50,9 @@ public class LunchboxResourceEnd2EndTest {
         assertEquals(new ArrayList<Ingredient>(), response.getBody().as(ToCookResponse.class).totalIngredients());
     }
 
-    private String registerAndLoginAccount() {
-        RegistrationRequest registrationRequest = createRegistrationRequestWithAccountInformation();
-        LoginRequest loginRequest = new LoginRequestFixture().withEmail(ACCOUNT_EMAIL).withPassword(ACCOUNT_PASSWORD).build();
-        given().contentType("application/json").body(registrationRequest).post(context.getURI() + "api/accounts/register");
+    private String loginCookAccount() {
+        LoginRequest loginRequest = new LoginRequestFixture().withEmail(COOK_ACCOUNT_EMAIL).withPassword(COOK_ACCOUNT_PASSWORD).build();
         Response loginResponse = given().contentType("application/json").body(loginRequest).post(context.getURI() + "api/auth/login");
         return loginResponse.getBody().as(LoginResponse.class).token();
-    }
-
-    private RegistrationRequest createRegistrationRequestWithAccountInformation() {
-        return new RegistrationRequestFixture().withEmail(ACCOUNT_EMAIL).withPassword(ACCOUNT_PASSWORD).withBirthdate(ACCOUNT_BIRTHDATE)
-            .withGender(ACCOUNT_GENDER).withName(ACCOUNT_NAME).withIdul(ACCOUNT_IDUL).build();
     }
 }

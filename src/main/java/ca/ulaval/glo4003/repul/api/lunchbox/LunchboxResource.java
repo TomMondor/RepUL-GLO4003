@@ -2,6 +2,8 @@ package ca.ulaval.glo4003.repul.api.lunchbox;
 
 import java.util.List;
 
+import ca.ulaval.glo4003.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.identitymanagement.middleware.Roles;
 import ca.ulaval.glo4003.identitymanagement.middleware.Secure;
 import ca.ulaval.glo4003.repul.api.lunchbox.assembler.LunchboxesResponseAssembler;
 import ca.ulaval.glo4003.repul.api.lunchbox.response.ToCookResponse;
@@ -26,6 +28,7 @@ public class LunchboxResource {
 
     @Secure
     @GET
+    @Roles(Role.COOK)
     @Path("/to-cook")
     public Response getLunchboxesToCook() {
         List<Lunchbox> lunchboxes = lunchboxService.getLunchboxesToCook();
