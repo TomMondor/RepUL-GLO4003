@@ -13,10 +13,10 @@ import ca.ulaval.glo4003.config.ApplicationContext;
 import ca.ulaval.glo4003.config.DevApplicationContext;
 import ca.ulaval.glo4003.identitymanagement.api.request.LoginRequest;
 import ca.ulaval.glo4003.identitymanagement.api.response.LoginResponse;
-import ca.ulaval.glo4003.identitymanagement.fixture.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.api.lunchbox.response.ToCookResponse;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Ingredient;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.Lunchbox;
+import ca.ulaval.glo4003.repul.fixture.LoginRequestFixture;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;

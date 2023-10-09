@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.identitymanagement.fixture;
+package ca.ulaval.glo4003.repul.fixture;
 
 import ca.ulaval.glo4003.identitymanagement.api.request.LoginRequest;
 

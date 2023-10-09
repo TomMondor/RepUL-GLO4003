@@ -11,9 +11,9 @@ import ca.ulaval.glo4003.config.ApplicationContext;
 import ca.ulaval.glo4003.config.DevApplicationContext;
 import ca.ulaval.glo4003.identitymanagement.api.request.LoginRequest;
 import ca.ulaval.glo4003.identitymanagement.api.response.LoginResponse;
-import ca.ulaval.glo4003.identitymanagement.fixture.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.api.account.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.api.account.response.AccountResponse;
+import ca.ulaval.glo4003.repul.fixture.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.RegistrationRequestFixture;
 
 import static io.restassured.RestAssured.given;

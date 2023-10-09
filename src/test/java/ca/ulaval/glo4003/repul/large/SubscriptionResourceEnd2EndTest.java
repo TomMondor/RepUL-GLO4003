@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.repul.large;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -14,7 +15,6 @@ import ca.ulaval.glo4003.config.ApplicationContext;
 import ca.ulaval.glo4003.config.DevApplicationContext;
 import ca.ulaval.glo4003.identitymanagement.api.request.LoginRequest;
 import ca.ulaval.glo4003.identitymanagement.api.response.LoginResponse;
-import ca.ulaval.glo4003.identitymanagement.fixture.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.api.account.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.api.subscription.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.api.subscription.response.SubscriptionCreatedResponse;
@@ -24,6 +24,7 @@ import ca.ulaval.glo4003.repul.domain.catalog.Catalog;
 import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 import ca.ulaval.glo4003.repul.fixture.CatalogFixture;
+import ca.ulaval.glo4003.repul.fixture.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.RegistrationRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.SubscriptionRequestFixture;
 
@@ -38,7 +39,7 @@ public class SubscriptionResourceEnd2EndTest {
     private static final String ACCOUNT_NAME = "Bob Math";
     private static final String ACCOUNT_BIRTHDATE = "1969-04-20";
     private static final String ACCOUNT_GENDER = "MAN";
-    private static final String SUBSCRIPTION_DAY_OF_WEEK = "MONDAY";
+    private static final String SUBSCRIPTION_DAY_OF_WEEK = DayOfWeek.from(LocalDate.now().plusDays(3)).toString();
     private static final String SUBSCRIPTION_LOCATION_ID = "VACHON";
     private static final String SUBSCRIPTION_LUNCHBOX_TYPE = LunchboxType.STANDARD.toString();
     private static final ApplicationContext context = new DevApplicationContext();

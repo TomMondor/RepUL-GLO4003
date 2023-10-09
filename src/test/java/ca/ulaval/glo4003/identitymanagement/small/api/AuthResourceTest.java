@@ -12,7 +12,7 @@ import ca.ulaval.glo4003.identitymanagement.api.response.LoginResponse;
 import ca.ulaval.glo4003.identitymanagement.application.AuthService;
 import ca.ulaval.glo4003.identitymanagement.application.query.LoginQuery;
 import ca.ulaval.glo4003.identitymanagement.domain.token.Token;
-import ca.ulaval.glo4003.identitymanagement.fixture.LoginRequestFixture;
+import ca.ulaval.glo4003.repul.fixture.LoginRequestFixture;
 
 import jakarta.ws.rs.core.Response;
 

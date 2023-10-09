@@ -18,6 +18,7 @@ import ca.ulaval.glo4003.repul.api.account.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.api.order.response.OrderResponse;
 import ca.ulaval.glo4003.repul.api.subscription.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.domain.account.subscription.order.lunchbox.LunchboxType;
+import ca.ulaval.glo4003.repul.fixture.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.RegistrationRequestFixture;
 
 import static io.restassured.RestAssured.given;
@@ -90,7 +91,7 @@ public class OrderResourceEnd2EndTest {
     private String registerAndLoginAccount() {
         RegistrationRequest registrationRequest = createRegistrationRequestWithAccountInformation();
         LoginRequest loginRequest =
-            new ca.ulaval.glo4003.identitymanagement.fixture.LoginRequestFixture().withEmail(ACCOUNT_EMAIL).withPassword(ACCOUNT_PASSWORD).build();
+            new LoginRequestFixture().withEmail(ACCOUNT_EMAIL).withPassword(ACCOUNT_PASSWORD).build();
         given().contentType("application/json").body(registrationRequest).post(context.getURI() + "api/accounts/register");
         Response loginResponse = given().contentType("application/json").body(loginRequest).post(context.getURI() + "api/auth/login");
         return loginResponse.getBody().as(LoginResponse.class).token();
