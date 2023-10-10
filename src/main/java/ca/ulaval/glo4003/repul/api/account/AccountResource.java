@@ -28,6 +28,7 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class AccountResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountResource.class);
+    private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
 
     private final AccountService accountService;
     private final AccountResponseAssembler accountResponseAssembler = new AccountResponseAssembler();
@@ -55,7 +56,7 @@ public class AccountResource {
     @Roles(Role.CLIENT)
     @Path("/me")
     public Response me(@Context ContainerRequestContext requestContext) {
-        UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty("uid");
+        UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
         AccountResponse accountResponse = accountResponseAssembler.toAccountResponse(accountService.getAccount(accountId));
 
