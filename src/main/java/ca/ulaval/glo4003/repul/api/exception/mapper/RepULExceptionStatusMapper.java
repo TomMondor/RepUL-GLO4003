@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.api.exception.mapper;
 
 import java.util.WeakHashMap;
 
+import ca.ulaval.glo4003.repul.domain.exception.InvalidBirthdateException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidFrequencyException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidGenderException;
 import ca.ulaval.glo4003.repul.domain.exception.InvalidLocationException;
@@ -46,5 +47,6 @@ public class RepULExceptionStatusMapper {
         exceptionMapper.put(InvalidGenderException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidLunchboxTypeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(OrderNotPendingException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidBirthdateException.class, Response.Status.BAD_REQUEST);
     }
 }
