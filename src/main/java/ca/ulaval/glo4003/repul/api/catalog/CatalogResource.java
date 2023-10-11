@@ -13,7 +13,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api/catalog")
-@Produces(MediaType.APPLICATION_JSON)
 public class CatalogResource {
     private final CatalogService catalogService;
     private final CatalogResponseAssembler catalogResponseAssembler = new CatalogResponseAssembler();
@@ -24,6 +23,7 @@ public class CatalogResource {
 
     @GET
     @Path("/locations")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getLocations() {
         List<LocationResponse> locations = catalogResponseAssembler.toLocationsResponse(catalogService.getPickupLocations());
         return Response.ok(locations).build();

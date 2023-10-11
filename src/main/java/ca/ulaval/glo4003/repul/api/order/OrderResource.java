@@ -20,7 +20,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api/orders")
-@Produces(MediaType.APPLICATION_JSON)
 public class OrderResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
     private final OrderService orderService;
@@ -34,6 +33,7 @@ public class OrderResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/me")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getMyCurrentOrders(@Context ContainerRequestContext requestContext) {
         UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 

@@ -25,7 +25,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api/accounts")
-@Produces(MediaType.APPLICATION_JSON)
 public class AccountResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountResource.class);
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
@@ -38,8 +37,8 @@ public class AccountResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/register")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response register(@Valid RegistrationRequest registrationRequest) {
         LOGGER.info("Registering new account for {}", registrationRequest.idul);
 
@@ -51,10 +50,10 @@ public class AccountResource {
     }
 
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Secure
     @Roles(Role.CLIENT)
     @Path("/me")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response me(@Context ContainerRequestContext requestContext) {
         UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 

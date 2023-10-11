@@ -27,7 +27,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api/subscriptions")
-@Produces(MediaType.APPLICATION_JSON)
 public class SubscriptionResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
     private final SubscriptionService subscriptionService;
@@ -41,6 +40,7 @@ public class SubscriptionResource {
     @Secure
     @Roles(Role.CLIENT)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createSubscription(@Context ContainerRequestContext context, @Valid SubscriptionRequest subscriptionRequest) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         SubscriptionQuery subscriptionQuery = SubscriptionQuery.from(subscriptionRequest.locationId, subscriptionRequest.dayOfWeek,
@@ -54,6 +54,7 @@ public class SubscriptionResource {
     @GET
     @Secure
     @Roles(Role.CLIENT)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getSubscriptions(@Context ContainerRequestContext context) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
@@ -65,7 +66,6 @@ public class SubscriptionResource {
 
     @POST
     @Secure
-    @Consumes(MediaType.APPLICATION_JSON)
     @Roles(Role.CLIENT)
     @Path("/{subscriptionId}/confirm")
     public Response confirmLunchbox(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
@@ -78,7 +78,6 @@ public class SubscriptionResource {
     @POST
     @Secure
     @Roles(Role.CLIENT)
-    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{subscriptionId}/decline")
     public Response declineLunchbox(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);

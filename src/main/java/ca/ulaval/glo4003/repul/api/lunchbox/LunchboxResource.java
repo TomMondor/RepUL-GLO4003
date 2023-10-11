@@ -17,7 +17,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api/lunchboxes")
-@Produces(MediaType.APPLICATION_JSON)
 public class LunchboxResource {
     private final LunchboxService lunchboxService;
     private final LunchboxesResponseAssembler lunchboxesResponseAssembler = new LunchboxesResponseAssembler();
@@ -26,10 +25,11 @@ public class LunchboxResource {
         this.lunchboxService = lunchboxService;
     }
 
-    @Secure
     @GET
+    @Secure
     @Roles(Role.COOK)
     @Path("/to-cook")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getLunchboxesToCook() {
         List<Lunchbox> lunchboxes = lunchboxService.getLunchboxesToCook();
 
