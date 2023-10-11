@@ -14,6 +14,7 @@ public class IDULTest {
     private static final String AN_IDUL_NOT_STARTING_WITH_FIVE_LETTERS = "69ALMATH";
     private static final String AN_IDUL_WITH_MORE_THAN_THREE_NUMBERS = "ALMATH69422";
     private static final String A_VALID_IDUL = "ALMAT69";
+    private static final String A_FOUR_LETTER_VALID_IDUL = "ALMA69";
 
     @Test
     public void givenEmptyValue_whenCreatingIDUL_shouldThrowInvalidIDULException() {
@@ -40,5 +41,12 @@ public class IDULTest {
         IDUL idul = new IDUL(A_VALID_IDUL);
 
         assertEquals(A_VALID_IDUL, idul.value());
+    }
+
+    @Test
+    public void given4LetterIDUL_whenCreatingIDUL_shouldCreate() {
+        IDUL idul = new IDUL(A_FOUR_LETTER_VALID_IDUL);
+
+        assertEquals(A_FOUR_LETTER_VALID_IDUL, idul.value());
     }
 }
