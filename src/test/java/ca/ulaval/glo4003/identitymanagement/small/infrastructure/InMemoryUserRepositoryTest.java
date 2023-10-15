@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class InMemoryUserRepositoryTest {
-    private static final Email AN_INVALID_EMAIL = new Email("sss@hot.lo");
+    private static final Email AN_INVALID_EMAIL = new Email("sss@ulaval.ca");
     private static final UniqueIdentifier A_UID = new UniqueIdentifier(UUID.randomUUID());
-    private static final Email AN_EMAIL = new Email("anEmail@ulava.ca");
+    private static final Email AN_EMAIL = new Email("anEmail@ulaval.ca");
     private static final Password AN_ENCRYPTED_PASSWORD = new Password("encryptedPassword");
     private UserRepository userRepository;
 

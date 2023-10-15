@@ -29,7 +29,7 @@ public class AccountFixture {
         birthDate = new Birthdate(LocalDate.now().minusYears(23));
         gender = Gender.UNDISCLOSED;
         idul = new IDUL("thmon420");
-        email = new Email("test@jdoe.com");
+        email = new Email("test.jdoe@ulaval.ca");
     }
 
     public AccountFixture withAccountId(UniqueIdentifier uid) {
