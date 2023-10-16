@@ -69,7 +69,7 @@ public class AuthGuard implements ContainerRequestFilter {
 
     private void validateRoles(Role[] allowedRoles, Role actualRole, Role claimedRole, ContainerRequestContext containerRequestContext) {
         if (actualRole != claimedRole || !Arrays.stream(allowedRoles).toList().contains(claimedRole)) {
-            Response response = Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("message", "You do not have access to this resource.")).build();
+            Response response = Response.status(Response.Status.FORBIDDEN).entity(Map.of("message", "You do not have access to this resource.")).build();
             containerRequestContext.abortWith(response);
         }
     }
