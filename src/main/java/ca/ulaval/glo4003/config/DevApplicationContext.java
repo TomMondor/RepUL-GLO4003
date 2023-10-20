@@ -45,13 +45,11 @@ import ca.ulaval.glo4003.identitymanagement.infrastructure.JWTTokenGenerator;
 import ca.ulaval.glo4003.identitymanagement.middleware.AuthGuard;
 import ca.ulaval.glo4003.repul.api.HealthResource;
 import ca.ulaval.glo4003.repul.api.account.AccountResource;
-import ca.ulaval.glo4003.repul.api.catalog.CatalogResource;
 import ca.ulaval.glo4003.repul.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.api.lunchbox.LunchboxResource;
 import ca.ulaval.glo4003.repul.api.order.OrderResource;
 import ca.ulaval.glo4003.repul.api.subscription.SubscriptionResource;
 import ca.ulaval.glo4003.repul.application.account.AccountService;
-import ca.ulaval.glo4003.repul.application.catalog.CatalogService;
 import ca.ulaval.glo4003.repul.application.lunchbox.LunchboxService;
 import ca.ulaval.glo4003.repul.application.order.OrderService;
 import ca.ulaval.glo4003.repul.application.subscription.SubscriptionService;
@@ -74,6 +72,15 @@ import ca.ulaval.glo4003.repul.domain.catalog.Semester;
 import ca.ulaval.glo4003.repul.domain.catalog.SemesterCode;
 import ca.ulaval.glo4003.repul.infrastructure.EmulatedPaymentHandler;
 import ca.ulaval.glo4003.repul.infrastructure.InMemoryRepULRepository;
+import ca.ulaval.glo4003.shipping.api.ShippingCatalogResource;
+import ca.ulaval.glo4003.shipping.api.ShippingResource;
+import ca.ulaval.glo4003.shipping.application.ShippingCatalogService;
+import ca.ulaval.glo4003.shipping.application.ShippingService;
+import ca.ulaval.glo4003.shipping.domain.Shipping;
+import ca.ulaval.glo4003.shipping.domain.ShippingRepository;
+import ca.ulaval.glo4003.shipping.domain.catalog.ShippingCatalog;
+import ca.ulaval.glo4003.shipping.domain.commons.ShippingLocation;
+import ca.ulaval.glo4003.shipping.infrastructure.InMemoryShippingRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -138,12 +145,6 @@ public class DevApplicationContext implements ApplicationContext {
         return new OrderResource(orderService);
     }
 
-    private static CatalogResource createCatalogResource(RepULRepository repULRepository) {
-        LOGGER.info("Setup catalog resource");
-        CatalogService catalogService = new CatalogService(repULRepository);
-        return new CatalogResource(catalogService);
-    }
-
     private static LunchboxResource createLunchboxResource(RepULRepository repULRepository) {
         LOGGER.info("Setup lunchbox resource");
         LunchboxService lunchboxService = new LunchboxService(repULRepository);
@@ -171,16 +172,25 @@ public class DevApplicationContext implements ApplicationContext {
 
         initializeRepUL(repULRepository, uniqueIdentifierFactory);
 
+        // Create shipping context
+        ShippingRepository shippingRepository = new InMemoryShippingRepository();
+        initializeShipping(shippingRepository);
+        ShippingResource shippingResource = createShippingResource(shippingRepository);
+        ShippingCatalogResource shippingCatalogResource = createShippingCatalogResource(shippingRepository);
+
         // Create user for cook
         User cookUser = createCookUser();
         userRepository.saveOrUpdate(cookUser);
+
+        // Create user for shipper
+        User shipperUser = createShipperUser();
+        userRepository.saveOrUpdate(shipperUser);
 
         LOGGER.info("Setup resources (API)");
         HealthResource healthResource = createHealthResource();
         AuthResource authResource = createAuthResource(authService);
         SubscriptionResource subscriptionResource = createSubscriptionResource(repULRepository);
         OrderResource orderResource = createOrderResource(repULRepository);
-        CatalogResource catalogResource = createCatalogResource(repULRepository);
         AccountResource accountResource = createAccountResource(repULRepository, authService);
         LunchboxResource lunchboxResource = createLunchboxResource(repULRepository);
 
@@ -192,8 +202,9 @@ public class DevApplicationContext implements ApplicationContext {
                 bind(subscriptionResource).to(SubscriptionResource.class);
                 bind(orderResource).to(OrderResource.class);
                 bind(accountResource).to(AccountResource.class);
-                bind(catalogResource).to(CatalogResource.class);
                 bind(lunchboxResource).to(LunchboxResource.class);
+                bind(shippingResource).to(ShippingResource.class);
+                bind(shippingCatalogResource).to(ShippingCatalogResource.class);
             }
         };
 
@@ -216,6 +227,17 @@ public class DevApplicationContext implements ApplicationContext {
         Email email = new Email("cook@ulaval.ca");
         Password password = new Password("cook");
         Role role = Role.COOK;
+        UniqueIdentifier uid = new UniqueIdentifierFactory().generate();
+
+        return userFactory.createUser(uid, email, role, password);
+    }
+
+    private User createShipperUser() {
+        UserFactory userFactory = new UserFactory(new CryptPasswordEncoder());
+
+        Email email = new Email("shipper@ulaval.ca");
+        Password password = new Password("shipper");
+        Role role = Role.SHIPPER;
         UniqueIdentifier uid = new UniqueIdentifierFactory().generate();
 
         return userFactory.createUser(uid, email, role, password);
@@ -354,5 +376,38 @@ public class DevApplicationContext implements ApplicationContext {
             LOGGER.error("Error while parsing date", e);
             throw new RuntimeException("Error while parsing date");
         }
+    }
+
+    private ShippingResource createShippingResource(ShippingRepository shippingRepository) {
+        LOGGER.info("Setup shipping resource");
+        ShippingService shippingService = new ShippingService(shippingRepository);
+        return new ShippingResource(shippingService);
+    }
+
+    private ShippingCatalogResource createShippingCatalogResource(ShippingRepository shippingRepository) {
+        LOGGER.info("Setup shipping catalog resource");
+        ShippingCatalogService shippingCatalogService = new ShippingCatalogService(shippingRepository);
+        return new ShippingCatalogResource(shippingCatalogService);
+    }
+
+    private void initializeShipping(ShippingRepository shippingRepository) {
+        List<ShippingLocation> shippingLocations = parseShippingLocations();
+        List<ca.ulaval.glo4003.shipping.domain.commons.PickupLocation> pickupLocations = new ArrayList<>();
+        pickupLocations.add(
+            new ca.ulaval.glo4003.shipping.domain.commons.PickupLocation(new ca.ulaval.glo4003.commons.domain.LocationId("Desjardins"), "Desjardins"));
+
+        ShippingCatalog shippingCatalog = new ShippingCatalog(shippingLocations, pickupLocations);
+
+        Shipping shipping = new Shipping(new ArrayList<>(), shippingCatalog);
+
+        shippingRepository.saveOrUpdate(shipping);
+    }
+
+    private List<ShippingLocation> parseShippingLocations() {
+        List<Map<String, Object>> listOfLocationMaps = getListOfMapsFromJsonFilePath(CAMPUS_STATIONS_LOCATION_FILE_PATH);
+        return listOfLocationMaps.stream().map(
+            map -> new ShippingLocation(new
+                ca.ulaval.glo4003.commons.domain.LocationId((String) map.get(LOCATION_FIELD_NAME_IN_JSON)), (String) map.get(NAME_FIELD_NAME_IN_JSON),
+                (int) map.get(CAPACITY_FIELD_NAME_IN_JSON))).toList();
     }
 }

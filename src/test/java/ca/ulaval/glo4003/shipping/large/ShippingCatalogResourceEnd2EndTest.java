@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.large;
+package ca.ulaval.glo4003.shipping.large;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.commons.fixture.ServerFixture;
 import ca.ulaval.glo4003.config.ApplicationContext;
 import ca.ulaval.glo4003.config.DevApplicationContext;
-import ca.ulaval.glo4003.repul.api.catalog.response.LocationResponse;
+import ca.ulaval.glo4003.shipping.api.response.LocationResponse;
 
 import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CatalogResourceEnd2EndTest {
+public class ShippingCatalogResourceEnd2EndTest {
     private static final ApplicationContext context = new DevApplicationContext();
     private static final String BASE_URL = context.getURI() + "api/catalog/";
     private static final LocationResponse EXPECTED_LOCATION = new LocationResponse("MYRAND", "Secteur EST", 12);
