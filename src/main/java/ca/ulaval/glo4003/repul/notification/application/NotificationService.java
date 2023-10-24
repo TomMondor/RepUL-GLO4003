@@ -11,7 +11,7 @@ import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 import ca.ulaval.glo4003.repul.shipping.application.event.MealKitDeliveryInfoDto;
 import ca.ulaval.glo4003.repul.shipping.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.DeliveryAccountCreatedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -31,8 +31,8 @@ public class NotificationService {
     }
 
     @Subscribe
-    public void handleDeliveryAccountCreated(DeliveryAccountCreatedEvent deliveryAccountCreatedEvent) {
-        Account account = new Account(deliveryAccountCreatedEvent.accountId, deliveryAccountCreatedEvent.email);
+    public void handleDeliveryAccountCreated(DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent) {
+        Account account = new Account(deliveryPersonAccountCreatedEvent.accountId, deliveryPersonAccountCreatedEvent.email);
         accountRepository.saveOrUpdate(account);
     }
 

@@ -9,6 +9,7 @@ import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.shipping.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.shipping.domain.catalog.ShippingCatalog;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShippingIdException;
 import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfo;
@@ -21,6 +22,7 @@ public class Shipping {
     private final ShippingCatalog shippingCatalog;
     private final ShippingTicketFactory shippingTicketFactory;
     private final MealKitShippingInfoFactory mealKitShippingInfoFactory;
+    private final List<UniqueIdentifier> deliveryAccountIds = new ArrayList<>();
 
     public Shipping(ShippingCatalog shippingCatalog) {
         this.shippingCatalog = shippingCatalog;
@@ -65,11 +67,18 @@ public class Shipping {
     }
 
     public List<MealKitShippingInfo> pickupCargo(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
+        validateDeliveryPersonExists(accountId);
         return shippingTickets.stream()
             .filter(shippingTicket -> shippingTicket.getTicketId().equals(shippingId))
             .findFirst()
             .orElseThrow(InvalidShippingIdException::new)
             .pickupCargo(accountId);
+    }
+
+    private void validateDeliveryPersonExists(UniqueIdentifier accountId) {
+        if (!deliveryAccountIds.contains(accountId)) {
+            throw new DeliveryPersonNotFoundException();
+        }
     }
 
     public void cancelShipping(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
@@ -94,5 +103,13 @@ public class Shipping {
             .findFirst()
             .orElseThrow(InvalidShippingIdException::new)
             .unconfirmShipping(accountId, mealKitId);
+    }
+
+    public void addDeliveryPerson(UniqueIdentifier accountId) {
+        deliveryAccountIds.add(accountId);
+    }
+
+    public List<UniqueIdentifier> getDeliveryPeople() {
+        return deliveryAccountIds;
     }
 }

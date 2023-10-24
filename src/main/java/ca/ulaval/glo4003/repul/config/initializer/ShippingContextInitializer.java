@@ -15,14 +15,11 @@ import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.application.ShippingCatalogService;
 import ca.ulaval.glo4003.repul.shipping.application.ShippingService;
-import ca.ulaval.glo4003.repul.shipping.domain.DeliveryAccount;
-import ca.ulaval.glo4003.repul.shipping.domain.DeliveryAccountRepository;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
 import ca.ulaval.glo4003.repul.shipping.domain.ShippingRepository;
 import ca.ulaval.glo4003.repul.shipping.domain.catalog.ShippingCatalog;
-import ca.ulaval.glo4003.repul.shipping.infrastructure.InMemoryDeliveryAccountRepository;
 import ca.ulaval.glo4003.repul.shipping.infrastructure.InMemoryShippingRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -34,29 +31,24 @@ public class ShippingContextInitializer {
     private static final String LOCATION_FIELD_NAME_IN_JSON = "location";
     private static final String NAME_FIELD_NAME_IN_JSON = "name";
     private static final String CAPACITY_FIELD_NAME_IN_JSON = "capacity";
+    private List<UniqueIdentifier> deliveryPersonIds = new ArrayList<>();
 
     private ShippingRepository shippingRepository = new InMemoryShippingRepository();
-    private DeliveryAccountRepository deliveryAccountRepository = new InMemoryDeliveryAccountRepository();
 
     public ShippingContextInitializer withShippingRepository(ShippingRepository shippingRepository) {
         this.shippingRepository = shippingRepository;
         return this;
     }
 
-    public ShippingContextInitializer withDeliveryAccountRepository(DeliveryAccountRepository deliveryAccountRepository) {
-        this.deliveryAccountRepository = deliveryAccountRepository;
-        return this;
-    }
-
-    public ShippingContextInitializer withShippers(List<UniqueIdentifier> shipperIds) {
-        shipperIds.forEach(shipperId -> deliveryAccountRepository.saveOrUpdate(new DeliveryAccount(shipperId)));
+    public ShippingContextInitializer withShippers(List<UniqueIdentifier> deliveryPersonIds) {
+        this.deliveryPersonIds.addAll(deliveryPersonIds);
         return this;
     }
 
     public ShippingService createShippingService(RepULEventBus eventBus) {
         LOGGER.info("Creating Shipping service");
         initializeShipping(shippingRepository);
-        return new ShippingService(shippingRepository, deliveryAccountRepository, eventBus);
+        return new ShippingService(shippingRepository, eventBus);
     }
 
     public ShippingCatalogService createShippingCatalogService() {
@@ -72,6 +64,7 @@ public class ShippingContextInitializer {
         ShippingCatalog shippingCatalog = new ShippingCatalog(deliveryLocations, kitchenLocations);
 
         Shipping shipping = new Shipping(shippingCatalog);
+        deliveryPersonIds.forEach(shipping::addDeliveryPerson);
 
         shippingRepository.saveOrUpdate(shipping);
     }

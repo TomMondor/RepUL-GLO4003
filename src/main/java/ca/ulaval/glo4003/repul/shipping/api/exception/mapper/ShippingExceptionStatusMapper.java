@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.shipping.api.exception.mapper;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import ca.ulaval.glo4003.repul.shipping.application.exception.DeliveryAccountNotFoundException;
+import ca.ulaval.glo4003.repul.shipping.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.shipping.application.exception.ShippingNotFoundException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShipperException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShippingIdException;
@@ -24,7 +24,7 @@ public class ShippingExceptionStatusMapper {
     private static void createExceptionMapper() {
         exceptionMapper = new WeakHashMap<>();
 
-        exceptionMapper.put(DeliveryAccountNotFoundException.class, Response.Status.NOT_FOUND);
+        exceptionMapper.put(DeliveryPersonNotFoundException.class, Response.Status.NOT_FOUND);
         exceptionMapper.put(ShippingNotFoundException.class, Response.Status.NOT_FOUND);
 
         exceptionMapper.put(InvalidShipperException.class, Response.Status.BAD_REQUEST);

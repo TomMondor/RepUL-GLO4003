@@ -23,7 +23,7 @@ import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 import ca.ulaval.glo4003.repul.shipping.application.event.MealKitDeliveryInfoDto;
 import ca.ulaval.glo4003.repul.shipping.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.DeliveryAccountCreatedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -80,9 +80,9 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingDeliveryAccountCreationEvent_shouldAddItToRepo() {
-        DeliveryAccountCreatedEvent deliveryAccountCreatedEvent = new DeliveryAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
+        DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent = new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
 
-        this.notificationService.handleDeliveryAccountCreated(deliveryAccountCreatedEvent);
+        this.notificationService.handleDeliveryAccountCreated(deliveryPersonAccountCreatedEvent);
 
         verify(accountRepository, times(1)).saveOrUpdate(A_DELIVERY_ACCOUNT);
     }
