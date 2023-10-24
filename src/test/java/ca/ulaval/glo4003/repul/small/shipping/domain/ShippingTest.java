@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
@@ -17,6 +16,7 @@ import ca.ulaval.glo4003.repul.fixture.shipping.ShippingFixture;
 import ca.ulaval.glo4003.repul.shipping.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
+import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
 import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidMealKitIdException;
@@ -48,7 +48,7 @@ public class ShippingTest {
     private static final UniqueIdentifier A_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier ANOTHER_SHIPPER_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier A_INVALID_SHIPPING_TICKET_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final CaseId A_CASE_ID = new CaseId("A_LOCATION_NAME 1", 1);
+    private static final LockerId A_LOCKER_ID = new LockerId("A_LOCATION_NAME 1", 1);
 
     @Mock
     private LocationsCatalog mockLocationsCatalog;
@@ -94,7 +94,7 @@ public class ShippingTest {
     }
 
     @Test
-    public void whenReceiveReadyToDeliverMealKit_shouldAssignCaseToMealKit() {
+    public void whenReceiveReadyToDeliverMealKit_shouldAssignLockerToMealKit() {
         DeliveryLocation deliveryLocation = new DeliveryLocation(A_DELIVERY_LOCATION_ID, A_LOCATION_NAME, 10);
         Shipping shipping = new ShippingFixture().withLocationsCatalog(
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(ANOTHER_DELIVERY_LOCATION).build()).build();
@@ -103,7 +103,7 @@ public class ShippingTest {
 
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
-        assertEquals(A_CASE_ID, shipping.getShippingTickets().get(0).getMealKitShippingInfos().get(0).getCaseId());
+        assertEquals(A_LOCKER_ID, shipping.getShippingTickets().get(0).getMealKitShippingInfos().get(0).getLockerId());
     }
 
     @Test
@@ -312,7 +312,7 @@ public class ShippingTest {
     }
 
     @Test
-    public void givenWaitingMealKit_whenConfirmShipping_shouldAssignCaseToWaitingMealKit() {
+    public void givenWaitingMealKit_whenConfirmShipping_shouldAssignLockerToWaitingMealKit() {
         Shipping shipping = new ShippingFixture().withLocationsCatalog(
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_ONE_PLACE_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
@@ -322,11 +322,11 @@ public class ShippingTest {
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
         shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
 
-        assertNull(shipping.getShippingTickets().get(0).getMealKitShippingInfos().get(1).getCaseId());
+        assertNull(shipping.getShippingTickets().get(0).getMealKitShippingInfos().get(1).getLockerId());
 
         shipping.confirmShipping(A_DELIVERY_PERSON_ID, ticketId, A_MEALKIT_ID);
 
-        assertEquals(A_CASE_ID, shipping.getShippingTickets().get(0).getMealKitShippingInfos().get(1).getCaseId());
+        assertEquals(A_LOCKER_ID, shipping.getShippingTickets().get(0).getMealKitShippingInfos().get(1).getLockerId());
     }
 
     @Test

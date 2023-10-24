@@ -51,14 +51,14 @@ public class NotificationService {
         String message = "Your meal kits (ticket:" + ticketId.value().toString() + ") are ready to be fetched from " + locationId.value() + "\n";
         message += "Here is the list of meal kits to be delivered:\n";
         for (MealKitDeliveryInfoDto mealKitDeliveryInfoDto : mealKitDeliveryInfoDtos) {
-            String caseId;
-            if (mealKitDeliveryInfoDto.caseId() == null) {
-                caseId = "To Be Determined";
+            String lockerId;
+            if (mealKitDeliveryInfoDto.lockerId() == null) {
+                lockerId = "To Be Determined";
             } else {
-                caseId = Integer.toString(mealKitDeliveryInfoDto.caseId().caseNumber());
+                lockerId = Integer.toString(mealKitDeliveryInfoDto.lockerId().lockerNumber());
             }
             message += "MealKit ID " + mealKitDeliveryInfoDto.mealkitId().value() + " to " + mealKitDeliveryInfoDto.shippingLocationId().value() + " in box " +
-                caseId + "\n";
+                lockerId + "\n";
         }
         return message;
     }

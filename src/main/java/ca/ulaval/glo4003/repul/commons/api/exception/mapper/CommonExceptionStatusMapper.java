@@ -5,7 +5,6 @@ import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.commons.domain.exception.CommonException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidAmountException;
-import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidCaseIdException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidEmailException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationIdException;
@@ -28,7 +27,6 @@ public class CommonExceptionStatusMapper {
 
         exceptionMapper.put(InvalidEmailException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidAmountException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(InvalidCaseIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidLocationException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidLocationIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidMealKitTypeException.class, Response.Status.BAD_REQUEST);

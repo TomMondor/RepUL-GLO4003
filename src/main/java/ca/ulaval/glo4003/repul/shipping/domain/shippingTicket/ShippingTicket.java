@@ -2,9 +2,9 @@ package ca.ulaval.glo4003.repul.shipping.domain.shippingTicket;
 
 import java.util.List;
 
-import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
+import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidMealKitIdException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShipperException;
 
@@ -61,7 +61,7 @@ public class ShippingTicket {
             .confirmShipping();
     }
 
-    public CaseId unconfirmShipping(UniqueIdentifier accountId, UniqueIdentifier mealKitId) {
+    public LockerId unconfirmShipping(UniqueIdentifier accountId, UniqueIdentifier mealKitId) {
         if (!accountId.equals(shipperId)) {
             throw new InvalidShipperException();
         }

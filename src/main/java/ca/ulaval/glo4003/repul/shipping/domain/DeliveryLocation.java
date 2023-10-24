@@ -1,10 +1,10 @@
 package ca.ulaval.glo4003.repul.shipping.domain;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfo;
 
@@ -12,14 +12,14 @@ public class DeliveryLocation {
     private final DeliveryLocationId deliveryLocationId;
     private final String name;
     private final int totalCapacity;
-    private final List<Case> cases = new ArrayList<>();
+    private final List<Locker> lockers = new ArrayList<>();
     private final List<MealKitShippingInfo> waitingMealKit = new ArrayList<>();
 
     public DeliveryLocation(DeliveryLocationId deliveryLocationId, String name, int totalCapacity) {
         this.deliveryLocationId = deliveryLocationId;
         this.name = name;
         this.totalCapacity = totalCapacity;
-        generateCases();
+        generateLockers();
     }
 
     public DeliveryLocationId getLocationId() {
@@ -31,40 +31,40 @@ public class DeliveryLocation {
     }
 
     public int getRemainingCapacity() {
-        return (int) cases.stream().filter(Case::isUnassigned).count();
+        return (int) lockers.stream().filter(Locker::isUnassigned).count();
     }
 
     public int getTotalCapacity() {
         return totalCapacity;
     }
 
-    private void generateCases() {
+    private void generateLockers() {
         for (int i = 0; i < totalCapacity; i++) {
-            cases.add(new Case(this.generateCaseId(i + 1)));
+            lockers.add(new Locker(this.generateLockerId(i + 1)));
         }
     }
 
-    private CaseId generateCaseId(int caseNumber) {
-        return new CaseId(this.name + " " + String.valueOf(caseNumber), caseNumber);
+    private LockerId generateLockerId(int lockerNumber) {
+        return new LockerId(this.name + " " + String.valueOf(lockerNumber), lockerNumber);
     }
 
-    public CaseId assignCase(MealKitShippingInfo mealKit) {
-        Optional<Case> assignedCase =
-            cases.stream().filter(Case::isUnassigned).sorted(
-                (c1, c2) -> Integer.compare(c1.getCaseId().caseNumber(), c2.getCaseId().caseNumber())
+    public LockerId assignLocker(MealKitShippingInfo mealKit) {
+        Optional<Locker> assignedLocker =
+            lockers.stream().filter(Locker::isUnassigned).sorted(
+                Comparator.comparingInt(c -> c.getLockerId().lockerNumber())
             ).findFirst();
-        if (assignedCase.isEmpty()) {
+        if (assignedLocker.isEmpty()) {
             waitingMealKit.add(mealKit);
             return null;
         }
-        assignedCase.get().assignCase(mealKit.getMealKitId());
-        return assignedCase.get().getCaseId();
+        assignedLocker.get().assign(mealKit.getMealKitId());
+        return assignedLocker.get().getLockerId();
     }
 
-    public void unassignCase(CaseId caseId) {
-        cases.stream().filter(c -> c.getCaseId().equals(caseId)).findFirst().get().unassignCase();
+    public void unassignLocker(LockerId lockerId) {
+        lockers.stream().filter(c -> c.getLockerId().equals(lockerId)).findFirst().get().unassign();
         if (!waitingMealKit.isEmpty()) {
-            waitingMealKit.remove(0).assignCase();
+            waitingMealKit.remove(0).assignLocker();
         }
     }
 }

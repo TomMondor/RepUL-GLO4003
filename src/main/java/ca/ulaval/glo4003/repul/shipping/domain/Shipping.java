@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
@@ -44,7 +43,7 @@ public class Shipping {
             .map(this.mealKitShippingInfos::remove)
             .toList();
 
-        mealKitShippingInfos.forEach(MealKitShippingInfo::assignCase);
+        mealKitShippingInfos.forEach(MealKitShippingInfo::assignLocker);
 
         mealKitShippingInfos.forEach(MealKitShippingInfo::markAsReadyToBeDelivered);
 
@@ -97,7 +96,7 @@ public class Shipping {
             .confirmShipping(accountId, mealKitId);
     }
 
-    public CaseId unconfirmShipping(UniqueIdentifier accountId, UniqueIdentifier ticketId, UniqueIdentifier mealKitId) {
+    public LockerId unconfirmShipping(UniqueIdentifier accountId, UniqueIdentifier ticketId, UniqueIdentifier mealKitId) {
         return shippingTickets.stream()
             .filter(shippingTicket -> shippingTicket.getTicketId().equals(ticketId))
             .findFirst()

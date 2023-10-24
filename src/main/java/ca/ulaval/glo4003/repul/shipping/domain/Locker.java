@@ -1,14 +1,13 @@
 package ca.ulaval.glo4003.repul.shipping.domain;
 
-import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 
-public class Case {
-    private final CaseId caseId;
+public class Locker {
+    private final LockerId lockerId;
     private UniqueIdentifier mealKitId;
 
-    public Case(CaseId caseId) {
-        this.caseId = caseId;
+    public Locker(LockerId lockerId) {
+        this.lockerId = lockerId;
     }
 
     public boolean isAssigned() {
@@ -19,15 +18,15 @@ public class Case {
         return this.mealKitId == null;
     }
 
-    public void assignCase(UniqueIdentifier mealKitId) {
+    public void assign(UniqueIdentifier mealKitId) {
         this.mealKitId = mealKitId;
     }
 
-    public void unassignCase() {
+    public void unassign() {
         this.mealKitId = null;
     }
 
-    public CaseId getCaseId() {
-        return caseId;
+    public LockerId getLockerId() {
+        return lockerId;
     }
 }

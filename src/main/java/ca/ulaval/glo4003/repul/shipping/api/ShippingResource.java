@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.repul.shipping.api;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.application.ShippingService;
-import ca.ulaval.glo4003.repul.shipping.application.payload.CasePayload;
+import ca.ulaval.glo4003.repul.shipping.application.payload.LockerPayload;
 import ca.ulaval.glo4003.repul.shipping.application.payload.MealKitShippingStatusPayload;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.middleware.Roles;
@@ -71,10 +71,10 @@ public class ShippingResource {
                                       @PathParam("mealKitId") String mealKitId) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
-        CasePayload casePayload =
-            CasePayload.from(shippingService.unconfirmShipping(accountId, UniqueIdentifier.from(ticketId), UniqueIdentifier.from(mealKitId)));
+        LockerPayload lockerPayload =
+            LockerPayload.from(shippingService.unconfirmShipping(accountId, UniqueIdentifier.from(ticketId), UniqueIdentifier.from(mealKitId)));
 
-        return Response.ok(casePayload).build();
+        return Response.ok(lockerPayload).build();
     }
 
     @GET

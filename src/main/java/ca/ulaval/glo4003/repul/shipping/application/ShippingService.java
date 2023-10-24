@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.shipping.application;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
-import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
@@ -12,6 +11,7 @@ import ca.ulaval.glo4003.repul.shipping.application.event.MealKitReceivedForDeli
 import ca.ulaval.glo4003.repul.shipping.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.shipping.application.exception.ShippingNotFoundException;
 import ca.ulaval.glo4003.repul.shipping.application.payload.MealKitShippingStatusPayload;
+import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
 import ca.ulaval.glo4003.repul.shipping.domain.ShippingRepository;
 import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfo;
@@ -66,7 +66,7 @@ public class ShippingService {
             new MealKitReceivedForDeliveryEvent(shippingTicket.getTicketId(), shippingTicket.getPickupLocation().getLocationId(),
                 shipping.getDeliveryPeople(), shippingTicket.getMealKitShippingInfos().stream().map(
                     mealKitShippingInfo -> new MealKitDeliveryInfoDto(mealKitShippingInfo.getShippingLocation().getLocationId(),
-                    mealKitShippingInfo.getCaseId(), mealKitShippingInfo.getMealKitId())).toList());
+                    mealKitShippingInfo.getLockerId(), mealKitShippingInfo.getMealKitId())).toList());
         eventBus.publish(mealKitReceivedForDeliveryEvent);
     }
 
@@ -106,13 +106,13 @@ public class ShippingService {
         shippingRepository.saveOrUpdate(shipping);
     }
 
-    public CaseId unconfirmShipping(UniqueIdentifier accountId, UniqueIdentifier ticketId, UniqueIdentifier mealKitId) {
+    public LockerId unconfirmShipping(UniqueIdentifier accountId, UniqueIdentifier ticketId, UniqueIdentifier mealKitId) {
         Shipping shipping = shippingRepository.get().orElseThrow(ShippingNotFoundException::new);
 
-        CaseId caseId = shipping.unconfirmShipping(accountId, ticketId, mealKitId);
+        LockerId lockerId = shipping.unconfirmShipping(accountId, ticketId, mealKitId);
 
         shippingRepository.saveOrUpdate(shipping);
 
-        return caseId;
+        return lockerId;
     }
 }

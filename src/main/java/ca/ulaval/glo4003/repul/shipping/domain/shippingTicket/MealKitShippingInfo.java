@@ -1,15 +1,15 @@
 package ca.ulaval.glo4003.repul.shipping.domain.shippingTicket;
 
-import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
+import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.MealKitNotInDeliveryException;
 
 public class MealKitShippingInfo {
     private final DeliveryLocation deliveryLocation;
     private final UniqueIdentifier mealKitId;
-    private CaseId caseId;
+    private LockerId lockerId;
     private ShippingStatus status;
 
     public MealKitShippingInfo(DeliveryLocation deliveryLocation, UniqueIdentifier mealKitId, ShippingStatus status) {
@@ -26,16 +26,16 @@ public class MealKitShippingInfo {
         return status;
     }
 
-    public CaseId getCaseId() {
-        return caseId;
+    public LockerId getLockerId() {
+        return lockerId;
     }
 
     public DeliveryLocation getShippingLocation() {
         return deliveryLocation;
     }
 
-    public void assignCase() {
-        this.caseId = this.deliveryLocation.assignCase(this);
+    public void assignLocker() {
+        this.lockerId = this.deliveryLocation.assignLocker(this);
     }
 
     public void markAsReadyToBeDelivered() {
@@ -54,15 +54,15 @@ public class MealKitShippingInfo {
         if (status != ShippingStatus.IN_DELIVERY) {
             throw new MealKitNotInDeliveryException();
         }
-        this.deliveryLocation.unassignCase(this.caseId);
+        this.deliveryLocation.unassignLocker(this.lockerId);
         status = ShippingStatus.DELIVERED;
     }
 
-    public CaseId unconfirmShipping() {
+    public LockerId unconfirmShipping() {
         if (status != ShippingStatus.DELIVERED) {
             throw new MealKitNotDeliveredException();
         }
         status = ShippingStatus.IN_DELIVERY;
-        return this.deliveryLocation.assignCase(this);
+        return this.deliveryLocation.assignLocker(this);
     }
 }
