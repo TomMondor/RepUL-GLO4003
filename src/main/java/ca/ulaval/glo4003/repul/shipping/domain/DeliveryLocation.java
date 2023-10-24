@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.MealKit;
 
 public class DeliveryLocation {
     private final DeliveryLocationId deliveryLocationId;

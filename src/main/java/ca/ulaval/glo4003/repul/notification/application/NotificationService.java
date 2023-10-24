@@ -38,7 +38,7 @@ public class NotificationService {
 
     @Subscribe
     public void handleMealKitReceivedForDeliveryEvent(MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent) {
-        String message = createReadyToBeDeliveredMessage(mealKitReceivedForDeliveryEvent.ticketId, mealKitReceivedForDeliveryEvent.kitchenLocationId,
+        String message = createReadyToBeDeliveredMessage(mealKitReceivedForDeliveryEvent.cargoId, mealKitReceivedForDeliveryEvent.kitchenLocationId,
             mealKitReceivedForDeliveryEvent.mealKitDeliveryInfos);
         for (UniqueIdentifier availableShipperId : mealKitReceivedForDeliveryEvent.availableShippers) {
             Account account = accountRepository.getByAccountId(availableShipperId).orElseThrow(AccountNotFoundException::new);
@@ -46,9 +46,9 @@ public class NotificationService {
         }
     }
 
-    private String createReadyToBeDeliveredMessage(UniqueIdentifier ticketId, KitchenLocationId locationId,
+    private String createReadyToBeDeliveredMessage(UniqueIdentifier cargoId, KitchenLocationId locationId,
                                                    List<MealKitDeliveryInfoDto> mealKitDeliveryInfoDtos) {
-        String message = "Your meal kits (ticket:" + ticketId.value().toString() + ") are ready to be fetched from " + locationId.value() + "\n";
+        String message = "Your meal kits (cargo id: " + cargoId.value().toString() + ") are ready to be fetched from " + locationId.value() + "\n";
         message += "Here is the list of meal kits to be delivered:\n";
         for (MealKitDeliveryInfoDto mealKitDeliveryInfoDto : mealKitDeliveryInfoDtos) {
             String lockerId;

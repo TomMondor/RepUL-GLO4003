@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.shipping.application.payload;
 
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.MealKit;
 
 public record MealKitShippingStatusPayload(String shippingStatus, String shippingLocationId, String lockerId) {
     public static MealKitShippingStatusPayload from(MealKit mealKit) {

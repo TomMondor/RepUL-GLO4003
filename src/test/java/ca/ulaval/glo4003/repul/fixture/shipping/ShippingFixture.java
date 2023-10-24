@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingTicket;
 
 public class ShippingFixture {
-    private List<ShippingTicket> shippingTickets;
+    private List<Cargo> cargos;
     private LocationsCatalog locationsCatalog;
 
     public ShippingFixture() {
-        this.shippingTickets = new ArrayList<>();
+        this.cargos = new ArrayList<>();
         this.locationsCatalog = new LocationsCatalogFixture().build();
     }
 
-    public ShippingFixture addShippingTicket(ShippingTicket shippingTicket) {
-        this.shippingTickets.add(shippingTicket);
+    public ShippingFixture addCargo(Cargo cargo) {
+        this.cargos.add(cargo);
         return this;
     }
 

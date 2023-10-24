@@ -18,12 +18,12 @@ import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.DeliveryStatus;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.MealKit;
 import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidMealKitIdException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShipperException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShippingIdException;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingStatus;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +47,7 @@ public class ShippingTest {
     private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier A_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier ANOTHER_SHIPPER_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_INVALID_SHIPPING_TICKET_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_INVALID_CARGO_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final LockerId A_LOCKER_ID = new LockerId("A_LOCATION_NAME 1", 1);
 
     @Mock
@@ -72,14 +72,14 @@ public class ShippingTest {
     }
 
     @Test
-    public void whenReceiveReadyToDeliverMealKit_shouldCreateShippingTicket() {
+    public void whenReceiveReadyToDeliverMealKit_shouldCreateCargo() {
         Shipping shipping = new ShippingFixture().withLocationsCatalog(
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
-        assertEquals(1, shipping.getShippingTickets().size());
+        assertEquals(1, shipping.getCargos().size());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ShippingTest {
 
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
-        assertEquals(ShippingStatus.READY_TO_BE_DELIVERED, shipping.getShippingTickets().get(0).getMealKits().get(0).getStatus());
+        assertEquals(DeliveryStatus.READY_TO_BE_DELIVERED, shipping.getCargos().get(0).getMealKits().get(0).getStatus());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ShippingTest {
 
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
-        assertEquals(A_LOCKER_ID, shipping.getShippingTickets().get(0).getMealKits().get(0).getLockerId());
+        assertEquals(A_LOCKER_ID, shipping.getCargos().get(0).getMealKits().get(0).getLockerId());
     }
 
     @Test
@@ -128,17 +128,17 @@ public class ShippingTest {
     }
 
     @Test
-    public void givenShipperId_whenPickupCargo_shouldSetShippingTicketShipperIdToRightValue() {
+    public void givenShipperId_whenPickupCargo_shouldSetCargoShipperIdToRightValue() {
         Shipping shipping = new ShippingFixture().withLocationsCatalog(
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
 
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertEquals(A_DELIVERY_PERSON_ID, shipping.getShippingTickets().get(0).getShipperId());
+        assertEquals(A_DELIVERY_PERSON_ID, shipping.getCargos().get(0).getShipperId());
     }
 
     @Test
@@ -147,12 +147,12 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
 
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertEquals(ShippingStatus.IN_DELIVERY, shipping.getShippingTickets().get(0).getMealKits().get(0).getStatus());
+        assertEquals(DeliveryStatus.IN_DELIVERY, shipping.getCargos().get(0).getMealKits().get(0).getStatus());
     }
 
     @Test
@@ -161,10 +161,10 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
 
-        List<MealKit> mealKits = shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        List<MealKit> mealKits = shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
         assertEquals(A_MEALKIT_ID, mealKits.get(0).getMealKitId());
     }
@@ -174,7 +174,7 @@ public class ShippingTest {
         Shipping shipping = new ShippingFixture().build();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
 
-        assertThrows(InvalidShippingIdException.class, () -> shipping.pickupCargo(A_DELIVERY_PERSON_ID, A_INVALID_SHIPPING_TICKET_ID));
+        assertThrows(InvalidShippingIdException.class, () -> shipping.pickupCargo(A_DELIVERY_PERSON_ID, A_INVALID_CARGO_ID));
     }
 
     @Test
@@ -183,20 +183,20 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        shipping.cancelShipping(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.cancelShipping(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertEquals(ShippingStatus.READY_TO_BE_DELIVERED, shipping.getShippingTickets().get(0).getMealKits().get(0).getStatus());
+        assertEquals(DeliveryStatus.READY_TO_BE_DELIVERED, shipping.getCargos().get(0).getMealKits().get(0).getStatus());
     }
 
     @Test
     public void givenInvalidShippingId_whenCancelShipping_shouldThrowInvalidShippingIdException() {
         Shipping shipping = new ShippingFixture().build();
 
-        assertThrows(InvalidShippingIdException.class, () -> shipping.cancelShipping(A_DELIVERY_PERSON_ID, A_INVALID_SHIPPING_TICKET_ID));
+        assertThrows(InvalidShippingIdException.class, () -> shipping.cancelShipping(A_DELIVERY_PERSON_ID, A_INVALID_CARGO_ID));
     }
 
     @Test
@@ -205,11 +205,11 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertThrows(InvalidShipperException.class, () -> shipping.cancelShipping(ANOTHER_SHIPPER_ID, ticketId));
+        assertThrows(InvalidShipperException.class, () -> shipping.cancelShipping(ANOTHER_SHIPPER_ID, cargoId));
     }
 
     @Test
@@ -218,20 +218,20 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        shipping.confirmShipping(A_DELIVERY_PERSON_ID, ticketId, A_MEALKIT_ID);
+        shipping.confirmShipping(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
-        assertEquals(ShippingStatus.DELIVERED, shipping.getShippingTickets().get(0).getMealKits().get(0).getStatus());
+        assertEquals(DeliveryStatus.DELIVERED, shipping.getCargos().get(0).getMealKits().get(0).getStatus());
     }
 
     @Test
     public void givenInvalidShippingId_whenConfirmShipping_shouldThrowInvalidShippingIdException() {
         Shipping shipping = new ShippingFixture().build();
 
-        assertThrows(InvalidShippingIdException.class, () -> shipping.confirmShipping(A_DELIVERY_PERSON_ID, A_INVALID_SHIPPING_TICKET_ID, A_MEALKIT_ID));
+        assertThrows(InvalidShippingIdException.class, () -> shipping.confirmShipping(A_DELIVERY_PERSON_ID, A_INVALID_CARGO_ID, A_MEALKIT_ID));
     }
 
     @Test
@@ -240,11 +240,11 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertThrows(InvalidShipperException.class, () -> shipping.confirmShipping(ANOTHER_SHIPPER_ID, ticketId, A_MEALKIT_ID));
+        assertThrows(InvalidShipperException.class, () -> shipping.confirmShipping(ANOTHER_SHIPPER_ID, cargoId, A_MEALKIT_ID));
     }
 
     @Test
@@ -253,11 +253,11 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertThrows(InvalidMealKitIdException.class, () -> shipping.confirmShipping(A_DELIVERY_PERSON_ID, ticketId, ANOTHER_MEALKIT_ID));
+        assertThrows(InvalidMealKitIdException.class, () -> shipping.confirmShipping(A_DELIVERY_PERSON_ID, cargoId, ANOTHER_MEALKIT_ID));
     }
 
     @Test
@@ -266,21 +266,21 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
-        shipping.confirmShipping(A_DELIVERY_PERSON_ID, ticketId, A_MEALKIT_ID);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+        shipping.confirmShipping(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
-        shipping.unconfirmShipping(A_DELIVERY_PERSON_ID, ticketId, A_MEALKIT_ID);
+        shipping.unconfirmShipping(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
-        assertEquals(ShippingStatus.IN_DELIVERY, shipping.getShippingTickets().get(0).getMealKits().get(0).getStatus());
+        assertEquals(DeliveryStatus.IN_DELIVERY, shipping.getCargos().get(0).getMealKits().get(0).getStatus());
     }
 
     @Test
     public void givenInvalidShippingId_whenUnconfirmShipping_shouldThrowInvalidShippingIdException() {
         Shipping shipping = new ShippingFixture().build();
 
-        assertThrows(InvalidShippingIdException.class, () -> shipping.unconfirmShipping(A_DELIVERY_PERSON_ID, A_INVALID_SHIPPING_TICKET_ID, A_MEALKIT_ID));
+        assertThrows(InvalidShippingIdException.class, () -> shipping.unconfirmShipping(A_DELIVERY_PERSON_ID, A_INVALID_CARGO_ID, A_MEALKIT_ID));
     }
 
     @Test
@@ -289,12 +289,12 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
-        shipping.confirmShipping(A_DELIVERY_PERSON_ID, ticketId, A_MEALKIT_ID);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+        shipping.confirmShipping(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
-        assertThrows(InvalidShipperException.class, () -> shipping.unconfirmShipping(ANOTHER_SHIPPER_ID, ticketId, A_MEALKIT_ID));
+        assertThrows(InvalidShipperException.class, () -> shipping.unconfirmShipping(ANOTHER_SHIPPER_ID, cargoId, A_MEALKIT_ID));
     }
 
     @Test
@@ -303,12 +303,12 @@ public class ShippingTest {
             new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
-        shipping.confirmShipping(A_DELIVERY_PERSON_ID, ticketId, A_MEALKIT_ID);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+        shipping.confirmShipping(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
-        assertThrows(InvalidMealKitIdException.class, () -> shipping.unconfirmShipping(A_DELIVERY_PERSON_ID, ticketId, ANOTHER_MEALKIT_ID));
+        assertThrows(InvalidMealKitIdException.class, () -> shipping.unconfirmShipping(A_DELIVERY_PERSON_ID, cargoId, ANOTHER_MEALKIT_ID));
     }
 
     @Test
@@ -318,15 +318,15 @@ public class ShippingTest {
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.createMealKit(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
+        UniqueIdentifier cargoId = shipping.getCargos().get(0).getCargoId();
         shipping.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        shipping.pickupCargo(A_DELIVERY_PERSON_ID, ticketId);
+        shipping.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertNull(shipping.getShippingTickets().get(0).getMealKits().get(1).getLockerId());
+        assertNull(shipping.getCargos().get(0).getMealKits().get(1).getLockerId());
 
-        shipping.confirmShipping(A_DELIVERY_PERSON_ID, ticketId, A_MEALKIT_ID);
+        shipping.confirmShipping(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
-        assertEquals(A_LOCKER_ID, shipping.getShippingTickets().get(0).getMealKits().get(1).getLockerId());
+        assertEquals(A_LOCKER_ID, shipping.getCargos().get(0).getMealKits().get(1).getLockerId());
     }
 
     @Test

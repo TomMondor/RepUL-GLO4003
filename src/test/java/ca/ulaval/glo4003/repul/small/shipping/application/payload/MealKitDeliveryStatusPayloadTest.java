@@ -8,18 +8,18 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.application.payload.MealKitShippingStatusPayload;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingStatus;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.DeliveryStatus;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.MealKit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MealKitShippingStatusPayloadTest {
+public class MealKitDeliveryStatusPayloadTest {
     private static final DeliveryLocationId DELIVERY_LOCATION_ID = new DeliveryLocationId("Location id");
     private static final String LOCATION_NAME = "VACHON";
     private static final int LOCATION_TOTAL_CAPACITY = 10;
     private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(DELIVERY_LOCATION_ID, LOCATION_NAME, LOCATION_TOTAL_CAPACITY);
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
-    private static final ShippingStatus SHIPPING_STATUS = ShippingStatus.IN_DELIVERY;
+    private static final DeliveryStatus SHIPPING_STATUS = DeliveryStatus.IN_DELIVERY;
     private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_MEAL_KIT_ID);
     private static final MealKit MEAL_KIT = new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, SHIPPING_STATUS);
     private static final MealKit ANOTHER_SHIPPING_INFO =

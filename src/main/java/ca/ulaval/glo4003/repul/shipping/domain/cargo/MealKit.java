@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.shipping.domain.shippingTicket;
+package ca.ulaval.glo4003.repul.shipping.domain.cargo;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
@@ -10,9 +10,9 @@ public class MealKit {
     private final DeliveryLocation deliveryLocation;
     private final UniqueIdentifier mealKitId;
     private LockerId lockerId;
-    private ShippingStatus status;
+    private DeliveryStatus status;
 
-    public MealKit(DeliveryLocation deliveryLocation, UniqueIdentifier mealKitId, ShippingStatus status) {
+    public MealKit(DeliveryLocation deliveryLocation, UniqueIdentifier mealKitId, DeliveryStatus status) {
         this.deliveryLocation = deliveryLocation;
         this.mealKitId = mealKitId;
         this.status = status;
@@ -22,7 +22,7 @@ public class MealKit {
         return mealKitId;
     }
 
-    public ShippingStatus getStatus() {
+    public DeliveryStatus getStatus() {
         return status;
     }
 
@@ -39,30 +39,30 @@ public class MealKit {
     }
 
     public void markAsReadyToBeDelivered() {
-        status = ShippingStatus.READY_TO_BE_DELIVERED;
+        status = DeliveryStatus.READY_TO_BE_DELIVERED;
     }
 
     public void pickupReadyToDeliverMealKit() {
-        status = ShippingStatus.IN_DELIVERY;
+        status = DeliveryStatus.IN_DELIVERY;
     }
 
     public void cancelInDeliveryShipping() {
-        status = ShippingStatus.READY_TO_BE_DELIVERED;
+        status = DeliveryStatus.READY_TO_BE_DELIVERED;
     }
 
     public void confirmShipping() {
-        if (status != ShippingStatus.IN_DELIVERY) {
+        if (status != DeliveryStatus.IN_DELIVERY) {
             throw new MealKitNotInDeliveryException();
         }
         this.deliveryLocation.unassignLocker(this.lockerId);
-        status = ShippingStatus.DELIVERED;
+        status = DeliveryStatus.DELIVERED;
     }
 
     public LockerId unconfirmShipping() {
-        if (status != ShippingStatus.DELIVERED) {
+        if (status != DeliveryStatus.DELIVERED) {
             throw new MealKitNotDeliveredException();
         }
-        status = ShippingStatus.IN_DELIVERY;
+        status = DeliveryStatus.IN_DELIVERY;
         return this.deliveryLocation.assignLocker(this);
     }
 }

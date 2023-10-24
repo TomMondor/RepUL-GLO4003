@@ -27,9 +27,9 @@ import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
 import ca.ulaval.glo4003.repul.shipping.domain.ShippingRepository;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingStatus;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingTicket;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.Cargo;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.DeliveryStatus;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.MealKit;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
@@ -42,9 +42,9 @@ import static org.mockito.Mockito.when;
 public class ShippingServiceTest {
     private static final String A_SHIPPING_ID = UUID.randomUUID().toString();
     private static final String A_SHIPPER_ID = UUID.randomUUID().toString();
-    private static final String A_TICKET_ID = UUID.randomUUID().toString();
+    private static final String A_CARGO_ID = UUID.randomUUID().toString();
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
-    private static final UniqueIdentifier A_TICKET_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_TICKET_ID);
+    private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_CARGO_ID);
     private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_MEAL_KIT_ID);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("Vachon");
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Pouliot");
@@ -52,24 +52,24 @@ public class ShippingServiceTest {
     private static final KitchenLocation A_KITCHEN_LOCATION = new KitchenLocation(A_KITCHEN_LOCATION_ID, "Vachon");
     private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Pouliot", 10);
     private static final MealKit A_MEAL_KIT =
-        new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, ShippingStatus.PENDING);
-    private static final ShippingTicket A_SHIPPING_TICKET =
-        new ShippingTicket(A_TICKET_UNIQUE_IDENTIFIER, A_KITCHEN_LOCATION, List.of(A_MEAL_KIT));
+        new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.PENDING);
+    private static final Cargo A_CARGO =
+        new Cargo(A_CARGO_UNIQUE_IDENTIFIER, A_KITCHEN_LOCATION, List.of(A_MEAL_KIT));
     private static final UniqueIdentifier A_SHIPPER_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_SHIPPER_ID);
-    private static final MealKitsCookedEvent A_MEAL_KITS_COOKED_EVENT =
-        new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.value(), List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
     private static final UniqueIdentifier A_SHIPPING_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_SHIPPING_ID);
     private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final MealKitsCookedEvent A_MEAL_KITS_COOKED_EVENT =
+        new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.value(), List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
     private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
-        new MealKitConfirmedEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, MealKitType.STANDARD, A_DELIVERY_LOCATION_ID,
-            A_DELIVERY_DATE);
     private static final UniqueIdentifier DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
     private static final Email DELIVERY_ACCOUNT_EMAIL = new Email("email@ulaval.ca");
     private static final DeliveryPersonAccountCreatedEvent DELIVERY_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(DELIVERY_ACCOUNT_ID, DELIVERY_ACCOUNT_EMAIL);
     private static final MealKitShippingStatusPayload A_MEAL_KIT_SHIPPING_STATUS_PAYLOAD =
-        new MealKitShippingStatusPayload(ShippingStatus.PENDING.toString(), A_DELIVERY_LOCATION_ID.value(), "To be determined");
+        new MealKitShippingStatusPayload(DeliveryStatus.PENDING.toString(), A_DELIVERY_LOCATION_ID.value(), "To be determined");
+    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
+        new MealKitConfirmedEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, MealKitType.STANDARD, A_DELIVERY_LOCATION_ID,
+            A_DELIVERY_DATE);
 
     private ShippingService shippingService;
     @Mock
@@ -170,7 +170,7 @@ public class ShippingServiceTest {
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldGetShipping() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        when(mockShipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_SHIPPING_TICKET);
+        when(mockShipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
         shippingService.receiveReadyToBeDeliveredMealKit(A_MEAL_KITS_COOKED_EVENT);
 
@@ -180,7 +180,7 @@ public class ShippingServiceTest {
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldSaveOrUpdate() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        when(mockShipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_SHIPPING_TICKET);
+        when(mockShipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
         shippingService.receiveReadyToBeDeliveredMealKit(A_MEAL_KITS_COOKED_EVENT);
 
@@ -188,9 +188,9 @@ public class ShippingServiceTest {
     }
 
     @Test
-    public void whenReceiveReadyToDeliverMealKit_shouldReturnShippingTicket() {
+    public void whenReceiveReadyToDeliverMealKit_shouldReturnCargo() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        when(mockShipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_SHIPPING_TICKET);
+        when(mockShipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
         shippingService.receiveReadyToBeDeliveredMealKit(A_MEAL_KITS_COOKED_EVENT);
 
@@ -200,7 +200,7 @@ public class ShippingServiceTest {
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldPublishMealKitReadyToDeliverEvent() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        when(mockShipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_SHIPPING_TICKET);
+        when(mockShipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
         shippingService.receiveReadyToBeDeliveredMealKit(A_MEAL_KITS_COOKED_EVENT);
 
@@ -254,7 +254,7 @@ public class ShippingServiceTest {
     @Test
     public void whenConfirmShipping_shouldGetShipping() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        shippingService.confirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_TICKET_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+        shippingService.confirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
         verify(shippingRepository).get();
     }
@@ -262,7 +262,7 @@ public class ShippingServiceTest {
     @Test
     public void whenConfirmShipping_shouldSaveOrUpdateShipping() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        shippingService.confirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_TICKET_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+        shippingService.confirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
         verify(shippingRepository).saveOrUpdate(any(Shipping.class));
     }
@@ -270,15 +270,15 @@ public class ShippingServiceTest {
     @Test
     public void givenValidUniqueIdentifiers_whenConfirmShipping_shouldConfirmShippingWithRightUniqueIdentifier() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        shippingService.confirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_TICKET_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+        shippingService.confirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockShipping).confirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_TICKET_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+        verify(mockShipping).confirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
     }
 
     @Test
     public void whenUnconfirmShipping_shouldGetShipping() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        shippingService.unconfirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_TICKET_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+        shippingService.unconfirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
         verify(shippingRepository).get();
     }
@@ -286,7 +286,7 @@ public class ShippingServiceTest {
     @Test
     public void whenUnconfirmShipping_shouldSaveOrUpdateShipping() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        shippingService.unconfirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_TICKET_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+        shippingService.unconfirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
         verify(shippingRepository).saveOrUpdate(any(Shipping.class));
     }
@@ -294,8 +294,8 @@ public class ShippingServiceTest {
     @Test
     public void givenValidUniqueIdentifiers_whenUnconfirmShipping_shouldUnconfirmShippingWithRightUniqueIdentifier() {
         when(shippingRepository.get()).thenReturn(Optional.of(mockShipping));
-        shippingService.unconfirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_TICKET_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+        shippingService.unconfirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockShipping).unconfirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_TICKET_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+        verify(mockShipping).unconfirmShipping(A_SHIPPER_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
     }
 }

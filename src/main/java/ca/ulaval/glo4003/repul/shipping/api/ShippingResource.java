@@ -53,12 +53,12 @@ public class ShippingResource {
     @PUT
     @Secure
     @Roles(Role.SHIPPER)
-    @Path("/confirm/{ticketId}/{mealKitId}")
-    public Response confirmShipping(@Context ContainerRequestContext context, @PathParam("ticketId") String ticketId,
+    @Path("/confirm/{cargoId}/{mealKitId}")
+    public Response confirmShipping(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId,
                                     @PathParam("mealKitId") String mealKitId) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
-        shippingService.confirmShipping(accountId, UniqueIdentifier.from(ticketId), UniqueIdentifier.from(mealKitId));
+        shippingService.confirmShipping(accountId, UniqueIdentifier.from(cargoId), UniqueIdentifier.from(mealKitId));
 
         return Response.noContent().build();
     }
@@ -66,13 +66,13 @@ public class ShippingResource {
     @PUT
     @Secure
     @Roles(Role.SHIPPER)
-    @Path("/unconfirm/{ticketId}/{mealKitId}")
-    public Response unconfirmShipping(@Context ContainerRequestContext context, @PathParam("ticketId") String ticketId,
+    @Path("/unconfirm/{cargoId}/{mealKitId}")
+    public Response unconfirmShipping(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId,
                                       @PathParam("mealKitId") String mealKitId) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
         LockerPayload lockerPayload =
-            LockerPayload.from(shippingService.unconfirmShipping(accountId, UniqueIdentifier.from(ticketId), UniqueIdentifier.from(mealKitId)));
+            LockerPayload.from(shippingService.unconfirmShipping(accountId, UniqueIdentifier.from(cargoId), UniqueIdentifier.from(mealKitId)));
 
         return Response.ok(lockerPayload).build();
     }

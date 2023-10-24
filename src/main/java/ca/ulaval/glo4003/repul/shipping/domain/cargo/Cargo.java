@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.shipping.domain.shippingTicket;
+package ca.ulaval.glo4003.repul.shipping.domain.cargo;
 
 import java.util.List;
 
@@ -8,20 +8,20 @@ import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidMealKitIdException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShipperException;
 
-public class ShippingTicket {
-    private final UniqueIdentifier ticketId;
+public class Cargo {
+    private final UniqueIdentifier cargoId;
     private final List<MealKit> mealKits;
     private KitchenLocation kitchenLocation;
     private UniqueIdentifier shipperId;
 
-    public ShippingTicket(UniqueIdentifier ticketId, KitchenLocation kitchenLocation, List<MealKit> mealKits) {
-        this.ticketId = ticketId;
+    public Cargo(UniqueIdentifier cargoId, KitchenLocation kitchenLocation, List<MealKit> mealKits) {
+        this.cargoId = cargoId;
         this.kitchenLocation = kitchenLocation;
         this.mealKits = mealKits;
     }
 
-    public UniqueIdentifier getTicketId() {
-        return ticketId;
+    public UniqueIdentifier getCargoId() {
+        return cargoId;
     }
 
     public UniqueIdentifier getShipperId() {

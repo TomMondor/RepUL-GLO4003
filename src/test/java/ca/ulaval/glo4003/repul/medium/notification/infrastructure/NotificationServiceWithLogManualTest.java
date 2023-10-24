@@ -35,14 +35,14 @@ public class NotificationServiceWithLogManualTest {
     private static final DeliveryLocationId ANOTHER_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final LockerId ANOTHER_LOCKER_ID = new LockerId("ANOTHER_LOCKER_ID", 2);
     private static final UniqueIdentifier ANOTHER_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_TICKET_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory().generate();
 
     private static final List<UniqueIdentifier> AVAILABLE_SHIPPERS_IDS = List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
     private static final List<MealKitDeliveryInfoDto> MEAL_KIT_DELIVERY_INFO_DTOS =
         List.of(new MealKitDeliveryInfoDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID),
             new MealKitDeliveryInfoDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
-        new MealKitReceivedForDeliveryEvent(A_TICKET_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_DELIVERY_INFO_DTOS);
+        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_DELIVERY_INFO_DTOS);
 
     public static void main(String[] args) {
         NotificationSender notificationSender = new LogNotificationSender();

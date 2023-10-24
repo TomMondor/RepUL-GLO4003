@@ -49,7 +49,7 @@ public class NotificationServiceTest {
     private static final DeliveryLocationId ANOTHER_DELIVERY_LOCATION_ID = new DeliveryLocationId("ANOTHER_DELIVERY_LOCATION_ID");
     private static final LockerId ANOTHER_LOCKER_ID = new LockerId("ANOTHER_LOCKER_ID", 2);
     private static final UniqueIdentifier ANOTHER_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_TICKET_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory().generate();
 
     private static final List<UniqueIdentifier> AVAILABLE_SHIPPERS_IDS = List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
     private static final List<UniqueIdentifier> AVAILABLE_SHIPPERS_IDS_WITH_INVALID_ACCOUNT = List.of(A_VALID_DELIVERY_ACCOUNT_ID, AN_INVALID_ACCOUNT_ID);
@@ -57,9 +57,9 @@ public class NotificationServiceTest {
         List.of(new MealKitDeliveryInfoDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID),
             new MealKitDeliveryInfoDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
-        new MealKitReceivedForDeliveryEvent(A_TICKET_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_DELIVERY_INFO_DTOS);
+        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_DELIVERY_INFO_DTOS);
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEventWithInvalidDeliveryAccount =
-        new MealKitReceivedForDeliveryEvent(A_TICKET_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS_WITH_INVALID_ACCOUNT, MEAL_KIT_DELIVERY_INFO_DTOS);
+        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS_WITH_INVALID_ACCOUNT, MEAL_KIT_DELIVERY_INFO_DTOS);
 
     private NotificationService notificationService;
 
@@ -107,7 +107,8 @@ public class NotificationServiceTest {
 
         this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
 
-        String message = "Your meal kits (ticket:" + A_TICKET_ID.value().toString() + ") are ready to be fetched from " + A_KITCHEN_LOCATION_ID.value() + "\n";
+        String message =
+            "Your meal kits (cargo id: " + A_CARGO_ID.value().toString() + ") are ready to be fetched from " + A_KITCHEN_LOCATION_ID.value() + "\n";
         message += "Here is the list of meal kits to be delivered:\n";
         message += "MealKit ID " + A_MEAL_KIT_ID.value() + " to " + A_DELIVERY_LOCATION_ID.value() + " in box " + A_LOCKER_ID.lockerNumber() + "\n";
         message +=

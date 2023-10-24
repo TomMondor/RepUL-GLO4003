@@ -9,23 +9,23 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.application.exception.DeliveryPersonNotFoundException;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.Cargo;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.shipping.domain.cargo.MealKitFactory;
 import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShippingIdException;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitFactory;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingTicket;
 
 public class Shipping {
     private final Map<UniqueIdentifier, MealKit> pendingMealKits = new HashMap<>();
-    private final List<ShippingTicket> shippingTickets = new ArrayList<>();
+    private final List<Cargo> cargos = new ArrayList<>();
     private final LocationsCatalog locationsCatalog;
-    private final ShippingTicketFactory shippingTicketFactory;
+    private final CargoFactory cargoFactory;
     private final MealKitFactory mealKitFactory;
     private final List<UniqueIdentifier> deliveryAccountIds = new ArrayList<>();
 
     public Shipping(LocationsCatalog locationsCatalog) {
         this.locationsCatalog = locationsCatalog;
-        this.shippingTicketFactory = new ShippingTicketFactory();
+        this.cargoFactory = new CargoFactory();
         this.mealKitFactory = new MealKitFactory();
     }
 
@@ -34,11 +34,11 @@ public class Shipping {
             mealKitFactory.createMealKit(locationsCatalog.getDeliveryLocation(deliveryLocationId), mealKitId));
     }
 
-    public List<ShippingTicket> getShippingTickets() {
-        return shippingTickets;
+    public List<Cargo> getCargos() {
+        return cargos;
     }
 
-    public ShippingTicket receiveReadyToBeDeliveredMealKit(KitchenLocationId kitchenLocationId, List<UniqueIdentifier> mealKitIds) {
+    public Cargo receiveReadyToBeDeliveredMealKit(KitchenLocationId kitchenLocationId, List<UniqueIdentifier> mealKitIds) {
         List<MealKit> mealKits = mealKitIds.stream()
             .map(this.pendingMealKits::remove)
             .toList();
@@ -47,14 +47,14 @@ public class Shipping {
 
         mealKits.forEach(MealKit::markAsReadyToBeDelivered);
 
-        ShippingTicket shippingTicket = shippingTicketFactory.createShippingTicket(
+        Cargo cargo = cargoFactory.createCargo(
             locationsCatalog.getKitchenLocation(kitchenLocationId),
             mealKits
         );
 
-        shippingTickets.add(shippingTicket);
+        cargos.add(cargo);
 
-        return shippingTicket;
+        return cargo;
     }
 
     public MealKit getMealKit(UniqueIdentifier mealKitId) {
@@ -67,8 +67,8 @@ public class Shipping {
 
     public List<MealKit> pickupCargo(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
         validateDeliveryPersonExists(accountId);
-        return shippingTickets.stream()
-            .filter(shippingTicket -> shippingTicket.getTicketId().equals(shippingId))
+        return cargos.stream()
+            .filter(cargo -> cargo.getCargoId().equals(shippingId))
             .findFirst()
             .orElseThrow(InvalidShippingIdException::new)
             .pickupCargo(accountId);
@@ -81,24 +81,24 @@ public class Shipping {
     }
 
     public void cancelShipping(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
-        shippingTickets.stream()
-            .filter(shippingTicket -> shippingTicket.getTicketId().equals(shippingId))
+        cargos.stream()
+            .filter(cargo -> cargo.getCargoId().equals(shippingId))
             .findFirst()
             .orElseThrow(InvalidShippingIdException::new)
             .cancelShipping(accountId);
     }
 
-    public void confirmShipping(UniqueIdentifier accountId, UniqueIdentifier ticketId, UniqueIdentifier mealKitId) {
-        shippingTickets.stream()
-            .filter(shippingTicket -> shippingTicket.getTicketId().equals(ticketId))
+    public void confirmShipping(UniqueIdentifier accountId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
+        cargos.stream()
+            .filter(cargo -> cargo.getCargoId().equals(cargoId))
             .findFirst()
             .orElseThrow(InvalidShippingIdException::new)
             .confirmShipping(accountId, mealKitId);
     }
 
-    public LockerId unconfirmShipping(UniqueIdentifier accountId, UniqueIdentifier ticketId, UniqueIdentifier mealKitId) {
-        return shippingTickets.stream()
-            .filter(shippingTicket -> shippingTicket.getTicketId().equals(ticketId))
+    public LockerId unconfirmShipping(UniqueIdentifier accountId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
+        return cargos.stream()
+            .filter(cargo -> cargo.getCargoId().equals(cargoId))
             .findFirst()
             .orElseThrow(InvalidShippingIdException::new)
             .unconfirmShipping(accountId, mealKitId);
