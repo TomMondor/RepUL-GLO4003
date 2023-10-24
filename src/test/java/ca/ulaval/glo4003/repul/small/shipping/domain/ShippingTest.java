@@ -12,13 +12,13 @@ import ca.ulaval.glo4003.repul.commons.domain.CaseId;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
-import ca.ulaval.glo4003.repul.fixture.shipping.ShippingCatalogFixture;
+import ca.ulaval.glo4003.repul.fixture.shipping.LocationsCatalogFixture;
 import ca.ulaval.glo4003.repul.fixture.shipping.ShippingFixture;
 import ca.ulaval.glo4003.repul.shipping.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
-import ca.ulaval.glo4003.repul.shipping.domain.catalog.ShippingCatalog;
+import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidMealKitIdException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShipperException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShippingIdException;
@@ -51,11 +51,11 @@ public class ShippingTest {
     private static final CaseId A_CASE_ID = new CaseId("A_LOCATION_NAME 1", 1);
 
     @Mock
-    private ShippingCatalog mockShippingCatalog;
+    private LocationsCatalog mockLocationsCatalog;
 
     @Test
     public void givenValidValue_whenCreateMealKitShippingInfo_shouldCreateMealKitShippingInfo() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(new ShippingCatalogFixture().addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(new LocationsCatalogFixture().addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
 
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
@@ -64,17 +64,17 @@ public class ShippingTest {
 
     @Test
     public void whenCreateMealKitShippingInfo_shouldGetShippingLocation() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(mockShippingCatalog).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(mockLocationsCatalog).build();
 
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
-        verify(mockShippingCatalog).getDeliveryLocation(A_DELIVERY_LOCATION_ID);
+        verify(mockLocationsCatalog).getDeliveryLocation(A_DELIVERY_LOCATION_ID);
     }
 
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldCreateShippingTicket() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
@@ -84,8 +84,8 @@ public class ShippingTest {
 
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldMarkAsReadyToDeliver() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
@@ -96,8 +96,8 @@ public class ShippingTest {
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldAssignCaseToMealKit() {
         DeliveryLocation deliveryLocation = new DeliveryLocation(A_DELIVERY_LOCATION_ID, A_LOCATION_NAME, 10);
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(ANOTHER_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(ANOTHER_DELIVERY_LOCATION).build()).build();
 
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
@@ -108,18 +108,18 @@ public class ShippingTest {
 
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldGetPickupLocation() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(mockShippingCatalog).build();
-        when(mockShippingCatalog.getDeliveryLocation(A_DELIVERY_LOCATION_ID)).thenReturn(A_DELIVERY_LOCATION);
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(mockLocationsCatalog).build();
+        when(mockLocationsCatalog.getDeliveryLocation(A_DELIVERY_LOCATION_ID)).thenReturn(A_DELIVERY_LOCATION);
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
-        verify(mockShippingCatalog).getKitchenLocation(A_KITCHEN_LOCATION_ID);
+        verify(mockLocationsCatalog).getKitchenLocation(A_KITCHEN_LOCATION_ID);
     }
 
     @Test
     public void whenGetShippingLocation_shouldReturnShippingLocations() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(new ShippingCatalogFixture().addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(new LocationsCatalogFixture().addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
 
         List<DeliveryLocation> deliveryLocations = shipping.getShippingLocations();
 
@@ -129,8 +129,8 @@ public class ShippingTest {
 
     @Test
     public void givenShipperId_whenPickupCargo_shouldSetShippingTicketShipperIdToRightValue() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -143,8 +143,8 @@ public class ShippingTest {
 
     @Test
     public void whenPickupCargo_shouldSetShippingStatusToInProgress() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -157,8 +157,8 @@ public class ShippingTest {
 
     @Test
     public void whenPickupCargo_shouldReturnListOfMealKitShippingInfo() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -179,8 +179,8 @@ public class ShippingTest {
 
     @Test
     public void whenCancelShipping_shouldSetShippingStatusToReadyToDeliver() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -201,8 +201,8 @@ public class ShippingTest {
 
     @Test
     public void givenInvalidShipperId_whenCancelShipping_shouldThrowInvalidShippingIdException() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -214,8 +214,8 @@ public class ShippingTest {
 
     @Test
     public void whenConfirmShipping_shouldSetShippingStatusToDelivered() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -236,8 +236,8 @@ public class ShippingTest {
 
     @Test
     public void givenInvalidShipperId_whenConfirmShipping_shouldThrowInvalidShipperException() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -249,8 +249,8 @@ public class ShippingTest {
 
     @Test
     public void givenInvalidMealKitId_whenConfirmShipping_shouldThrowInvalidMealKitIdException() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -262,8 +262,8 @@ public class ShippingTest {
 
     @Test
     public void whenUnconfirmShipping_shouldSetShippingStatusToInDelivery() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -285,8 +285,8 @@ public class ShippingTest {
 
     @Test
     public void givenInvalidShipperId_whenUnconfirmShipping_shouldThrowInvalidShipperException() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -299,8 +299,8 @@ public class ShippingTest {
 
     @Test
     public void givenInvalidMealKitId_whenUnconfirmShipping_shouldThrowInvalidMealKitIdException() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         UniqueIdentifier ticketId = shipping.getShippingTickets().get(0).getTicketId();
@@ -313,8 +313,8 @@ public class ShippingTest {
 
     @Test
     public void givenWaitingMealKit_whenConfirmShipping_shouldAssignCaseToWaitingMealKit() {
-        Shipping shipping = new ShippingFixture().withShippingCatalog(
-            new ShippingCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_ONE_PLACE_DELIVERY_LOCATION).build()).build();
+        Shipping shipping = new ShippingFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_ONE_PLACE_DELIVERY_LOCATION).build()).build();
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         shipping.createMealKitShippingInfo(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
         shipping.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));

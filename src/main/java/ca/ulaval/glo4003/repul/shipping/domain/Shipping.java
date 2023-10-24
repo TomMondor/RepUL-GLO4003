@@ -10,7 +10,7 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.application.exception.DeliveryPersonNotFoundException;
-import ca.ulaval.glo4003.repul.shipping.domain.catalog.ShippingCatalog;
+import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShippingIdException;
 import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfo;
 import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfoFactory;
@@ -19,20 +19,20 @@ import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingTicket;
 public class Shipping {
     private final Map<UniqueIdentifier, MealKitShippingInfo> mealKitShippingInfos = new HashMap<>();
     private final List<ShippingTicket> shippingTickets = new ArrayList<>();
-    private final ShippingCatalog shippingCatalog;
+    private final LocationsCatalog locationsCatalog;
     private final ShippingTicketFactory shippingTicketFactory;
     private final MealKitShippingInfoFactory mealKitShippingInfoFactory;
     private final List<UniqueIdentifier> deliveryAccountIds = new ArrayList<>();
 
-    public Shipping(ShippingCatalog shippingCatalog) {
-        this.shippingCatalog = shippingCatalog;
+    public Shipping(LocationsCatalog locationsCatalog) {
+        this.locationsCatalog = locationsCatalog;
         this.shippingTicketFactory = new ShippingTicketFactory();
         this.mealKitShippingInfoFactory = new MealKitShippingInfoFactory();
     }
 
     public void createMealKitShippingInfo(DeliveryLocationId deliveryLocationId, UniqueIdentifier mealKitId) {
         mealKitShippingInfos.put(mealKitId,
-            mealKitShippingInfoFactory.createMealKitShippingInfo(shippingCatalog.getDeliveryLocation(deliveryLocationId), mealKitId));
+            mealKitShippingInfoFactory.createMealKitShippingInfo(locationsCatalog.getDeliveryLocation(deliveryLocationId), mealKitId));
     }
 
     public List<ShippingTicket> getShippingTickets() {
@@ -49,7 +49,7 @@ public class Shipping {
         mealKitShippingInfos.forEach(MealKitShippingInfo::markAsReadyToBeDelivered);
 
         ShippingTicket shippingTicket = shippingTicketFactory.createShippingTicket(
-            shippingCatalog.getKitchenLocation(kitchenLocationId),
+            locationsCatalog.getKitchenLocation(kitchenLocationId),
             mealKitShippingInfos
         );
 
@@ -63,7 +63,7 @@ public class Shipping {
     }
 
     public List<DeliveryLocation> getShippingLocations() {
-        return shippingCatalog.getDeliveryLocations();
+        return locationsCatalog.getDeliveryLocations();
     }
 
     public List<MealKitShippingInfo> pickupCargo(UniqueIdentifier accountId, UniqueIdentifier shippingId) {

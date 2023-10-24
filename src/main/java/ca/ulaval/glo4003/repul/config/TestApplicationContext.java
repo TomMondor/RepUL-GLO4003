@@ -28,7 +28,7 @@ import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.payment.application.PaymentService;
-import ca.ulaval.glo4003.repul.shipping.api.ShippingCatalogResource;
+import ca.ulaval.glo4003.repul.shipping.api.LocationsCatalogResource;
 import ca.ulaval.glo4003.repul.shipping.api.ShippingResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
@@ -83,7 +83,7 @@ public class TestApplicationContext implements ApplicationContext {
 
         ShippingContextInitializer shippingContextInitializer = new ShippingContextInitializer().withShippers(List.of(SHIPPER_ID));
         ShippingResource shippingResource = new ShippingResource(shippingContextInitializer.createShippingService(eventBus));
-        ShippingCatalogResource shippingCatalogResource = new ShippingCatalogResource(shippingContextInitializer.createShippingCatalogService());
+        LocationsCatalogResource locationsCatalogResource = new LocationsCatalogResource(shippingContextInitializer.createLocationsCatalogService());
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {
@@ -93,7 +93,7 @@ public class TestApplicationContext implements ApplicationContext {
                 bind(userResource).to(UserResource.class);
                 bind(mealKitResource).to(MealKitResource.class);
                 bind(shippingResource).to(ShippingResource.class);
-                bind(shippingCatalogResource).to(ShippingCatalogResource.class);
+                bind(locationsCatalogResource).to(LocationsCatalogResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
             }
         };

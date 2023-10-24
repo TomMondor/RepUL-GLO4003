@@ -6,10 +6,10 @@ import ca.ulaval.glo4003.repul.shipping.application.payload.LocationsPayload;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
 import ca.ulaval.glo4003.repul.shipping.domain.ShippingRepository;
 
-public class ShippingCatalogService {
+public class LocationsCatalogService {
     private final ShippingRepository shippingRepository;
 
-    public ShippingCatalogService(ShippingRepository shippingRepository) {
+    public LocationsCatalogService(ShippingRepository shippingRepository) {
         this.shippingRepository = shippingRepository;
     }
 

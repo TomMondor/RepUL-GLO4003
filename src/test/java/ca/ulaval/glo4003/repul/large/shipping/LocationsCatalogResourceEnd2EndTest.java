@@ -17,7 +17,7 @@ import ca.ulaval.glo4003.repul.shipping.api.response.LocationResponse;
 import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ShippingCatalogResourceEnd2EndTest {
+public class LocationsCatalogResourceEnd2EndTest {
     private static final ApplicationContext context = new TestApplicationContext();
     private static final String BASE_URL = context.getURI() + "catalog/";
     private static final LocationResponse EXPECTED_LOCATION = new LocationResponse("MYRAND", "Secteur EST", 12);

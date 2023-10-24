@@ -11,11 +11,11 @@ import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationException
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
 
-public class ShippingCatalog {
+public class LocationsCatalog {
     private final Map<DeliveryLocationId, DeliveryLocation> deliveryLocations;
     private final Map<KitchenLocationId, KitchenLocation> kitchenLocations;
 
-    public ShippingCatalog(List<DeliveryLocation> deliveryLocations, List<KitchenLocation> kitchenLocations) {
+    public LocationsCatalog(List<DeliveryLocation> deliveryLocations, List<KitchenLocation> kitchenLocations) {
         this.deliveryLocations = deliveryLocations.stream().collect(Collectors.toMap(DeliveryLocation::getLocationId, Function.identity()));
         this.kitchenLocations = kitchenLocations.stream().collect(Collectors.toMap(KitchenLocation::getLocationId, Function.identity()));
     }

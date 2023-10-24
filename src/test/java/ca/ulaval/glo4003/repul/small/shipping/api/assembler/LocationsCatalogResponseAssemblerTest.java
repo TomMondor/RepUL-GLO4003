@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.shipping.api.assembler.ShippingCatalogResponseAssembler;
+import ca.ulaval.glo4003.repul.shipping.api.assembler.LocationsCatalogResponseAssembler;
 import ca.ulaval.glo4003.repul.shipping.api.response.LocationResponse;
 import ca.ulaval.glo4003.repul.shipping.application.payload.LocationPayload;
 import ca.ulaval.glo4003.repul.shipping.application.payload.LocationsPayload;
@@ -14,7 +14,7 @@ import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ShippingCatalogResponseAssemblerTest {
+public class LocationsCatalogResponseAssemblerTest {
     private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(new DeliveryLocationId("VACHON"), "vch-1", 10);
     private static final DeliveryLocation A_SECOND_DELIVERY_LOCATION = new DeliveryLocation(new DeliveryLocationId("PEPS"), "pep-2", 20);
     private static final DeliveryLocation A_THIRD_DELIVERY_LOCATION = new DeliveryLocation(new DeliveryLocationId("DESJARDINS"), "dej-3", 30);
@@ -30,11 +30,11 @@ public class ShippingCatalogResponseAssemblerTest {
     private static final LocationsPayload A_LOCATIONS_PAYLOAD =
         new LocationsPayload(List.of(A_LOCATION_PAYLOAD, A_SECOND_LOCATION_PAYLOAD, A_THIRD_LOCATION_PAYLOAD));
 
-    private ShippingCatalogResponseAssembler catalogResponseAssembler;
+    private LocationsCatalogResponseAssembler catalogResponseAssembler;
 
     @BeforeEach
     public void createAssembler() {
-        catalogResponseAssembler = new ShippingCatalogResponseAssembler();
+        catalogResponseAssembler = new LocationsCatalogResponseAssembler();
     }
 
     @Test

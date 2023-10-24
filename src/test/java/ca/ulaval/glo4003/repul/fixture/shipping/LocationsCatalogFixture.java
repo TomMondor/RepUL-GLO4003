@@ -7,28 +7,28 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
-import ca.ulaval.glo4003.repul.shipping.domain.catalog.ShippingCatalog;
+import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
 
-public class ShippingCatalogFixture {
+public class LocationsCatalogFixture {
     private final Map<DeliveryLocationId, DeliveryLocation> deliveryLocations;
     private final Map<KitchenLocationId, KitchenLocation> kitchenLocations;
 
-    public ShippingCatalogFixture() {
+    public LocationsCatalogFixture() {
         this.deliveryLocations = new HashMap<>();
         this.kitchenLocations = new HashMap<>();
     }
 
-    public ShippingCatalogFixture addDeliveryLocation(DeliveryLocation deliveryLocation) {
+    public LocationsCatalogFixture addDeliveryLocation(DeliveryLocation deliveryLocation) {
         deliveryLocations.put(deliveryLocation.getLocationId(), deliveryLocation);
         return this;
     }
 
-    public ShippingCatalogFixture addKitchenLocation(KitchenLocation kitchenLocation) {
+    public LocationsCatalogFixture addKitchenLocation(KitchenLocation kitchenLocation) {
         kitchenLocations.put(kitchenLocation.getLocationId(), kitchenLocation);
         return this;
     }
 
-    public ShippingCatalog build() {
-        return new ShippingCatalog(deliveryLocations.values().stream().toList(), kitchenLocations.values().stream().toList());
+    public LocationsCatalog build() {
+        return new LocationsCatalog(deliveryLocations.values().stream().toList(), kitchenLocations.values().stream().toList());
     }
 }

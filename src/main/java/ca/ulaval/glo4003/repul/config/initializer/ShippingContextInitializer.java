@@ -13,13 +13,13 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
-import ca.ulaval.glo4003.repul.shipping.application.ShippingCatalogService;
+import ca.ulaval.glo4003.repul.shipping.application.LocationsCatalogService;
 import ca.ulaval.glo4003.repul.shipping.application.ShippingService;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
 import ca.ulaval.glo4003.repul.shipping.domain.ShippingRepository;
-import ca.ulaval.glo4003.repul.shipping.domain.catalog.ShippingCatalog;
+import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.shipping.infrastructure.InMemoryShippingRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -51,9 +51,9 @@ public class ShippingContextInitializer {
         return new ShippingService(shippingRepository, eventBus);
     }
 
-    public ShippingCatalogService createShippingCatalogService() {
-        LOGGER.info("Creating Shipping Catalog service");
-        return new ShippingCatalogService(shippingRepository);
+    public LocationsCatalogService createLocationsCatalogService() {
+        LOGGER.info("Creating Locations Catalog service");
+        return new LocationsCatalogService(shippingRepository);
     }
 
     private void initializeShipping(ShippingRepository shippingRepository) {
@@ -61,9 +61,9 @@ public class ShippingContextInitializer {
         List<KitchenLocation> kitchenLocations = new ArrayList<>();
         kitchenLocations.add(new KitchenLocation(new KitchenLocationId("DESJARDINS"), "Desjardins"));
 
-        ShippingCatalog shippingCatalog = new ShippingCatalog(deliveryLocations, kitchenLocations);
+        LocationsCatalog locationsCatalog = new LocationsCatalog(deliveryLocations, kitchenLocations);
 
-        Shipping shipping = new Shipping(shippingCatalog);
+        Shipping shipping = new Shipping(locationsCatalog);
         deliveryPersonIds.forEach(shipping::addDeliveryPerson);
 
         shippingRepository.saveOrUpdate(shipping);
