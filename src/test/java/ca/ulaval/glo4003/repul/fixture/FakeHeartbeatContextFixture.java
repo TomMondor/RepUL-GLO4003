@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.repul.fixture;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
-import ca.ulaval.glo4003.config.ApplicationContext;
-import ca.ulaval.glo4003.config.http.CORSResponseFilter;
+import ca.ulaval.glo4003.repul.config.ApplicationContext;
+import ca.ulaval.glo4003.repul.config.http.CORSResponseFilter;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

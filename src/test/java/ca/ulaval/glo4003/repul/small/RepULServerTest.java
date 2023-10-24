@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.RepULServer;
+import ca.ulaval.glo4003.repul.RepULServer;
 import ca.ulaval.glo4003.repul.fixture.FakeHeartbeatContextFixture;
 
 import static io.restassured.RestAssured.when;
