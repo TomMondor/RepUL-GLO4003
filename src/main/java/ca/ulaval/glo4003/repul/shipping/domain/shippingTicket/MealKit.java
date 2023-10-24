@@ -6,13 +6,13 @@ import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.MealKitNotInDeliveryException;
 
-public class MealKitShippingInfo {
+public class MealKit {
     private final DeliveryLocation deliveryLocation;
     private final UniqueIdentifier mealKitId;
     private LockerId lockerId;
     private ShippingStatus status;
 
-    public MealKitShippingInfo(DeliveryLocation deliveryLocation, UniqueIdentifier mealKitId, ShippingStatus status) {
+    public MealKit(DeliveryLocation deliveryLocation, UniqueIdentifier mealKitId, ShippingStatus status) {
         this.deliveryLocation = deliveryLocation;
         this.mealKitId = mealKitId;
         this.status = status;

@@ -8,7 +8,7 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.application.payload.MealKitShippingStatusPayload;
 import ca.ulaval.glo4003.repul.shipping.domain.DeliveryLocation;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfo;
+import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
 import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,9 +21,9 @@ public class MealKitShippingStatusPayloadTest {
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
     private static final ShippingStatus SHIPPING_STATUS = ShippingStatus.IN_DELIVERY;
     private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_MEAL_KIT_ID);
-    private static final MealKitShippingInfo SHIPPING_INFO = new MealKitShippingInfo(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, SHIPPING_STATUS);
-    private static final MealKitShippingInfo ANOTHER_SHIPPING_INFO =
-        new MealKitShippingInfo(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, SHIPPING_STATUS);
+    private static final MealKit MEAL_KIT = new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, SHIPPING_STATUS);
+    private static final MealKit ANOTHER_SHIPPING_INFO =
+        new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, SHIPPING_STATUS);
     private static final String TO_BE_DETERMINE_LOCKER_ID = "To be determined";
     private static final String VACHON_1_LOCKER_ID = "VACHON 1";
 
@@ -41,10 +41,10 @@ public class MealKitShippingStatusPayloadTest {
     public void givenNullLockerId_whenUsingFrom_shouldReturnCorrectLockerPayload() {
         MealKitShippingStatusPayload expectedMealKitShippingStatusPayload =
             new MealKitShippingStatusPayload(SHIPPING_STATUS.toString(), DELIVERY_LOCATION_ID.value(), VACHON_1_LOCKER_ID);
-        MealKitShippingInfo shippingInfo = SHIPPING_INFO;
-        shippingInfo.assignLocker();
+        MealKit mealKit = MEAL_KIT;
+        mealKit.assignLocker();
 
-        MealKitShippingStatusPayload actualMealKitShippingStatusPayload = MealKitShippingStatusPayload.from(SHIPPING_INFO);
+        MealKitShippingStatusPayload actualMealKitShippingStatusPayload = MealKitShippingStatusPayload.from(MEAL_KIT);
 
         assertEquals(expectedMealKitShippingStatusPayload, actualMealKitShippingStatusPayload);
     }

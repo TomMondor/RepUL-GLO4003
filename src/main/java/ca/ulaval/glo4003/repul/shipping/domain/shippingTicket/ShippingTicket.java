@@ -10,14 +10,14 @@ import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShipperException
 
 public class ShippingTicket {
     private final UniqueIdentifier ticketId;
-    private final List<MealKitShippingInfo> mealKitShippingInfos;
+    private final List<MealKit> mealKits;
     private KitchenLocation kitchenLocation;
     private UniqueIdentifier shipperId;
 
-    public ShippingTicket(UniqueIdentifier ticketId, KitchenLocation kitchenLocation, List<MealKitShippingInfo> mealKitShippingInfos) {
+    public ShippingTicket(UniqueIdentifier ticketId, KitchenLocation kitchenLocation, List<MealKit> mealKits) {
         this.ticketId = ticketId;
         this.kitchenLocation = kitchenLocation;
-        this.mealKitShippingInfos = mealKitShippingInfos;
+        this.mealKits = mealKits;
     }
 
     public UniqueIdentifier getTicketId() {
@@ -32,14 +32,14 @@ public class ShippingTicket {
         return kitchenLocation;
     }
 
-    public List<MealKitShippingInfo> getMealKitShippingInfos() {
-        return mealKitShippingInfos;
+    public List<MealKit> getMealKits() {
+        return mealKits;
     }
 
-    public List<MealKitShippingInfo> pickupCargo(UniqueIdentifier accountId) {
+    public List<MealKit> pickupCargo(UniqueIdentifier accountId) {
         this.shipperId = accountId;
-        mealKitShippingInfos.forEach(MealKitShippingInfo::pickupReadyToDeliverMealKit);
-        return mealKitShippingInfos;
+        mealKits.forEach(MealKit::pickupReadyToDeliverMealKit);
+        return mealKits;
     }
 
     public void cancelShipping(UniqueIdentifier accountId) {
@@ -47,15 +47,15 @@ public class ShippingTicket {
             throw new InvalidShipperException();
         }
         this.shipperId = null;
-        mealKitShippingInfos.forEach(MealKitShippingInfo::cancelInDeliveryShipping);
+        mealKits.forEach(MealKit::cancelInDeliveryShipping);
     }
 
     public void confirmShipping(UniqueIdentifier accountId, UniqueIdentifier mealKitId) {
         if (!accountId.equals(shipperId)) {
             throw new InvalidShipperException();
         }
-        mealKitShippingInfos.stream()
-            .filter(mealKitShippingInfo -> mealKitShippingInfo.getMealKitId().equals(mealKitId))
+        mealKits.stream()
+            .filter(mealKit -> mealKit.getMealKitId().equals(mealKitId))
             .findFirst()
             .orElseThrow(InvalidMealKitIdException::new)
             .confirmShipping();
@@ -65,8 +65,8 @@ public class ShippingTicket {
         if (!accountId.equals(shipperId)) {
             throw new InvalidShipperException();
         }
-        return mealKitShippingInfos.stream()
-            .filter(mealKitShippingInfo -> mealKitShippingInfo.getMealKitId().equals(mealKitId))
+        return mealKits.stream()
+            .filter(mealKit -> mealKit.getMealKitId().equals(mealKitId))
             .findFirst()
             .orElseThrow(InvalidMealKitIdException::new)
             .unconfirmShipping();

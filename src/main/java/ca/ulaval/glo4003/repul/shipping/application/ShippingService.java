@@ -14,7 +14,7 @@ import ca.ulaval.glo4003.repul.shipping.application.payload.MealKitShippingStatu
 import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.shipping.domain.Shipping;
 import ca.ulaval.glo4003.repul.shipping.domain.ShippingRepository;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfo;
+import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
 import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingTicket;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
@@ -43,7 +43,7 @@ public class ShippingService {
     public void receiveShippingRequest(MealKitConfirmedEvent mealKitConfirmedEvent) {
         Shipping shipping = shippingRepository.get().orElseThrow(ShippingNotFoundException::new);
 
-        shipping.createMealKitShippingInfo(mealKitConfirmedEvent.deliveryLocationId, mealKitConfirmedEvent.mealKitId);
+        shipping.createMealKit(mealKitConfirmedEvent.deliveryLocationId, mealKitConfirmedEvent.mealKitId);
 
         shippingRepository.saveOrUpdate(shipping);
     }
@@ -64,24 +64,24 @@ public class ShippingService {
     private void sendReadyToBeDeliverMealKitEvent(ShippingTicket shippingTicket, Shipping shipping) {
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
             new MealKitReceivedForDeliveryEvent(shippingTicket.getTicketId(), shippingTicket.getPickupLocation().getLocationId(),
-                shipping.getDeliveryPeople(), shippingTicket.getMealKitShippingInfos().stream().map(
-                    mealKitShippingInfo -> new MealKitDeliveryInfoDto(mealKitShippingInfo.getShippingLocation().getLocationId(),
-                    mealKitShippingInfo.getLockerId(), mealKitShippingInfo.getMealKitId())).toList());
+                shipping.getDeliveryPeople(), shippingTicket.getMealKits().stream().map(
+                    mealKit -> new MealKitDeliveryInfoDto(mealKit.getShippingLocation().getLocationId(),
+                    mealKit.getLockerId(), mealKit.getMealKitId())).toList());
         eventBus.publish(mealKitReceivedForDeliveryEvent);
     }
 
     public void pickupCargo(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
         Shipping shipping = shippingRepository.get().orElseThrow(ShippingNotFoundException::new);
 
-        List<MealKitShippingInfo> mealKitShippingInfoList = shipping.pickupCargo(accountId, shippingId);
+        List<MealKit> mealKits = shipping.pickupCargo(accountId, shippingId);
 
-        sendPickupCargoEvent(mealKitShippingInfoList);
+        sendPickupCargoEvent(mealKits);
 
         shippingRepository.saveOrUpdate(shipping);
     }
 
-    private void sendPickupCargoEvent(List<MealKitShippingInfo> mealKitShippingInfoList) {
-        eventBus.publish(new PickedUpCargoEvent(mealKitShippingInfoList.stream().map(MealKitShippingInfo::getMealKitId).toList()));
+    private void sendPickupCargoEvent(List<MealKit> mealKits) {
+        eventBus.publish(new PickedUpCargoEvent(mealKits.stream().map(MealKit::getMealKitId).toList()));
     }
 
     public void cancelShipping(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
@@ -95,7 +95,7 @@ public class ShippingService {
     public MealKitShippingStatusPayload getShippingStatus(UniqueIdentifier mealKitId) {
         Shipping shipping = shippingRepository.get().orElseThrow(ShippingNotFoundException::new);
 
-        return MealKitShippingStatusPayload.from(shipping.getMealKitShippingInfo(mealKitId));
+        return MealKitShippingStatusPayload.from(shipping.getMealKit(mealKitId));
     }
 
     public void confirmShipping(UniqueIdentifier accountId, UniqueIdentifier ticketId, UniqueIdentifier mealKitId) {

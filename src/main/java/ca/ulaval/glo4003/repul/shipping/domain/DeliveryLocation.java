@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfo;
+import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
 
 public class DeliveryLocation {
     private final DeliveryLocationId deliveryLocationId;
     private final String name;
     private final int totalCapacity;
     private final List<Locker> lockers = new ArrayList<>();
-    private final List<MealKitShippingInfo> waitingMealKit = new ArrayList<>();
+    private final List<MealKit> waitingMealKit = new ArrayList<>();
 
     public DeliveryLocation(DeliveryLocationId deliveryLocationId, String name, int totalCapacity) {
         this.deliveryLocationId = deliveryLocationId;
@@ -48,7 +48,7 @@ public class DeliveryLocation {
         return new LockerId(this.name + " " + String.valueOf(lockerNumber), lockerNumber);
     }
 
-    public LockerId assignLocker(MealKitShippingInfo mealKit) {
+    public LockerId assignLocker(MealKit mealKit) {
         Optional<Locker> assignedLocker =
             lockers.stream().filter(Locker::isUnassigned).sorted(
                 Comparator.comparingInt(c -> c.getLockerId().lockerNumber())

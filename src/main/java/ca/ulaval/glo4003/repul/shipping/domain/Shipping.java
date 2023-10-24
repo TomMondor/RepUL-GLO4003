@@ -11,27 +11,27 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.shipping.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.shipping.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.shipping.domain.exception.InvalidShippingIdException;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfo;
-import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitShippingInfoFactory;
+import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKit;
+import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.MealKitFactory;
 import ca.ulaval.glo4003.repul.shipping.domain.shippingTicket.ShippingTicket;
 
 public class Shipping {
-    private final Map<UniqueIdentifier, MealKitShippingInfo> mealKitShippingInfos = new HashMap<>();
+    private final Map<UniqueIdentifier, MealKit> pendingMealKits = new HashMap<>();
     private final List<ShippingTicket> shippingTickets = new ArrayList<>();
     private final LocationsCatalog locationsCatalog;
     private final ShippingTicketFactory shippingTicketFactory;
-    private final MealKitShippingInfoFactory mealKitShippingInfoFactory;
+    private final MealKitFactory mealKitFactory;
     private final List<UniqueIdentifier> deliveryAccountIds = new ArrayList<>();
 
     public Shipping(LocationsCatalog locationsCatalog) {
         this.locationsCatalog = locationsCatalog;
         this.shippingTicketFactory = new ShippingTicketFactory();
-        this.mealKitShippingInfoFactory = new MealKitShippingInfoFactory();
+        this.mealKitFactory = new MealKitFactory();
     }
 
-    public void createMealKitShippingInfo(DeliveryLocationId deliveryLocationId, UniqueIdentifier mealKitId) {
-        mealKitShippingInfos.put(mealKitId,
-            mealKitShippingInfoFactory.createMealKitShippingInfo(locationsCatalog.getDeliveryLocation(deliveryLocationId), mealKitId));
+    public void createMealKit(DeliveryLocationId deliveryLocationId, UniqueIdentifier mealKitId) {
+        pendingMealKits.put(mealKitId,
+            mealKitFactory.createMealKit(locationsCatalog.getDeliveryLocation(deliveryLocationId), mealKitId));
     }
 
     public List<ShippingTicket> getShippingTickets() {
@@ -39,17 +39,17 @@ public class Shipping {
     }
 
     public ShippingTicket receiveReadyToBeDeliveredMealKit(KitchenLocationId kitchenLocationId, List<UniqueIdentifier> mealKitIds) {
-        List<MealKitShippingInfo> mealKitShippingInfos = mealKitIds.stream()
-            .map(this.mealKitShippingInfos::remove)
+        List<MealKit> mealKits = mealKitIds.stream()
+            .map(this.pendingMealKits::remove)
             .toList();
 
-        mealKitShippingInfos.forEach(MealKitShippingInfo::assignLocker);
+        mealKits.forEach(MealKit::assignLocker);
 
-        mealKitShippingInfos.forEach(MealKitShippingInfo::markAsReadyToBeDelivered);
+        mealKits.forEach(MealKit::markAsReadyToBeDelivered);
 
         ShippingTicket shippingTicket = shippingTicketFactory.createShippingTicket(
             locationsCatalog.getKitchenLocation(kitchenLocationId),
-            mealKitShippingInfos
+            mealKits
         );
 
         shippingTickets.add(shippingTicket);
@@ -57,15 +57,15 @@ public class Shipping {
         return shippingTicket;
     }
 
-    public MealKitShippingInfo getMealKitShippingInfo(UniqueIdentifier mealKitId) {
-        return mealKitShippingInfos.get(mealKitId);
+    public MealKit getMealKit(UniqueIdentifier mealKitId) {
+        return pendingMealKits.get(mealKitId);
     }
 
     public List<DeliveryLocation> getShippingLocations() {
         return locationsCatalog.getDeliveryLocations();
     }
 
-    public List<MealKitShippingInfo> pickupCargo(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
+    public List<MealKit> pickupCargo(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
         validateDeliveryPersonExists(accountId);
         return shippingTickets.stream()
             .filter(shippingTicket -> shippingTicket.getTicketId().equals(shippingId))
