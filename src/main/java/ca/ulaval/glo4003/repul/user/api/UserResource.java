@@ -44,8 +44,6 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/users:register")
     public Response register(@Valid RegistrationRequest registrationRequest) {
-        LOGGER.info("Registering new account for {}", registrationRequest.idul);
-
         userService.register(RegistrationQuery.from(registrationRequest.email, registrationRequest.password, registrationRequest.idul, registrationRequest.name,
             registrationRequest.birthdate, registrationRequest.gender));
 
