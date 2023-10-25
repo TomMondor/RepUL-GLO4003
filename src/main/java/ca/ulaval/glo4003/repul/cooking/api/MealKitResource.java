@@ -117,4 +117,15 @@ public class MealKitResource {
 
         return Response.noContent().build();
     }
+
+    @POST
+    @Secure
+    @Roles(Role.COOK)
+    @Path("/mealKits/{mealKitId}:recallCooked")
+    public Response recallCooked(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
+        UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+        cookingService.recallCooked(cookId, UniqueIdentifier.from(mealKitId));
+
+        return Response.noContent().build();
+    }
 }

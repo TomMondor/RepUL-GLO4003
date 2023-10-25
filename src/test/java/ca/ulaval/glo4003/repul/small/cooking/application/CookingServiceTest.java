@@ -21,6 +21,7 @@ import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
+import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,8 @@ public class CookingServiceTest {
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("DESJARDINS");
     private static final MealKitConfirmedEvent MEALKIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_UNIQUE_ID, A_UNIQUE_ID, A_UNIQUE_ID, A_MEALKIT_TYPE, null, A_DATE);
+    private static final PickedUpCargoEvent PICKED_UP_CARGO_EVENT =
+        new PickedUpCargoEvent(List.of(A_UNIQUE_ID));
 
     private CookingService cookingService;
     @Mock
@@ -258,6 +261,27 @@ public class CookingServiceTest {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
 
         cookingService.confirmCooked(A_COOK_ID, List.of(A_UNIQUE_ID, ANOTHER_UNIQUE_ID));
+
+        verify(kitchenRepository).saveOrUpdate(kitchen);
+    }
+
+    @Test
+    public void whenHandlingPickedUpCargoEvent_shouldGetKitchen() {
+        cookingService.handlePickedUpCargoEvent(PICKED_UP_CARGO_EVENT);
+
+        verify(kitchenRepository).get();
+    }
+
+    @Test
+    public void whenHandlingPickedUpCargoEvent_shouldRemoveMealKitsFromKitchen() {
+        cookingService.handlePickedUpCargoEvent(PICKED_UP_CARGO_EVENT);
+
+        verify(kitchen).removeMealKitsFromKitchen(List.of(A_UNIQUE_ID));
+    }
+
+    @Test
+    public void whenHandlingPickedUpCargoEvent_shouldSaveOrUpdateKitchen() {
+        cookingService.handlePickedUpCargoEvent(PICKED_UP_CARGO_EVENT);
 
         verify(kitchenRepository).saveOrUpdate(kitchen);
     }

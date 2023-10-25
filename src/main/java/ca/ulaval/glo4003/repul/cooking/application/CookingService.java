@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
+import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 
 import com.google.common.eventbus.Subscribe;
@@ -29,6 +30,15 @@ public class CookingService {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.addMealKit(event.mealKitId, event.mealKitType, event.deliveryDate);
+
+        kitchenRepository.saveOrUpdate(kitchen);
+    }
+
+    @Subscribe
+    public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
+        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+
+        kitchen.removeMealKitsFromKitchen(event.mealKitIds);
 
         kitchenRepository.saveOrUpdate(kitchen);
     }
@@ -89,5 +99,13 @@ public class CookingService {
         kitchenRepository.saveOrUpdate(kitchen);
 
         eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().value(), mealKitIds));
+    }
+
+    public void recallCooked(UniqueIdentifier cookId, UniqueIdentifier mealKitId) {
+        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+
+        kitchen.recallCooked(cookId, mealKitId);
+
+        kitchenRepository.saveOrUpdate(kitchen);
     }
 }

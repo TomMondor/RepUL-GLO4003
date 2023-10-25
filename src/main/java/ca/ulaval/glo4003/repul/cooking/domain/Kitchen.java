@@ -22,13 +22,17 @@ public class Kitchen {
         kitchenLocationId = new KitchenLocationId("DESJARDINS");
     }
 
+    public KitchenLocationId getKitchenLocationId() {
+        return kitchenLocationId;
+    }
+
     public void addMealKit(UniqueIdentifier mealKitId, MealKitType type, LocalDate deliveryDate) {
         MealKit mealKit = new MealKit(mealKitId, deliveryDate, recipesCatalog.getRecipes(type));
         mealKits.put(mealKitId, mealKit);
     }
 
     public List<MealKit> getMealKitsToCook() {
-        return mealKits.values().stream().filter(mealKit -> mealKit.isUnselected() && mealKit.isDeliveryTomorrow()).toList();
+        return mealKits.values().stream().filter(mealKit -> mealKit.isUnselected() && !mealKit.isCooked() && mealKit.isDeliveryTomorrow()).toList();
     }
 
     public void select(UniqueIdentifier cookId, List<UniqueIdentifier> selectedMealKitIds) {
@@ -55,16 +59,21 @@ public class Kitchen {
 
     public void confirmCooked(UniqueIdentifier cookId, UniqueIdentifier mealKitId) {
         verifyMealKitsInCookSelection(cookId, List.of(mealKitId));
-        removeMealKitsFromKitchen(List.of(mealKitId));
+        getMealKit(mealKitId).setCooked();
     }
 
     public void confirmCooked(UniqueIdentifier cookId, List<UniqueIdentifier> mealKitIds) {
         verifyMealKitsInCookSelection(cookId, mealKitIds);
-        removeMealKitsFromKitchen(mealKitIds);
+        mealKitIds.forEach(id -> getMealKit(id).setCooked());
     }
 
-    public KitchenLocationId getKitchenLocationId() {
-        return kitchenLocationId;
+    public void recallCooked(UniqueIdentifier cookId, UniqueIdentifier mealKitId) {
+        MealKit mealKit = getMealKit(mealKitId);
+        mealKit.recallMealKit(cookId);
+    }
+
+    public void removeMealKitsFromKitchen(List<UniqueIdentifier> mealKitIds) {
+        mealKitIds.forEach(mealKits::remove);
     }
 
     private void verifyMealKitsAreUnassigned(List<UniqueIdentifier> mealKitIds) {
@@ -89,10 +98,6 @@ public class Kitchen {
 
     private void unselectSelectedMealKits(UniqueIdentifier cookId) {
         getSelectedMealKits(cookId).forEach(mealKit -> mealKit.setCookId(null));
-    }
-
-    private void removeMealKitsFromKitchen(List<UniqueIdentifier> mealKitIds) {
-        mealKitIds.forEach(id -> mealKits.remove(id));
     }
 
     private MealKit getMealKit(UniqueIdentifier mealKitId) {

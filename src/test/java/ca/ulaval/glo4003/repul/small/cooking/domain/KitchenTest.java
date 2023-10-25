@@ -22,6 +22,7 @@ import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -121,12 +122,15 @@ public class KitchenTest {
     }
 
     @Test
-    public void givenMealKitInSelection_whenConfirmOneCooked_shouldRemoveFromKitchen() {
+    public void givenMealKitInSelection_whenConfirmOneCooked_shouldSetMealKitAsCooked() {
         addMealKit(A_MEALKIT_ID, true);
 
         kitchen.confirmCooked(A_COOK_ID, A_MEALKIT_ID);
 
-        assertEquals(0, kitchen.getSelection(A_COOK_ID).size());
+        List<UniqueIdentifier> mealKitsToCookIds = kitchen.getMealKitsToCook().stream().map(MealKit::getMealKitId).toList();
+        assertFalse(mealKitsToCookIds.contains(A_MEALKIT_ID));
+        assertFalse(mealKitsToCookIds.contains(ANOTHER_MEALKIT_ID));
+        assertFalse(kitchen.getSelection(A_COOK_ID).contains(A_MEALKIT_ID));
     }
 
     @Test
@@ -138,13 +142,26 @@ public class KitchenTest {
     }
 
     @Test
-    public void givenMealKitsInSelection_whenConfirmMultipleCooked_shouldRemoveFromKitchen() {
+    public void givenMealKitsInSelection_whenConfirmMultipleCooked_shouldSetMealKitAsCooked() {
         addMealKit(A_MEALKIT_ID, true);
         addMealKit(ANOTHER_MEALKIT_ID, true);
 
         kitchen.confirmCooked(A_COOK_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
 
-        assertEquals(0, kitchen.getSelection(A_COOK_ID).size());
+        List<UniqueIdentifier> mealKitsToCookIds = kitchen.getMealKitsToCook().stream().map(MealKit::getMealKitId).toList();
+        assertFalse(mealKitsToCookIds.contains(A_MEALKIT_ID));
+        assertFalse(mealKitsToCookIds.contains(ANOTHER_MEALKIT_ID));
+        assertFalse(kitchen.getSelection(A_COOK_ID).contains(A_MEALKIT_ID));
+    }
+
+    @Test
+    public void whenRemovingMealKitsFromKitchen_shouldNotBePossibleToRecallAnymore() {
+        addMealKit(A_MEALKIT_ID, true);
+        kitchen.confirmCooked(A_COOK_ID, List.of(A_MEALKIT_ID));
+
+        kitchen.removeMealKitsFromKitchen(List.of(A_MEALKIT_ID));
+
+        assertThrows(MealKitNotFoundException.class, () -> kitchen.recallCooked(A_COOK_ID, A_MEALKIT_ID));
     }
 
     private void addMealKit(UniqueIdentifier mealKitId, boolean selected) {
