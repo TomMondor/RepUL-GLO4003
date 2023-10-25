@@ -80,10 +80,11 @@ public class SubscriptionService {
         Subscription subscription = getSubscription(subscriberId, subscriptionId);
 
         Order confirmedOrder = subscription.confirmNextMealKit();
-        eventBus.publish(new MealKitConfirmedEvent(confirmedOrder.getOrderId(), subscription.getSubscriptionId(), subscription.getSubscriberId(),
-            subscription.getMealKitType(), subscription.getDeliveryLocationId(), confirmedOrder.getDeliveryDate()));
 
         subscriptionRepository.saveOrUpdate(subscription);
+
+        eventBus.publish(new MealKitConfirmedEvent(confirmedOrder.getOrderId(), subscription.getSubscriptionId(), subscription.getSubscriberId(),
+            subscription.getMealKitType(), subscription.getDeliveryLocationId(), confirmedOrder.getDeliveryDate()));
     }
 
     public void declineNextMealKitForSubscription(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {

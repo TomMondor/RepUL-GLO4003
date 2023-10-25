@@ -56,9 +56,9 @@ public class DeliveryService {
 
         Cargo cargo = deliverySystem.receiveReadyToBeDeliveredMealKit(kitchenLocationId, mealKitsCookedEvent.mealKitIds);
 
-        sendReadyToBeDeliverMealKitEvent(cargo, deliverySystem);
-
         deliverySystemRepository.saveOrUpdate(deliverySystem);
+
+        sendReadyToBeDeliverMealKitEvent(cargo, deliverySystem);
     }
 
     private void sendReadyToBeDeliverMealKitEvent(Cargo cargo, DeliverySystem deliverySystem) {
@@ -75,9 +75,9 @@ public class DeliveryService {
 
         List<MealKit> mealKits = deliverySystem.pickupCargo(deliveryPersonId, cargoId);
 
-        sendPickedUpCargoEvent(mealKits);
-
         deliverySystemRepository.saveOrUpdate(deliverySystem);
+
+        sendPickedUpCargoEvent(mealKits);
     }
 
     private void sendPickedUpCargoEvent(List<MealKit> mealKits) {
