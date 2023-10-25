@@ -9,10 +9,10 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api/health")
+@Produces(MediaType.APPLICATION_JSON)
 public class HealthResource {
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getHealth() {
         return Response.ok(new HealthDto("OK - Everything is alright!")).build();
     }

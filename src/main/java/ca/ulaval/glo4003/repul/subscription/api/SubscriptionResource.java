@@ -33,6 +33,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api")
+@Produces(MediaType.APPLICATION_JSON)
 public class SubscriptionResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
     private final SubscriptionService subscriptionService;
@@ -49,7 +50,6 @@ public class SubscriptionResource {
     @Roles(Role.CLIENT)
     @Path("/subscriptions")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response createSubscription(@Context ContainerRequestContext context, @Valid SubscriptionRequest subscriptionRequest) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         SubscriptionQuery subscriptionQuery =
@@ -66,7 +66,6 @@ public class SubscriptionResource {
     @Secure
     @Path("/subscriptions/{subscriptionId}")
     @Roles(Role.CLIENT)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getSubscription(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionIdAsString) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         UniqueIdentifier subscriptionId = new UniqueIdentifier(UUID.fromString(subscriptionIdAsString));
@@ -82,7 +81,6 @@ public class SubscriptionResource {
     @Secure
     @Path("/subscriptions")
     @Roles(Role.CLIENT)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getSubscriptions(@Context ContainerRequestContext context) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
@@ -118,7 +116,6 @@ public class SubscriptionResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/subscriptions:currentOrders")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getMyCurrentOrders(@Context ContainerRequestContext requestContext) {
         UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 

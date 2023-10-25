@@ -26,6 +26,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api")
+@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class MealKitResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
@@ -41,7 +42,6 @@ public class MealKitResource {
     @Secure
     @Roles(Role.COOK)
     @Path("/mealKits:toCook")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getMealKitsToCook() {
         MealKitsPayload mealKitsPayload = cookingService.getMealKitsToCook();
 
@@ -65,7 +65,6 @@ public class MealKitResource {
     @Secure
     @Roles(Role.COOK)
     @Path("/mealKits:getSelection")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getSelection(@Context ContainerRequestContext context) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         List<UniqueIdentifier> mealKitIds = cookingService.getSelection(cookId);
