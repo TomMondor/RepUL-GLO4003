@@ -14,23 +14,19 @@ import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
+import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.notification.application.NotificationService;
 import ca.ulaval.glo4003.repul.notification.application.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.AccountRepository;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
-import ca.ulaval.glo4003.repul.shipping.application.event.MealKitDeliveryInfoDto;
-import ca.ulaval.glo4003.repul.shipping.application.event.MealKitReceivedForDeliveryEvent;
-import ca.ulaval.glo4003.repul.shipping.domain.LockerId;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationServiceTest {
@@ -51,15 +47,15 @@ public class NotificationServiceTest {
     private static final UniqueIdentifier ANOTHER_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
     private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory().generate();
 
-    private static final List<UniqueIdentifier> AVAILABLE_SHIPPERS_IDS = List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
-    private static final List<UniqueIdentifier> AVAILABLE_SHIPPERS_IDS_WITH_INVALID_ACCOUNT = List.of(A_VALID_DELIVERY_ACCOUNT_ID, AN_INVALID_ACCOUNT_ID);
-    private static final List<MealKitDeliveryInfoDto> MEAL_KIT_DELIVERY_INFO_DTOS =
-        List.of(new MealKitDeliveryInfoDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID),
-            new MealKitDeliveryInfoDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
+    private static final List<UniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS = List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
+    private static final List<UniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS_WITH_INVALID_ACCOUNT =
+        List.of(A_VALID_DELIVERY_ACCOUNT_ID, AN_INVALID_ACCOUNT_ID);
+    private static final List<MealKitDto> MEAL_KIT_DTOS = List.of(new MealKitDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID),
+        new MealKitDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
-        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_DELIVERY_INFO_DTOS);
+        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_DELIVERY_PEOPLE_IDS, MEAL_KIT_DTOS);
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEventWithInvalidDeliveryAccount =
-        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS_WITH_INVALID_ACCOUNT, MEAL_KIT_DELIVERY_INFO_DTOS);
+        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_DELIVERY_PEOPLE_IDS_WITH_INVALID_ACCOUNT, MEAL_KIT_DTOS);
 
     private NotificationService notificationService;
 
@@ -74,7 +70,7 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void whenHandlingAccountCreation_shouldAddItToRepo() {
+    public void whenHandlingAccountCreation_shouldSaveOrUpdateAccountRepository() {
         AccountCreatedEvent accountCreatedEvent = new AccountCreatedEvent(A_VALID_ACCOUNT_ID, AN_EMAIL);
 
         this.notificationService.handleAccountCreated(accountCreatedEvent);
@@ -83,7 +79,7 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void whenHandlingDeliveryAccountCreationEvent_shouldAddItToRepo() {
+    public void whenHandlingDeliveryAccountCreationEvent_shouldSaveOrUpdateAccountRepository() {
         DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent = new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
 
         this.notificationService.handleDeliveryAccountCreated(deliveryPersonAccountCreatedEvent);
@@ -97,7 +93,7 @@ public class NotificationServiceTest {
 
         this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
 
-        verify(notificationSender, times(AVAILABLE_SHIPPERS_IDS.size())).send(any(Account.class), anyString());
+        verify(notificationSender, times(AVAILABLE_DELIVERY_PEOPLE_IDS.size())).send(any(Account.class), anyString());
     }
 
     @Test

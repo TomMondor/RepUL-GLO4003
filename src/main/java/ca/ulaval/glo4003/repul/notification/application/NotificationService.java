@@ -4,12 +4,12 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.notification.application.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.AccountRepository;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
-import ca.ulaval.glo4003.repul.shipping.application.event.MealKitDeliveryInfoDto;
-import ca.ulaval.glo4003.repul.shipping.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
@@ -39,25 +39,25 @@ public class NotificationService {
     @Subscribe
     public void handleMealKitReceivedForDeliveryEvent(MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent) {
         String message = createReadyToBeDeliveredMessage(mealKitReceivedForDeliveryEvent.cargoId, mealKitReceivedForDeliveryEvent.kitchenLocationId,
-            mealKitReceivedForDeliveryEvent.mealKitDeliveryInfos);
-        for (UniqueIdentifier availableShipperId : mealKitReceivedForDeliveryEvent.availableShippers) {
+            mealKitReceivedForDeliveryEvent.mealKitDtos);
+        for (UniqueIdentifier availableShipperId : mealKitReceivedForDeliveryEvent.availableDeliveryPeople) {
             Account account = accountRepository.getByAccountId(availableShipperId).orElseThrow(AccountNotFoundException::new);
             notificationSender.send(account, message);
         }
     }
 
     private String createReadyToBeDeliveredMessage(UniqueIdentifier cargoId, KitchenLocationId locationId,
-                                                   List<MealKitDeliveryInfoDto> mealKitDeliveryInfoDtos) {
+                                                   List<MealKitDto> mealKitDtos) {
         String message = "Your meal kits (cargo id: " + cargoId.value().toString() + ") are ready to be fetched from " + locationId.value() + "\n";
         message += "Here is the list of meal kits to be delivered:\n";
-        for (MealKitDeliveryInfoDto mealKitDeliveryInfoDto : mealKitDeliveryInfoDtos) {
+        for (MealKitDto mealKitDto : mealKitDtos) {
             String lockerId;
-            if (mealKitDeliveryInfoDto.lockerId() == null) {
+            if (mealKitDto.lockerId() == null) {
                 lockerId = "To Be Determined";
             } else {
-                lockerId = Integer.toString(mealKitDeliveryInfoDto.lockerId().lockerNumber());
+                lockerId = Integer.toString(mealKitDto.lockerId().lockerNumber());
             }
-            message += "MealKit ID " + mealKitDeliveryInfoDto.mealkitId().value() + " to " + mealKitDeliveryInfoDto.shippingLocationId().value() + " in box " +
+            message += "MealKit ID " + mealKitDto.mealKitId().value() + " to " + mealKitDto.deliveryLocationId().value() + " in box " +
                 lockerId + "\n";
         }
         return message;

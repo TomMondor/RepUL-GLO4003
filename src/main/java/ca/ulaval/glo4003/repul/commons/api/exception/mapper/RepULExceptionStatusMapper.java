@@ -4,8 +4,8 @@ import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.commons.domain.exception.RepULException;
 import ca.ulaval.glo4003.repul.cooking.api.exception.mapper.CookingExceptionStatusMapper;
+import ca.ulaval.glo4003.repul.delivery.api.exception.mapper.DeliveryExceptionStatusMapper;
 import ca.ulaval.glo4003.repul.notification.api.exception.mapper.NotificationExceptionStatusMapper;
-import ca.ulaval.glo4003.repul.shipping.api.exception.mapper.ShippingExceptionStatusMapper;
 import ca.ulaval.glo4003.repul.subscription.api.exception.mapper.SubscriptionExceptionStatusMapper;
 import ca.ulaval.glo4003.repul.user.api.exception.mapper.UserExceptionStatusMapper;
 
@@ -25,7 +25,7 @@ public class RepULExceptionStatusMapper {
         exceptionMapper = new WeakHashMap<>();
         exceptionMapper.putAll(UserExceptionStatusMapper.getAll());
         exceptionMapper.putAll(SubscriptionExceptionStatusMapper.getAll());
-        exceptionMapper.putAll(ShippingExceptionStatusMapper.getAll());
+        exceptionMapper.putAll(DeliveryExceptionStatusMapper.getAll());
         exceptionMapper.putAll(CommonExceptionStatusMapper.getAll());
         exceptionMapper.putAll(CookingExceptionStatusMapper.getAll());
         exceptionMapper.putAll(NotificationExceptionStatusMapper.getAll());

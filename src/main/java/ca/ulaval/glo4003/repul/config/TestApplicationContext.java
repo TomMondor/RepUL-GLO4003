@@ -20,16 +20,16 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.http.CORSResponseFilter;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
+import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
-import ca.ulaval.glo4003.repul.config.initializer.ShippingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.UserContextInitializer;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
+import ca.ulaval.glo4003.repul.delivery.api.DeliveryResource;
+import ca.ulaval.glo4003.repul.delivery.api.LocationsCatalogResource;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.payment.application.PaymentService;
-import ca.ulaval.glo4003.repul.shipping.api.LocationsCatalogResource;
-import ca.ulaval.glo4003.repul.shipping.api.ShippingResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
@@ -81,9 +81,9 @@ public class TestApplicationContext implements ApplicationContext {
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer();
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionContextInitializer.createSubscriptionService(eventBus));
 
-        ShippingContextInitializer shippingContextInitializer = new ShippingContextInitializer().withShippers(List.of(SHIPPER_ID));
-        ShippingResource shippingResource = new ShippingResource(shippingContextInitializer.createShippingService(eventBus));
-        LocationsCatalogResource locationsCatalogResource = new LocationsCatalogResource(shippingContextInitializer.createLocationsCatalogService());
+        DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(SHIPPER_ID));
+        DeliveryResource deliveryResource = new DeliveryResource(deliveryContextInitializer.createDeliveryService(eventBus));
+        LocationsCatalogResource locationsCatalogResource = new LocationsCatalogResource(deliveryContextInitializer.createLocationsCatalogService());
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {
@@ -92,7 +92,7 @@ public class TestApplicationContext implements ApplicationContext {
                 bind(healthResource).to(HealthResource.class);
                 bind(userResource).to(UserResource.class);
                 bind(mealKitResource).to(MealKitResource.class);
-                bind(shippingResource).to(ShippingResource.class);
+                bind(deliveryResource).to(DeliveryResource.class);
                 bind(locationsCatalogResource).to(LocationsCatalogResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
             }

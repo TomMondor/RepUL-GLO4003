@@ -209,7 +209,7 @@ public class CookingServiceTest {
 
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
-        assertEquals(A_KITCHEN_LOCATION_ID.value(), publishedEvent.pickupLocationId);
+        assertEquals(A_KITCHEN_LOCATION_ID.value(), publishedEvent.kitchenLocationId);
         assertEquals(List.of(A_UNIQUE_ID), publishedEvent.mealKitIds);
     }
 
@@ -249,7 +249,7 @@ public class CookingServiceTest {
 
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
-        assertEquals(A_KITCHEN_LOCATION_ID.value(), publishedEvent.pickupLocationId);
+        assertEquals(A_KITCHEN_LOCATION_ID.value(), publishedEvent.kitchenLocationId);
         assertEquals(MANY_IDS, publishedEvent.mealKitIds);
     }
 

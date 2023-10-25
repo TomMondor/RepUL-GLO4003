@@ -76,7 +76,7 @@ public class UserContextInitializer {
     }
 
     public UserContextInitializer withShippers(List<Map<UniqueIdentifier, RegistrationQuery>> queries) {
-        queries.forEach(query -> createAndSaveUser(query, Role.SHIPPER));
+        queries.forEach(query -> createAndSaveUser(query, Role.DELIVERY_PERSON));
         return this;
     }
 
