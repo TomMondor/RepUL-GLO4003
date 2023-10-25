@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.repul.subscription.domain.order;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
@@ -8,6 +10,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderNotPendingExce
 
 public class Order {
     private static final int DAYS_TO_CONFIRM = 2;
+    private static final LocalTime OPENING_TIME = LocalTime.of(9, 0);
     private final LocalDate deliveryDate;
     private final UniqueIdentifier orderId;
     private final MealKitType mealKitType;
@@ -48,7 +51,7 @@ public class Order {
 
     public void confirm() {
         verifyIfOrderIsPending();
-        if (LocalDate.now().isBefore(this.deliveryDate.minusDays(DAYS_TO_CONFIRM))) {
+        if (LocalDateTime.now().isBefore(LocalDateTime.of(this.deliveryDate.minusDays(DAYS_TO_CONFIRM), OPENING_TIME))) {
             orderStatus = OrderStatus.TO_COOK;
         } else {
             orderStatus = OrderStatus.DECLINED;
