@@ -4,5 +4,6 @@ public enum DeliveryStatus {
     PENDING,
     READY_TO_BE_DELIVERED,
     IN_DELIVERY,
-    DELIVERED
+    DELIVERED,
+    PICKED_UP
 }

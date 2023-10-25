@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
@@ -22,18 +23,19 @@ public class DeliverySystem {
     private final CargoFactory cargoFactory;
     private final MealKitFactory mealKitFactory;
     private final List<UniqueIdentifier> deliveryPersonIds = new ArrayList<>();
+    private final LockerAssignator lockerAssignator;
 
     public DeliverySystem(LocationsCatalog locationsCatalog) {
         this.locationsCatalog = locationsCatalog;
         this.cargoFactory = new CargoFactory();
         this.mealKitFactory = new MealKitFactory();
+        this.lockerAssignator = new LockerAssignator(locationsCatalog.getDeliveryLocations());
     }
 
     public void createMealKit(DeliveryLocationId deliveryLocationId, UniqueIdentifier mealKitId) {
         pendingMealKits.put(mealKitId, mealKitFactory.createMealKit(locationsCatalog.getDeliveryLocation(deliveryLocationId), mealKitId));
     }
 
-    // TODO : Regarder si on garde vraiment cette fonction qui est seulement utilisé dans les tests
     public List<Cargo> getCargos() {
         return cargos;
     }
@@ -41,7 +43,7 @@ public class DeliverySystem {
     public Cargo receiveReadyToBeDeliveredMealKit(KitchenLocationId kitchenLocationId, List<UniqueIdentifier> mealKitIds) {
         List<MealKit> mealKits = mealKitIds.stream().map(this.pendingMealKits::remove).toList();
 
-        mealKits.forEach(MealKit::assignLocker);
+        mealKits.forEach(lockerAssignator::assignLocker);
 
         mealKits.forEach(MealKit::markAsReadyToBeDelivered);
 
@@ -82,7 +84,7 @@ public class DeliverySystem {
             .confirmDelivery(deliveryPersonId, mealKitId);
     }
 
-    public LockerId recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
+    public Optional<LockerId> recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
         return cargos.stream().filter(cargo -> cargo.getCargoId().equals(cargoId)).findFirst().orElseThrow(InvalidCargoIdException::new)
             .recallDelivery(deliveryPersonId, mealKitId);
     }

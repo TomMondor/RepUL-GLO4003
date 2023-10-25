@@ -26,7 +26,11 @@ import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationServiceTest {
@@ -40,10 +44,10 @@ public class NotificationServiceTest {
     private static final Account ANOTHER_DELIVERY_ACCOUNT = new Account(ANOTHER_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("A_LOCATION_ID");
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("A_DELIVERY_LOCATION_ID");
-    private static final LockerId A_LOCKER_ID = new LockerId("A_LOCKER_ID", 1);
+    private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("A_LOCKER_ID", 1));
     private static final UniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
     private static final DeliveryLocationId ANOTHER_DELIVERY_LOCATION_ID = new DeliveryLocationId("ANOTHER_DELIVERY_LOCATION_ID");
-    private static final LockerId ANOTHER_LOCKER_ID = new LockerId("ANOTHER_LOCKER_ID", 2);
+    private static final Optional<LockerId> ANOTHER_LOCKER_ID = Optional.of(new LockerId("ANOTHER_LOCKER_ID", 2));
     private static final UniqueIdentifier ANOTHER_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
     private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory().generate();
 
@@ -106,9 +110,10 @@ public class NotificationServiceTest {
         String message =
             "Your meal kits (cargo id: " + A_CARGO_ID.value().toString() + ") are ready to be fetched from " + A_KITCHEN_LOCATION_ID.value() + "\n";
         message += "Here is the list of meal kits to be delivered:\n";
-        message += "MealKit ID " + A_MEAL_KIT_ID.value() + " to " + A_DELIVERY_LOCATION_ID.value() + " in box " + A_LOCKER_ID.lockerNumber() + "\n";
+        message += "MealKit ID " + A_MEAL_KIT_ID.value() + " to " + A_DELIVERY_LOCATION_ID.value() + " in box " + A_LOCKER_ID.get().lockerNumber() + "\n";
         message +=
-            "MealKit ID " + ANOTHER_MEAL_KIT_ID.value() + " to " + ANOTHER_DELIVERY_LOCATION_ID.value() + " in box " + ANOTHER_LOCKER_ID.lockerNumber() + "\n";
+            "MealKit ID " + ANOTHER_MEAL_KIT_ID.value() + " to " + ANOTHER_DELIVERY_LOCATION_ID.value() + " in box " + ANOTHER_LOCKER_ID.get().lockerNumber() +
+                "\n";
 
         verify(notificationSender, times(1)).send(A_DELIVERY_ACCOUNT, message);
         verify(notificationSender, times(1)).send(ANOTHER_DELIVERY_ACCOUNT, message);

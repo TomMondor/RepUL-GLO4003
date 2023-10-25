@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.medium.notification.infrastructure;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,16 +31,16 @@ public class NotificationServiceWithLogManualTest {
     private static final Account ANOTHER_DELIVERY_ACCOUNT = new Account(ANOTHER_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("DESJARDINS");
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("POULIOT");
-    private static final LockerId A_LOCKER_ID = new LockerId("A_LOCKER_ID", 1);
+    private static final Optional<LockerId> A_OPTINAL_LOCKER_ID = Optional.of(new LockerId("A_LOCKER_ID", 1));
     private static final UniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
     private static final DeliveryLocationId ANOTHER_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
-    private static final LockerId ANOTHER_LOCKER_ID = new LockerId("ANOTHER_LOCKER_ID", 2);
+    private static final Optional<LockerId> ANOTHER_LOCKER_ID = Optional.of(new LockerId("ANOTHER_LOCKER_ID", 2));
     private static final UniqueIdentifier ANOTHER_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
     private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory().generate();
 
     private static final List<UniqueIdentifier> AVAILABLE_SHIPPERS_IDS = List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
     private static final List<MealKitDto> MEAL_KIT_DTOS =
-        List.of(new MealKitDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID),
+        List.of(new MealKitDto(A_DELIVERY_LOCATION_ID, A_OPTINAL_LOCKER_ID, A_MEAL_KIT_ID),
             new MealKitDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
         new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_DTOS);

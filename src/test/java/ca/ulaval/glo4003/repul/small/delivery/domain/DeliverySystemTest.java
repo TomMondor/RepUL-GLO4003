@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.small.delivery.domain;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class DeliverySystemTest {
     private static final UniqueIdentifier A_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier ANOTHER_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier A_INVALID_CARGO_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final LockerId A_LOCKER_ID = new LockerId("A_LOCATION_NAME 1", 1);
+    private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("A_LOCATION_NAME 1", 1));
 
     @Mock
     private LocationsCatalog mockLocationsCatalog;
@@ -308,24 +309,6 @@ public class DeliverySystemTest {
         deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
         assertThrows(InvalidMealKitIdException.class, () -> deliverySystem.recallDelivery(A_DELIVERY_PERSON_ID, cargoId, ANOTHER_MEALKIT_ID));
-    }
-
-    @Test
-    public void givenWaitingMealKit_whenConfirmDelivery_shouldAssignLockerToWaitingMealKit() {
-        DeliverySystem deliverySystem = new DeliverySystemFixture().withLocationsCatalog(
-            new LocationsCatalogFixture().addKitchenLocation(A_KITCHEN_LOCATION).addDeliveryLocation(A_ONE_PLACE_DELIVERY_LOCATION).build()).build();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
-        deliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        UniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
-        deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
-        deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
-
-        assertNull(deliverySystem.getCargos().get(0).getMealKits().get(1).getLockerId());
-
-        deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
-
-        assertEquals(A_LOCKER_ID, deliverySystem.getCargos().get(0).getMealKits().get(1).getLockerId());
     }
 
     @Test

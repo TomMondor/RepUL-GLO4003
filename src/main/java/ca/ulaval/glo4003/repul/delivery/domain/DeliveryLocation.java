@@ -48,24 +48,9 @@ public class DeliveryLocation {
         return new LockerId(this.name + " " + String.valueOf(lockerNumber), lockerNumber);
     }
 
-    public LockerId assignLocker(MealKit mealKit) {
-        Optional<Locker> assignedLocker =
-            lockers.stream().filter(Locker::isUnassigned).sorted(
-                Comparator.comparingInt(c -> c.getLockerId().lockerNumber())
-            ).findFirst();
-        if (assignedLocker.isEmpty()) {
-            waitingMealKit.add(mealKit);
-            return null;
-        }
-        assignedLocker.get().assign(mealKit.getMealKitId());
-        return assignedLocker.get().getLockerId();
-    }
-
-    // TODO : Cette méthode fait un assign et un unassign, il faudrait séparer les deux
-    public void unassignLocker(LockerId lockerId) {
-        lockers.stream().filter(c -> c.getLockerId().equals(lockerId)).findFirst().get().unassign();
-        if (!waitingMealKit.isEmpty()) {
-            waitingMealKit.remove(0).assignLocker();
-        }
+    public Optional<Locker> findNextAvailableLocker() {
+        return lockers.stream().filter(Locker::isUnassigned).sorted(
+            Comparator.comparingInt(c -> c.getLockerId().lockerNumber())
+        ).findFirst();
     }
 }

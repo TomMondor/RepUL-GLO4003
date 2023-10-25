@@ -52,10 +52,10 @@ public class NotificationService {
         message += "Here is the list of meal kits to be delivered:\n";
         for (MealKitDto mealKitDto : mealKitDtos) {
             String lockerId;
-            if (mealKitDto.lockerId() == null) {
-                lockerId = "To Be Determined";
+            if (mealKitDto.lockerId().isPresent()) {
+                lockerId = Integer.toString(mealKitDto.lockerId().get().lockerNumber());
             } else {
-                lockerId = Integer.toString(mealKitDto.lockerId().lockerNumber());
+                lockerId = "To Be Determined";
             }
             message += "MealKit ID " + mealKitDto.mealKitId().value() + " to " + mealKitDto.deliveryLocationId().value() + " in box " +
                 lockerId + "\n";

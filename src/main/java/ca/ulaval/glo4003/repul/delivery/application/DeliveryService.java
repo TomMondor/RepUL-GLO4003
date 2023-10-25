@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.delivery.application;
 
 import java.util.List;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
@@ -65,8 +66,8 @@ public class DeliveryService {
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
             new MealKitReceivedForDeliveryEvent(cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeople(),
                 cargo.getMealKits().stream()
-                    .map(mealKit -> new MealKitDto(mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(), mealKit.getMealKitId()))
-                    .toList());
+                    .map(mealKit -> new MealKitDto(mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(),
+                        mealKit.getMealKitId())).toList());
         eventBus.publish(mealKitReceivedForDeliveryEvent);
     }
 
@@ -106,10 +107,10 @@ public class DeliveryService {
         deliverySystemRepository.saveOrUpdate(deliverySystem);
     }
 
-    public LockerId recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
+    public Optional<LockerId> recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
 
-        LockerId lockerId = deliverySystem.recallDelivery(deliveryPersonId, cargoId, mealKitId);
+        Optional<LockerId> lockerId = deliverySystem.recallDelivery(deliveryPersonId, cargoId, mealKitId);
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);
 

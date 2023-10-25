@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.delivery.domain.cargo;
 
 import java.util.List;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
@@ -43,26 +44,27 @@ public class Cargo {
     }
 
     public void cancelCargo(UniqueIdentifier deliveryPersonId) {
-        // TODO : Ajouter une vérification que chaque meal kit dans le cargo est dans l'état IN_DELIVERY
-        if (!deliveryPersonId.equals(this.deliveryPersonId)) {
-            throw new InvalidDeliveryPersonIdException();
-        }
+        validateIsSameDeliveryPersonId(deliveryPersonId);
+
         this.deliveryPersonId = null;
-        mealKits.forEach(MealKit::cancelDelivery);
+
+        mealKits.stream().filter(MealKit::isNotAlreadyDelivered).forEach(MealKit::cancelDelivery);
     }
 
     public void confirmDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier mealKitId) {
-        if (!deliveryPersonId.equals(this.deliveryPersonId)) {
-            throw new InvalidDeliveryPersonIdException();
-        }
+        validateIsSameDeliveryPersonId(deliveryPersonId);
         mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new).confirmDelivery();
     }
 
-    public LockerId recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier mealKitId) {
+    public Optional<LockerId> recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier mealKitId) {
+        validateIsSameDeliveryPersonId(deliveryPersonId);
+        return mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new)
+            .recallDelivery();
+    }
+
+    private void validateIsSameDeliveryPersonId(UniqueIdentifier deliveryPersonId) {
         if (!deliveryPersonId.equals(this.deliveryPersonId)) {
             throw new InvalidDeliveryPersonIdException();
         }
-        return mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new)
-            .recallDelivery();
     }
 }
