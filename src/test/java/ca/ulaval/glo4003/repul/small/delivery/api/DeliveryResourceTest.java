@@ -114,22 +114,4 @@ public class DeliveryResourceTest {
 
         verify(deliveryService).recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
     }
-
-    @Test
-    public void whenGettingMealKitDeliveryStatus_shouldReturn200() {
-        when(deliveryService.getDeliveryStatus(A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(A_MEAL_KIT_DELIVERY_STATUS_PAYLOAD);
-
-        Response response = deliveryResource.getMealKitDeliveryStatus(A_MEAL_KIT_ID);
-
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void whenGettingMealKitDeliveryStatus_shouldGetMealKitDeliveryStatus() {
-        when(deliveryService.getDeliveryStatus(A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(A_MEAL_KIT_DELIVERY_STATUS_PAYLOAD);
-
-        deliveryResource.getMealKitDeliveryStatus(A_MEAL_KIT_ID);
-
-        verify(deliveryService).getDeliveryStatus(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-    }
 }

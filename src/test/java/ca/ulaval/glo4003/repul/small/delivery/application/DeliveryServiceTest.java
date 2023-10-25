@@ -33,7 +33,6 @@ import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -234,26 +233,6 @@ public class DeliveryServiceTest {
         deliveryService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
         verify(mockDeliverySystem).createMealKit(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-    }
-
-    @Test
-    public void whenGetDeliveryStatus_shouldGetDeliverySystem() {
-        when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
-        when(mockDeliverySystem.getMealKit(A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(A_MEAL_KIT);
-
-        deliveryService.getDeliveryStatus(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemRepository).get();
-    }
-
-    @Test
-    public void givenValidUniqueIdentifier_whenGetDeliveryStatus_shouldReturnMealKitDeliveryStatusPayload() {
-        when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
-        when(mockDeliverySystem.getMealKit(A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(A_MEAL_KIT);
-
-        MealKitDeliveryStatusPayload payload = deliveryService.getDeliveryStatus(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        assertEquals(A_MEAL_KIT_DELIVERY_STATUS_PAYLOAD, payload);
     }
 
     @Test

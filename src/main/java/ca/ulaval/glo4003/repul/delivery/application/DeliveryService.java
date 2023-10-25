@@ -11,7 +11,6 @@ import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.exception.DeliverySystemNotFoundException;
-import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitDeliveryStatusPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
@@ -91,12 +90,6 @@ public class DeliveryService {
         deliverySystem.cancelCargo(deliveryPersonId, cargoId);
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);
-    }
-
-    public MealKitDeliveryStatusPayload getDeliveryStatus(UniqueIdentifier mealKitId) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
-
-        return MealKitDeliveryStatusPayload.from(deliverySystem.getMealKit(mealKitId));
     }
 
     public void confirmDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
