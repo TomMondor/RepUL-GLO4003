@@ -11,8 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.delivery.application.LocationsCatalogService;
-import ca.ulaval.glo4003.repul.delivery.application.payload.LocationPayload;
-import ca.ulaval.glo4003.repul.delivery.application.payload.LocationsPayload;
+import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationPayload;
+import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationsPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
@@ -60,12 +60,12 @@ public class LocationsCatalogServiceTest {
     @Test
     public void whenGettingPickupLocations_shouldReturnMatchingLocationsPayload() {
         when(mockDeliverySystem.getDeliveryLocations()).thenReturn(SOME_DELIVERY_LOCATIONS);
-        LocationsPayload expectedLocationPayload = new LocationsPayload(List.of(
-            new LocationPayload(A_DELIVERY_LOCATION.getLocationId(), A_DELIVERY_LOCATION.getName(), A_DELIVERY_LOCATION.getTotalCapacity(),
+        DeliveryLocationsPayload expectedDeliveryLocationPayload = new DeliveryLocationsPayload(List.of(
+            new DeliveryLocationPayload(A_DELIVERY_LOCATION.getLocationId(), A_DELIVERY_LOCATION.getName(), A_DELIVERY_LOCATION.getTotalCapacity(),
                 A_DELIVERY_LOCATION.getRemainingCapacity())));
 
-        LocationsPayload locationsPayload = locationsCatalogService.getDeliveryLocations();
+        DeliveryLocationsPayload deliveryLocationsPayload = locationsCatalogService.getDeliveryLocations();
 
-        assertEquals(expectedLocationPayload, locationsPayload);
+        assertEquals(expectedDeliveryLocationPayload, deliveryLocationsPayload);
     }
 }

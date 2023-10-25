@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.delivery.api;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.delivery.api.assembler.LocationsCatalogResponseAssembler;
-import ca.ulaval.glo4003.repul.delivery.api.response.LocationResponse;
+import ca.ulaval.glo4003.repul.delivery.api.response.DeliveryLocationResponse;
 import ca.ulaval.glo4003.repul.delivery.application.LocationsCatalogService;
 
 import jakarta.ws.rs.GET;
@@ -22,10 +22,10 @@ public class LocationsCatalogResource {
     }
 
     @GET
-    @Path("/locations")
+    @Path("/delivery-locations")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLocations() {
-        List<LocationResponse> locations = locationsCatalogResponseAssembler.toLocationsResponse(locationsCatalogService.getDeliveryLocations());
+    public Response getDeliveryLocations() {
+        List<DeliveryLocationResponse> locations = locationsCatalogResponseAssembler.toLocationsResponse(locationsCatalogService.getDeliveryLocations());
         return Response.ok(locations).build();
     }
 }

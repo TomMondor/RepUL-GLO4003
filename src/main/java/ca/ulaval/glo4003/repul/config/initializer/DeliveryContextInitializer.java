@@ -35,11 +35,6 @@ public class DeliveryContextInitializer {
 
     private DeliverySystemRepository deliverySystemRepository = new InMemoryDeliverySystemRepository();
 
-    public DeliveryContextInitializer withShippingRepository(DeliverySystemRepository deliverySystemRepository) {
-        this.deliverySystemRepository = deliverySystemRepository;
-        return this;
-    }
-
     public DeliveryContextInitializer withDeliveryPeople(List<UniqueIdentifier> deliveryPersonIds) {
         this.deliveryPersonIds.addAll(deliveryPersonIds);
         return this;
@@ -57,7 +52,7 @@ public class DeliveryContextInitializer {
     }
 
     private void initializeDelivery(DeliverySystemRepository deliverySystemRepository) {
-        List<DeliveryLocation> deliveryLocations = parseShippingLocations();
+        List<DeliveryLocation> deliveryLocations = parseDeliveryLocations();
         List<KitchenLocation> kitchenLocations = new ArrayList<>();
         kitchenLocations.add(new KitchenLocation(new KitchenLocationId("DESJARDINS"), "Desjardins"));
 
@@ -69,7 +64,7 @@ public class DeliveryContextInitializer {
         deliverySystemRepository.saveOrUpdate(deliverySystem);
     }
 
-    private List<DeliveryLocation> parseShippingLocations() {
+    private List<DeliveryLocation> parseDeliveryLocations() {
         List<Map<String, Object>> listOfLocationMaps = getListOfMapsFromJsonFilePath(CAMPUS_STATIONS_LOCATION_FILE_PATH);
         return listOfLocationMaps.stream().map(
             map -> new DeliveryLocation(new DeliveryLocationId((String) map.get(LOCATION_FIELD_NAME_IN_JSON)), (String) map.get(NAME_FIELD_NAME_IN_JSON),

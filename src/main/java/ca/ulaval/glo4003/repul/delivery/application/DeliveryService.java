@@ -84,10 +84,10 @@ public class DeliveryService {
         eventBus.publish(new PickedUpCargoEvent(mealKits.stream().map(MealKit::getMealKitId).toList()));
     }
 
-    public void cancelCargo(UniqueIdentifier accountId, UniqueIdentifier shippingId) {
+    public void cancelCargo(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
 
-        deliverySystem.cancelCargo(accountId, shippingId);
+        deliverySystem.cancelCargo(deliveryPersonId, cargoId);
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);
     }

@@ -38,7 +38,7 @@ public class InMemoryDeliverySystemRepositoryTest {
     }
 
     @Test
-    public void givenExistingDeliverySystem_whenGet_shouldReturnRightShipping() {
+    public void givenExistingDeliverySystem_whenGet_shouldReturnRightDeliverySystem() {
         deliveryRepository.saveOrUpdate(deliverySystem);
 
         assertEquals(deliverySystem, deliveryRepository.get().get());

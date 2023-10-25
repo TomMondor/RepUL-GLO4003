@@ -39,7 +39,7 @@ public class DeliveryResourceTest {
     private ContainerRequestContext requestContext;
 
     @BeforeEach
-    public void createShippingResource() {
+    public void createDeliveryResource() {
         deliveryResource = new DeliveryResource(deliveryService);
     }
 
