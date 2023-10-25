@@ -1,90 +1,99 @@
 package ca.ulaval.glo4003.repul.small.subscription.infrastructure;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
-import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
-import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
+@ExtendWith(MockitoExtension.class)
 public class InMemorySubscriptionRepositoryTest {
-    private SubscriptionRepository subscriptionRepository;
+    private static final UniqueIdentifier A_SUBSCRIPTION_VALID_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier ANOTHER_SUBSCRIPTION_VALID_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_SUBSCRIBER_VALID_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory().generate();
+    @Mock
+    private Subscription subscription;
+
+    private InMemorySubscriptionRepository inMemorySubscriptionRepository;
 
     @BeforeEach
     public void createSubscriptionRepository() {
-        subscriptionRepository = new InMemorySubscriptionRepository();
+        inMemorySubscriptionRepository = new InMemorySubscriptionRepository();
     }
 
     @Test
-    public void whenSavingSubscription_shouldSaveSubscription() {
-        Subscription subscriptionToSave = new SubscriptionFixture().build();
+    public void whenSavingSubscriptionAndGettingSubscriptionById_shouldReturnOptionalOfRightSubscription() {
+        given(subscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
 
-        subscriptionRepository.saveOrUpdate(subscriptionToSave);
+        inMemorySubscriptionRepository.saveOrUpdate(subscription);
+        Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getById(A_SUBSCRIPTION_VALID_ID);
 
-        assertTrue(subscriptionRepository.getById(subscriptionToSave.getSubscriptionId()).isPresent());
+        assertEquals(Optional.of(subscription), subscriptionFound);
     }
 
     @Test
-    public void givenExistingSubscription_whenGettingSubscriptionById_shouldReturnOptionalOfSubscription() {
-        Subscription existingSubscription = new SubscriptionFixture().build();
-        subscriptionRepository.saveOrUpdate(existingSubscription);
+    public void givenNoSubscription_whenGettingSubscriptionById_shouldReturnOptionalOfEmpty() {
+        Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getById(A_SUBSCRIPTION_VALID_ID);
 
-        Optional<Subscription> subscription = subscriptionRepository.getById(existingSubscription.getSubscriptionId());
-
-        assertEquals(existingSubscription, subscription.get());
+        assertTrue(subscriptionFound.isEmpty());
     }
 
     @Test
-    public void givenNonexistentSubscription_whenGettingSubscriptionById_shouldReturnEmptyOptional() {
-        Optional<Subscription> subscription = subscriptionRepository.getById(new UniqueIdentifier(UUID.randomUUID()));
+    public void givenNoSubscriptionsForSubscriber_whenGettingSubscriptionsBySubscriberId_shouldReturnEmptyList() {
+        List<Subscription> subscriptionsFound = inMemorySubscriptionRepository.getBySubscriberId(A_SUBSCRIBER_VALID_ID);
 
-        assertEquals(Optional.empty(), subscription);
-    }
-
-    @Test
-    public void givenNoSubscriptionsForSubscriber_whenGettingSubscriptionsBySubscriberId_shouldReturnEmptyCollection() {
-        List<Subscription> subscriptions = subscriptionRepository.getBySubscriberId(new UniqueIdentifier(UUID.randomUUID()));
-
-        assertTrue(subscriptions.isEmpty());
+        assertTrue(subscriptionsFound.isEmpty());
     }
 
     @Test
     public void givenSubscriptionsForSubscriber_whenGettingSubscriptionsBySubscriberId_shouldReturnMatchingSubscriptions() {
-        UniqueIdentifier subscriberId = new UniqueIdentifier(UUID.randomUUID());
-        Subscription subscription = new SubscriptionFixture().withSubscriberId(subscriberId).build();
-        Subscription anotherSubscription = new SubscriptionFixture().withSubscriberId(subscriberId).build();
-        subscriptionRepository.saveOrUpdate(subscription);
-        subscriptionRepository.saveOrUpdate(anotherSubscription);
+        Subscription anotherSubscription = mock(Subscription.class);
+        given(subscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
+        given(subscription.getSubscriberId()).willReturn(A_SUBSCRIBER_VALID_ID);
+        given(anotherSubscription.getSubscriptionId()).willReturn(ANOTHER_SUBSCRIPTION_VALID_ID);
+        given(anotherSubscription.getSubscriberId()).willReturn(A_SUBSCRIBER_VALID_ID);
+        inMemorySubscriptionRepository.saveOrUpdate(subscription);
+        inMemorySubscriptionRepository.saveOrUpdate(anotherSubscription);
 
-        List<Subscription> subscriptions = subscriptionRepository.getBySubscriberId(subscriberId);
+        List<Subscription> subscriptionsFound = inMemorySubscriptionRepository.getBySubscriberId(A_SUBSCRIBER_VALID_ID);
 
-        assertTrue(subscriptions.contains(subscription));
-        assertTrue(subscriptions.contains(anotherSubscription));
-        assertEquals(2, subscriptions.size());
+        assertTrue(subscriptionsFound.contains(subscription));
+        assertTrue(subscriptionsFound.contains(anotherSubscription));
+        assertEquals(2, subscriptionsFound.size());
     }
 
     @Test
-    public void whenGettingSubscriptionByOrderId_shouldReturnMatchingSubscription() {
-        UniqueIdentifier orderId = new UniqueIdentifier(UUID.randomUUID());
-        Order order = new Order(orderId, MealKitType.STANDARD, LocalDate.now().plusDays(2));
-        Subscription expectedSubscription = new SubscriptionFixture().withOrders(List.of(order)).build();
-        subscriptionRepository.saveOrUpdate(expectedSubscription);
+    public void givenNoSubscriptionWithSpecificOrder_whenGettingSubscriptionByOrderId_shouldReturnOptionalOfEmpty() {
+        Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getSubscriptionByOrderId(AN_ORDER_ID);
 
-        Optional<Subscription> subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
+        assertTrue(subscriptionFound.isEmpty());
+    }
 
-        Assertions.assertEquals(subscription.get().findCurrentOrder().get(), order);
+    @Test
+    public void givenSubscriptionWithSpecificOrder_whenGettingSubscriptionByOrderId_shouldReturnMatchingSubscription() {
+        given(subscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
+        Order anOrder = mock(Order.class);
+        given(anOrder.getOrderId()).willReturn(AN_ORDER_ID);
+        given(subscription.findCurrentOrder()).willReturn(Optional.of(anOrder));
+        inMemorySubscriptionRepository.saveOrUpdate(subscription);
+
+        Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getSubscriptionByOrderId(AN_ORDER_ID);
+
+        assertEquals(Optional.of(subscription), subscriptionFound);
     }
 }

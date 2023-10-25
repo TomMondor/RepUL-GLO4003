@@ -10,93 +10,73 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.PasswordEncoder;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserRepository;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.UserNotFoundException;
 import ca.ulaval.glo4003.repul.user.infrastructure.identitymanagement.InMemoryUserRepository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class InMemoryUserRepositoryTest {
-    private static final Email AN_INVALID_EMAIL = new Email("sss@ulaval.ca");
     private static final UniqueIdentifier A_UID = new UniqueIdentifier(UUID.randomUUID());
     private static final Email AN_EMAIL = new Email("anEmail@ulaval.ca");
-    private static final Password AN_ENCRYPTED_PASSWORD = new Password("encryptedPassword");
-    private UserRepository userRepository;
+    private UserRepository inMemoryUserRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private User user;
 
     @BeforeEach
     public void setup() {
-        this.userRepository = new InMemoryUserRepository();
+        this.inMemoryUserRepository = new InMemoryUserRepository();
     }
 
     @Test
-    public void givenInexistentUser_whenGettingUserByEmail_shouldThrowUserNotFoundException() {
-        assertThrows(UserNotFoundException.class, () -> this.userRepository.findByEmail(AN_INVALID_EMAIL));
+    public void givenNoUser_whenGettingUserByEmail_shouldThrowUserNotFoundException() {
+        assertThrows(UserNotFoundException.class, () -> inMemoryUserRepository.findByEmail(AN_EMAIL));
     }
 
     @Test
-    public void givenExistingUser_whenGettingUserByEmail_shouldReturnUser() {
-        User existingUser = givenExistingUser();
-        userRepository.saveOrUpdate(existingUser);
+    public void whenSavingAndGettingUserByEmail_shouldReturnRightUser() {
+        given(user.getEmail()).willReturn(AN_EMAIL);
 
-        User user = this.userRepository.findByEmail(AN_EMAIL);
+        inMemoryUserRepository.saveOrUpdate(user);
+        User userFound = inMemoryUserRepository.findByEmail(AN_EMAIL);
 
-        assertEquals(existingUser, user);
+        assertEquals(user, userFound);
     }
 
     @Test
-    public void givenInexistentUser_whenGettingUserByUid_shouldThrowUserNotFoundException() {
-        assertThrows(UserNotFoundException.class, () -> this.userRepository.findByUid(A_UID));
+    public void givenNoUser_whenGettingUserByUid_shouldThrowUserNotFoundException() {
+        assertThrows(UserNotFoundException.class, () -> inMemoryUserRepository.findByUid(A_UID));
     }
 
     @Test
-    public void givenExistingUser_whenGettingUserByUId_shouldReturnUser() {
-        User existingUser = givenExistingUser();
-        userRepository.saveOrUpdate(existingUser);
+    public void whenSavingAndGettingUserByUId_shouldReturnRightUser() {
+        given(user.getEmail()).willReturn(AN_EMAIL);
+        given(user.getUid()).willReturn(A_UID);
 
-        User user = this.userRepository.findByUid(A_UID);
+        inMemoryUserRepository.saveOrUpdate(user);
+        User userFound = inMemoryUserRepository.findByUid(A_UID);
 
-        assertEquals(existingUser, user);
+        assertEquals(user, userFound);
     }
 
     @Test
-    public void givenInexistantUser_whenCheckingIfUserExists_shouldReturnFalse() {
-        boolean userExists = this.userRepository.exists(AN_INVALID_EMAIL);
+    public void givenNoUser_whenCheckingIfUserExists_shouldReturnFalse() {
+        boolean userExists = inMemoryUserRepository.exists(AN_EMAIL);
 
         assertFalse(userExists);
     }
 
     @Test
     public void givenExistingUser_whenCheckingIfUserExists_shouldReturnTrue() {
-        User existingUser = givenExistingUser();
-        userRepository.saveOrUpdate(existingUser);
+        given(user.getEmail()).willReturn(AN_EMAIL);
+        inMemoryUserRepository.saveOrUpdate(user);
 
-        boolean userExists = this.userRepository.exists(AN_EMAIL);
+        boolean userExists = inMemoryUserRepository.exists(AN_EMAIL);
 
         assertTrue(userExists);
-    }
-
-    @Test
-    public void whenSavingUser_shouldSaveUser() {
-        User userToSave = givenExistingUser();
-
-        userRepository.saveOrUpdate(userToSave);
-
-        assertEquals(userToSave, this.userRepository.findByEmail(AN_EMAIL));
-    }
-
-    private User givenExistingUser() {
-        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
-        return user;
     }
 }

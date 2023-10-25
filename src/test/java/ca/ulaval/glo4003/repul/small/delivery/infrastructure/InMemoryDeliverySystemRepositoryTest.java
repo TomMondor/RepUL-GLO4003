@@ -12,35 +12,32 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class InMemoryDeliverySystemRepositoryTest {
-    private InMemoryDeliverySystemRepository deliveryRepository;
+    private InMemoryDeliverySystemRepository inMemoryDeliverySystemRepository;
 
     @Mock
     private DeliverySystem deliverySystem;
 
     @BeforeEach
     public void createDeliverySystemRepository() {
-        deliveryRepository = new InMemoryDeliverySystemRepository();
+        inMemoryDeliverySystemRepository = new InMemoryDeliverySystemRepository();
     }
 
     @Test
-    public void givenValidDeliverySystem_whenSaveOrUpdate_shouldSaveInRepository() {
-        deliveryRepository.saveOrUpdate(deliverySystem);
+    public void whenSavingDeliverySystemAndGettingDeliverySystem_shouldReturnOptionalOfRightDeliverySystem() {
+        inMemoryDeliverySystemRepository.saveOrUpdate(deliverySystem);
+        Optional<DeliverySystem> deliverySystemFound = inMemoryDeliverySystemRepository.get();
 
-        assertEquals(deliverySystem, deliveryRepository.get().get());
+        assertEquals(Optional.of(deliverySystem), deliverySystemFound);
     }
 
     @Test
-    public void givenNoDeliverySystem_whenGetting_shouldReturnEmptyOptional() {
-        assertEquals(Optional.empty(), deliveryRepository.get());
-    }
+    public void givenNoDeliverySystem_whenGettingDeliverySystem_shouldReturnOptionalOfEmpty() {
+        Optional<DeliverySystem> deliverySystemFound = inMemoryDeliverySystemRepository.get();
 
-    @Test
-    public void givenExistingDeliverySystem_whenGet_shouldReturnRightDeliverySystem() {
-        deliveryRepository.saveOrUpdate(deliverySystem);
-
-        assertEquals(deliverySystem, deliveryRepository.get().get());
+        assertTrue(deliverySystemFound.isEmpty());
     }
 }

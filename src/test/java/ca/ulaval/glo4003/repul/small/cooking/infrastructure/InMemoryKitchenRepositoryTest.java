@@ -9,34 +9,35 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
-import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
 import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class InMemoryKitchenRepositoryTest {
-    private KitchenRepository kitchenRepository;
+    private InMemoryKitchenRepository inMemorykitchenRepository;
 
     @Mock
     private Kitchen kitchen;
 
     @BeforeEach
     public void createKitchenRepository() {
-        this.kitchenRepository = new InMemoryKitchenRepository();
+        this.inMemorykitchenRepository = new InMemoryKitchenRepository();
     }
 
     @Test
-    public void whenSaveOrUpdate_shouldSaveOrUpdate() {
-        kitchenRepository.saveOrUpdate(kitchen);
+    public void whenSavingKitchenAndGettingKitchen_shouldReturnOptionalOfRightKitchen() {
+        inMemorykitchenRepository.saveOrUpdate(kitchen);
+        Optional<Kitchen> kitchenFound = inMemorykitchenRepository.get();
 
-        assertEquals(Optional.of(kitchen), kitchenRepository.get());
+        assertEquals(Optional.of(kitchen), kitchenFound);
     }
 
     @Test
-    public void whenGetWithKitchen_shouldReturnKitchen() {
-        kitchenRepository.saveOrUpdate(kitchen);
+    public void givenNoKitchen_whenGettingKitchen_shouldReturnOptionalOfEmpty() {
+        Optional<Kitchen> kitchenFound = inMemorykitchenRepository.get();
 
-        assertEquals(Optional.of(kitchen), kitchenRepository.get());
+        assertTrue(kitchenFound.isEmpty());
     }
 }
