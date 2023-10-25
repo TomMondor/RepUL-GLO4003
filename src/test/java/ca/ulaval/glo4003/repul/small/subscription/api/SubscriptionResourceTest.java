@@ -11,18 +11,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionRequestFixture;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.subscription.api.response.OrderResponse;
-import ca.ulaval.glo4003.repul.subscription.api.response.SubscriptionCreatedResponse;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
+import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
+import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
+import ca.ulaval.glo4003.repul.subscription.domain.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -42,14 +47,22 @@ public class SubscriptionResourceTest {
     private static final String A_MEAL_KIT_TYPE_STRING = "STANDARD";
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST =
         new SubscriptionRequestFixture().withLocationId(A_LOCATION_ID).withDayOfWeek(A_DAY_OF_WEEK).build();
-    private static final UniqueIdentifier ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
     private static final LocalDate AN_ORDER_DELIVERY_DATE = LocalDate.now().plusDays(4);
     private static final OrderStatus AN_ORDER_STATUS = OrderStatus.PENDING;
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final UniqueIdentifier AN_ORDER_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final OrdersPayload AN_ORDERS_PAYLOAD =
         new OrdersPayload(List.of(new OrderPayload(AN_ORDER_ID, A_MEAL_KIT_TYPE, AN_ORDER_DELIVERY_DATE, AN_ORDER_STATUS)));
+    private static final String PATH_TO_API = "/api/subscriptions/";
+    private static final Frequency A_FREQUENCY =  new Frequency(DayOfWeek.MONDAY);
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Here");
+    private static final Semester A_SEMESTER = new Semester(new SemesterCode("H24"),
+        LocalDate.now().minusMonths(3), LocalDate.now().plusMonths(3));
+    private static final SubscriptionPayload A_SUBSCRIPTION_PAYLOAD =
+        new SubscriptionPayload(ACCOUNT_ID, A_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+            MealKitType.STANDARD, A_SEMESTER);
 
     private SubscriptionResource subscriptionResource;
     @Mock
@@ -120,7 +133,8 @@ public class SubscriptionResourceTest {
             A_SUBSCRIPTION_ID);
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 
-        assertEquals(A_SUBSCRIPTION_ID.value().toString(), ((SubscriptionCreatedResponse) response.getEntity()).subscriptionId());
+        assertEquals(PATH_TO_API + A_SUBSCRIPTION_ID.value().toString(),
+            response.getHeaderString("Location"));
     }
 
     @Test
@@ -137,6 +151,27 @@ public class SubscriptionResourceTest {
         when(subscriptionService.getSubscriptions(ACCOUNT_ID)).thenReturn(A_SUBSCRIPTIONS_PAYLOAD);
 
         Response response = subscriptionResource.getSubscriptions(containerRequestContext);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void whenGettingSubscriptionById_shouldGetSubscription() {
+        when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID))
+            .thenReturn(A_SUBSCRIPTION_PAYLOAD);
+
+        subscriptionResource.getSubscription(containerRequestContext, A_SUBSCRIPTION_ID.value().toString());
+
+        verify(subscriptionService).getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID);
+    }
+
+    @Test
+    public void whenGettingSubscription_shouldReturn200() {
+        when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID))
+            .thenReturn(A_SUBSCRIPTION_PAYLOAD);
+
+        Response response = subscriptionResource.getSubscription(containerRequestContext,
+            A_SUBSCRIPTION_ID.value().toString());
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }

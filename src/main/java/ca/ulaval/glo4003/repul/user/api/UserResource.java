@@ -1,8 +1,11 @@
 package ca.ulaval.glo4003.repul.user.api;
 
+import java.net.URI;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.ulaval.glo4003.repul.commons.api.UriFactory;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.user.api.assembler.UserResponseAssembler;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
@@ -35,6 +38,7 @@ public class UserResource {
 
     private final UserService userService;
     private final UserResponseAssembler userResponseAssembler = new UserResponseAssembler();
+    private final UriFactory uriFactory = new UriFactory();
 
     public UserResource(UserService userService) {
         this.userService = userService;
@@ -46,8 +50,9 @@ public class UserResource {
     public Response register(@Valid RegistrationRequest registrationRequest) {
         userService.register(RegistrationQuery.from(registrationRequest.email, registrationRequest.password, registrationRequest.idul, registrationRequest.name,
             registrationRequest.birthdate, registrationRequest.gender));
+        URI location = uriFactory.createURI("/api/users");
 
-        return Response.status(Response.Status.CREATED).build();
+        return Response.created(location).build();
     }
 
     @POST
@@ -57,7 +62,7 @@ public class UserResource {
         Token token = userService.login(LoginQuery.from(loginRequest.email, loginRequest.password));
         LoginResponse loginResponse = userResponseAssembler.toLoginResponse(token);
 
-        return Response.status(Response.Status.OK).entity(loginResponse).build();
+        return Response.ok(loginResponse).build();
     }
 
     @GET
@@ -70,6 +75,6 @@ public class UserResource {
 
         AccountResponse accountResponse = userResponseAssembler.toAccountResponse(userService.getAccount(accountId));
 
-        return Response.status(Response.Status.OK).entity(accountResponse).build();
+        return Response.ok(accountResponse).build();
     }
 }

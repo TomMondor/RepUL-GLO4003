@@ -211,6 +211,28 @@ public class SubscriptionServiceTest {
     }
 
     @Test
+    public void whenGettingSubscriptionById_shouldGetSubscriptionFromRepository() {
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
+
+        subscriptionService.getSubscriptionById(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
+
+        verify(mockSubscriptionRepository).getById(A_SUBSCRIPTION_ID);
+    }
+
+    @Test
+    public void whenGettingSubscriptionById_shouldReturnMatchingSubscriptionsPayload() {
+        Subscription subscription = new SubscriptionFixture().withSubscriberId(AN_ACCOUNT_ID).build();
+        SubscriptionPayload expectedPayload = SubscriptionPayload.from(subscription);
+        when(mockSubscriptionRepository.getById(subscription.getSubscriptionId())).thenReturn(Optional.of(subscription));
+
+        SubscriptionPayload subscriptionPayload = subscriptionService.getSubscriptionById(AN_ACCOUNT_ID,
+            subscription.getSubscriptionId());
+
+        assertEquals(expectedPayload, subscriptionPayload);
+    }
+
+    @Test
     public void whenConfirmingNextMealKitForSubscription_shouldGetSubscriptionFromRepository() {
         when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);

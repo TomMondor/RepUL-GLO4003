@@ -26,6 +26,7 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -67,6 +68,13 @@ public class UserResourceTest {
         Response response = userResource.register(A_REGISTRATION_REQUEST);
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void whenRegistering_shouldHaveLocationHeader() {
+        Response response = userResource.register(A_REGISTRATION_REQUEST);
+
+        assertNotNull(response.getHeaderString("Location"));
     }
 
     @Test

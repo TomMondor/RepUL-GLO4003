@@ -14,6 +14,6 @@ public class HealthResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getHealth() {
-        return Response.status(Response.Status.OK).entity(new HealthDto("OK - Everything is alright!")).build();
+        return Response.ok(new HealthDto("OK - Everything is alright!")).build();
     }
 }

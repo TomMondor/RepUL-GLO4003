@@ -19,7 +19,6 @@ import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.subscription.api.response.OrderResponse;
-import ca.ulaval.glo4003.repul.subscription.api.response.SubscriptionCreatedResponse;
 import ca.ulaval.glo4003.repul.subscription.api.response.SubscriptionResponse;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
@@ -64,14 +63,14 @@ public class SubscriptionResourceEnd2EndTest {
     }
 
     @Test
-    public void whenSubscribing_shouldReturnSubscriptionId() {
+    public void whenSubscribing_shouldReturnSubscriptionIdInLocationHeader() {
         String accountToken = login();
 
         Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(A_SUBSCRIPTION_REQUEST)
             .post(CONTEXT.getURI() + "subscriptions");
-        SubscriptionCreatedResponse responseBody = response.getBody().as(SubscriptionCreatedResponse.class);
+        String locationHeader = response.getHeader("Location");
 
-        assertNotNull(responseBody.subscriptionId());
+        assertFalse(locationHeader.isEmpty());
     }
 
     @Test
@@ -98,6 +97,35 @@ public class SubscriptionResourceEnd2EndTest {
         assertEquals(A_SUBSCRIPTION_REQUEST.locationId, createdSubscriptionResponse.get().locationId());
         assertEquals(A_SUBSCRIPTION_REQUEST.lunchboxType, createdSubscriptionResponse.get().lunchboxType());
         assertEquals(LocalDate.now().toString(), createdSubscriptionResponse.get().startDate());
+    }
+
+    @Test
+    public void whenGettingSubscription_shouldReturn200() {
+        String accountToken = login();
+        String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST);
+
+        Response response = given().contentType("application/json")
+            .header("Authorization", "Bearer " + accountToken)
+            .get(CONTEXT.getURI() + "subscriptions/" + subscriptionId);
+
+        assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    public void whenGettingSubscription_shouldReturnSubscription() {
+        String accountToken = login();
+        String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST);
+        String url = CONTEXT.getURI() + "subscriptions/" + subscriptionId;
+        Response response = given().contentType("application/json")
+            .header("Authorization", "Bearer " + accountToken)
+            .get(url);
+        SubscriptionResponse responseBody = response.getBody().as(SubscriptionResponse.class);
+
+        assertEquals(subscriptionId, responseBody.subscriptionId());
+        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, responseBody.dayOfWeek());
+        assertEquals(A_SUBSCRIPTION_REQUEST.locationId, responseBody.locationId());
+        assertEquals(A_SUBSCRIPTION_REQUEST.lunchboxType, responseBody.lunchboxType());
+        assertEquals(LocalDate.now().toString(), responseBody.startDate());
     }
 
     @Test
@@ -175,8 +203,7 @@ public class SubscriptionResourceEnd2EndTest {
     private String createSubscription(String accountToken, SubscriptionRequest subscriptionRequest) {
         Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(subscriptionRequest)
             .post(CONTEXT.getURI() + "subscriptions");
-        SubscriptionCreatedResponse responseBody = response.getBody().as(SubscriptionCreatedResponse.class);
-
-        return responseBody.subscriptionId();
+        String location =  response.getHeader("Location");
+        return location.substring(location.indexOf("subscriptions/") + 14);
     }
 }

@@ -1,16 +1,19 @@
 package ca.ulaval.glo4003.repul.subscription.api;
 
+import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
+import ca.ulaval.glo4003.repul.commons.api.UriFactory;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.api.assembler.OrdersResponseAssembler;
 import ca.ulaval.glo4003.repul.subscription.api.assembler.SubscriptionsResponseAssembler;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.subscription.api.response.OrderResponse;
-import ca.ulaval.glo4003.repul.subscription.api.response.SubscriptionCreatedResponse;
 import ca.ulaval.glo4003.repul.subscription.api.response.SubscriptionResponse;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
+import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
@@ -35,6 +38,7 @@ public class SubscriptionResource {
     private final SubscriptionService subscriptionService;
     private final SubscriptionsResponseAssembler subscriptionsResponseAssembler = new SubscriptionsResponseAssembler();
     private final OrdersResponseAssembler ordersResponseAssembler = new OrdersResponseAssembler();
+    private final UriFactory uriFactory = new UriFactory();
 
     public SubscriptionResource(SubscriptionService subscriptionService) {
         this.subscriptionService = subscriptionService;
@@ -53,7 +57,25 @@ public class SubscriptionResource {
 
         UniqueIdentifier subscriptionId = subscriptionService.createSubscription(accountId, subscriptionQuery);
 
-        return Response.status(Response.Status.CREATED).entity(new SubscriptionCreatedResponse(subscriptionId.value().toString())).build();
+        URI location = uriFactory.createURI("/api/subscriptions/" + subscriptionId.value().toString());
+
+        return Response.created(location).build();
+    }
+
+    @GET
+    @Secure
+    @Path("/subscriptions/{subscriptionId}")
+    @Roles(Role.CLIENT)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSubscription(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionIdAsString) {
+        UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+        UniqueIdentifier subscriptionId = new UniqueIdentifier(UUID.fromString(subscriptionIdAsString));
+
+        SubscriptionPayload
+            subscription = subscriptionService.getSubscriptionById(accountId, subscriptionId);
+
+        SubscriptionResponse subscriptionResponse = subscriptionsResponseAssembler.toSubscriptionResponse(subscription);
+        return Response.ok(subscriptionResponse).build();
     }
 
     @GET

@@ -71,6 +71,11 @@ public class SubscriptionService {
         return new SubscriptionsPayload(subscriptionPayloads);
     }
 
+    public SubscriptionPayload getSubscriptionById(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {
+        Subscription subscription = getSubscription(subscriberId, subscriptionId);
+        return SubscriptionPayload.from(subscription);
+    }
+
     public void confirmNextMealKitForSubscription(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {
         Subscription subscription = getSubscription(subscriberId, subscriptionId);
 

@@ -58,7 +58,7 @@ public class MealKitResource {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         cookingService.select(cookId, UniqueIdentifier.from(request.ids));
 
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.noContent().build();
     }
 
     @GET
@@ -116,6 +116,6 @@ public class MealKitResource {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         cookingService.confirmCooked(cookId, UniqueIdentifier.from(request.ids));
 
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return Response.noContent().build();
     }
 }
