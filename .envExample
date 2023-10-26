@@ -1,0 +1,3 @@
+EMAIL_SENDER=example@example.local
+PASSWORD_SENDER=a_password
+JWT_SECRET=a_secret

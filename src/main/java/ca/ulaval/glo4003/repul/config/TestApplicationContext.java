@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.infrastructure.EnvParser;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.http.CORSResponseFilter;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
@@ -55,6 +56,7 @@ public class TestApplicationContext implements ApplicationContext {
 
     @Override
     public ResourceConfig initializeResourceConfig() {
+        EnvParser.setFilename(".envExample");
         RepULEventBus eventBus = new GuavaEventBus();
 
         LOGGER.info("Creating Health resource");

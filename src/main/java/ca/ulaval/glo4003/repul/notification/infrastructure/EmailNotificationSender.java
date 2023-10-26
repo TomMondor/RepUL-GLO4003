@@ -1,8 +1,5 @@
 package ca.ulaval.glo4003.repul.notification.infrastructure;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -17,12 +14,13 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.ulaval.glo4003.repul.commons.infrastructure.EnvParser;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 
 public class EmailNotificationSender implements NotificationSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailNotificationSender.class);
-
+    private final EnvParser envParser = EnvParser.getInstance();
     private final String smtpHost = "smtp.gmail.com";
     private final String smtpProtocol = "TLSv1.2";
     private final int smtpPort = 587;
@@ -31,25 +29,9 @@ public class EmailNotificationSender implements NotificationSender {
     private String senderPassword;
 
     public EmailNotificationSender() {
-        try {
-            setProperties();
-            try (BufferedReader reader = new BufferedReader(new FileReader(".env"))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("EMAIL_SENDER=")) {
-                        this.senderEmail = line.substring(13);
-                    } else if (line.startsWith("PASSWORD_SENDER=")) {
-                        this.senderPassword = line.substring(16);
-                    }
-                }
-            } catch (IOException e) {
-                LOGGER.info("Could not read .env file that contains the sender email and password.");
-                throw new RuntimeException(e);
-            }
-        } catch (Exception e) {
-            LOGGER.info("Error setting up email notification sender.");
-            throw new RuntimeException(e);
-        }
+        setProperties();
+        this.senderEmail = envParser.readVariable("EMAIL_SENDER");
+        this.senderPassword = envParser.readVariable("PASSWORD_SENDER");
     }
 
     public void send(Account account, String messageBody) {
