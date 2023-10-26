@@ -7,6 +7,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
@@ -59,6 +60,15 @@ public class DeliveryService {
         deliverySystemRepository.saveOrUpdate(deliverySystem);
 
         sendReadyToBeDeliverMealKitEvent(cargo, deliverySystem);
+    }
+
+    @Subscribe
+    public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
+        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+
+        deliverySystem.moveMealKitFromCargosToPending(recallCookedMealKitEvent.mealKitId);
+
+        deliverySystemRepository.saveOrUpdate(deliverySystem);
     }
 
     private void sendReadyToBeDeliverMealKitEvent(Cargo cargo, DeliverySystem deliverySystem) {

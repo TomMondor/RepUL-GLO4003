@@ -5,6 +5,7 @@ import java.util.List;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
@@ -107,5 +108,7 @@ public class CookingService {
         kitchen.recallCooked(cookId, mealKitId);
 
         kitchenRepository.saveOrUpdate(kitchen);
+
+        eventBus.publish(new RecallCookedMealKitEvent(mealKitId));
     }
 }

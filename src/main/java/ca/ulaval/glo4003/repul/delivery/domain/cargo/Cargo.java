@@ -62,6 +62,23 @@ public class Cargo {
             .recallDelivery();
     }
 
+    public boolean containsMealKit(UniqueIdentifier mealKitId) {
+        return mealKits.stream().anyMatch(mealKit -> mealKit.getMealKitId().equals(mealKitId));
+    }
+
+    public MealKit removeMealKit(UniqueIdentifier mealKitId) {
+        MealKit mealKit =
+            mealKits.stream().filter(currentMealKit -> currentMealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new);
+
+        mealKits.remove(mealKit);
+
+        return mealKit;
+    }
+
+    public boolean isEmpty() {
+        return mealKits.isEmpty();
+    }
+
     private void validateIsSameDeliveryPersonId(UniqueIdentifier deliveryPersonId) {
         if (!deliveryPersonId.equals(this.deliveryPersonId)) {
             throw new InvalidDeliveryPersonIdException();

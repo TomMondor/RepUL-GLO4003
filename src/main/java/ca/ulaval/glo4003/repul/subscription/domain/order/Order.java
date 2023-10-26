@@ -83,4 +83,8 @@ public class Order {
     public void markAsInDelivery() {
         orderStatus = OrderStatus.IN_DELIVERY;
     }
+
+    public void markAsToCook() {
+        orderStatus = OrderStatus.TO_COOK;
+    }
 }

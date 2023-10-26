@@ -16,6 +16,7 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.fixture.subscription.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
@@ -124,6 +125,36 @@ public class SubscriptionServiceTest {
 
         verify(mockSubscription).markAsCooked();
         verify(otherMockSubscription).markAsCooked();
+    }
+
+    @Test
+    public void whenHandlingMealKitsCookedEvent_shouldGetSubscriptionByOrderIdInRepository() {
+        RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEALKIT_ID);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+
+        subscriptionService.handleRecallCookedMealKitEvent(recallCookedMealKitEvent);
+
+        verify(mockSubscriptionRepository).getSubscriptionByOrderId(A_MEALKIT_ID);
+    }
+
+    @Test
+    public void whenHandlingRecallCookedMealKitEvent_shouldMarkSubscriptionAsToCookO() {
+        RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEALKIT_ID);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+
+        subscriptionService.handleRecallCookedMealKitEvent(recallCookedMealKitEvent);
+
+        verify(mockSubscription).markAsToCook();
+    }
+
+    @Test
+    public void whenHandlingRecallCookedMealKitEvent_shouldSaveOrUpdateSubscription() {
+        RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEALKIT_ID);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+
+        subscriptionService.handleRecallCookedMealKitEvent(recallCookedMealKitEvent);
+
+        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.small.delivery.application;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
@@ -52,13 +54,14 @@ public class DeliveryServiceTest {
     private static final KitchenLocation A_KITCHEN_LOCATION = new KitchenLocation(A_KITCHEN_LOCATION_ID, "Vachon");
     private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Pouliot", 10);
     private static final MealKit A_MEAL_KIT = new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.PENDING);
-    private static final Cargo A_CARGO = new Cargo(A_CARGO_UNIQUE_IDENTIFIER, A_KITCHEN_LOCATION, List.of(A_MEAL_KIT));
+    private static final Cargo A_CARGO = new Cargo(A_CARGO_UNIQUE_IDENTIFIER, A_KITCHEN_LOCATION, new ArrayList<>(List.of(A_MEAL_KIT)));
     private static final UniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_DELIVERY_PERSON_ID);
     private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, MealKitType.STANDARD, A_DELIVERY_LOCATION_ID,
             A_DELIVERY_DATE);
+    private static final RecallCookedMealKitEvent A_RECALL_COOKED_MEAL_KIT_EVENT = new RecallCookedMealKitEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER);
     private static final UniqueIdentifier DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
     private static final Email DELIVERY_ACCOUNT_EMAIL = new Email("email@ulaval.ca");
     private static final DeliveryPersonAccountCreatedEvent DELIVERY_ACCOUNT_CREATED_EVENT =
@@ -169,7 +172,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandleMealKitsCookedEvent_shouldGetDeliverySystem() {
+    public void whenHandlingMealKitsCookedEvent_shouldGetDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
         when(mockDeliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
@@ -179,7 +182,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandleMealKitsCookedEvent_shouldSaveOrUpdateDeliverySystem() {
+    public void whenHandlingMealKitsCookedEvent_shouldSaveOrUpdateDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
         when(mockDeliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
@@ -189,7 +192,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandleMealKitsCookedEvent_shouldReceiveReadyToBeDeliveredMealKit() {
+    public void whenHandlingMealKitsCookedEvent_shouldReceiveReadyToBeDeliveredMealKit() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
         when(mockDeliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
@@ -199,7 +202,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandleMealKitsCookedEvent_shouldPublishMealKitReadyToDeliverEvent() {
+    public void whenHandlingMealKitsCookedEvent_shouldPublishMealKitReadyToDeliverEvent() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
         when(mockDeliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
@@ -209,7 +212,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenReceiveDeliveryRequest_shouldGetDeliverySystem() {
+    public void whenHandlingMealKitConfirmedEvent_shouldGetDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
@@ -218,7 +221,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenReceiveDeliveryRequest_shouldSaveOrUpdateDeliverySystem() {
+    public void whenHandlingMealKitConfirmedEvent_shouldSaveOrUpdateDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
@@ -227,12 +230,39 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenReceiveDeliveryRequest_shouldCreateMealKit() {
+    public void whenHandlingMealKitConfirmedEvent_shouldCreateMealKit() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
         verify(mockDeliverySystem).createMealKit(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+    }
+
+    @Test
+    public void whenHandlingRecallCookedMealKitEvent_shouldGetDeliverySystem() {
+        when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+
+        deliveryService.handleRecallCookedMealKitEvent(A_RECALL_COOKED_MEAL_KIT_EVENT);
+
+        verify(mockDeliverySystemRepository).get();
+    }
+
+    @Test
+    public void whenHandlingRecallCookedMealKitEvent_shouldMoveMealKitFromCargosToPendingInDeliverySystem() {
+        when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+
+        deliveryService.handleRecallCookedMealKitEvent(A_RECALL_COOKED_MEAL_KIT_EVENT);
+
+        verify(mockDeliverySystem).moveMealKitFromCargosToPending(A_MEAL_KIT_UNIQUE_IDENTIFIER);
+    }
+
+    @Test
+    public void whenHandlingRecallCookedMealKitEvent_shouldSaveOrUpdateDeliverySystem() {
+        when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+
+        deliveryService.handleRecallCookedMealKitEvent(A_RECALL_COOKED_MEAL_KIT_EVENT);
+
+        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
     }
 
     @Test

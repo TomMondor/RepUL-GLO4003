@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
@@ -15,6 +16,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKitFactory;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidCargoIdException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
 
 public class DeliverySystem {
     private final Map<UniqueIdentifier, MealKit> pendingMealKits = new HashMap<>();
@@ -41,7 +43,13 @@ public class DeliverySystem {
     }
 
     public Cargo receiveReadyToBeDeliveredMealKit(KitchenLocationId kitchenLocationId, List<UniqueIdentifier> mealKitIds) {
-        List<MealKit> mealKits = mealKitIds.stream().map(this.pendingMealKits::remove).toList();
+        mealKitIds.stream().forEach(mealKitId -> {
+            if (!pendingMealKits.containsKey(mealKitId)) {
+                throw new InvalidMealKitIdException();
+            }
+        });
+
+        List<MealKit> mealKits = mealKitIds.stream().map(this.pendingMealKits::remove).collect(Collectors.toCollection(ArrayList::new));
 
         mealKits.forEach(lockerAssignator::assignLocker);
 
@@ -52,10 +60,6 @@ public class DeliverySystem {
         cargos.add(cargo);
 
         return cargo;
-    }
-
-    public MealKit getMealKit(UniqueIdentifier mealKitId) {
-        return pendingMealKits.get(mealKitId);
     }
 
     public List<DeliveryLocation> getDeliveryLocations() {
@@ -75,8 +79,7 @@ public class DeliverySystem {
     }
 
     public void cancelCargo(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId) {
-        cargos.stream().filter(cargo -> cargo.getCargoId().equals(cargoId)).findFirst().orElseThrow(InvalidCargoIdException::new)
-            .cancelCargo(deliveryPersonId);
+        cargos.stream().filter(cargo -> cargo.getCargoId().equals(cargoId)).findFirst().orElseThrow(InvalidCargoIdException::new).cancelCargo(deliveryPersonId);
     }
 
     public void confirmDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
@@ -95,5 +98,23 @@ public class DeliverySystem {
 
     public List<UniqueIdentifier> getDeliveryPeople() {
         return deliveryPersonIds;
+    }
+
+    public void moveMealKitFromCargosToPending(UniqueIdentifier mealKitId) {
+        MealKit removedMealKitFromCargos = removeMealKitFromCargos(mealKitId);
+        pendingMealKits.put(mealKitId, removedMealKitFromCargos);
+    }
+
+    private MealKit removeMealKitFromCargos(UniqueIdentifier mealKitId) {
+        for (Cargo cargo : cargos) {
+            if (cargo.containsMealKit(mealKitId)) {
+                MealKit mealKit = cargo.removeMealKit(mealKitId);
+                if (cargo.isEmpty()) {
+                    cargos.remove(cargo);
+                }
+                return mealKit;
+            }
+        }
+        throw new InvalidMealKitIdException();
     }
 }

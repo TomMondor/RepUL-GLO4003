@@ -6,6 +6,7 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
@@ -61,6 +62,14 @@ public class SubscriptionService {
             subscription.markAsInDelivery();
             subscriptionRepository.saveOrUpdate(subscription);
         }
+    }
+
+    @Subscribe
+    public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
+        Subscription subscription =
+            subscriptionRepository.getSubscriptionByOrderId(recallCookedMealKitEvent.mealKitId).orElseThrow(OrderNotFoundException::new);
+        subscription.markAsToCook();
+        subscriptionRepository.saveOrUpdate(subscription);
     }
 
     public SubscriptionsPayload getSubscriptions(UniqueIdentifier subscriberId) {

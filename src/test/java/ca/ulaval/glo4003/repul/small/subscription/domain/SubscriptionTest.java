@@ -147,4 +147,15 @@ public class SubscriptionTest {
 
         assertEquals(OrderStatus.TO_DELIVER, anOrder.getOrderStatus());
     }
+
+    @Test
+    public void whenMarkAsToCook_shouldChangeOrderStatusToToCook() {
+        Order anOrder = new OrderFixture().withOrderStatus(OrderStatus.TO_DELIVER).build();
+        Subscription subscription =
+            new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrder), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
+
+        subscription.markAsToCook();
+
+        assertEquals(OrderStatus.TO_COOK, anOrder.getOrderStatus());
+    }
 }

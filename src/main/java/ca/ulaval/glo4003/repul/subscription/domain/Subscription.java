@@ -92,4 +92,8 @@ public class Subscription {
     public void markAsInDelivery() {
         this.findCurrentOrder().ifPresent(Order::markAsInDelivery);
     }
+
+    public void markAsToCook() {
+        this.findCurrentOrder().ifPresent(Order::markAsToCook);
+    }
 }
