@@ -1,14 +1,14 @@
 {
 	"info": {
-		"_postman_id": "03a5f3a5-2989-4da0-9e24-498beea08807",
+		"_postman_id": "32deff1b-c4a2-4aa0-a901-912e0da7178a",
 		"name": "RepUL",
 		"description": "Service de boîte repas de l’université Laval, l’éducation commence toujours par une bonne alimentation!\n\nSi l'application est démarée en mode demo (avec l'argument --demo) voici les informations pour se connecter à certains comptes:\n\nSe connecter en tant que client:\n\nemail: client@ulaval.ca\n\npassword: client\n\nSe connecter en tant que Paul le cuisinier:\n\nemail: cook@ulaval.ca\n\npassword: cook",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "21028314"
+		"_exporter_id": "24366551"
 	},
 	"item": [
 		{
-			"name": "Auth",
+			"name": "User",
 			"item": [
 				{
 					"name": "Register",
@@ -25,7 +25,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/accounts/register",
+							"raw": "http://localhost:8080/api/users:register",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -33,8 +33,7 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"accounts",
-								"register"
+								"users:register"
 							]
 						},
 						"description": "Route permettant de créer un nouveau compte client.\n\nSexes disponibles: MAN, WOMAN, OTHER, UNDISCLOSED"
@@ -55,7 +54,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/accounts/register",
+									"raw": "http://localhost:8080/api/users:register",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -63,15 +62,14 @@
 									"port": "8080",
 									"path": [
 										"api",
-										"accounts",
-										"register"
+										"users:register"
 									]
 								}
 							},
-							"_postman_previewlanguage": null,
-							"header": null,
+							"_postman_previewlanguage": "Text",
+							"header": [],
 							"cookie": [],
-							"body": null
+							"body": ""
 						}
 					]
 				},
@@ -107,7 +105,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/login",
+							"raw": "http://localhost:8080/api/users:login",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -115,8 +113,7 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"auth",
-								"login"
+								"users:login"
 							]
 						},
 						"description": "Route permettant de se connecter à l'application. La route retourne un token à utiliser dans les routes protégées."
@@ -137,7 +134,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/auth/login",
+									"raw": "http://localhost:8080/api/users:login",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -145,15 +142,14 @@
 									"port": "8080",
 									"path": [
 										"api",
-										"auth",
-										"login"
+										"users:login"
 									]
 								}
 							},
-							"_postman_previewlanguage": null,
-							"header": null,
+							"_postman_previewlanguage": "Text",
+							"header": [],
 							"cookie": [],
-							"body": null
+							"body": ""
 						},
 						{
 							"name": "Login as Paul",
@@ -162,7 +158,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"email\":\"cook@ulaval.ca\",\n    \"password\": \"cook\"\n}",
+									"raw": "{\n    \"email\":\"paul@ulaval.ca\",\n    \"password\": \"paul123\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -170,7 +166,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/auth/login",
+									"raw": "http://localhost:8080/api/users:login",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -178,24 +174,23 @@
 									"port": "8080",
 									"path": [
 										"api",
-										"auth",
-										"login"
+										"users:login"
 									]
 								}
 							},
-							"_postman_previewlanguage": null,
-							"header": null,
+							"_postman_previewlanguage": "Text",
+							"header": [],
 							"cookie": [],
-							"body": null
+							"body": ""
 						},
 						{
-							"name": "Login as Client",
+							"name": "Login as Roger",
 							"originalRequest": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"email\":\"client@ulaval.ca\",\n    \"password\": \"client\"\n}",
+									"raw": "{\n    \"email\":\"roger@ulaval.ca\",\n    \"password\": \"roger123\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -203,7 +198,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/auth/login",
+									"raw": "http://localhost:8080/api/users:login",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -211,31 +206,34 @@
 									"port": "8080",
 									"path": [
 										"api",
-										"auth",
-										"login"
+										"users:login"
 									]
 								}
 							},
-							"_postman_previewlanguage": null,
-							"header": null,
+							"_postman_previewlanguage": "Text",
+							"header": [],
 							"cookie": [],
-							"body": null
+							"body": ""
 						}
 					]
-				}
-			],
-			"description": "Requêtes afin de se connecter ou créer un compte."
-		},
-		{
-			"name": "Catalog",
-			"item": [
+				},
 				{
-					"name": "Locations",
+					"name": "Account Informations",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/catalog/locations",
+							"raw": "http://localhost:8080/api/users",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -243,16 +241,15 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"catalog",
-								"locations"
+								"users"
 							]
 						},
-						"description": "Route retournant les locations permises lors de la création d'un abonnement."
+						"description": "Route retournant les informations du compte de l'utilisateur effectuant la demande."
 					},
 					"response": []
 				}
 			],
-			"description": "Requêtes liées au catalogue d'offres."
+			"description": "Requêtes afin de se connecter ou créer un compte."
 		},
 		{
 			"name": "Subscription",
@@ -264,10 +261,14 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Set token variable\", function() {",
-									"    var response = pm.response.json();",
+									"pm.test(\"Set subscription_id variable\", function() {",
+									"    var headers = pm.response.headers;",
 									"",
-									"    var subscriptionId = response.subscriptionId;",
+									"    const url = headers.get(\"location\");",
+									"    const path = \"/subscriptions/\";",
+									"    const index = url.indexOf(path);",
+									"    const subscriptionId = url.substring(index + path.length);",
+									"    ",
 									"",
 									"    pm.collectionVariables.set(\"subscription_id\", subscriptionId);",
 									"});"
@@ -291,7 +292,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"locationId\": \"VACHON\",\n    \"dayOfWeek\": \"TUESDAY\",\n    \"lunchboxType\": \"STANDARD\"\n}",
+							"raw": "{\n    \"locationId\": \"VACHON\",\n    \"dayOfWeek\": \"TUESDAY\",\n    \"mealKitType\": \"STANDARD\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -330,7 +331,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/subscriptions/{{subscription_id}}/confirm",
+							"raw": "http://localhost:8080/api/subscriptions/{{subscription_id}}:confirm",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -339,8 +340,7 @@
 							"path": [
 								"api",
 								"subscriptions",
-								"{{subscription_id}}",
-								"confirm"
+								"{{subscription_id}}:confirm"
 							]
 						},
 						"description": "Route permettant de confirmer la boîte-repas courante de l'abonnement spécifié."
@@ -363,7 +363,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/subscriptions/{{subscription_id}}/decline",
+							"raw": "http://localhost:8080/api/subscriptions/{{subscription_id}}:decline",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -372,8 +372,7 @@
 							"path": [
 								"api",
 								"subscriptions",
-								"{{subscription_id}}",
-								"decline"
+								"{{subscription_id}}:decline"
 							]
 						},
 						"description": "Route permettant de refuser la boîte-repas courante de l'abonnement spécifié."
@@ -410,15 +409,87 @@
 						"description": "Retourne les abonnements de l'utilisateur effectuant la requête."
 					},
 					"response": []
+				},
+				{
+					"name": "Subscription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/subscriptions/{{subscription_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"subscriptions",
+								"{{subscription_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Current orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/subscriptions:currentOrders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"subscriptions:currentOrders"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"description": "Requêtes liées aux abonnements."
 		},
 		{
-			"name": "Lunchboxes",
+			"name": "Cooking",
 			"item": [
 				{
-					"name": "Lunchboxes to prepare",
+					"name": "Meal kits to cook",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -433,7 +504,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/lunchboxes/to-cook",
+							"raw": "http://localhost:8080/api/mealKits:toCook",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -441,16 +512,53 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"lunchboxes",
-								"to-cook"
+								"mealKits:toCook"
 							]
-						},
-						"description": "Route permettant au cuisinier de voir les boîtes qu'il doit préparer."
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "See my current lunchboxes",
+					"name": "Select meal kits",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ids\": [\"891a7eb8-8cb1-4b6a-9a54-9f0adcc4bde2\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/mealKits:select",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"mealKits:select"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My selection",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -465,7 +573,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/orders/me",
+							"raw": "http://localhost:8080/api/mealKits:getSelection",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -473,16 +581,328 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"orders",
-								"me"
+								"mealKits:getSelection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel one selected",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
 							]
 						},
-						"description": "Route permettant de voir les boîtes-repas de l'utilisateur courant."
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/mealKits/{{mealKit_id}}:cancelSelection",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"mealKits",
+								"{{mealKit_id}}:cancelSelection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel all selected",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/mealKits:cancelSelection",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"mealKits:cancelSelection"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm one cooked",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/mealKits/{{mealKit_id}}:confirmCooked",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"mealKits",
+								"{{mealKit_id}}:confirmCooked"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm many cooked",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ids\": [\"891a7eb8-8cb1-4b6a-9a54-9f0adcc4bde2\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/mealKits:confirmCooked",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"mealKits:confirmCooked"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Recall cooked",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/mealKits/{{mealKit_id}}:recallCooked",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"mealKits",
+								"{{mealKit_id}}:recallCooked"
+							]
+						}
 					},
 					"response": []
 				}
-			],
-			"description": "Requêtes liées aux boîtes-repas."
+			]
+		},
+		{
+			"name": "Delivery",
+			"item": [
+				{
+					"name": "Pickup cargo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/cargos/{{cargo_id}}:pickup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cargos",
+								"{{cargo_id}}:pickup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel delivery",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/cargos/{{cargo_id}}:cancel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cargos",
+								"{{cargo_id}}:cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm delivery",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/cargos/{{cargo_id}}/mealKits/{{mealKit_id}}:confirm",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cargos",
+								"{{cargo_id}}",
+								"mealKits",
+								"{{mealKit_id}}:confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Recall delivery",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/cargos/{{cargo_id}}/mealKits/{{mealKit_id}}:recall",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cargos",
+								"{{cargo_id}}",
+								"mealKits",
+								"{{mealKit_id}}:recall"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delivery Locations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/locations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Health",
@@ -502,38 +922,6 @@
 					]
 				},
 				"description": "Route retournant un 200 OK si l'application est fonctionnelle."
-			},
-			"response": []
-		},
-		{
-			"name": "Account Informations",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/accounts/me",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"accounts",
-						"me"
-					]
-				},
-				"description": "Route retournant les informations du compte de l'utilisateur effectuant la demande."
 			},
 			"response": []
 		}
@@ -566,6 +954,16 @@
 		},
 		{
 			"key": "subscription_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "mealKit_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cargo_id",
 			"value": "",
 			"type": "string"
 		}

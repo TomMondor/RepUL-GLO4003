@@ -40,7 +40,7 @@ public class Kitchen {
 
         selectedMealKitIds.forEach(id -> {
             MealKit mealKit = getMealKit(id);
-            mealKit.setCookId(cookId);
+            mealKit.selectBy(cookId);
         });
     }
 
@@ -97,7 +97,7 @@ public class Kitchen {
     }
 
     private void unselectSelectedMealKits(UniqueIdentifier cookId) {
-        getSelectedMealKits(cookId).forEach(mealKit -> mealKit.setCookId(null));
+        getSelectedMealKits(cookId).forEach(MealKit::unselect);
     }
 
     private MealKit getMealKit(UniqueIdentifier mealKitId) {

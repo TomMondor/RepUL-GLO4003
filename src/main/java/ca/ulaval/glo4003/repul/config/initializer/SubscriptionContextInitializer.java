@@ -62,8 +62,9 @@ public class SubscriptionContextInitializer {
 
     public SubscriptionService createSubscriptionService(RepULEventBus eventBus) {
         LOGGER.info("Creating Subscription service");
-
-        return new SubscriptionService(subscriptionRepository, subscriptionFactory, eventBus);
+        SubscriptionService service = new SubscriptionService(subscriptionRepository, subscriptionFactory, eventBus);
+        eventBus.register(service);
+        return service;
     }
 
     private List<DeliveryLocationId> parseDeliveryLocationIds() {

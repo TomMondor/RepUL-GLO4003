@@ -8,7 +8,7 @@ import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
 public class SubscriptionRequestFixture {
     private String locationId = "VACHON";
     private String dayOfWeek = DayOfWeek.MONDAY.toString();
-    private String lunchboxType = MealKitType.STANDARD.toString();
+    private String mealKitType = MealKitType.STANDARD.toString();
 
     public SubscriptionRequestFixture withLocationId(String locationId) {
         this.locationId = locationId;
@@ -20,8 +20,8 @@ public class SubscriptionRequestFixture {
         return this;
     }
 
-    public SubscriptionRequestFixture withLunchboxType() {
-        this.lunchboxType = lunchboxType;
+    public SubscriptionRequestFixture withMealKitType(String mealKitType) {
+        this.mealKitType = mealKitType;
         return this;
     }
 
@@ -29,7 +29,7 @@ public class SubscriptionRequestFixture {
         SubscriptionRequest subscriptionRequest = new SubscriptionRequest();
         subscriptionRequest.locationId = locationId;
         subscriptionRequest.dayOfWeek = dayOfWeek;
-        subscriptionRequest.lunchboxType = lunchboxType;
+        subscriptionRequest.mealKitType = mealKitType;
         return subscriptionRequest;
     }
 }

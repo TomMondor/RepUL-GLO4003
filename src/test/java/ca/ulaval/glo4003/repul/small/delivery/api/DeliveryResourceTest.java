@@ -44,12 +44,12 @@ public class DeliveryResourceTest {
     }
 
     @Test
-    public void whenCancellingCargo_shouldReturn200() {
+    public void whenCancellingCargo_shouldReturn204() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
 
         Response response = deliveryResource.cancelCargo(requestContext, A_CARGO_ID);
 
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     @Test
@@ -62,12 +62,12 @@ public class DeliveryResourceTest {
     }
 
     @Test
-    public void whenPickingUpCargo_shouldReturn200() {
+    public void whenPickingUpCargo_shouldReturn204() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
 
         Response response = deliveryResource.pickupCargo(requestContext, A_CARGO_ID);
 
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     @Test

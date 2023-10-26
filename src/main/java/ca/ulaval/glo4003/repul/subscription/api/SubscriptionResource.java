@@ -53,7 +53,7 @@ public class SubscriptionResource {
     public Response createSubscription(@Context ContainerRequestContext context, @Valid SubscriptionRequest subscriptionRequest) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         SubscriptionQuery subscriptionQuery =
-            SubscriptionQuery.from(subscriptionRequest.locationId, subscriptionRequest.dayOfWeek, subscriptionRequest.lunchboxType);
+            SubscriptionQuery.from(subscriptionRequest.locationId, subscriptionRequest.dayOfWeek, subscriptionRequest.mealKitType);
 
         UniqueIdentifier subscriptionId = subscriptionService.createSubscription(accountId, subscriptionQuery);
 

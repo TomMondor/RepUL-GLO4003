@@ -34,8 +34,9 @@ import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserFactory;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserRepository;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.EmailAlreadyInUseException;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.IDULAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.InvalidCredentialsException;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.UserAlreadyExistsException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.TokenGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -86,10 +87,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void givenRegistrationQueryWithExistingEmail_whenRegistering_shouldThrowUserAlreadyExistsException() {
+    public void givenRegistrationQueryWithExistingEmail_whenRegistering_shouldThrowEmailAlreadyInUseException() {
         given(userRepository.exists(any())).willReturn(true);
 
-        assertThrows(UserAlreadyExistsException.class,
+        assertThrows(EmailAlreadyInUseException.class,
             () -> userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER)));
     }
 
@@ -99,7 +100,7 @@ public class UserServiceTest {
 
         try {
             userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
-        } catch (UserAlreadyExistsException ignored) {
+        } catch (EmailAlreadyInUseException ignored) {
             // Ignoring the exception because we want to check the repositories
         }
 
@@ -108,11 +109,11 @@ public class UserServiceTest {
     }
 
     @Test
-    public void givenRegistrationQueryWithExistingIDUL_whenRegistering_shouldThrowUserAlreadyExistsException() {
+    public void givenRegistrationQueryWithExistingIDUL_whenRegistering_shouldThrowIDULAlreadyInUseException() {
         given(userRepository.exists(any())).willReturn(false);
         given(accountRepository.getByIDUL(any())).willReturn(Optional.of(mock(Account.class)));
 
-        assertThrows(UserAlreadyExistsException.class,
+        assertThrows(IDULAlreadyInUseException.class,
             () -> userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER)));
     }
 
@@ -123,7 +124,7 @@ public class UserServiceTest {
 
         try {
             userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
-        } catch (UserAlreadyExistsException ignored) {
+        } catch (IDULAlreadyInUseException ignored) {
             // Ignoring the exception because we want to check the repositories
         }
 

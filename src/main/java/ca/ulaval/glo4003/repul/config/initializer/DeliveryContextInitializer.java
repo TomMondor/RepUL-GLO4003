@@ -43,7 +43,9 @@ public class DeliveryContextInitializer {
     public DeliveryService createDeliveryService(RepULEventBus eventBus) {
         LOGGER.info("Creating Delivery service");
         initializeDelivery(deliverySystemRepository);
-        return new DeliveryService(deliverySystemRepository, eventBus);
+        DeliveryService service = new DeliveryService(deliverySystemRepository, eventBus);
+        eventBus.register(service);
+        return service;
     }
 
     public LocationsCatalogService createLocationsCatalogService() {

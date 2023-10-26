@@ -17,8 +17,9 @@ import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserFactory;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserRepository;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.EmailAlreadyInUseException;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.IDULAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.InvalidCredentialsException;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.UserAlreadyExistsException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.Token;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.TokenGenerator;
 
@@ -43,8 +44,11 @@ public class UserService {
     }
 
     public void register(RegistrationQuery registrationQuery) {
-        if (userRepository.exists(registrationQuery.email()) || accountRepository.getByIDUL(registrationQuery.idul()).isPresent()) {
-            throw new UserAlreadyExistsException();
+        if (userRepository.exists(registrationQuery.email())) {
+            throw new EmailAlreadyInUseException();
+        }
+        if (accountRepository.getByIDUL(registrationQuery.idul()).isPresent()) {
+            throw new IDULAlreadyInUseException();
         }
         UniqueIdentifier uniqueIdentifier = uniqueIdentifierFactory.generate();
         User newUser = userFactory.createUser(uniqueIdentifier, registrationQuery.email(), Role.CLIENT, registrationQuery.password());

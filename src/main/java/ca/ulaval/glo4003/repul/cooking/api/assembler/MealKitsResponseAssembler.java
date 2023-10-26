@@ -18,7 +18,7 @@ import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 
 public class MealKitsResponseAssembler {
     public SelectionResponse toSelectionResponse(List<UniqueIdentifier> mealKitIds) {
-        return new SelectionResponse(mealKitIds.stream().map(Record::toString).collect(Collectors.toList()));
+        return new SelectionResponse(mealKitIds.stream().map(id -> id.value().toString()).collect(Collectors.toList()));
     }
 
     public ToCookResponse toToCookResponse(MealKitsPayload mealKitsPayload) {

@@ -80,6 +80,19 @@ public class UserContextInitializer {
         return this;
     }
 
+    public UserService createService() {
+        LOGGER.info("Creating User service");
+        UserService service = new UserService(accountRepository, userRepository, accountFactory,
+            userFactory, uniqueIdentifierFactory, tokenGenerator, eventBus);
+        eventBus.register(service);
+        return service;
+    }
+
+    public AuthGuard createAuthGuard() {
+        LOGGER.info("Creating Auth guard");
+        return new AuthGuard(userRepository, tokenDecoder);
+    }
+
     private void createAndSaveUser(Map<UniqueIdentifier, RegistrationQuery> query, Role role) {
         UniqueIdentifier userId = query.keySet().iterator().next();
         RegistrationQuery registrationQuery = query.get(userId);
@@ -87,15 +100,5 @@ public class UserContextInitializer {
         accountRepository.saveOrUpdate(
             accountFactory.createAccount(userId, registrationQuery.idul(), registrationQuery.name(), registrationQuery.birthdate(), registrationQuery.gender(),
                 registrationQuery.email()));
-    }
-
-    public UserService createService() {
-        LOGGER.info("Creating User service");
-        return new UserService(accountRepository, userRepository, accountFactory, userFactory, uniqueIdentifierFactory, tokenGenerator, eventBus);
-    }
-
-    public AuthGuard createAuthGuard() {
-        LOGGER.info("Creating Auth guard");
-        return new AuthGuard(userRepository, tokenDecoder);
     }
 }

@@ -4,17 +4,19 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
+import ca.ulaval.glo4003.repul.user.application.exception.InvalidDateException;
 import ca.ulaval.glo4003.repul.user.domain.account.exception.InvalidBirthdateException;
 import ca.ulaval.glo4003.repul.user.domain.account.exception.InvalidGenderException;
 import ca.ulaval.glo4003.repul.user.domain.account.exception.InvalidIDULException;
 import ca.ulaval.glo4003.repul.user.domain.account.exception.InvalidNameException;
 import ca.ulaval.glo4003.repul.user.domain.exception.UserException;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.EmailAlreadyInUseException;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.IDULAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.InvalidCredentialsException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.InvalidPasswordException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.InvalidTokenException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.PasswordNotMatchingException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.TokenVerificationFailedException;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.UserAlreadyExistsException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.UserNotFoundException;
 import ca.ulaval.glo4003.repul.user.middleware.exception.MissingAuthorizationHeaderException;
 
@@ -37,11 +39,13 @@ public class UserExceptionStatusMapper {
         exceptionMapper.put(UserNotFoundException.class, Response.Status.NOT_FOUND);
 
         exceptionMapper.put(InvalidBirthdateException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidDateException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidGenderException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidIDULException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidNameException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidTokenException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(UserAlreadyExistsException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(IDULAlreadyInUseException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(EmailAlreadyInUseException.class, Response.Status.BAD_REQUEST);
 
         exceptionMapper.put(InvalidCredentialsException.class, Response.Status.UNAUTHORIZED);
         exceptionMapper.put(InvalidPasswordException.class, Response.Status.UNAUTHORIZED);

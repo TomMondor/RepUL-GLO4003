@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LocationsCatalogResourceEnd2EndTest {
     private static final ApplicationContext context = new TestApplicationContext();
-    private static final String BASE_URL = context.getURI() + "catalog/";
+    private static final String BASE_URL = context.getURI() + "locations/";
     private static final DeliveryLocationResponse EXPECTED_LOCATION = new DeliveryLocationResponse("MYRAND", "Secteur EST", 12);
 
     private ServerFixture server;
@@ -37,14 +37,14 @@ public class LocationsCatalogResourceEnd2EndTest {
 
     @Test
     public void whenGettingLocations_shouldReturn200() {
-        Response response = when().get(BASE_URL + "delivery-locations");
+        Response response = when().get(BASE_URL);
 
         assertEquals(200, response.getStatusCode());
     }
 
     @Test
     public void whenGettingLocations_shouldReturnLocationsBody() {
-        Response response = when().get(BASE_URL + "delivery-locations");
+        Response response = when().get(BASE_URL);
         List<DeliveryLocationResponse> actualBody = Arrays.asList(response.getBody().as(DeliveryLocationResponse[].class));
 
         assertEquals(EXPECTED_LOCATION, actualBody.get(0));

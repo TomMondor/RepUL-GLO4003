@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.CatchallExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationExceptionMapper;
+import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
@@ -101,7 +102,8 @@ public class TestApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(authGuard).register(new CORSResponseFilter()).register(new CatchallExceptionMapper()).register(new RepULExceptionMapper())
+            .register(authGuard).register(new CORSResponseFilter()).register(new CatchallExceptionMapper()).register(new NotFoundExceptionMapper())
+            .register(new RepULExceptionMapper())
             .register(new ConstraintViolationExceptionMapper());
     }
 

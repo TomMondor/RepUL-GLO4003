@@ -12,7 +12,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/api/catalog")
+@Path("/api/locations")
 public class LocationsCatalogResource {
     private final LocationsCatalogService locationsCatalogService;
     private final LocationsCatalogResponseAssembler locationsCatalogResponseAssembler = new LocationsCatalogResponseAssembler();
@@ -22,7 +22,6 @@ public class LocationsCatalogResource {
     }
 
     @GET
-    @Path("/delivery-locations")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDeliveryLocations() {
         List<DeliveryLocationResponse> locations = locationsCatalogResponseAssembler.toLocationsResponse(locationsCatalogService.getDeliveryLocations());

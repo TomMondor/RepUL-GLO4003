@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.cooking.domain;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
@@ -10,7 +11,7 @@ public class MealKit {
     private final UniqueIdentifier mealKitId;
     private final List<Recipe> recipes;
     private final LocalDate deliveryDate;
-    private UniqueIdentifier cookId;
+    private Optional<UniqueIdentifier> cookId = Optional.empty();
     private boolean isCooked;
 
     public MealKit(UniqueIdentifier mealKitId, LocalDate deliveryDate, List<Recipe> recipes) {
@@ -18,10 +19,6 @@ public class MealKit {
         this.recipes = recipes;
         this.deliveryDate = deliveryDate;
         this.isCooked = false;
-    }
-
-    public void setCookId(UniqueIdentifier cookId) {
-        this.cookId = cookId;
     }
 
     public UniqueIdentifier getMealKitId() {
@@ -36,16 +33,20 @@ public class MealKit {
         return deliveryDate;
     }
 
+    public void selectBy(UniqueIdentifier cookId) {
+        this.cookId = Optional.of(cookId);
+    }
+
     public void unselect() {
-        cookId = null;
+        cookId = Optional.empty();
     }
 
     public boolean isSelectedBy(UniqueIdentifier cookId) {
-        return this.cookId == cookId && !isCooked;
+        return this.cookId.equals(Optional.of(cookId)) && !isCooked;
     }
 
     public boolean isUnselected() {
-        return cookId == null;
+        return !cookId.isPresent();
     }
 
     public boolean isDeliveryTomorrow() {
@@ -62,7 +63,7 @@ public class MealKit {
             throw new MealKitNotCookedException();
         }
         this.isCooked = false;
-        this.cookId = cookId;
+        this.cookId = Optional.of(cookId);
     }
 
     public boolean isCooked() {

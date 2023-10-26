@@ -35,7 +35,7 @@ public class DeliveryResource {
 
         deliveryService.pickupCargo(deliveryPersonId, UniqueIdentifier.from(cargoId));
 
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @POST
@@ -47,7 +47,7 @@ public class DeliveryResource {
 
         deliveryService.cancelCargo(deliveryPersonId, UniqueIdentifier.from(cargoId));
 
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @POST
