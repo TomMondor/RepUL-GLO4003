@@ -34,7 +34,7 @@ public class MealKitsResponseAssemblerTest {
     }
 
     @Test
-    public void givenALunchbox_whenAssemblingResponse_shouldReturnToCookResponseWithMealKitsAndIngredient() {
+    public void givenAMealKit_whenAssemblingResponse_shouldReturnToCookResponseWithMealKitsAndIngredient() {
         Recipe mealKitRecipe = A_MEALKIT.getRecipes().get(0);
         IngredientResponse expectedIngredientResponse = new IngredientResponse(mealKitRecipe.ingredients().get(0).name(),
             new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().value(), mealKitRecipe.ingredients().get(0).quantity().unit()));
@@ -49,7 +49,7 @@ public class MealKitsResponseAssemblerTest {
     }
 
     @Test
-    public void givenMultipleLunchboxWithSameIngredient_whenAssemblingResponse_shouldAddIngredientQuantity() {
+    public void givenMultipleMealKitWithSameIngredient_whenAssemblingResponse_shouldAddIngredientQuantity() {
         Recipe mealKitRecipe = A_MEALKIT.getRecipes().get(0);
         IngredientResponse expectedIngredientResponse = new IngredientResponse(mealKitRecipe.ingredients().get(0).name(),
             new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().value() * 2, mealKitRecipe.ingredients().get(0).quantity().unit()));

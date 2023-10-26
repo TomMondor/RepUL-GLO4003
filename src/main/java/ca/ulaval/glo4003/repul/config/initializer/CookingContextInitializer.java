@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CookingContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CookingContextInitializer.class);
-    private static final String STANDARD_LUNCHBOX_FILE_PATH = "src/main/resources/standard-meal-box.json";
+    private static final String STANDARD_MEALKIT_FILE_PATH = "src/main/resources/standard-meal-box.json";
     private static final String RECIPES_FIELD_NAME_IN_JSON = "recipes";
     private static final String RECIPE_NAME_FIELD_NAME_IN_JSON = "name";
     private static final String RECIPE_CALORIES_FIELD_NAME_IN_JSON = "calories";
@@ -67,19 +67,19 @@ public class CookingContextInitializer {
 
     private Map<MealKitType, List<Recipe>> getRecipes() {
         Map<MealKitType, List<Recipe>> recipes = new HashMap<>();
-        recipes.put(MealKitType.STANDARD, parseStandardLunchboxRecipes());
+        recipes.put(MealKitType.STANDARD, parseStandardMealKitRecipes());
         return recipes;
     }
 
-    private List<Recipe> parseStandardLunchboxRecipes() {
+    private List<Recipe> parseStandardMealKitRecipes() {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            Object listOfRecipesMaps = objectMapper.readValue(new File(STANDARD_LUNCHBOX_FILE_PATH), new TypeReference<Map<String, Object>>() {
+            Object listOfRecipesMaps = objectMapper.readValue(new File(STANDARD_MEALKIT_FILE_PATH), new TypeReference<Map<String, Object>>() {
             }).get(RECIPES_FIELD_NAME_IN_JSON);
             return getRecipesFromJsonList(listOfRecipesMaps);
         } catch (IOException e) {
-            LOGGER.error("Error while reading " + STANDARD_LUNCHBOX_FILE_PATH, e);
-            throw new RuntimeException("Error while reading " + STANDARD_LUNCHBOX_FILE_PATH);
+            LOGGER.error("Error while reading " + STANDARD_MEALKIT_FILE_PATH, e);
+            throw new RuntimeException("Error while reading " + STANDARD_MEALKIT_FILE_PATH);
         }
     }
 

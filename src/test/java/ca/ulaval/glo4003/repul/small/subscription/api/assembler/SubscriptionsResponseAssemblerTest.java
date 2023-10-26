@@ -25,10 +25,10 @@ public class SubscriptionsResponseAssemblerTest {
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
     private static final LocalDate A_DATE = LocalDate.now();
-    private static final MealKitType A_LUNCHBOX_TYPE = MealKitType.STANDARD;
+    private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final Subscription A_SUBSCRIPTION =
         new SubscriptionFixture().withSubscriptionId(A_SUBSCRIPTION_ID).withPickupLocationId(A_DELIVERY_LOCATION_ID).withFrequency(A_FREQUENCY)
-            .withMealKitType(A_LUNCHBOX_TYPE).withStartDate(A_DATE).build();
+            .withMealKitType(A_MEALKIT_TYPE).withStartDate(A_DATE).build();
     private static final SubscriptionPayload SUBSCRIPTION_PAYLOAD = SubscriptionPayload.from(A_SUBSCRIPTION);
     private static final SubscriptionsPayload SUBSCRIPTIONS_PAYLOAD = new SubscriptionsPayload(List.of(SUBSCRIPTION_PAYLOAD));
 
@@ -43,7 +43,7 @@ public class SubscriptionsResponseAssemblerTest {
         assertEquals(A_SUBSCRIPTION_ID.value().toString(), subscriptionResponses.get(0).subscriptionId());
         assertEquals(A_DELIVERY_LOCATION_ID.value(), subscriptionResponses.get(0).locationId());
         assertEquals(A_FREQUENCY.dayOfWeek().name(), subscriptionResponses.get(0).dayOfWeek());
-        assertEquals(A_LUNCHBOX_TYPE.name(), subscriptionResponses.get(0).lunchboxType());
+        assertEquals(A_MEALKIT_TYPE.name(), subscriptionResponses.get(0).mealKitType());
         assertEquals(A_DATE.toString(), subscriptionResponses.get(0).startDate());
     }
 
@@ -56,7 +56,7 @@ public class SubscriptionsResponseAssemblerTest {
         assertEquals(A_SUBSCRIPTION_ID.value().toString(), subscriptionResponse.subscriptionId());
         assertEquals(A_DELIVERY_LOCATION_ID.value(), subscriptionResponse.locationId());
         assertEquals(A_FREQUENCY.dayOfWeek().name(), subscriptionResponse.dayOfWeek());
-        assertEquals(A_LUNCHBOX_TYPE.name(), subscriptionResponse.lunchboxType());
+        assertEquals(A_MEALKIT_TYPE.name(), subscriptionResponse.mealKitType());
         assertEquals(A_DATE.toString(), subscriptionResponse.startDate());
     }
 }
