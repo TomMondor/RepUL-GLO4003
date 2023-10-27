@@ -5,7 +5,7 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
-import ca.ulaval.glo4003.repul.delivery.domain.exception.AlreadyPickedUpException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitAlreadyPickedUpException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 
@@ -66,7 +66,7 @@ public class MealKit {
 
     public Optional<LockerId> recallDelivery() {
         if (status == DeliveryStatus.PICKED_UP) {
-            throw new AlreadyPickedUpException();
+            throw new MealKitAlreadyPickedUpException();
         } else if (status != DeliveryStatus.DELIVERED) {
             throw new MealKitNotDeliveredException();
         }

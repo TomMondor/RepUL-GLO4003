@@ -6,6 +6,7 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.CargoAlreadyPickedUpException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidDeliveryPersonIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
 
@@ -38,6 +39,9 @@ public class Cargo {
     }
 
     public List<MealKit> pickupCargo(UniqueIdentifier deliveryPersonId) {
+        if (this.deliveryPersonId != null) {
+            throw new CargoAlreadyPickedUpException();
+        }
         this.deliveryPersonId = deliveryPersonId;
         mealKits.forEach(MealKit::pickupReadyToDeliverMealKit);
         return mealKits;

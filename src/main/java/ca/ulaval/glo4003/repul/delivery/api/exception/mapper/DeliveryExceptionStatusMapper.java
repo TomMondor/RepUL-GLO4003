@@ -5,6 +5,7 @@ import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.delivery.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.application.exception.DeliverySystemNotFoundException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.CargoAlreadyPickedUpException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.DeliveryException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidCargoIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidDeliveryPersonIdException;
@@ -37,5 +38,6 @@ public class DeliveryExceptionStatusMapper {
         exceptionMapper.put(MealKitNotDeliveredException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotInDeliveryException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidMealKitIdException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(CargoAlreadyPickedUpException.class, Response.Status.BAD_REQUEST);
     }
 }
