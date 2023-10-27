@@ -12,12 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
-import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
@@ -49,14 +48,8 @@ public class SubscriptionContextInitializer {
         return this;
     }
 
-    public SubscriptionContextInitializer withSubscriptions(List<Map<UniqueIdentifier, SubscriptionQuery>> queries) {
-        queries.forEach(query -> {
-            UniqueIdentifier subscriberId = query.keySet().iterator().next();
-            SubscriptionQuery subscriptionQuery = query.get(subscriberId);
-            subscriptionRepository.saveOrUpdate(
-                subscriptionFactory.createSubscription(subscriberId, subscriptionQuery.deliveryLocationId(), subscriptionQuery.dayOfWeek(),
-                    subscriptionQuery.mealKitType()));
-        });
+    public SubscriptionContextInitializer withSubscriptions(List<Subscription> subscriptions) {
+        subscriptions.forEach(subscriptionRepository::saveOrUpdate);
         return this;
     }
 

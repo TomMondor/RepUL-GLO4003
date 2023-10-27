@@ -16,17 +16,18 @@ import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
 
 import static io.restassured.RestAssured.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LocationsCatalogResourceEnd2EndTest {
-    private static final ApplicationContext context = new TestApplicationContext();
-    private static final String BASE_URL = context.getURI() + "locations/";
+public class LocationResourceEnd2EndTest {
+    private static final ApplicationContext CONTEXT = new TestApplicationContext();
     private static final DeliveryLocationResponse EXPECTED_LOCATION = new DeliveryLocationResponse("MYRAND", "Secteur EST", 12);
 
     private ServerFixture server;
 
     @BeforeEach
     public void startServer() throws Exception {
-        server = new ServerFixture(context);
+        server = new ServerFixture(CONTEXT);
         server.start();
     }
 
@@ -37,16 +38,17 @@ public class LocationsCatalogResourceEnd2EndTest {
 
     @Test
     public void whenGettingLocations_shouldReturn200() {
-        Response response = when().get(BASE_URL);
+        Response response = when().get(CONTEXT.getURI() + "locations");
 
         assertEquals(200, response.getStatusCode());
     }
 
     @Test
-    public void whenGettingLocations_shouldReturnLocationsBody() {
-        Response response = when().get(BASE_URL);
+    public void whenGettingLocations_shouldReturnLocations() {
+        Response response = when().get(CONTEXT.getURI() + "locations");
         List<DeliveryLocationResponse> actualBody = Arrays.asList(response.getBody().as(DeliveryLocationResponse[].class));
 
-        assertEquals(EXPECTED_LOCATION, actualBody.get(0));
+        assertFalse(actualBody.isEmpty());
+        assertTrue(actualBody.contains(EXPECTED_LOCATION));
     }
 }

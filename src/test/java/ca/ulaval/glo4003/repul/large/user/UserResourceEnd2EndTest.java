@@ -55,6 +55,15 @@ public class UserResourceEnd2EndTest {
     }
 
     @Test
+    public void whenRegistering_shouldReturnLocationHeader() {
+        RegistrationRequest registrationRequest = new RegistrationRequestFixture().build();
+
+        Response response = given().contentType("application/json").body(registrationRequest).post(CONTEXT.getURI() + "users:register");
+
+        assertNotNull(response.getHeader("Location"));
+    }
+
+    @Test
     public void givenExistingAccount_whenGettingMyAccount_shouldReturn200() {
         String accountToken = registerAndLogin();
 

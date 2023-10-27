@@ -65,6 +65,7 @@ public class MealKitResource {
     @Secure
     @Roles(Role.COOK)
     @Path("/mealKits:getSelection")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getSelection(@Context ContainerRequestContext context) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         List<UniqueIdentifier> mealKitIds = cookingService.getSelection(cookId);

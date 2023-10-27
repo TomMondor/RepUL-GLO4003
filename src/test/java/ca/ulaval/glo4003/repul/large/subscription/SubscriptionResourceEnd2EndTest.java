@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.repul.large.subscription;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -25,9 +27,12 @@ import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SubscriptionResourceEnd2EndTest {
+    private static final int SUBSCRIPTION_ID_LENGTH = 14;
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST = new SubscriptionRequestFixture().build();
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS =
         new SubscriptionRequestFixture().withDayOfWeek(LocalDate.now().plusDays(3).getDayOfWeek().toString()).build();
@@ -36,12 +41,13 @@ public class SubscriptionResourceEnd2EndTest {
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST_STARTING_TODAY =
         new SubscriptionRequestFixture().withDayOfWeek(LocalDate.now().getDayOfWeek().toString()).build();
     private static final ApplicationContext CONTEXT = new TestApplicationContext();
-
+    private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private ServerFixture server;
 
     @BeforeEach
     public void startServer() throws Exception {
         RestAssured.urlEncodingEnabled = false;
+        System.setOut(new PrintStream(outputStream));
         server = new ServerFixture(CONTEXT);
         server.start();
     }
@@ -49,6 +55,7 @@ public class SubscriptionResourceEnd2EndTest {
     @AfterEach
     public void closeServer() throws Exception {
         RestAssured.reset();
+        System.setOut(System.out);
         server.stop();
     }
 
@@ -104,9 +111,8 @@ public class SubscriptionResourceEnd2EndTest {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST);
 
-        Response response = given().contentType("application/json")
-            .header("Authorization", "Bearer " + accountToken)
-            .get(CONTEXT.getURI() + "subscriptions/" + subscriptionId);
+        Response response =
+            given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "subscriptions/" + subscriptionId);
 
         assertEquals(200, response.getStatusCode());
     }
@@ -116,9 +122,7 @@ public class SubscriptionResourceEnd2EndTest {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST);
         String url = CONTEXT.getURI() + "subscriptions/" + subscriptionId;
-        Response response = given().contentType("application/json")
-            .header("Authorization", "Bearer " + accountToken)
-            .get(url);
+        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(url);
         SubscriptionResponse responseBody = response.getBody().as(SubscriptionResponse.class);
 
         assertEquals(subscriptionId, responseBody.subscriptionId());
@@ -137,6 +141,21 @@ public class SubscriptionResourceEnd2EndTest {
             .post(CONTEXT.getURI() + "subscriptions/" + subscriptionId + ":confirm");
 
         assertEquals(204, response.getStatusCode());
+    }
+
+    @Test
+    public void whenConfirmingCurrentOrder_shouldChargeClient() {
+        String expectedMessage = String.format("The account with id %s has been debited $%s for a meal kit of type %s to be delivered on %s\n",
+            TestApplicationContext.CLIENT_ID.value().toString(), 75.0, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS.mealKitType,
+            LocalDate.now().plusDays(3));
+        String accountToken = login();
+        String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS);
+
+        given().contentType("application/json").header("Authorization", "Bearer " + accountToken)
+            .post(CONTEXT.getURI() + "subscriptions/" + subscriptionId + ":confirm");
+        String paymentServiceLog = outputStream.toString();
+
+        assertEquals(expectedMessage, paymentServiceLog);
     }
 
     @Test
@@ -203,7 +222,7 @@ public class SubscriptionResourceEnd2EndTest {
     private String createSubscription(String accountToken, SubscriptionRequest subscriptionRequest) {
         Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(subscriptionRequest)
             .post(CONTEXT.getURI() + "subscriptions");
-        String location =  response.getHeader("Location");
-        return location.substring(location.indexOf("subscriptions/") + 14);
+        String location = response.getHeader("Location");
+        return location.substring(location.indexOf("subscriptions/") + SUBSCRIPTION_ID_LENGTH);
     }
 }

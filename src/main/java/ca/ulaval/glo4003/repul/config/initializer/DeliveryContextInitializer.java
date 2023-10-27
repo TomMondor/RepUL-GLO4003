@@ -31,12 +31,28 @@ public class DeliveryContextInitializer {
     private static final String LOCATION_FIELD_NAME_IN_JSON = "location";
     private static final String NAME_FIELD_NAME_IN_JSON = "name";
     private static final String CAPACITY_FIELD_NAME_IN_JSON = "capacity";
-    private final List<UniqueIdentifier> deliveryPersonIds = new ArrayList<>();
-
+    private final List<UniqueIdentifier> deliveryPeopleToAdd = new ArrayList<>();
+    private final List<Map<UniqueIdentifier, DeliveryLocationId>> pendingMealKitsToAdd = new ArrayList<>();
+    private final List<List<UniqueIdentifier>> cargosToAdd = new ArrayList<>();
     private DeliverySystemRepository deliverySystemRepository = new InMemoryDeliverySystemRepository();
 
+    public DeliveryContextInitializer withDeliverySystemRepository(DeliverySystemRepository deliverySystemRepository) {
+        this.deliverySystemRepository = deliverySystemRepository;
+        return this;
+    }
+
     public DeliveryContextInitializer withDeliveryPeople(List<UniqueIdentifier> deliveryPersonIds) {
-        this.deliveryPersonIds.addAll(deliveryPersonIds);
+        deliveryPeopleToAdd.addAll(deliveryPersonIds);
+        return this;
+    }
+
+    public DeliveryContextInitializer withPendingMealKits(List<Map<UniqueIdentifier, DeliveryLocationId>> mealKits) {
+        pendingMealKitsToAdd.addAll(mealKits);
+        return this;
+    }
+
+    public DeliveryContextInitializer withCargo(List<UniqueIdentifier> mealKits) {
+        cargosToAdd.add(mealKits);
         return this;
     }
 
@@ -61,7 +77,15 @@ public class DeliveryContextInitializer {
         LocationsCatalog locationsCatalog = new LocationsCatalog(deliveryLocations, kitchenLocations);
 
         DeliverySystem deliverySystem = new DeliverySystem(locationsCatalog);
-        deliveryPersonIds.forEach(deliverySystem::addDeliveryPerson);
+        deliveryPeopleToAdd.forEach(deliverySystem::addDeliveryPerson);
+        pendingMealKitsToAdd.forEach(mealKit -> {
+            UniqueIdentifier parcelId = mealKit.keySet().iterator().next();
+            DeliveryLocationId deliveryLocationId = mealKit.get(parcelId);
+            deliverySystem.createMealKit(deliveryLocationId, parcelId);
+        });
+        cargosToAdd.forEach(cargo -> {
+            deliverySystem.receiveReadyToBeDeliveredMealKit(new KitchenLocationId("DESJARDINS"), cargo);
+        });
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);
     }

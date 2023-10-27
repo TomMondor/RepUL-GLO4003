@@ -24,12 +24,12 @@ import jakarta.ws.rs.core.Response;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
-public class DeliveryResource {
+public class CargoResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
     private final DeliveryService deliveryService;
     private final CargosResponseAssembler cargosResponseAssembler = new CargosResponseAssembler();
 
-    public DeliveryResource(DeliveryService deliveryService) {
+    public CargoResource(DeliveryService deliveryService) {
         this.deliveryService = deliveryService;
     }
 

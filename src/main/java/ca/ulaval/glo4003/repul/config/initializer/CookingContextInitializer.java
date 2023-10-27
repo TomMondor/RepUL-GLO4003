@@ -38,7 +38,7 @@ public class CookingContextInitializer {
     private static final String RECIPE_INGREDIENT_QUANTITY_FIELD_NAME_IN_JSON = "quantity";
 
     private KitchenRepository kitchenRepository = new InMemoryKitchenRepository();
-    private List<Order> mealKitsToAdd = List.of();
+    private final List<Order> mealKitsToAdd = new ArrayList<>();
 
     public CookingContextInitializer withKitchenRepository(KitchenRepository kitchenRepository) {
         this.kitchenRepository = kitchenRepository;
@@ -46,7 +46,7 @@ public class CookingContextInitializer {
     }
 
     public CookingContextInitializer withMealKits(List<Order> orders) {
-        mealKitsToAdd = orders;
+        mealKitsToAdd.addAll(orders);
         return this;
     }
 

@@ -13,11 +13,11 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/api/locations")
-public class LocationsCatalogResource {
+public class LocationResource {
     private final LocationsCatalogService locationsCatalogService;
     private final LocationsCatalogResponseAssembler locationsCatalogResponseAssembler = new LocationsCatalogResponseAssembler();
 
-    public LocationsCatalogResource(LocationsCatalogService locationsCatalogService) {
+    public LocationResource(LocationsCatalogService locationsCatalogService) {
         this.locationsCatalogService = locationsCatalogService;
     }
 

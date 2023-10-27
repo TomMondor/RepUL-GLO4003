@@ -14,7 +14,7 @@ public class Cargo {
     private final UniqueIdentifier cargoId;
     private final List<MealKit> mealKits;
     private final KitchenLocation kitchenLocation;
-    private UniqueIdentifier deliveryPersonId;
+    private Optional<UniqueIdentifier> deliveryPersonId = Optional.empty();
 
     public Cargo(UniqueIdentifier cargoId, KitchenLocation kitchenLocation, List<MealKit> mealKits) {
         this.cargoId = cargoId;
@@ -26,7 +26,7 @@ public class Cargo {
         return cargoId;
     }
 
-    public UniqueIdentifier getDeliveryPersonId() {
+    public Optional<UniqueIdentifier> getDeliveryPersonId() {
         return deliveryPersonId;
     }
 
@@ -39,14 +39,14 @@ public class Cargo {
     }
 
     public boolean isReadyToBeDelivered() {
-        return deliveryPersonId == null;
+        return deliveryPersonId.isEmpty();
     }
 
     public List<MealKit> pickupCargo(UniqueIdentifier deliveryPersonId) {
-        if (this.deliveryPersonId != null) {
+        if (this.deliveryPersonId.isPresent()) {
             throw new CargoAlreadyPickedUpException();
         }
-        this.deliveryPersonId = deliveryPersonId;
+        this.deliveryPersonId = Optional.of(deliveryPersonId);
         mealKits.forEach(MealKit::pickupReadyToDeliverMealKit);
         return mealKits;
     }
@@ -54,7 +54,7 @@ public class Cargo {
     public void cancelCargo(UniqueIdentifier deliveryPersonId) {
         validateIsSameDeliveryPersonId(deliveryPersonId);
 
-        this.deliveryPersonId = null;
+        this.deliveryPersonId = Optional.empty();
 
         mealKits.stream().filter(MealKit::isNotAlreadyDelivered).forEach(MealKit::cancelDelivery);
     }
@@ -88,7 +88,7 @@ public class Cargo {
     }
 
     private void validateIsSameDeliveryPersonId(UniqueIdentifier deliveryPersonId) {
-        if (!deliveryPersonId.equals(this.deliveryPersonId)) {
+        if (!Optional.of(deliveryPersonId).equals(this.deliveryPersonId)) {
             throw new InvalidDeliveryPersonIdException();
         }
     }

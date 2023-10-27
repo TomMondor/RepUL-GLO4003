@@ -2,9 +2,6 @@ package ca.ulaval.glo4003.repul.user.api;
 
 import java.net.URI;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.ulaval.glo4003.repul.commons.api.UriFactory;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.user.api.assembler.UserResponseAssembler;
@@ -34,7 +31,7 @@ import jakarta.ws.rs.core.Response;
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserResource.class);
+    private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
 
     private final UserService userService;
     private final UserResponseAssembler userResponseAssembler = new UserResponseAssembler();
@@ -70,8 +67,8 @@ public class UserResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/users")
-    public Response getMyAccount(@Context ContainerRequestContext requestContext) {
-        UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty("uid");
+    public Response getMyAccount(@Context ContainerRequestContext context) {
+        UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
         AccountResponse accountResponse = userResponseAssembler.toAccountResponse(userService.getAccount(accountId));
 

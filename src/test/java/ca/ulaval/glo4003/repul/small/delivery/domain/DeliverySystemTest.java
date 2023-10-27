@@ -129,7 +129,7 @@ public class DeliverySystemTest {
 
         deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertEquals(A_DELIVERY_PERSON_ID, deliverySystem.getCargos().get(0).getDeliveryPersonId());
+        assertEquals(Optional.of(A_DELIVERY_PERSON_ID), deliverySystem.getCargos().get(0).getDeliveryPersonId());
     }
 
     @Test

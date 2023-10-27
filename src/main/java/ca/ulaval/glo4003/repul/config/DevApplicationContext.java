@@ -26,8 +26,8 @@ import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer
 import ca.ulaval.glo4003.repul.config.initializer.UserContextInitializer;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
-import ca.ulaval.glo4003.repul.delivery.api.DeliveryResource;
-import ca.ulaval.glo4003.repul.delivery.api.LocationsCatalogResource;
+import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
+import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
 import ca.ulaval.glo4003.repul.payment.application.PaymentService;
@@ -76,8 +76,8 @@ public class DevApplicationContext implements ApplicationContext {
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionContextInitializer.createSubscriptionService(eventBus));
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(SHIPPER_ID));
-        DeliveryResource deliveryResource = new DeliveryResource(deliveryContextInitializer.createDeliveryService(eventBus));
-        LocationsCatalogResource locationsCatalogResource = new LocationsCatalogResource(deliveryContextInitializer.createLocationsCatalogService());
+        CargoResource cargoResource = new CargoResource(deliveryContextInitializer.createDeliveryService(eventBus));
+        LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {
@@ -86,8 +86,8 @@ public class DevApplicationContext implements ApplicationContext {
                 bind(healthResource).to(HealthResource.class);
                 bind(userResource).to(UserResource.class);
                 bind(mealKitResource).to(MealKitResource.class);
-                bind(deliveryResource).to(DeliveryResource.class);
-                bind(locationsCatalogResource).to(LocationsCatalogResource.class);
+                bind(cargoResource).to(CargoResource.class);
+                bind(locationResource).to(LocationResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
             }
         };
