@@ -38,6 +38,10 @@ public class DeliverySystem {
         pendingMealKits.put(mealKitId, mealKitFactory.createMealKit(locationsCatalog.getDeliveryLocation(deliveryLocationId), mealKitId));
     }
 
+    public List<Cargo> getCargosReadyToPickUp() {
+        return cargos.stream().filter(Cargo::isReadyToBeDelivered).toList();
+    }
+
     public List<Cargo> getCargos() {
         return cargos;
     }

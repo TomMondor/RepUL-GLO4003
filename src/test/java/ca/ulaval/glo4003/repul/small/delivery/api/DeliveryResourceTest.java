@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.repul.small.delivery.api;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryResource;
+import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
+import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitDeliveryStatusPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
 
@@ -19,7 +23,8 @@ import jakarta.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DeliveryResourceTest {
@@ -113,5 +118,26 @@ public class DeliveryResourceTest {
         deliveryResource.recallDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
 
         verify(deliveryService).recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+    }
+
+    @Test
+    public void whenGettingCargosReadyToPickUp_shouldReturn200() {
+        CargosPayload cargosPayload = new CargosPayload(Collections.emptyList());
+        when(deliveryService.getCargosReadyToPickUp()).thenReturn(cargosPayload);
+
+        Response response = deliveryResource.getCargosReadyToPickUp();
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void whenGettingCargosReadyToPickUp_shouldReturnListOfCargoResponse() {
+        CargosPayload cargosPayload = new CargosPayload(Collections.emptyList());
+        when(deliveryService.getCargosReadyToPickUp()).thenReturn(cargosPayload);
+        List<CargoResponse> expectedCargoResponses = Collections.emptyList();
+
+        Response response = deliveryResource.getCargosReadyToPickUp();
+
+        assertEquals(expectedCargoResponses, response.getEntity());
     }
 }

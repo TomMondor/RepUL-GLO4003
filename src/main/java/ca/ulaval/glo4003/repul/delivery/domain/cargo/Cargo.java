@@ -38,6 +38,10 @@ public class Cargo {
         return mealKits;
     }
 
+    public boolean isReadyToBeDelivered() {
+        return deliveryPersonId == null;
+    }
+
     public List<MealKit> pickupCargo(UniqueIdentifier deliveryPersonId) {
         if (this.deliveryPersonId != null) {
             throw new CargoAlreadyPickedUpException();

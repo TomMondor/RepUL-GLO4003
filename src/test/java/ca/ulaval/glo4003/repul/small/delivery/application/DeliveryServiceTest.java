@@ -318,4 +318,22 @@ public class DeliveryServiceTest {
 
         verify(mockDeliverySystem).recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
     }
+
+    @Test
+    public void whenGettingCargosReadyToPickUp_shouldGetDeliverySystem() {
+        when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+
+        deliveryService.getCargosReadyToPickUp();
+
+        verify(mockDeliverySystemRepository).get();
+    }
+
+    @Test
+    public void whenGettingCargosReadyToPickUp_shouldGetCargosReadyToPickUp() {
+        when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+
+        deliveryService.getCargosReadyToPickUp();
+
+        verify(mockDeliverySystem).getCargosReadyToPickUp();
+    }
 }

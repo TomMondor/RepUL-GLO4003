@@ -29,8 +29,9 @@ public class DeliveryExceptionStatusMapper {
     private static void createExceptionMapper() {
         exceptionMapper = new WeakHashMap<>();
 
+        exceptionMapper.put(DeliverySystemNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
+
         exceptionMapper.put(DeliveryPersonNotFoundException.class, Response.Status.NOT_FOUND);
-        exceptionMapper.put(DeliverySystemNotFoundException.class, Response.Status.NOT_FOUND);
 
         exceptionMapper.put(InvalidLockerIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidDeliveryPersonIdException.class, Response.Status.BAD_REQUEST);

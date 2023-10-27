@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "32deff1b-c4a2-4aa0-a901-912e0da7178a",
+		"_postman_id": "7a1adcce-1356-4d42-b6f6-99f229fd5f5a",
 		"name": "RepUL",
 		"description": "Service de boîte repas de l’université Laval, l’éducation commence toujours par une bonne alimentation!\n\nSi l'application est démarée en mode demo (avec l'argument --demo) voici les informations pour se connecter à certains comptes:\n\nSe connecter en tant que client:\n\nemail: client@ulaval.ca\n\npassword: client\n\nSe connecter en tant que Paul le cuisinier:\n\nemail: cook@ulaval.ca\n\npassword: cook",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24366551"
+		"_exporter_id": "29993190"
 	},
 	"item": [
 		{
@@ -897,6 +897,36 @@
 							"path": [
 								"api",
 								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cargos to pick up",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/cargos:toPickUp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cargos:toPickUp"
 							]
 						}
 					},

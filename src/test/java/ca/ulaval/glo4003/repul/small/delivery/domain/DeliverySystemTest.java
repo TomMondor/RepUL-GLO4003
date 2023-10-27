@@ -19,6 +19,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
@@ -192,6 +193,21 @@ public class DeliverySystemTest {
     }
 
     @Test
+    public void whenCancelCargo_shouldUnassignCargo() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
+        UniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
+        deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
+        deliverySystem.addDeliveryPerson(ANOTHER_DELIVERY_PERSON_ID);
+        deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+
+        deliverySystem.cancelCargo(A_DELIVERY_PERSON_ID, cargoId);
+
+        assertDoesNotThrow(() -> deliverySystem.pickupCargo(ANOTHER_DELIVERY_PERSON_ID, cargoId));
+    }
+
+    @Test
     public void givenInvalidCargoId_whenCancelCargo_shouldThrowInvalidCargoIdException() {
         DeliverySystem deliverySystem = createDeliverySystem();
 
@@ -355,6 +371,41 @@ public class DeliverySystemTest {
         deliverySystem.moveMealKitFromCargosToPending(A_MEALKIT_ID);
 
         assertDoesNotThrow(() -> deliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, newMealKitId));
+    }
+
+    @Test
+    public void givenNoCargos_whenGettingCargosReadyToPickUp_shouldReturnEmptyList() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+
+        List<Cargo> cargos = deliverySystem.getCargosReadyToPickUp();
+
+        assertEquals(0, cargos.size());
+    }
+
+    @Test
+    public void givenOneCargo_whenGettingCargosReadyToPickUpy_shouldReturnListOfOneCargo() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
+
+        List<Cargo> cargos = deliverySystem.getCargosReadyToPickUp();
+
+        assertEquals(1, cargos.size());
+        assertEquals(A_MEALKIT_ID, cargos.get(0).getMealKits().get(0).getMealKitId());
+    }
+
+    @Test
+    public void givenOnePickedUpCargo_whenGettingCargosReadyToPickUp_shouldReturnEmptyList() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
+        UniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
+        deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
+        deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+
+        List<Cargo> cargos = deliverySystem.getCargosReadyToPickUp();
+
+        assertEquals(0, cargos.size());
     }
 
     private DeliverySystem createDeliverySystem() {

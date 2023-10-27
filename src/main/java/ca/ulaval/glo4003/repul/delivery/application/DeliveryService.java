@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.exception.DeliverySystemNotFoundException;
+import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
@@ -75,9 +76,14 @@ public class DeliveryService {
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
             new MealKitReceivedForDeliveryEvent(cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeople(),
                 cargo.getMealKits().stream()
-                    .map(mealKit -> new MealKitDto(mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(),
-                        mealKit.getMealKitId())).toList());
+                    .map(mealKit -> new MealKitDto(mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())).toList());
         eventBus.publish(mealKitReceivedForDeliveryEvent);
+    }
+
+    public CargosPayload getCargosReadyToPickUp() {
+        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+
+        return CargosPayload.from(deliverySystem.getCargosReadyToPickUp());
     }
 
     public void pickupCargo(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId) {
