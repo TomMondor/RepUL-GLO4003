@@ -29,7 +29,18 @@ _Le setup est recommandé pour IntelliJ_
 
 ## Démarrer le projet 🚀
 
-Pour lancer l'application:
+### Variable d'environnement
+
+Vous devez ajouter les informations suivantes : EMAIL_SENDER, PASSWORD_SENDER et JWT_SECRET dans le `.env`.
+
+Afin de faire fonctionner l'encriptage des mots de passe, vous devez ajouter la variable JWT_SECRET dans le `.env`.
+Vous pouvez mettre la valeur que vous voulez pour cette variable.
+
+Afin de faire fonctionner l'envoi de courriel, vous devez ajouter les variables EMAIL_SENDER et PASSWORD_SENDER dans le `.env`.
+Vous ne pouvez pas mettre n'importe quelle valeur dans ces variables. Pour obtenir les valeurs à inscrire, vous devez allez directement sur le
+discord de l'équipe 01 dans le salon suivant : https://discord.com/channels/870753929317744660/1167630977959469216. (credentials-gmail-repul)
+
+### Lancer l'application
 * Dans un terminal, exécutez start.sh si vous êtes sur Linux / OSX
 * Dans un terminal, exécutez start.bat si vous êtes sur Windows
 * Dans un IDE, exécutez la classe `Main` en tant que "Java Application"
@@ -39,10 +50,28 @@ Pour lancer l'application:
   * Exécuter toutes les vérifications (test, dependency-check, etc...) et produire un artifact pour votre application (se trouvant sous
     `target/application.jar`) avec `mvn verify` que vous pouvez juste invoquer directement avec un `java -jar target/application.jar`
 
-### Démarer le projet en mode test
+### Démarrer le projet en mode test
 
 Pour lancer l'application en mode test, exécuter start.sh ou start.bt en ajoutant l'argument de ligne de commande "--test".
 Par exemple, sous Mac/Linux: `./start.sh --test`.
+
+### Démarrer le projet en mode Demo et spécification
+
+Pour lancer l'application en mode demo, exécuter start.sh ou start.bt en ajoutant l'argument de ligne de commande "--demo".
+
+Afin d'avoir la vérification que l'envoi de courriel fonctionne correctement pour le livreur lorsqu'une cargaison est prête, il faut
+ajouter votre adresse Ulaval dans le `.env` à la variable d'environnement "DELIVERY_PERSON_EMAIL".
+
+#### Information sur les comptes déjà présent dans l'application
+Ces informations sont nécessaires afin de se connecter avec chacun des comptes à l'aide de la route logIn
+
+Compte du cuisinier :
+  - courriel : paul@ulaval.ca
+  - mot de passe : paul123
+
+Compte du livreur :
+  - courriel : (l'adresse Ulaval que vous avez mis dans le `.env`)
+  - mot de passe : roger123
 
 ## Tests 🧪
 
@@ -57,7 +86,7 @@ Voici les différentes étapes pour l'activer :
 
 ```
 File -> Settings -> Plugins
-S'assurer d'installer le plugin CheckStyle-IDEA (Restart l'IDE si demandé)
+S'assurer d'installer le plugin CheckStyle-IDEA (Redémarrer l'IDE si demandé)
 
 // Pour faire apparaître les erreurs dans le code
 File -> Settings -> Tools -> Checkstyle
