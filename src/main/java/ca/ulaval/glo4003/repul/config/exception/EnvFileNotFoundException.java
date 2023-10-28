@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.commons.infrastructure.exception;
+package ca.ulaval.glo4003.repul.config.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

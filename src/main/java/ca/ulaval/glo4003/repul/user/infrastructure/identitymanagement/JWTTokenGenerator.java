@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.user.infrastructure.identitymanagement;
 import java.util.Date;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
-import ca.ulaval.glo4003.repul.commons.infrastructure.EnvParser;
+import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.Token;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.TokenGenerator;

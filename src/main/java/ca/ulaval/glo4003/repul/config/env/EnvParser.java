@@ -1,10 +1,10 @@
-package ca.ulaval.glo4003.repul.commons.infrastructure;
+package ca.ulaval.glo4003.repul.config.env;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import ca.ulaval.glo4003.repul.commons.infrastructure.exception.EnvFileNotFoundException;
+import ca.ulaval.glo4003.repul.config.exception.EnvFileNotFoundException;
 
 public class EnvParser {
     private static String fileName = ".envExample";

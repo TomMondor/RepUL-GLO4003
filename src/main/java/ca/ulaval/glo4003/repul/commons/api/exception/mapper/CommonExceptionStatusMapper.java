@@ -10,7 +10,7 @@ import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidEmailException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationIdException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidMealKitTypeException;
-import ca.ulaval.glo4003.repul.commons.infrastructure.exception.EnvFileNotFoundException;
+import ca.ulaval.glo4003.repul.config.exception.EnvFileNotFoundException;
 
 import jakarta.ws.rs.core.Response;
 

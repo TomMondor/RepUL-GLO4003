@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.ulaval.glo4003.repul.commons.infrastructure.EnvParser;
+import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 
