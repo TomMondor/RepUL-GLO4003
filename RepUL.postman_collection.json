@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "32b0e5b1-c41a-47ea-a83c-36dfe5a14be9",
+		"_postman_id": "b5200f1b-de58-438a-aedb-394b907c6057",
 		"name": "RepUL",
-		"description": "Service de boîte repas de l’Université Laval, l’éducation commence toujours par une bonne alimentation!\n\n#### **Application en mode démo**\n\nL'application peut être lancée en mode démo avec l'argument --demo. Le mode démo popule le contexte de préparation des boîtes (Cooking) avec des boîtes qui doivent être livrées demain. Ainsi, Paul est en mesure d'assembler des commandes.\n\nVoici les informations pour se connecter au compte de Paul ou de Roger:\n\n- Se connecter en tant que Paul le **cuisinier**:\n    - Email: [paul@ulaval.ca](paul@ulaval.ca)\n    - Password: paul123\n- Se connecter en tant que Roger le **livreur**:\n    - Email : l'adresse Ulaval que vous avez mis dans le .env. Lire le _README_ pour savoir comment configurer le fichier .env\n    - Password : roger123\n\n#### Étapes proposées en mode démo\n\nNotre collection Postman est assez _straightforward._ Voici le fonctionnement proposé:\n\n1. Créer un compte pour Alexandra. Voir _Register as Alexandra_ sous _User._\n2. Se connecter sous le compte d'Alexandra. Voir _Login as Alexandra_ sous _Login._\n3. Sous _Subscription,_ faire les actions qu'Alexandra désire faire.\n4. Se connecter sous le compte de Paul. Voir _Login as Paul_ sous _Login._\n5. Sous _Cooking,_ faire les actions que Paul désire faire.\n6. Se connecter sous le compte de Roger. Voir _Login as Roger_ sous _Login._ Ne pas oublier d'utiliser le courriel spécifié dans votre fichier .env\n7. Sous _Delivery,_ faire les actions que Roger désire faire.\n    \n\n#### Détails sur les variables Postman\n\n- Lorsque vous vous connectez sous les comptes d'Alexandra, Paul ou Roger, le _JWT Token_ retourné est automatiquement placé dans une variable _token_ utilisée dans le _Bearer Token_. Normalement, pas besoin de copier le _Token_ nul part!\n- Lorsqu'un abonnement est créé avec la route _Create Subscription_, l'identifiant de l'abonnement créé est automatiquement placé dans la variable _subscription_id_.\n- Des variables _mealKit_id_ et _cargo_id_ ont été créées, mais celles-ci ne seront pas automatiquement populées comme _token_ et _subscription_id_. Veuillez remplir ces variables vous-mêmes.",
+		"description": "Service de boîte repas de l’Université Laval, l’éducation commence toujours par une bonne alimentation!\n\n#### **Application en mode démo**\n\nL'application peut être lancée en mode démo avec l'argument --demo. Le mode démo popule le contexte de préparation des boîtes (Cooking) avec des boîtes qui doivent être livrées demain. Ainsi, Paul est en mesure d'assembler des commandes.\n\nVoici les informations pour se connecter au compte de Paul ou de Roger:\n\n- Se connecter en tant que Paul le **cuisinier**:\n    - Email: [paul@ulaval.ca](https://paul@ulaval.ca)\n    - Password: paul123\n- Se connecter en tant que Roger le **livreur**:\n    \n    - Email : l'adresse Ulaval que vous avez mis dans le .env. Lire le _README_ pour savoir comment configurer le fichier .env\n    - Password : roger123\n        \n- Se connecter en tant qu'Alexandra la cliente:\n    \n    - Email: [alexandra@ulaval.ca](https://paul@ulaval.ca)\n        \n    - Password: alexandra123\n        \n\n#### Étapes proposées en mode démo\n\nNotre collection Postman est assez _straightforward._ Voici le fonctionnement proposé:\n\nÀ tout moment, il est possible de se connecter en tant qu'Alexandra. Voir _Register_ _as Alexandra_ sous _User_. Ce sont ces commandes qui sont traitées par Paul et Roger en ce moment (puisqu'on traite uniquement les commandes de la journée, et qu'on ne peut les confirmer la journée même, nous les avons précréées pour les fins de la démonstration). Nous vous recommandons d'aller voir _Current orders_ sous _Subscriptions_ pour aller voir les commandes du moment et voir leur statut se mettre à jour.\n\n1. Créer un compte pour Antoine. Voir _Register as Antoine_ sous _User._\n    \n2. Se connecter sous le compte d'Antoine. Voir _Login as Antoine_ sous _Login._\n    \n3. Sous _Subscription,_ faire les actions qu'Alexandra désire faire.\n4. Se connecter sous le compte de Paul. Voir _Login as Paul_ sous _Login._\n5. Sous _Cooking,_ faire les actions que Paul désire faire.\n6. Se connecter sous le compte de Roger. Voir _Login as Roger_ sous _Login._ Ne pas oublier d'utiliser le courriel spécifié dans votre fichier .env\n    \n7. Sous _Delivery,_ faire les actions que Roger désire faire.\n    \n\n#### Détails sur les variables Postman\n\n- Lorsque vous vous connectez sous les comptes d'Alexandra, Paul ou Roger, le _JWT Token_ retourné est automatiquement placé dans une variable _token_ utilisée dans le _Bearer Token_. Normalement, pas besoin de copier le _Token_ nul part!\n- Lorsqu'un abonnement est créé avec la route _Create Subscription_, l'identifiant de l'abonnement créé est automatiquement placé dans la variable _subscription_id_.\n- Des variables _mealKit_id_ et _cargo_id_ ont été créées, mais celles-ci ne seront pas automatiquement populées comme _token_ et _subscription_id_. Veuillez remplir ces variables vous-mêmes.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19124741"
+		"_exporter_id": "19119980"
 	},
 	"item": [
 		{
@@ -40,13 +40,13 @@
 					},
 					"response": [
 						{
-							"name": "Register as Alexandra",
+							"name": "Register as Antoine",
 							"originalRequest": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"idul\": \"ALBON81\",\n    \"email\":\"alexandra.bonaparte.1@ulaval.ca\",\n    \"password\": \"monChat123\",\n    \"name\": \"Alexandra Bonaparte\",\n    \"birthdate\": \"2001-04-24\",\n    \"gender\": \"WOMAN\"\n}",
+									"raw": "{\n    \"idul\": \"ANLEF999\",\n    \"email\":\"antoine.lefrancois.999@ulaval.ca\",\n    \"password\": \"monChat123\",\n    \"name\": \"Antoine Lefrancois\",\n    \"birthdate\": \"2008-04-24\",\n    \"gender\": \"WOMAN\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -120,13 +120,45 @@
 					},
 					"response": [
 						{
+							"name": "Login as Antoine",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\":\"antoine.lefrancois.999@ulaval.ca\",\n    \"password\": \"monChat123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/users:login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"users:login"
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
 							"name": "Login as Alexandra",
 							"originalRequest": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"email\":\"alexandra.bonaparte.1@ulaval.ca\",\n    \"password\": \"monChat123\"\n}",
+									"raw": "{\n    \"email\":\"alexandra@ulaval.ca\",\n    \"password\": \"alexandra123\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -535,7 +567,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"ids\": [\"891a7eb8-8cb1-4b6a-9a54-9f0adcc4bde2\"]\r\n}",
+							"raw": "{\r\n    \"ids\": [\"d59a281f-59e6-44d2-84fa-425a46793178\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -756,6 +788,36 @@
 			"name": "Delivery",
 			"item": [
 				{
+					"name": "Cargos to pick up",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/cargos:toPickUp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cargos:toPickUp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Pick up cargo",
 					"request": {
 						"auth": {
@@ -898,36 +960,6 @@
 							"path": [
 								"api",
 								"locations"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Cargos to pick up",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/cargos:toPickUp",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"cargos:toPickUp"
 							]
 						}
 					},
