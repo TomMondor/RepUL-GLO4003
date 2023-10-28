@@ -15,8 +15,6 @@ import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
-import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitDeliveryStatusPayload;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
@@ -35,8 +33,6 @@ public class CargoResourceTest {
     private static final UniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_DELIVERY_PERSON_ID);
     private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_CARGO_ID);
     private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_MEAL_KIT_ID);
-    private static final MealKitDeliveryStatusPayload A_MEAL_KIT_DELIVERY_STATUS_PAYLOAD =
-        new MealKitDeliveryStatusPayload(A_CARGO_ID, A_MEAL_KIT_ID, DeliveryStatus.IN_DELIVERY.toString());
     private CargoResource cargoResource;
     @Mock
     private DeliveryService deliveryService;

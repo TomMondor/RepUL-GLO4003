@@ -24,7 +24,6 @@ import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEven
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
-import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitDeliveryStatusPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
@@ -66,8 +65,6 @@ public class DeliveryServiceTest {
     private static final Email DELIVERY_ACCOUNT_EMAIL = new Email("email@ulaval.ca");
     private static final DeliveryPersonAccountCreatedEvent DELIVERY_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(DELIVERY_ACCOUNT_ID, DELIVERY_ACCOUNT_EMAIL);
-    private static final MealKitDeliveryStatusPayload A_MEAL_KIT_DELIVERY_STATUS_PAYLOAD =
-        new MealKitDeliveryStatusPayload(DeliveryStatus.PENDING.toString(), A_DELIVERY_LOCATION_ID.value(), "To be determined");
     private DeliveryService deliveryService;
     @Mock
     private DeliverySystemRepository mockDeliverySystemRepository;
