@@ -145,7 +145,7 @@ public class SubscriptionResourceEnd2EndTest {
 
     @Test
     public void whenConfirmingCurrentOrder_shouldChargeClient() {
-        String expectedMessage = String.format("The account with id %s has been debited $%s for a meal kit of type %s to be delivered on %s\n",
+        String expectedMessage = String.format("The account with id %s has been debited $%s for a meal kit of type %s to be delivered on %s",
             TestApplicationContext.CLIENT_ID.value().toString(), 75.0, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS.mealKitType,
             LocalDate.now().plusDays(3));
         String accountToken = login();
@@ -153,7 +153,7 @@ public class SubscriptionResourceEnd2EndTest {
 
         given().contentType("application/json").header("Authorization", "Bearer " + accountToken)
             .post(CONTEXT.getURI() + "subscriptions/" + subscriptionId + ":confirm");
-        String paymentServiceLog = outputStream.toString();
+        String paymentServiceLog = outputStream.toString().trim();
 
         assertEquals(expectedMessage, paymentServiceLog);
     }
