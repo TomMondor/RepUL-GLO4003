@@ -40,6 +40,10 @@ Afin de faire fonctionner l'envoi de courriel, vous devez ajouter les variables 
 Vous ne pouvez pas mettre n'importe quelle valeur dans ces variables. Pour obtenir les valeurs à inscrire, vous devez allez directement sur le
 discord de l'équipe 01 dans le salon suivant : https://discord.com/channels/870753929317744660/1167630977959469216. (credentials-gmail-repul)
 
+Afin d'avoir la vérification que l'envoi de courriel fonctionne correctement pour le livreur lorsqu'une cargaison est prête, il faut
+ajouter votre adresse Ulaval dans le `.env` à la variable d'environnement "DELIVERY_PERSON_EMAIL". C'est obligatoire lorsqu'on lance 
+l'application dans un autre contexte que celui de test.
+
 ### Lancer l'application
 * Dans un terminal, exécutez start.sh si vous êtes sur Linux / OSX
 * Dans un terminal, exécutez start.bat si vous êtes sur Windows
@@ -57,10 +61,10 @@ Par exemple, sous Mac/Linux: `./start.sh --test`.
 
 ### Démarrer le projet en mode Demo et spécification
 
-Pour lancer l'application en mode demo, exécuter start.sh ou start.bt en ajoutant l'argument de ligne de commande "--demo".
+Comme les requis font en sorte qu'on ne peut confirmer une commande dans un délai de 48h, un contexte de démonstration a été créé afin
+de pouvoir tester les parties demandant une boîte-repas confirmée.
 
-Afin d'avoir la vérification que l'envoi de courriel fonctionne correctement pour le livreur lorsqu'une cargaison est prête, il faut
-ajouter votre adresse Ulaval dans le `.env` à la variable d'environnement "DELIVERY_PERSON_EMAIL".
+Pour lancer l'application en mode demo, exécuter start.sh ou start.bat en ajoutant l'argument de ligne de commande "--demo".
 
 #### Information sur les comptes déjà présent dans l'application
 Ces informations sont nécessaires afin de se connecter avec chacun des comptes à l'aide de la route logIn
@@ -72,6 +76,12 @@ Compte du cuisinier :
 Compte du livreur :
   - courriel : (l'adresse Ulaval que vous avez mis dans le `.env`)
   - mot de passe : roger123
+
+**En mode démo seulement:
+
+Compte du client :
+- courriel : alexandra@ulaval.ca
+- mot de passe : alexandra123
 
 ## Tests 🧪
 
