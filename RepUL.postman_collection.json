@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "7a1adcce-1356-4d42-b6f6-99f229fd5f5a",
+		"_postman_id": "32b0e5b1-c41a-47ea-a83c-36dfe5a14be9",
 		"name": "RepUL",
-		"description": "Service de boîte repas de l’université Laval, l’éducation commence toujours par une bonne alimentation!\n\nSi l'application est démarée en mode demo (avec l'argument --demo) voici les informations pour se connecter à certains comptes:\n\nSe connecter en tant que client:\n\nemail: client@ulaval.ca\n\npassword: client\n\nSe connecter en tant que Paul le cuisinier:\n\nemail: cook@ulaval.ca\n\npassword: cook",
+		"description": "Service de boîte repas de l’Université Laval, l’éducation commence toujours par une bonne alimentation!\n\n#### **Application en mode démo**\n\nL'application peut être lancée en mode démo avec l'argument --demo. Le mode démo popule le contexte de préparation des boîtes (Cooking) avec des boîtes qui doivent être livrées demain. Ainsi, Paul est en mesure d'assembler des commandes.\n\nVoici les informations pour se connecter au compte de Paul ou de Roger:\n\n- Se connecter en tant que Paul le **cuisinier**:\n    - Email: [paul@ulaval.ca](paul@ulaval.ca)\n    - Password: paul123\n- Se connecter en tant que Roger le **livreur**:\n    - Email : l'adresse Ulaval que vous avez mis dans le .env. Lire le _README_ pour savoir comment configurer le fichier .env\n    - Password : roger123\n\n#### Étapes proposées en mode démo\n\nNotre collection Postman est assez _straightforward._ Voici le fonctionnement proposé:\n\n1. Créer un compte pour Alexandra. Voir _Register as Alexandra_ sous _User._\n2. Se connecter sous le compte d'Alexandra. Voir _Login as Alexandra_ sous _Login._\n3. Sous _Subscription,_ faire les actions qu'Alexandra désire faire.\n4. Se connecter sous le compte de Paul. Voir _Login as Paul_ sous _Login._\n5. Sous _Cooking,_ faire les actions que Paul désire faire.\n6. Se connecter sous le compte de Roger. Voir _Login as Roger_ sous _Login._ Ne pas oublier d'utiliser le courriel spécifié dans votre fichier .env\n7. Sous _Delivery,_ faire les actions que Roger désire faire.\n    \n\n#### Détails sur les variables Postman\n\n- Lorsque vous vous connectez sous les comptes d'Alexandra, Paul ou Roger, le _JWT Token_ retourné est automatiquement placé dans une variable _token_ utilisée dans le _Bearer Token_. Normalement, pas besoin de copier le _Token_ nul part!\n- Lorsqu'un abonnement est créé avec la route _Create Subscription_, l'identifiant de l'abonnement créé est automatiquement placé dans la variable _subscription_id_.\n- Des variables _mealKit_id_ et _cargo_id_ ont été créées, mais celles-ci ne seront pas automatiquement populées comme _token_ et _subscription_id_. Veuillez remplir ces variables vous-mêmes.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "29993190"
+		"_exporter_id": "19124741"
 	},
 	"item": [
 		{
@@ -249,7 +249,7 @@
 					"response": []
 				}
 			],
-			"description": "Requêtes afin de se connecter ou créer un compte."
+			"description": "Requêtes afin de créer un compte, se connecter, ou trouver les informations de son compte."
 		},
 		{
 			"name": "Subscription",
@@ -472,7 +472,7 @@
 					"response": []
 				}
 			],
-			"description": "Requêtes liées aux abonnements."
+			"description": "Requêtes pour créer un abonnement, confirmer ou refuser la commande de cette semaine, retrouver les informations d'un abonnement en particulier, retrouver les informations de tous mes abonnements, et retrouver les informations de mes commandes en cours."
 		},
 		{
 			"name": "Cooking",
@@ -749,13 +749,14 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Requêtes pour retrouver les boîtes à préparer pour demain, pour sélectionner des boîtes, voir ma sélection, annuler une ou plusieurs sélection, confirmer la préparation d'une ou plusieurs boîtes et rappeler la préparation d'une commande."
 		},
 		{
 			"name": "Delivery",
 			"item": [
 				{
-					"name": "Pickup cargo",
+					"name": "Pick up cargo",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -770,7 +771,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/cargos/{{cargo_id}}:pickup",
+							"raw": "http://localhost:8080/api/cargos/{{cargo_id}}:pickUp",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -779,7 +780,7 @@
 							"path": [
 								"api",
 								"cargos",
-								"{{cargo_id}}:pickup"
+								"{{cargo_id}}:pickUp"
 							]
 						}
 					},
@@ -932,7 +933,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Requêtes pour ramasser un groupe de boîtes, annuler ou confirmer une livraison, rappeler la livraison d'une boîte, retrouver la liste d'emplacements de livraison, et voir la liste des groupes de boîtes disponibles pour livrer."
 		},
 		{
 			"name": "Health",
