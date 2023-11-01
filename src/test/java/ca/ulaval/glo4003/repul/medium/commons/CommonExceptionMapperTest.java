@@ -6,7 +6,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.config.ApplicationContext;
+import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.fixture.commons.FakeCommonExceptionThrowerContextFixture;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
 

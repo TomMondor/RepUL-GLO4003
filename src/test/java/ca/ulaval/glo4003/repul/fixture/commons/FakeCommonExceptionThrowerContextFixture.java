@@ -6,7 +6,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.domain.exception.CommonException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidEmailException;
-import ca.ulaval.glo4003.repul.config.ApplicationContext;
+import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

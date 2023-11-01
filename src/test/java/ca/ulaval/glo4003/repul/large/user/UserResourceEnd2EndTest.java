@@ -7,8 +7,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.config.ApplicationContext;
-import ca.ulaval.glo4003.repul.config.TestApplicationContext;
+import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
+import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
 import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.RegistrationRequestFixture;

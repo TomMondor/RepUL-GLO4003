@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.config;
+package ca.ulaval.glo4003.repul.config.context;
 
 import java.util.List;
 import java.util.Map;

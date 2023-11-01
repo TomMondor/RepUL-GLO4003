@@ -5,7 +5,7 @@ import java.net.URI;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 
-import ca.ulaval.glo4003.repul.config.ApplicationContext;
+import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 
 public class ServerFixture {
     private final Server server;
