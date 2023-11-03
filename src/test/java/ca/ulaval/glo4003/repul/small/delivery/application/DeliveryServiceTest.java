@@ -22,6 +22,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDeliveredEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
@@ -45,6 +46,7 @@ public class DeliveryServiceTest {
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
     private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_CARGO_ID);
     private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_MEAL_KIT_ID);
+    private static final RecallCookedMealKitEvent A_RECALL_COOKED_MEAL_KIT_EVENT = new RecallCookedMealKitEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("Vachon");
     private static final MealKitsCookedEvent A_MEAL_KITS_COOKED_EVENT =
         new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.value(), List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
@@ -60,7 +62,6 @@ public class DeliveryServiceTest {
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, MealKitType.STANDARD, A_DELIVERY_LOCATION_ID,
             A_DELIVERY_DATE);
-    private static final RecallCookedMealKitEvent A_RECALL_COOKED_MEAL_KIT_EVENT = new RecallCookedMealKitEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER);
     private static final UniqueIdentifier DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
     private static final Email DELIVERY_ACCOUNT_EMAIL = new Email("email@ulaval.ca");
     private static final DeliveryPersonAccountCreatedEvent DELIVERY_ACCOUNT_CREATED_EVENT =
@@ -265,6 +266,7 @@ public class DeliveryServiceTest {
     @Test
     public void whenConfirmDelivery_shouldGetDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
@@ -272,8 +274,19 @@ public class DeliveryServiceTest {
     }
 
     @Test
+    public void whenConfirmDelivery_shouldSendMealKitDeliveredEvent() {
+        when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT);
+
+        deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
+
+        verify(mockRepULEventBus).publish(any(MealKitDeliveredEvent.class));
+    }
+
+    @Test
     public void whenConfirmDelivery_shouldSaveOrUpdateDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
@@ -283,6 +296,7 @@ public class DeliveryServiceTest {
     @Test
     public void givenValidUniqueIdentifiers_whenConfirmDelivery_shouldConfirmDeliveryWithRightUniqueIdentifier() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 

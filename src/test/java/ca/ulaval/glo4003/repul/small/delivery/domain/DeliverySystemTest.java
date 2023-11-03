@@ -46,6 +46,7 @@ public class DeliverySystemTest {
     private static final UniqueIdentifier A_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier ANOTHER_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier A_INVALID_CARGO_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_INVALID_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("A_LOCATION_NAME 1", 1));
 
     @Mock
@@ -406,6 +407,37 @@ public class DeliverySystemTest {
         List<Cargo> cargos = deliverySystem.getCargosReadyToPickUp();
 
         assertEquals(0, cargos.size());
+    }
+
+    @Test
+    public void whenGettingMealKit_shouldReturnMealKit() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
+        UniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
+
+        MealKit mealKit = deliverySystem.getCargoMealKit(cargoId, A_MEALKIT_ID);
+
+        assertEquals(A_MEALKIT_ID, mealKit.getMealKitId());
+    }
+
+    @Test
+    public void givenInvalidCargoId_whenGettingMealKit_shouldThrowInvalidCargoIdException() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
+
+        assertThrows(InvalidCargoIdException.class, () -> deliverySystem.getCargoMealKit(A_INVALID_CARGO_ID, A_MEALKIT_ID));
+    }
+
+    @Test
+    public void givenInvalidCargoId_whenGettingMealKit_shouldThrowInvalidMealKitIdException() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKit(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
+        UniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
+
+        assertThrows(InvalidMealKitIdException.class, () -> deliverySystem.getCargoMealKit(cargoId, A_INVALID_MEALKIT_ID));
     }
 
     private DeliverySystem createDeliverySystem() {

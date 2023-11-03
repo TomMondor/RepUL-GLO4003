@@ -92,4 +92,8 @@ public class Cargo {
             throw new InvalidDeliveryPersonIdException();
         }
     }
+
+    public MealKit getMealKit(UniqueIdentifier mealKitId) {
+        return mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new);
+    }
 }

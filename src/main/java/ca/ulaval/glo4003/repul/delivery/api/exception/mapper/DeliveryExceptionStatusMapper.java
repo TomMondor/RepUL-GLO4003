@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidCargoIdException
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidDeliveryPersonIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidLockerIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 
@@ -40,5 +41,6 @@ public class DeliveryExceptionStatusMapper {
         exceptionMapper.put(MealKitNotInDeliveryException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidMealKitIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(CargoAlreadyPickedUpException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(LockerNotAssignedException.class, Response.Status.BAD_REQUEST);
     }
 }
