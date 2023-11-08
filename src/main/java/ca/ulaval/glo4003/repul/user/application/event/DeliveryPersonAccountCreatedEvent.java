@@ -9,6 +9,7 @@ public class DeliveryPersonAccountCreatedEvent extends RepULEvent {
     public final Email email;
 
     public DeliveryPersonAccountCreatedEvent(UniqueIdentifier accountId, Email email) {
+        super();
         this.accountId = accountId;
         this.email = email;
     }

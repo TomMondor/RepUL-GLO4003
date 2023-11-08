@@ -7,6 +7,7 @@ public class RecallCookedMealKitEvent extends RepULEvent {
     public final UniqueIdentifier mealKitId;
 
     public RecallCookedMealKitEvent(UniqueIdentifier mealKitId) {
+        super();
         this.mealKitId = mealKitId;
     }
 }

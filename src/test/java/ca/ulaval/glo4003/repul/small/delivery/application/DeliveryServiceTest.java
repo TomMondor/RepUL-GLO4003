@@ -22,7 +22,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
-import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDeliveredEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
@@ -280,7 +280,7 @@ public class DeliveryServiceTest {
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockRepULEventBus).publish(any(MealKitDeliveredEvent.class));
+        verify(mockRepULEventBus).publish(any(ConfirmedDeliveryEvent.class));
     }
 
     @Test

@@ -9,6 +9,7 @@ public class PickedUpCargoEvent extends RepULEvent {
     public final List<UniqueIdentifier> mealKitIds;
 
     public PickedUpCargoEvent(List<UniqueIdentifier> mealKitIds) {
+        super();
         this.mealKitIds = mealKitIds;
     }
 }

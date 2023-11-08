@@ -14,6 +14,7 @@ public class MealKitReceivedForDeliveryEvent extends RepULEvent {
 
     public MealKitReceivedForDeliveryEvent(UniqueIdentifier cargoId, KitchenLocationId kitchenLocationId, List<UniqueIdentifier> availableDeliveryPeople,
                                            List<MealKitDto> mealKitDtos) {
+        super();
         this.cargoId = cargoId;
         this.availableDeliveryPeople = availableDeliveryPeople;
         this.kitchenLocationId = kitchenLocationId;

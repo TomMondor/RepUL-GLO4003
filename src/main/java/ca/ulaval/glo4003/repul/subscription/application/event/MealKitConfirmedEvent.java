@@ -18,6 +18,7 @@ public final class MealKitConfirmedEvent extends RepULEvent {
     public MealKitConfirmedEvent(UniqueIdentifier mealKitId, UniqueIdentifier subscriptionId, UniqueIdentifier accountId,
                                  MealKitType mealKitType, DeliveryLocationId subscriberDeliveryLocationId, LocalDate deliveryDate
     ) {
+        super();
         this.mealKitId = mealKitId;
         this.subscriptionId = subscriptionId;
         this.accountId = accountId;

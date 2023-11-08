@@ -10,6 +10,7 @@ public class MealKitsCookedEvent extends RepULEvent {
     public final List<UniqueIdentifier> mealKitIds;
 
     public MealKitsCookedEvent(String kitchenLocationId, List<UniqueIdentifier> mealKitIds) {
+        super();
         this.kitchenLocationId = kitchenLocationId;
         this.mealKitIds = mealKitIds;
     }

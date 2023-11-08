@@ -9,7 +9,7 @@ import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
-import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDeliveredEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
@@ -117,7 +117,7 @@ public class DeliveryService {
 
         MealKit mealKit = deliverySystem.getCargoMealKit(cargoId, mealKitId);
         eventBus.publish(
-            new MealKitDeliveredEvent(mealKit.getMealKitId(), mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(), LocalTime.now()));
+            new ConfirmedDeliveryEvent(mealKit.getMealKitId(), mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(), LocalTime.now()));
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);
     }
