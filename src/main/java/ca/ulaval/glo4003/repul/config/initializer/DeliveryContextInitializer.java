@@ -84,7 +84,7 @@ public class DeliveryContextInitializer {
             deliverySystem.createMealKit(deliveryLocationId, parcelId);
         });
         cargosToAdd.forEach(cargo -> {
-            deliverySystem.receiveReadyToBeDeliveredMealKit(new KitchenLocationId("DESJARDINS"), cargo);
+            deliverySystem.receiveReadyToBeDeliveredMealKits(new KitchenLocationId("DESJARDINS"), cargo);
         });
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);

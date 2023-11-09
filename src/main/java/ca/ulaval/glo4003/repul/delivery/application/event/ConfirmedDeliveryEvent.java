@@ -12,13 +12,13 @@ public class ConfirmedDeliveryEvent extends RepULEvent {
     public UniqueIdentifier mealKitId;
     public DeliveryLocationId deliveryLocationId;
     public Optional<LockerId> lockerId;
-    public LocalTime dateTime;
+    public LocalTime deliveryTime;
 
-    public ConfirmedDeliveryEvent(UniqueIdentifier mealKitId, DeliveryLocationId deliveryLocationId, Optional<LockerId> lockerId, LocalTime dateTime) {
+    public ConfirmedDeliveryEvent(UniqueIdentifier mealKitId, DeliveryLocationId deliveryLocationId, Optional<LockerId> lockerId, LocalTime deliveryTime) {
         super();
         this.mealKitId = mealKitId;
         this.deliveryLocationId = deliveryLocationId;
         this.lockerId = lockerId;
-        this.dateTime = dateTime;
+        this.deliveryTime = deliveryTime;
     }
 }

@@ -76,7 +76,11 @@ public class Order {
         }
     }
 
-    public void markAsCooked() {
+    public void markAsToCook() {
+        orderStatus = OrderStatus.TO_COOK;
+    }
+
+    public void markAsToDeliver() {
         orderStatus = OrderStatus.TO_DELIVER;
     }
 
@@ -84,7 +88,7 @@ public class Order {
         orderStatus = OrderStatus.IN_DELIVERY;
     }
 
-    public void markAsToCook() {
-        orderStatus = OrderStatus.TO_COOK;
+    public void markAsToPickUp() {
+        orderStatus = OrderStatus.TO_PICKUP;
     }
 }

@@ -85,15 +85,19 @@ public class Subscription {
         return orders.stream().filter(Order::isInTheFuture).findFirst();
     }
 
-    public void markAsCooked() {
-        this.findCurrentOrder().ifPresent(Order::markAsCooked);
+    public void markCurrentOrderAsToCook() {
+        this.findCurrentOrder().ifPresent(Order::markAsToCook);
     }
 
-    public void markAsInDelivery() {
+    public void markCurrentOrderAsToDeliver() {
+        this.findCurrentOrder().ifPresent(Order::markAsToDeliver);
+    }
+
+    public void markCurrentOrderAsInDelivery() {
         this.findCurrentOrder().ifPresent(Order::markAsInDelivery);
     }
 
-    public void markAsToCook() {
-        this.findCurrentOrder().ifPresent(Order::markAsToCook);
+    public void markCurrentOrderAsToPickUp() {
+        this.findCurrentOrder().ifPresent(Order::markAsToPickUp);
     }
 }

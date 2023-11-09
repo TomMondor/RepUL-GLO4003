@@ -138,24 +138,46 @@ public class SubscriptionTest {
     }
 
     @Test
-    public void whenMarkAsCooked_shouldChangeOrderStatusToToDeliver() {
+    public void whenMarkCurrentOrderAsToCook_shouldChangeOrderStatusToToCook() {
+        Order anOrder = new OrderFixture().withOrderStatus(OrderStatus.TO_DELIVER).build();
+        Subscription subscription =
+            new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrder), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
+
+        subscription.markCurrentOrderAsToCook();
+
+        assertEquals(OrderStatus.TO_COOK, anOrder.getOrderStatus());
+    }
+
+    @Test
+    public void whenMarkCurrentOrderAsToDeliver_shouldChangeOrderStatusToToDeliver() {
         Order anOrder = new OrderFixture().withOrderStatus(OrderStatus.TO_COOK).build();
         Subscription subscription =
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrder), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
 
-        subscription.markAsCooked();
+        subscription.markCurrentOrderAsToDeliver();
 
         assertEquals(OrderStatus.TO_DELIVER, anOrder.getOrderStatus());
     }
 
     @Test
-    public void whenMarkAsToCook_shouldChangeOrderStatusToToCook() {
-        Order anOrder = new OrderFixture().withOrderStatus(OrderStatus.TO_DELIVER).build();
+    public void whenMarkCurrentOrderAsInDelivery_shouldChangeOrderStatusToInDelivery() {
+        Order anOrder = new OrderFixture().withOrderStatus(OrderStatus.TO_COOK).build();
         Subscription subscription =
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrder), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
 
-        subscription.markAsToCook();
+        subscription.markCurrentOrderAsInDelivery();
 
-        assertEquals(OrderStatus.TO_COOK, anOrder.getOrderStatus());
+        assertEquals(OrderStatus.IN_DELIVERY, anOrder.getOrderStatus());
+    }
+
+    @Test
+    public void whenMarkCurrentOrderAsToPickUp_shouldChangeOrderStatusToToPickUp() {
+        Order anOrder = new OrderFixture().withOrderStatus(OrderStatus.TO_COOK).build();
+        Subscription subscription =
+            new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrder), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
+
+        subscription.markCurrentOrderAsToPickUp();
+
+        assertEquals(OrderStatus.TO_PICKUP, anOrder.getOrderStatus());
     }
 }

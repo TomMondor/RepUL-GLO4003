@@ -7,7 +7,10 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
@@ -50,16 +53,7 @@ public class SubscriptionService {
     public void handleMealKitsCookedEvent(MealKitsCookedEvent event) {
         for (UniqueIdentifier orderId : event.mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
-            subscription.markAsCooked();
-            subscriptionRepository.saveOrUpdate(subscription);
-        }
-    }
-
-    @Subscribe
-    public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
-        for (UniqueIdentifier orderId : event.mealKitIds) {
-            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
-            subscription.markAsInDelivery();
+            subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.saveOrUpdate(subscription);
         }
     }
@@ -68,7 +62,39 @@ public class SubscriptionService {
     public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
         Subscription subscription =
             subscriptionRepository.getSubscriptionByOrderId(recallCookedMealKitEvent.mealKitId).orElseThrow(OrderNotFoundException::new);
-        subscription.markAsToCook();
+        subscription.markCurrentOrderAsToCook();
+        subscriptionRepository.saveOrUpdate(subscription);
+    }
+
+    @Subscribe
+    public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
+        for (UniqueIdentifier orderId : event.mealKitIds) {
+            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
+            subscription.markCurrentOrderAsInDelivery();
+            subscriptionRepository.saveOrUpdate(subscription);
+        }
+    }
+
+    @Subscribe
+    public void handleCanceledCargoEvent(CanceledCargoEvent event) {
+        for (UniqueIdentifier orderId : event.mealKitIds) {
+            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
+            subscription.markCurrentOrderAsToDeliver();
+            subscriptionRepository.saveOrUpdate(subscription);
+        }
+    }
+
+    @Subscribe
+    public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent event) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
+        subscription.markCurrentOrderAsToPickUp();
+        subscriptionRepository.saveOrUpdate(subscription);
+    }
+
+    @Subscribe
+    public void handleRecalledDeliveryEvent(RecalledDeliveryEvent event) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
+        subscription.markCurrentOrderAsInDelivery();
         subscriptionRepository.saveOrUpdate(subscription);
     }
 

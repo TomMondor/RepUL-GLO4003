@@ -2,7 +2,9 @@ package ca.ulaval.glo4003.repul.medium.subscription;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +16,10 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
@@ -110,6 +115,51 @@ public class SubscriptionServiceTest {
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         assertEquals(OrderStatus.IN_DELIVERY, updatedOrdersPayload.orders().get(0).orderStatus());
         assertEquals(OrderStatus.IN_DELIVERY, updatedOrdersPayload.orders().get(1).orderStatus());
+    }
+
+    @Test
+    public void whenHandlingCanceledCargoEvent_shouldMarkMatchingOrdersAsToDeliver() {
+        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        UniqueIdentifier otherSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_SUBSCRIPTION_QUERY);
+        subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
+        subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
+        OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
+        List<UniqueIdentifier> orderIds = ordersPayload.orders().stream().map(OrderPayload::orderId).toList();
+        CanceledCargoEvent event = new CanceledCargoEvent(orderIds);
+
+        eventBus.publish(event);
+
+        OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
+        assertEquals(OrderStatus.TO_DELIVER, updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.TO_DELIVER, updatedOrdersPayload.orders().get(1).orderStatus());
+    }
+
+    @Test
+    public void whenHandlingConfirmedDeliveryEvent_shouldMarkMatchingOrdersAsToPickup() {
+        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
+        OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
+        UniqueIdentifier orderId = ordersPayload.orders().stream().map(OrderPayload::orderId).toList().get(0);
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(orderId, A_LOCATION_ID, Optional.empty(), LocalTime.now());
+
+        eventBus.publish(event);
+
+        OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
+        assertEquals(OrderStatus.TO_PICKUP, updatedOrdersPayload.orders().get(0).orderStatus());
+    }
+
+    @Test
+    public void whenHandlingRecalledDeliveryEvent_shouldMarkMatchingOrdersAsInDelivery() {
+        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
+        OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
+        UniqueIdentifier orderId = ordersPayload.orders().stream().map(OrderPayload::orderId).toList().get(0);
+        RecalledDeliveryEvent event = new RecalledDeliveryEvent(orderId);
+
+        eventBus.publish(event);
+
+        OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
+        assertEquals(OrderStatus.IN_DELIVERY, updatedOrdersPayload.orders().get(0).orderStatus());
     }
 
     @Test

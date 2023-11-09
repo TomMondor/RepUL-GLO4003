@@ -46,7 +46,7 @@ public class DeliverySystem {
         return cargos;
     }
 
-    public Cargo receiveReadyToBeDeliveredMealKit(KitchenLocationId kitchenLocationId, List<UniqueIdentifier> mealKitIds) {
+    public Cargo receiveReadyToBeDeliveredMealKits(KitchenLocationId kitchenLocationId, List<UniqueIdentifier> mealKitIds) {
         mealKitIds.stream().forEach(mealKitId -> {
             if (!pendingMealKits.containsKey(mealKitId)) {
                 throw new InvalidMealKitIdException();
@@ -82,8 +82,9 @@ public class DeliverySystem {
         }
     }
 
-    public void cancelCargo(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId) {
-        cargos.stream().filter(cargo -> cargo.getCargoId().equals(cargoId)).findFirst().orElseThrow(InvalidCargoIdException::new).cancelCargo(deliveryPersonId);
+    public List<MealKit> cancelCargo(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId) {
+        return cargos.stream().filter(cargo -> cargo.getCargoId().equals(cargoId)).findFirst().orElseThrow(InvalidCargoIdException::new)
+            .cancelCargo(deliveryPersonId);
     }
 
     public void confirmDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {

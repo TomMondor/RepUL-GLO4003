@@ -51,12 +51,14 @@ public class Cargo {
         return mealKits;
     }
 
-    public void cancelCargo(UniqueIdentifier deliveryPersonId) {
+    public List<MealKit> cancelCargo(UniqueIdentifier deliveryPersonId) {
         validateIsSameDeliveryPersonId(deliveryPersonId);
 
         this.deliveryPersonId = Optional.empty();
 
-        mealKits.stream().filter(MealKit::isNotAlreadyDelivered).forEach(MealKit::cancelDelivery);
+        List<MealKit> notYetDeliveredMealKits = mealKits.stream().filter(MealKit::isNotAlreadyDelivered).toList();
+        notYetDeliveredMealKits.forEach(MealKit::cancelDelivery);
+        return notYetDeliveredMealKits;
     }
 
     public void confirmDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier mealKitId) {
