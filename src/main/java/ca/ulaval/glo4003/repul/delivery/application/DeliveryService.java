@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.repul.delivery.application;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
@@ -22,6 +21,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
@@ -127,14 +127,18 @@ public class DeliveryService {
             new ConfirmedDeliveryEvent(mealKit.getMealKitId(), mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(), LocalTime.now()));
     }
 
-    public Optional<LockerId> recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
+    public LockerId recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
 
-        Optional<LockerId> lockerId = deliverySystem.recallDelivery(deliveryPersonId, cargoId, mealKitId);
+        MealKit mealKit = deliverySystem.recallDelivery(deliveryPersonId, cargoId, mealKitId);
+        LockerId lockerId = mealKit.getLockerId().orElseThrow(LockerNotAssignedException::new);
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);
 
-        eventBus.publish(new RecalledDeliveryEvent(mealKitId));
+        eventBus.publish(new RecalledDeliveryEvent(
+            mealKitId,
+            lockerId,
+            mealKit.getDeliveryLocation().getLocationId()));
 
         return lockerId;
     }

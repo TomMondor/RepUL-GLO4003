@@ -22,6 +22,7 @@ import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
+import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.fixture.subscription.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
@@ -56,6 +57,7 @@ public class SubscriptionServiceTest {
     private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId(A_LOCATION_STRING);
+    private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
     private SubscriptionService subscriptionService;
 
     @Mock
@@ -313,7 +315,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingRecalledDeliveryEvent_shouldGetSubscriptionsByOrderIdInRepository() {
-        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID);
+        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
 
         subscriptionService.handleRecalledDeliveryEvent(event);
@@ -323,7 +325,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenInexistantMealKit_whenHandlingRecalledDeliveryEvent_shouldThrowOrderNotFoundException() {
-        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID);
+        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.empty());
 
         assertThrows(OrderNotFoundException.class, () -> subscriptionService.handleRecalledDeliveryEvent(event));
@@ -331,7 +333,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingRecalledDeliveryEvent_shouldMarkMatchingOrdersAsInDelivery() {
-        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID);
+        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
 
         subscriptionService.handleRecalledDeliveryEvent(event);
@@ -341,7 +343,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingRecalledDeliveryEvent_shouldSaveSubscriptionsInRepository() {
-        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID);
+        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
 
         subscriptionService.handleRecalledDeliveryEvent(event);

@@ -15,6 +15,7 @@ import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
+import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
@@ -33,6 +34,8 @@ public class CargoResourceTest {
     private static final UniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_DELIVERY_PERSON_ID);
     private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_CARGO_ID);
     private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_MEAL_KIT_ID);
+    private static final LockerId A_LOCKER_ID = new LockerId("10", 1234);
+
     private CargoResource cargoResource;
     @Mock
     private DeliveryService deliveryService;
@@ -101,6 +104,8 @@ public class CargoResourceTest {
     @Test
     public void whenRecallingDelivery_shouldReturn200() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
+        when(deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER))
+            .thenReturn(A_LOCKER_ID);
 
         Response response = cargoResource.recallDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
 
@@ -110,6 +115,8 @@ public class CargoResourceTest {
     @Test
     public void whenRecallingDelivery_shouldRecallDelivery() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
+        when(deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER))
+            .thenReturn(A_LOCKER_ID);
 
         cargoResource.recallDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
 

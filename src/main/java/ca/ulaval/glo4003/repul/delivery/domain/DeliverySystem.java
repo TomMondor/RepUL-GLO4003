@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
@@ -92,7 +91,7 @@ public class DeliverySystem {
             .confirmDelivery(deliveryPersonId, mealKitId);
     }
 
-    public Optional<LockerId> recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
+    public MealKit recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
         return cargos.stream().filter(cargo -> cargo.getCargoId().equals(cargoId)).findFirst().orElseThrow(InvalidCargoIdException::new)
             .recallDelivery(deliveryPersonId, mealKitId);
     }

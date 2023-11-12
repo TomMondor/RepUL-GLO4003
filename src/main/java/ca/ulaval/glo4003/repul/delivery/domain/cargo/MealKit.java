@@ -68,14 +68,13 @@ public class MealKit {
         status = DeliveryStatus.DELIVERED;
     }
 
-    public Optional<LockerId> recallDelivery() {
+    public void recallDelivery() {
         if (status == DeliveryStatus.PICKED_UP) {
             throw new MealKitAlreadyPickedUpException();
         } else if (status != DeliveryStatus.DELIVERED) {
             throw new MealKitNotDeliveredException();
         }
         status = DeliveryStatus.IN_DELIVERY;
-        return lockerId;
     }
 
     public boolean isNotAlreadyDelivered() {

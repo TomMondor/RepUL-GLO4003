@@ -20,6 +20,7 @@ import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
+import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
@@ -47,6 +48,7 @@ public class SubscriptionServiceTest {
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(2));
     private static final DeliveryLocationId A_LOCATION_ID = new DeliveryLocationId(A_LOCATION_STRING);
     private static final DeliveryLocationId ANOTHER_LOCATION_ID = new DeliveryLocationId(ANOTHER_LOCATION_STRING);
+    private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
     private RepULEventBus eventBus;
     private SubscriptionService subscriptionService;
 
@@ -154,7 +156,7 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         UniqueIdentifier orderId = ordersPayload.orders().stream().map(OrderPayload::orderId).toList().get(0);
-        RecalledDeliveryEvent event = new RecalledDeliveryEvent(orderId);
+        RecalledDeliveryEvent event = new RecalledDeliveryEvent(orderId, A_LOCKER_ID, A_LOCATION_ID);
 
         eventBus.publish(event);
 
