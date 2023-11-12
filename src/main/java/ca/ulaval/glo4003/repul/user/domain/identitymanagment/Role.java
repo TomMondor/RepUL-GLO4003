@@ -4,5 +4,6 @@ public enum Role {
     ADMIN,
     COOK,
     CLIENT,
-    DELIVERY_PERSON
+    DELIVERY_PERSON,
+    LOCKER
 }

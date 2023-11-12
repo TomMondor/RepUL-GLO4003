@@ -22,6 +22,7 @@ import ca.ulaval.glo4003.repul.config.env.EnvParserFactory;
 import ca.ulaval.glo4003.repul.config.http.CORSResponseFilter;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
+import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.UserContextInitializer;
@@ -30,6 +31,7 @@ import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
+import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
 import ca.ulaval.glo4003.repul.payment.application.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
@@ -82,6 +84,10 @@ public class DevApplicationContext implements ApplicationContext {
         CargoResource cargoResource = new CargoResource(deliveryContextInitializer.createDeliveryService(eventBus));
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
 
+        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
+        LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(
+            lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
+
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {
             @Override
@@ -92,6 +98,7 @@ public class DevApplicationContext implements ApplicationContext {
                 bind(cargoResource).to(CargoResource.class);
                 bind(locationResource).to(LocationResource.class);
                 bind(subscriptionResource).to(SubscriptionResource.class);
+                bind(lockerAuthorizationResource).to(LockerAuthorizationResource.class);
             }
         };
 
