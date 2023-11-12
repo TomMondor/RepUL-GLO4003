@@ -35,6 +35,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.fixture.delivery.MealKitFixture;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
@@ -55,9 +56,10 @@ public class DeliveryServiceTest {
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(1);
     private static final KitchenLocation A_KITCHEN_LOCATION = new KitchenLocation(A_KITCHEN_LOCATION_ID, "Vachon");
     private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Pouliot", 10);
+    private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final MealKit A_MEAL_KIT = new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.PENDING);
+    private static final MealKit A_MEAL_KIT_WITH_LOCKER = new MealKitFixture().withLockerId(A_LOCKER_ID).build();
     private static final MealKit A_DELIVERED_MEALKIT = new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.DELIVERED);
-    private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("123", 1));
     private static final Cargo A_CARGO = new Cargo(A_CARGO_UNIQUE_IDENTIFIER, A_KITCHEN_LOCATION, new ArrayList<>(List.of(A_MEAL_KIT)));
     private static final UniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_DELIVERY_PERSON_ID);
     private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
@@ -280,7 +282,7 @@ public class DeliveryServiceTest {
     @Test
     public void whenConfirmDelivery_shouldGetDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
-        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT);
+        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
@@ -290,7 +292,7 @@ public class DeliveryServiceTest {
     @Test
     public void whenConfirmDelivery_shouldSaveOrUpdateDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
-        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT);
+        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
@@ -300,7 +302,7 @@ public class DeliveryServiceTest {
     @Test
     public void whenConfirmDelivery_shouldPublishConfirmedDeliveryEvent() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
-        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT);
+        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
@@ -310,7 +312,7 @@ public class DeliveryServiceTest {
     @Test
     public void givenValidUniqueIdentifiers_whenConfirmDelivery_shouldConfirmDeliveryWithRightUniqueIdentifier() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
-        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT);
+        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 

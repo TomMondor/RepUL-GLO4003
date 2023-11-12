@@ -57,6 +57,7 @@ public class SubscriptionServiceTest {
     private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId(A_LOCATION_STRING);
+    private static final Optional<LockerId> OPTIONAL_OF_A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
     private SubscriptionService subscriptionService;
 
@@ -277,7 +278,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldGetSubscriptionsByOrderIdInRepository() {
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, Optional.empty(), LocalTime.now());
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, OPTIONAL_OF_A_LOCKER_ID, LocalTime.now());
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
 
         subscriptionService.handleConfirmedDeliveryEvent(event);
@@ -287,7 +288,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenInexistantMealKit_whenHandlingConfirmedDeliveryEvent_shouldThrowOrderNotFoundException() {
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, Optional.empty(), LocalTime.now());
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, OPTIONAL_OF_A_LOCKER_ID, LocalTime.now());
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.empty());
 
         assertThrows(OrderNotFoundException.class, () -> subscriptionService.handleConfirmedDeliveryEvent(event));
@@ -295,7 +296,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldMarkMatchingOrdersAsToPickup() {
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, Optional.empty(), LocalTime.now());
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, OPTIONAL_OF_A_LOCKER_ID, LocalTime.now());
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
 
         subscriptionService.handleConfirmedDeliveryEvent(event);
@@ -305,7 +306,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldSaveSubscriptionsInRepository() {
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, Optional.empty(), LocalTime.now());
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, OPTIONAL_OF_A_LOCKER_ID, LocalTime.now());
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
 
         subscriptionService.handleConfirmedDeliveryEvent(event);

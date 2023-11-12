@@ -7,18 +7,23 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEvent;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
 
 public class ConfirmedDeliveryEvent extends RepULEvent {
     public UniqueIdentifier mealKitId;
     public DeliveryLocationId deliveryLocationId;
-    public Optional<LockerId> lockerId;
+    public LockerId lockerId;
     public LocalTime deliveryTime;
 
     public ConfirmedDeliveryEvent(UniqueIdentifier mealKitId, DeliveryLocationId deliveryLocationId, Optional<LockerId> lockerId, LocalTime deliveryTime) {
         super();
         this.mealKitId = mealKitId;
         this.deliveryLocationId = deliveryLocationId;
-        this.lockerId = lockerId;
         this.deliveryTime = deliveryTime;
+
+        if (lockerId.isEmpty()) {
+            throw new LockerNotAssignedException();
+        }
+        this.lockerId = lockerId.get();
     }
 }

@@ -142,7 +142,7 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         UniqueIdentifier orderId = ordersPayload.orders().stream().map(OrderPayload::orderId).toList().get(0);
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(orderId, A_LOCATION_ID, Optional.empty(), LocalTime.now());
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(orderId, A_LOCATION_ID, Optional.of(A_LOCKER_ID), LocalTime.now());
 
         eventBus.publish(event);
 
