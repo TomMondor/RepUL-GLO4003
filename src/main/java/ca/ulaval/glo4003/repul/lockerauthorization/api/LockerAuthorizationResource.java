@@ -31,8 +31,7 @@ public class LockerAuthorizationResource {
     public Response openLocker(OpenLockerRequest request) {
         OpenLockerQuery query = OpenLockerQuery.from(
             request.userCardNumber,
-            request.deliveryLocationId,
-            request.lockerNumber);
+            request.lockerId);
 
         lockerAuthorizationService.openLocker(query);
 

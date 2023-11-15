@@ -165,7 +165,11 @@ public class TestApplicationContext implements ApplicationContext {
         CargoResource cargoResource = new CargoResource(deliveryContextInitializer.createDeliveryService(eventBus));
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
 
-        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
+        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer()
+            .withOrders(List.of(Map.entry(CLIENT_ID, FIRST_MEAL_KIT_ID), Map.entry(CLIENT_ID, SECOND_MEAL_KIT_ID),
+                Map.entry(CLIENT_ID, THIRD_MEAL_KIT_ID), Map.entry(CLIENT_ID, FOURTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, FIFTH_MEAL_KIT_ID),
+                Map.entry(CLIENT_ID, SIXTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, SEVENTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, EIGHTH_MEAL_KIT_ID),
+                Map.entry(CLIENT_ID, NINTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, TENTH_MEAL_KIT_ID)));
         LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(
             lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
 

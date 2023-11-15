@@ -26,7 +26,7 @@ class LockerAuthorizationSystemTest {
     public void givenUserWithNoCardLinked_whenAuthorize_shouldThrowNoCardLinkedToUserException() {
         LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
         lockerAuthorizationSystem.createOrder(AN_USER_ID, A_MEAL_KIT_ID);
-        lockerAuthorizationSystem.assignLocation(A_MEAL_KIT_ID, A_LOCKER_ID);
+        lockerAuthorizationSystem.assignLocker(A_MEAL_KIT_ID, A_LOCKER_ID);
 
         assertThrows(NoCardLinkedToUserException.class, () -> lockerAuthorizationSystem.authorize(A_LOCKER_ID, A_USER_CARD_NUMBER));
     }
@@ -43,8 +43,8 @@ class LockerAuthorizationSystemTest {
     public void givenLockerIdThatHasBeenUnassignedFromOrder_whenAuthorize_shouldThrowLockerNotFoundException() {
         LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
         lockerAuthorizationSystem.createOrder(AN_USER_ID, A_MEAL_KIT_ID);
-        lockerAuthorizationSystem.assignLocation(A_MEAL_KIT_ID, A_LOCKER_ID);
-        lockerAuthorizationSystem.unassignLocation(A_MEAL_KIT_ID);
+        lockerAuthorizationSystem.assignLocker(A_MEAL_KIT_ID, A_LOCKER_ID);
+        lockerAuthorizationSystem.unassignLocker(A_MEAL_KIT_ID);
 
         assertThrows(LockerNotAssignedException.class, () -> lockerAuthorizationSystem.authorize(A_LOCKER_ID, A_USER_CARD_NUMBER));
     }
@@ -53,7 +53,7 @@ class LockerAuthorizationSystemTest {
     public void givenNotAuthorizedUserCardNumber_whenAuthorize_shouldThrowUserCardNotAuthorizedException() {
         LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
         lockerAuthorizationSystem.createOrder(AN_USER_ID, A_MEAL_KIT_ID);
-        lockerAuthorizationSystem.assignLocation(A_MEAL_KIT_ID, A_LOCKER_ID);
+        lockerAuthorizationSystem.assignLocker(A_MEAL_KIT_ID, A_LOCKER_ID);
         lockerAuthorizationSystem.registerUserCardNumber(AN_USER_ID, A_USER_CARD_NUMBER);
 
         assertThrows(UserCardNotAuthorizedException.class,
@@ -64,7 +64,7 @@ class LockerAuthorizationSystemTest {
     public void givenAuthorizedUserCardNumberAndCompleteInformation_whenAuthorize_shouldNotThrow() {
         LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
         lockerAuthorizationSystem.createOrder(AN_USER_ID, A_MEAL_KIT_ID);
-        lockerAuthorizationSystem.assignLocation(A_MEAL_KIT_ID, A_LOCKER_ID);
+        lockerAuthorizationSystem.assignLocker(A_MEAL_KIT_ID, A_LOCKER_ID);
         lockerAuthorizationSystem.registerUserCardNumber(AN_USER_ID, A_USER_CARD_NUMBER);
 
         assertDoesNotThrow(() -> lockerAuthorizationSystem.authorize(A_LOCKER_ID, A_USER_CARD_NUMBER));
@@ -74,7 +74,7 @@ class LockerAuthorizationSystemTest {
     public void givenAuthorizedUserCardNumber_whenAuthorize_shouldRemoveOrderFromList() {
         LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
         lockerAuthorizationSystem.createOrder(AN_USER_ID, A_MEAL_KIT_ID);
-        lockerAuthorizationSystem.assignLocation(A_MEAL_KIT_ID, A_LOCKER_ID);
+        lockerAuthorizationSystem.assignLocker(A_MEAL_KIT_ID, A_LOCKER_ID);
         lockerAuthorizationSystem.registerUserCardNumber(AN_USER_ID, A_USER_CARD_NUMBER);
 
         lockerAuthorizationSystem.authorize(A_LOCKER_ID, A_USER_CARD_NUMBER);

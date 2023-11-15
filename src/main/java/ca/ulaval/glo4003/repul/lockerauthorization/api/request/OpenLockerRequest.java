@@ -9,9 +9,6 @@ public class OpenLockerRequest {
     @NotNull(message = "The user card number may not be null.")
     public String userCardNumber;
 
-    @NotNull(message = "The delivery location ID may not be null.")
-    public String deliveryLocationId;
-
-    @NotNull(message = "The locker number may not be null.")
-    public int lockerNumber;
+    @NotNull(message = "The locker id may not be null.")
+    public String lockerId;
 }

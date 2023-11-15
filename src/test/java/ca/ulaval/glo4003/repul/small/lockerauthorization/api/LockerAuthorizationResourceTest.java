@@ -19,8 +19,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 public class LockerAuthorizationResourceTest {
     private static final String A_CARD_NUMBER = "111222333";
-    private static final String A_DELIVERY_LOCATION_ID = "1";
-    private static final int A_LOCKER_NUMBER = 10;
+    private static final String A_LOCKER_ID = "VACH 1";
 
     @Mock
     private LockerAuthorizationService lockerAuthorizationService;
@@ -34,7 +33,7 @@ public class LockerAuthorizationResourceTest {
 
     @Test
     public void whenOpening_shouldAuthorizeLocker() {
-        OpenLockerQuery query = OpenLockerQuery.from(A_CARD_NUMBER, A_DELIVERY_LOCATION_ID, A_LOCKER_NUMBER);
+        OpenLockerQuery query = OpenLockerQuery.from(A_CARD_NUMBER, A_LOCKER_ID);
 
         lockerAuthorizationResource.openLocker(getLockerOpenRequest());
 
@@ -51,8 +50,7 @@ public class LockerAuthorizationResourceTest {
     private OpenLockerRequest getLockerOpenRequest() {
         OpenLockerRequest request = new OpenLockerRequest();
         request.userCardNumber = A_CARD_NUMBER;
-        request.deliveryLocationId = A_DELIVERY_LOCATION_ID;
-        request.lockerNumber = A_LOCKER_NUMBER;
+        request.lockerId = A_LOCKER_ID;
         return request;
     }
 }

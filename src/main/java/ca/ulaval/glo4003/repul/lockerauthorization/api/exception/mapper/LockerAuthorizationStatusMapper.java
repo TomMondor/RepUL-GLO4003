@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.lockerauthorization.api.exception.mapper;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import ca.ulaval.glo4003.repul.lockerauthorization.application.exception.LockerAuthorizationSystemNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.InvalidLockerIdException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerAuthorizationException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
@@ -28,5 +29,7 @@ public class LockerAuthorizationStatusMapper {
         exceptionMapper.put(NoCardLinkedToUserException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(UserCardNotAuthorizedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidLockerIdException.class, Response.Status.BAD_REQUEST);
+
+        exceptionMapper.put(LockerAuthorizationSystemNotFoundException.class, Response.Status.NOT_FOUND);
     }
 }

@@ -1,13 +1,12 @@
 package ca.ulaval.glo4003.repul.lockerauthorization.api.query;
 
-import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
 
-public record OpenLockerQuery(UserCardNumber userCardNumber, DeliveryLocationId deliveryLocationId, int lockerNumber) {
-    public static OpenLockerQuery from(String userCardNumber, String deliveryLocationId, int lockerNumber) {
+public record OpenLockerQuery(UserCardNumber userCardNumber, LockerId lockerId) {
+    public static OpenLockerQuery from(String userCardNumber, String lockerId) {
         return new OpenLockerQuery(
             new UserCardNumber(userCardNumber),
-            new DeliveryLocationId(deliveryLocationId),
-            lockerNumber);
+            new LockerId(lockerId));
     }
 }

@@ -21,15 +21,15 @@ public class LockerAuthorizationSystem {
         orders.put(mealKitId, new Order(userId, mealKitId));
     }
 
-    public void assignLocation(UniqueIdentifier mealKitId, LockerId lockerId) {
+    public void assignLocker(UniqueIdentifier mealKitId, LockerId lockerId) {
         orders.get(mealKitId).assignLocker(lockerId);
     }
 
-    public void unassignLocation(UniqueIdentifier mealKitId) {
+    public void unassignLocker(UniqueIdentifier mealKitId) {
         orders.get(mealKitId).unassignLocker();
     }
 
-    public void authorize(LockerId lockerId, UserCardNumber userCardNumberToValidate) {
+    public UniqueIdentifier authorize(LockerId lockerId, UserCardNumber userCardNumberToValidate) {
         Order order = getOrderByLockerId(lockerId);
         if (userCardNumberByUser.containsKey(order.getUserId())) {
             UserCardNumber userCardNumber = userCardNumberByUser.get(order.getUserId());
@@ -41,6 +41,7 @@ public class LockerAuthorizationSystem {
         } else {
             throw new NoCardLinkedToUserException();
         }
+        return order.getMealKitId();
     }
 
     private Order getOrderByLockerId(LockerId lockerId) {
