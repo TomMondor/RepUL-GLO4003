@@ -65,7 +65,7 @@ public class DeliveryService {
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);
 
-        sendReadyToBeDeliverMealKitEvent(cargo, deliverySystem);
+        sendMealKitReceivedForDeliveryEvent(cargo, deliverySystem);
     }
 
     @Subscribe
@@ -86,7 +86,7 @@ public class DeliveryService {
         deliverySystemRepository.saveOrUpdate(deliverySystem);
     }
 
-    private void sendReadyToBeDeliverMealKitEvent(Cargo cargo, DeliverySystem deliverySystem) {
+    private void sendMealKitReceivedForDeliveryEvent(Cargo cargo, DeliverySystem deliverySystem) {
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
             new MealKitReceivedForDeliveryEvent(cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeople(),
                 cargo.getMealKits().stream()
