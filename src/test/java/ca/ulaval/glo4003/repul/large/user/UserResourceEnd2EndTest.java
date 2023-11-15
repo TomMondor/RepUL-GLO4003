@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
+import ca.ulaval.glo4003.repul.fixture.user.AddCardRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.RegistrationRequestFixture;
+import ca.ulaval.glo4003.repul.user.api.request.AddCardRequest;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.api.response.AccountResponse;
@@ -85,6 +87,17 @@ public class UserResourceEnd2EndTest {
         assertEquals(ACCOUNT_GENDER, responseBody.gender());
         assertEquals(ACCOUNT_IDUL.toUpperCase(), responseBody.idul());
         assertNotNull(responseBody.age());
+    }
+
+    @Test
+    public void givenExistingAccount_whenAddingCard_shouldReturn204() {
+        String accountToken = registerAndLogin();
+        AddCardRequest addCardRequest = new AddCardRequestFixture().build();
+
+        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(addCardRequest)
+            .post(CONTEXT.getURI() + "users:addCard");
+
+        assertEquals(204, response.getStatusCode());
     }
 
     private String registerAndLogin() {

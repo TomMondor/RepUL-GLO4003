@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.user.domain.account.Account;
 import ca.ulaval.glo4003.repul.user.domain.account.AccountRepository;
@@ -25,5 +26,10 @@ public class InMemoryAccountRepository implements AccountRepository {
     @Override
     public Optional<Account> getByAccountId(UniqueIdentifier accountId) {
         return accounts.values().stream().filter(account -> account.getAccountId().equals(accountId)).findFirst();
+    }
+
+    @Override
+    public boolean isUserCardNumberUsed(UserCardNumber cardNumber) {
+        return accounts.values().stream().anyMatch(account -> account.getCardNumber().isPresent() && account.getCardNumber().get().equals(cardNumber));
     }
 }

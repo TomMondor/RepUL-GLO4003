@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.user.AccountFixture;
@@ -19,6 +20,7 @@ import ca.ulaval.glo4003.repul.user.application.UserService;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
+import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
 import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.domain.account.Account;
@@ -54,6 +56,9 @@ public class UserServiceTest {
     private static final String A_NAME = "aName";
     private static final String A_BIRTHDATE = "2000-01-01";
     private static final String A_GENDER = "MAN";
+    private static final String A_CARD_NUMBER = "123456789";
+    private static final AddCardQuery AN_ADD_CARD_QUERY = AddCardQuery.from(A_CARD_NUMBER);
+
     private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
 
     private UserService userService;
@@ -63,6 +68,9 @@ public class UserServiceTest {
 
     @Mock
     private AccountFactory accountFactory;
+
+    @Mock
+    private Account mockAccount;
 
     @Mock
     private UserRepository userRepository;
@@ -78,6 +86,7 @@ public class UserServiceTest {
 
     @Mock
     private TokenGenerator tokenGenerator;
+
     @Mock
     private RepULEventBus repULEventBus;
 
@@ -269,5 +278,39 @@ public class UserServiceTest {
         assertEquals(account.getBirthdate(), payload.birthdate());
         assertEquals(account.getGender(), payload.gender());
         assertEquals(account.getEmail(), payload.email());
+    }
+
+    @Test
+    public void givenInexistentAccount_whenAddingCard_shouldThrowAccountNotFoundException() {
+        given(accountRepository.getByAccountId(any())).willReturn(Optional.empty());
+
+        assertThrows(AccountNotFoundException.class, () -> userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY));
+    }
+
+    @Test
+    public void whenAddingCard_shouldGetAccountById() {
+        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
+
+        userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
+
+        verify(accountRepository).getByAccountId(AN_ACCOUNT_ID);
+    }
+
+    @Test
+    public void whenAddingCard_shouldSetUserCardOfAccount() {
+        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(mockAccount));
+
+        userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
+
+        verify(mockAccount).setCardNumber(new UserCardNumber(A_CARD_NUMBER));
+    }
+
+    @Test
+    public void whenAddingCard_shouldSaveOrUpdateAccount() {
+        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
+
+        userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
+
+        verify(accountRepository).saveOrUpdate(any(Account.class));
     }
 }

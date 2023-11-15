@@ -3,11 +3,14 @@ package ca.ulaval.glo4003.repul.user.application;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
+import ca.ulaval.glo4003.repul.user.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
+import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
 import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.domain.account.Account;
@@ -83,5 +86,21 @@ public class UserService {
         }
 
         return AccountInformationPayload.fromAccount(account.get());
+    }
+
+    public void addCard(UniqueIdentifier accountId, AddCardQuery addCardQuery) {
+        Optional<Account> account = accountRepository.getByAccountId(accountId);
+        if (account.isEmpty()) {
+            throw new AccountNotFoundException();
+        }
+        validateCardNumber(addCardQuery.cardNumber());
+        account.get().setCardNumber(addCardQuery.cardNumber());
+        accountRepository.saveOrUpdate(account.get());
+    }
+
+    private void validateCardNumber(UserCardNumber cardNumber) {
+        if (accountRepository.isUserCardNumberUsed(cardNumber)) {
+            throw new CardNumberAlreadyInUseException();
+        }
     }
 }

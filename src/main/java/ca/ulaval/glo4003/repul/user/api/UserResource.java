@@ -5,11 +5,13 @@ import java.net.URI;
 import ca.ulaval.glo4003.repul.commons.api.UriFactory;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.user.api.assembler.UserResponseAssembler;
+import ca.ulaval.glo4003.repul.user.api.request.AddCardRequest;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.api.response.AccountResponse;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 import ca.ulaval.glo4003.repul.user.application.UserService;
+import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
 import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
@@ -73,5 +75,18 @@ public class UserResource {
         AccountResponse accountResponse = userResponseAssembler.toAccountResponse(userService.getAccount(accountId));
 
         return Response.ok(accountResponse).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Secure
+    @Roles(Role.CLIENT)
+    @Path("/users:addCard")
+    public Response addCard(@Context ContainerRequestContext context, @Valid AddCardRequest addCardRequest) {
+        UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+
+        userService.addCard(accountId, AddCardQuery.from(addCardRequest.cardNumber));
+
+        return Response.noContent().build();
     }
 }
