@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidDeliveryPersonId
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidLockerIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitAlreadyPickedUpException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 
@@ -31,6 +32,7 @@ public class DeliveryExceptionStatusMapper {
         exceptionMapper = new WeakHashMap<>();
 
         exceptionMapper.put(DeliverySystemNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
+        exceptionMapper.put(InvalidMealKitIdException.class, Response.Status.INTERNAL_SERVER_ERROR);
 
         exceptionMapper.put(DeliveryPersonNotFoundException.class, Response.Status.NOT_FOUND);
 
@@ -39,8 +41,8 @@ public class DeliveryExceptionStatusMapper {
         exceptionMapper.put(InvalidCargoIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotDeliveredException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotInDeliveryException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(InvalidMealKitIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(CargoAlreadyPickedUpException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(LockerNotAssignedException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(MealKitAlreadyPickedUpException.class, Response.Status.BAD_REQUEST);
     }
 }
