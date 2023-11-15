@@ -38,9 +38,9 @@ public class EmailNotificationSender implements NotificationSender {
         try {
             Message message = createMessage(account, messageBody);
             Transport.send(message);
-            LOGGER.info("Email sent successfully to {}.", account.email().value());
+            LOGGER.info("Email sent successfully to {}.", account.getEmail().value());
         } catch (MessagingException e) {
-            LOGGER.info("Error sending email to {}.", account.email().value());
+            LOGGER.info("Error sending email to {}.", account.getEmail().value());
         }
     }
 
@@ -62,12 +62,12 @@ public class EmailNotificationSender implements NotificationSender {
         Message message = new MimeMessage(session);
         try {
             message.setFrom(new InternetAddress(this.senderEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(account.email().value()));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(account.getEmail().value()));
             // TODO: 2023-10-20 change the email subject
             message.setSubject("REPUL Notif");
             message.setText(messageBody);
         } catch (MessagingException e) {
-            LOGGER.info("Error sending email to {}.", account.email().value());
+            LOGGER.info("Error sending email to {}.", account.getEmail().value());
             throw e;
         }
         return message;

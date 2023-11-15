@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.repul.notification.application.exception;
 
-public class AccountNotFoundException extends NotificationException {
-    public AccountNotFoundException() {
+public class UserAccountNotFoundException extends NotificationException {
+    public UserAccountNotFoundException() {
         super("The given account was not found.");
     }
 }

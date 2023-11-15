@@ -91,7 +91,7 @@ public class DemoApplicationContext implements ApplicationContext {
 
         NotificationContextInitializer notificationContextInitializer =
             new NotificationContextInitializer().withNotificationSender(new EmailNotificationSender())
-                .withAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)));
+                .withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)));
         notificationContextInitializer.createNotificationService(eventBus);
 
         PaymentService paymentService = new PaymentService();

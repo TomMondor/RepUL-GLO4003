@@ -6,6 +6,6 @@ import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 public class LogNotificationSender implements NotificationSender {
     @Override
     public void send(Account account, String message) {
-        System.out.println("Sending notification to: " + account.email().value() + " with message: " + message);
+        System.out.println("Sending notification to: " + account.getEmail().value() + " with message: " + message);
     }
 }

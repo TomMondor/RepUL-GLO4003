@@ -111,7 +111,10 @@ public class TestApplicationContext implements ApplicationContext {
         HealthResource healthResource = new HealthResource();
 
         NotificationContextInitializer notificationContextInitializer =
-            new NotificationContextInitializer().withAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)));
+            new NotificationContextInitializer()
+                .withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)))
+                .withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL)))
+                .withMealKitIdForUser(TENTH_MEAL_KIT_ID, CLIENT_ID);
         notificationContextInitializer.createNotificationService(eventBus);
 
         PaymentService paymentService = new PaymentService();

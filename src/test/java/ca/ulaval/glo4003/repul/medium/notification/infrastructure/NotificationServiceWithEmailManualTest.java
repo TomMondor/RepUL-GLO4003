@@ -15,20 +15,21 @@ import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.notification.application.NotificationService;
-import ca.ulaval.glo4003.repul.notification.domain.Account;
-import ca.ulaval.glo4003.repul.notification.domain.AccountRepository;
+import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
+import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
+import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
-import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryAccountRepository;
+import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryDeliveryPersonAccountRepository;
+import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryUserAccountRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationServiceWithEmailManualTest {
     private static final UniqueIdentifier A_VALID_DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
     private static final UniqueIdentifier ANOTHER_VALID_DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_INVALID_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
     private static final Email AN_EMAIL = new Email("alexandre.mathieu.7@ulaval.ca");
-    private static final Account A_DELIVERY_ACCOUNT = new Account(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
-    private static final Account ANOTHER_DELIVERY_ACCOUNT = new Account(ANOTHER_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
+    private static final DeliveryPersonAccount A_DELIVERY_ACCOUNT = new DeliveryPersonAccount(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
+    private static final DeliveryPersonAccount ANOTHER_DELIVERY_ACCOUNT = new DeliveryPersonAccount(ANOTHER_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("DESJARDINS");
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("POULIOT");
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("A_LOCKER_ID", 1));
@@ -47,11 +48,15 @@ public class NotificationServiceWithEmailManualTest {
 
     public static void main(String[] args) {
         NotificationSender notificationSender = new EmailNotificationSender();
-        AccountRepository accountRepository = new InMemoryAccountRepository();
-        NotificationService notificationService = new NotificationService(accountRepository, notificationSender);
+        DeliveryPersonAccountRepository
+            deliveryDeliveryPersonAccountRepository = new InMemoryDeliveryPersonAccountRepository();
+        UserAccountRepository
+            userAccountRepository = new InMemoryUserAccountRepository();
+        NotificationService notificationService = new NotificationService(userAccountRepository,
+            deliveryDeliveryPersonAccountRepository, notificationSender);
 
-        accountRepository.saveOrUpdate(A_DELIVERY_ACCOUNT);
-        accountRepository.saveOrUpdate(ANOTHER_DELIVERY_ACCOUNT);
+        deliveryDeliveryPersonAccountRepository.saveOrUpdate(A_DELIVERY_ACCOUNT);
+        deliveryDeliveryPersonAccountRepository.saveOrUpdate(ANOTHER_DELIVERY_ACCOUNT);
 
         notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
     }

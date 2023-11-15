@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class InMemoryAccountRepositoryTest {
+public class InMemoryDeliveryPersonAccountRepositoryTest {
 
     private static final IDUL ACCOUNT_VALID_IDUL = new IDUL("ALMAT69");
     private static final UniqueIdentifier ACCOUNT_VALID_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());

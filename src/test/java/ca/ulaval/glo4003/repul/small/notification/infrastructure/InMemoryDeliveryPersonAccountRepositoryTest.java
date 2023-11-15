@@ -10,38 +10,38 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.notification.domain.Account;
-import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryAccountRepository;
+import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
+import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryDeliveryPersonAccountRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class InMemoryAccountRepositoryTest {
+public class InMemoryDeliveryPersonAccountRepositoryTest {
     private static final UniqueIdentifier ACCOUNT_VALID_ID = new UniqueIdentifierFactory().generate();
     @Mock
-    private Account account;
-    private InMemoryAccountRepository inMemoryAccountRepository;
+    private DeliveryPersonAccount deliveryPersonAccount;
+    private InMemoryDeliveryPersonAccountRepository inMemoryDeliveryPersonAccountRepository;
 
     @BeforeEach
     public void createRepo() {
-        inMemoryAccountRepository = new InMemoryAccountRepository();
+        inMemoryDeliveryPersonAccountRepository = new InMemoryDeliveryPersonAccountRepository();
     }
 
     @Test
     public void whenSavingAccountAndGettingAccount_shouldReturnOptionalOfRightAccount() {
-        given(account.accountId()).willReturn(ACCOUNT_VALID_ID);
+        given(deliveryPersonAccount.getAccountId()).willReturn(ACCOUNT_VALID_ID);
 
-        inMemoryAccountRepository.saveOrUpdate(account);
-        Optional<Account> accountFound = inMemoryAccountRepository.getByAccountId(ACCOUNT_VALID_ID);
+        inMemoryDeliveryPersonAccountRepository.saveOrUpdate(deliveryPersonAccount);
+        Optional<DeliveryPersonAccount> accountFound = inMemoryDeliveryPersonAccountRepository.getByAccountId(ACCOUNT_VALID_ID);
 
-        assertEquals(Optional.of(account), accountFound);
+        assertEquals(Optional.of(deliveryPersonAccount), accountFound);
     }
 
     @Test
     public void givenNoAccount_whenGettingAccount_shouldReturnOptionalOfEmpty() {
-        Optional<Account> accountFound = inMemoryAccountRepository.getByAccountId(ACCOUNT_VALID_ID);
+        Optional<DeliveryPersonAccount> accountFound = inMemoryDeliveryPersonAccountRepository.getByAccountId(ACCOUNT_VALID_ID);
 
         assertTrue(accountFound.isEmpty());
     }
