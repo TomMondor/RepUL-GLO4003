@@ -28,6 +28,8 @@ public class CookingExceptionStatusMapper {
     private static void createExceptionMapper() {
         exceptionMapper = new WeakHashMap<>();
 
+        exceptionMapper.put(KitchenNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
+
         exceptionMapper.put(InvalidQuantityUnitException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidQuantityValueException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidRecipeException.class, Response.Status.BAD_REQUEST);
@@ -36,6 +38,5 @@ public class CookingExceptionStatusMapper {
         exceptionMapper.put(MealKitNotCookedException.class, Response.Status.NOT_FOUND);
 
         exceptionMapper.put(MealKitNotFoundException.class, Response.Status.NOT_FOUND);
-        exceptionMapper.put(KitchenNotFoundException.class, Response.Status.NOT_FOUND);
     }
 }

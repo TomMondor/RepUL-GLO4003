@@ -27,6 +27,8 @@ public class SubscriptionExceptionStatusMapper {
     private static void createExceptionMapper() {
         exceptionMapper = new WeakHashMap<>();
 
+        exceptionMapper.put(OrderNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
+
         exceptionMapper.put(SubscriptionNotFoundException.class, Response.Status.NOT_FOUND);
         exceptionMapper.put(SemesterNotFoundException.class, Response.Status.NOT_FOUND);
 
@@ -34,6 +36,5 @@ public class SubscriptionExceptionStatusMapper {
         exceptionMapper.put(NoNextOrderInSubscriptionException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(NoOrdersInDesiredPeriodException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(OrderNotPendingException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(OrderNotFoundException.class, Response.Status.BAD_REQUEST);
     }
 }

@@ -25,11 +25,11 @@ public class LockerAuthorizationStatusMapper {
     private static void createExceptionMapper() {
         exceptionMapper = new WeakHashMap<>();
 
+        exceptionMapper.put(LockerAuthorizationSystemNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
+
         exceptionMapper.put(LockerNotAssignedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(NoCardLinkedToUserException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(UserCardNotAuthorizedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidLockerIdException.class, Response.Status.BAD_REQUEST);
-
-        exceptionMapper.put(LockerAuthorizationSystemNotFoundException.class, Response.Status.NOT_FOUND);
     }
 }
