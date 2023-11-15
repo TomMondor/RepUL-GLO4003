@@ -91,4 +91,8 @@ public class Order {
     public void markAsToPickUp() {
         orderStatus = OrderStatus.TO_PICKUP;
     }
+
+    public void markAsPickedUp() {
+        orderStatus = OrderStatus.PICKED_UP;
+    }
 }

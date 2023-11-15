@@ -180,4 +180,15 @@ public class SubscriptionTest {
 
         assertEquals(OrderStatus.TO_PICKUP, anOrder.getOrderStatus());
     }
+
+    @Test
+    public void whenMarkOrderAsPickedUp_shouldChangeOrderStatusToPickedUp() {
+        Order anOrder = new OrderFixture().withOrderStatus(OrderStatus.TO_PICKUP).build();
+        Subscription subscription =
+            new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrder), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
+
+        subscription.markOrderAsPickedUp(anOrder.getOrderId());
+
+        assertEquals(OrderStatus.PICKED_UP, anOrder.getOrderStatus());
+    }
 }

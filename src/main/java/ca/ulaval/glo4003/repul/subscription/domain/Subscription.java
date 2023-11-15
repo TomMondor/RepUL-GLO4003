@@ -100,4 +100,8 @@ public class Subscription {
     public void markCurrentOrderAsToPickUp() {
         this.findCurrentOrder().ifPresent(Order::markAsToPickUp);
     }
+
+    public void markOrderAsPickedUp(UniqueIdentifier mealKitId) {
+        this.orders.stream().filter(order -> order.getOrderId().equals(mealKitId)).findFirst().ifPresent(Order::markAsPickedUp);
+    }
 }

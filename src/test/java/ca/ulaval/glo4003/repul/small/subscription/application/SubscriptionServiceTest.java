@@ -25,6 +25,7 @@ import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.fixture.subscription.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
+import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
@@ -109,6 +110,36 @@ public class SubscriptionServiceTest {
         UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
 
         assertEquals(A_SUBSCRIPTION_ID, subscriptionId);
+    }
+
+    @Test
+    public void whenHandlingMealKitPickedUpByUserEvent_shouldGetSubscriptionsByOrderIdInRepository() {
+        MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(A_MEALKIT_ID);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+
+        subscriptionService.handleMealKitPickedUpByUserEvent(event);
+
+        verify(mockSubscriptionRepository).getSubscriptionByOrderId(A_MEALKIT_ID);
+    }
+
+    @Test
+    public void whenHandlingMealKitPickedUpByUserEvent_shouldMarkOrderAsPickedUp() {
+        MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(A_MEALKIT_ID);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+
+        subscriptionService.handleMealKitPickedUpByUserEvent(event);
+
+        verify(mockSubscription).markOrderAsPickedUp(A_MEALKIT_ID);
+    }
+
+    @Test
+    public void whenHandlingMealKitPickedUpByUserEvent_shouldSaveOrUpdateSubscription() {
+        MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(A_MEALKIT_ID);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+
+        subscriptionService.handleMealKitPickedUpByUserEvent(event);
+
+        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
     }
 
     @Test

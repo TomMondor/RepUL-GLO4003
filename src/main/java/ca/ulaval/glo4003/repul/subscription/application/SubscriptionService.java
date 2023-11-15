@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
+import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
@@ -47,6 +48,14 @@ public class SubscriptionService {
         subscriptionRepository.saveOrUpdate(subscription);
 
         return subscription.getSubscriptionId();
+    }
+
+    @Subscribe
+    public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
+        Subscription subscription =
+            subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
+        subscription.markOrderAsPickedUp(event.mealKitId);
+        subscriptionRepository.saveOrUpdate(subscription);
     }
 
     @Subscribe

@@ -21,6 +21,7 @@ import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
@@ -195,5 +196,19 @@ public class SubscriptionServiceTest {
         assertEquals(2, currentOrders.orders().size());
         assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.TO_COOK)));
         assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.PENDING)));
+    }
+
+    @Test
+    public void whenHandlingMealKitPickedUpByUserEvent_shouldMarkMatchingOrderAsPickedUp() {
+        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
+        OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
+        UniqueIdentifier orderId = ordersPayload.orders().stream().map(OrderPayload::orderId).toList().get(0);
+        MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(orderId);
+
+        eventBus.publish(event);
+
+        OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
+        assertEquals(OrderStatus.PICKED_UP, updatedOrdersPayload.orders().get(0).orderStatus());
     }
 }
