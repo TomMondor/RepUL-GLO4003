@@ -154,7 +154,7 @@ public class NotificationServiceTest {
         expectedMessage += "It arrived at " + A_TIME.toString() + ".\n";
         expectedMessage += "Come get it!";
 
-        this.notificationService.handleMealKitDeliveredEvent(MEAL_KIT_DELIVERED_EVENT);
+        this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
 
         verify(notificationSender, times(1)).send(A_VALID_USER_ACCOUNT, expectedMessage);
     }
@@ -172,7 +172,7 @@ public class NotificationServiceTest {
     public void whenHandleMealKitDeliveredEvent_shouldCallNotificationSenderWithGoodAccount() {
         when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(Optional.of(A_VALID_USER_ACCOUNT));
 
-        this.notificationService.handleMealKitDeliveredEvent(MEAL_KIT_DELIVERED_EVENT);
+        this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
 
         verify(notificationSender, times(1)).send(eq(A_VALID_USER_ACCOUNT), any(String.class));
     }
@@ -182,7 +182,7 @@ public class NotificationServiceTest {
         when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(Optional.empty());
 
         assertThrows(UserAccountNotFoundException.class,
-            () -> this.notificationService.handleMealKitDeliveredEvent(MEAL_KIT_DELIVERED_EVENT));
+            () -> this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT));
     }
 
     @Test

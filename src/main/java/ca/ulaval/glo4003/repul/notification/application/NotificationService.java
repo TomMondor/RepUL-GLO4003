@@ -57,7 +57,7 @@ public class NotificationService {
     }
 
     @Subscribe
-    public void handleMealKitDeliveredEvent(ConfirmedDeliveryEvent confirmedDeliveryEvent) {
+    public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent confirmedDeliveryEvent) {
         String message = messageFactory.createDeliveredMessage(confirmedDeliveryEvent.mealKitId,
             confirmedDeliveryEvent.deliveryLocationId, confirmedDeliveryEvent.deliveryTime,
             confirmedDeliveryEvent.lockerId);
