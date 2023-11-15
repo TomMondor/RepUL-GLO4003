@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.small.user.middleware;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +19,11 @@ import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.UserNotFo
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.DecodedToken;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.TokenDecoder;
 import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
+import ca.ulaval.glo4003.repul.user.middleware.Roles;
 import ca.ulaval.glo4003.repul.user.middleware.exception.MissingAuthorizationHeaderException;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.HttpHeaders;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,9 +52,13 @@ public class AuthGuardTest {
     @Mock
     private ContainerRequestContext containerRequestContext;
 
+    @Mock
+    private ResourceInfo resourceInfo;
+
     @BeforeEach
     public void createAuthGuard() {
         authGuard = new AuthGuard(userRepository, tokenDecoder);
+        authGuard.setResourceInfo(resourceInfo);
     }
 
     @Test
@@ -112,5 +119,44 @@ public class AuthGuardTest {
         authGuard.filter(containerRequestContext);
 
         verify(containerRequestContext).abortWith(any());
+    }
+
+    @Test
+    public void givenRolesAnnotationAndWrongRole_whenFilter_shouldAbortRequest() throws IOException, NoSuchMethodException, SecurityException {
+        User user = mockUserWithRole(Role.ADMIN);
+        given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
+        given(userRepository.findByUid(A_UID)).willReturn(user);
+        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
+        Method mockedMethod = AuthGuardTest.class.getMethod("clientRoleMethod");
+        given(resourceInfo.getResourceMethod()).willReturn(mockedMethod);
+
+        authGuard.filter(containerRequestContext);
+
+        verify(containerRequestContext).abortWith(any());
+    }
+
+    @Test
+    public void givenRolesAnnotationAndAuthorizedRole_whenFilter_shouldNotAbortRequest() throws IOException, NoSuchMethodException, SecurityException {
+        User user = mockUserWithRole(Role.CLIENT);
+        given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
+        given(userRepository.findByUid(A_UID)).willReturn(user);
+        given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
+        Method mockedMethod = AuthGuardTest.class.getMethod("clientRoleMethod");
+        given(resourceInfo.getResourceMethod()).willReturn(mockedMethod);
+
+        authGuard.filter(containerRequestContext);
+
+        verify(containerRequestContext).setProperty("uid", A_UID);
+    }
+
+    private User mockUserWithRole(Role role) {
+        User user = mock(User.class);
+        given(user.getRole()).willReturn(role);
+        return user;
+    }
+
+    @Roles(Role.CLIENT)
+    public void clientRoleMethod() {
+        // For annotation test purposes only
     }
 }
