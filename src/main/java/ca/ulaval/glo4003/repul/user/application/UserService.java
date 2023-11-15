@@ -59,7 +59,7 @@ public class UserService {
                 registrationQuery.gender(), registrationQuery.email());
         accountRepository.saveOrUpdate(createdAccount);
 
-        eventBus.publish(new AccountCreatedEvent(createdAccount.accountId(), createdAccount.email()));
+        eventBus.publish(new AccountCreatedEvent(createdAccount.getAccountId(), createdAccount.getEmail()));
     }
 
     public Token login(LoginQuery loginQuery) {

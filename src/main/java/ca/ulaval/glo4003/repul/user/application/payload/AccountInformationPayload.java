@@ -9,7 +9,7 @@ import ca.ulaval.glo4003.repul.user.domain.account.Name;
 
 public record AccountInformationPayload(Name name, Birthdate birthdate, Gender gender, int age, IDUL idul, Email email) {
     public static AccountInformationPayload fromAccount(Account account) {
-        return new AccountInformationPayload(account.name(), account.birthdate(), account.gender(),
-            account.birthdate().getAge(), account.idul(), account.email());
+        return new AccountInformationPayload(account.getName(), account.getBirthdate(), account.getGender(),
+            account.getBirthdate().getAge(), account.getIdul(), account.getEmail());
     }
 }

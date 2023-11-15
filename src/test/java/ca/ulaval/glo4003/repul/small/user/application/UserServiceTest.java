@@ -264,10 +264,10 @@ public class UserServiceTest {
 
         AccountInformationPayload payload = userService.getAccount(AN_ACCOUNT_ID);
 
-        assertEquals(account.idul(), payload.idul());
-        assertEquals(account.name(), payload.name());
-        assertEquals(account.birthdate(), payload.birthdate());
-        assertEquals(account.gender(), payload.gender());
-        assertEquals(account.email(), payload.email());
+        assertEquals(account.getIdul(), payload.idul());
+        assertEquals(account.getName(), payload.name());
+        assertEquals(account.getBirthdate(), payload.birthdate());
+        assertEquals(account.getGender(), payload.gender());
+        assertEquals(account.getEmail(), payload.email());
     }
 }

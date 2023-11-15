@@ -14,7 +14,7 @@ public class InMemoryAccountRepository implements AccountRepository {
 
     @Override
     public void saveOrUpdate(Account account) {
-        accounts.put(account.idul(), account);
+        accounts.put(account.getIdul(), account);
     }
 
     @Override
@@ -24,6 +24,6 @@ public class InMemoryAccountRepository implements AccountRepository {
 
     @Override
     public Optional<Account> getByAccountId(UniqueIdentifier accountId) {
-        return accounts.values().stream().filter(account -> account.accountId().equals(accountId)).findFirst();
+        return accounts.values().stream().filter(account -> account.getAccountId().equals(accountId)).findFirst();
     }
 }
