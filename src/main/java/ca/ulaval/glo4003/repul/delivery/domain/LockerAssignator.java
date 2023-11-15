@@ -28,4 +28,12 @@ public class LockerAssignator {
             waitingMealKitsByDeliveryLocation.get(deliveryLocation).add(mealKit);
         }
     }
+
+    public void unassignLocker(MealKit mealKit) {
+        DeliveryLocation deliveryLocation = mealKit.getDeliveryLocation();
+        deliveryLocation.findLockerById(mealKit.getLockerId().get()).unassign();
+        if (waitingMealKitsByDeliveryLocation.get(deliveryLocation).size() > 0) {
+            this.assignLocker(waitingMealKitsByDeliveryLocation.get(deliveryLocation).get(0));
+        }
+    }
 }

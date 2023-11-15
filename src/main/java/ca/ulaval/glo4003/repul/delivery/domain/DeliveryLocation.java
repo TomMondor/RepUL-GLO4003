@@ -53,4 +53,8 @@ public class DeliveryLocation {
             Comparator.comparingInt(c -> c.getLockerId().lockerNumber())
         ).findFirst();
     }
+
+    public Locker findLockerById(LockerId lockerId) {
+        return lockers.stream().filter(locker -> locker.getLockerId().equals(lockerId)).findFirst().get();
+    }
 }

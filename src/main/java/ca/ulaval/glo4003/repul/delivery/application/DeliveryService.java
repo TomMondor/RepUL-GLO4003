@@ -22,6 +22,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
+import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
@@ -72,6 +73,15 @@ public class DeliveryService {
         DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
 
         deliverySystem.moveMealKitFromCargosToPending(recallCookedMealKitEvent.mealKitId);
+
+        deliverySystemRepository.saveOrUpdate(deliverySystem);
+    }
+
+    @Subscribe
+    public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent mealKitPickedUpByUserEvent) {
+        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+
+        deliverySystem.removeMealKitFromLocker(mealKitPickedUpByUserEvent.mealKitId);
 
         deliverySystemRepository.saveOrUpdate(deliverySystem);
     }

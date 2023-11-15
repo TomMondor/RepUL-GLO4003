@@ -18,6 +18,7 @@ import ca.ulaval.glo4003.repul.delivery.application.exception.DeliveryPersonNotF
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
+import ca.ulaval.glo4003.repul.delivery.domain.Locker;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
@@ -457,9 +458,73 @@ public class DeliverySystemTest {
         assertThrows(InvalidMealKitIdException.class, () -> deliverySystem.getCargoMealKit(cargoId, A_INVALID_MEALKIT_ID));
     }
 
+    @Test
+    public void whenRemovingMealKitFromLocker_shouldDeleteMealKitFromCargo() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
+        UniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
+        deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
+        deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+        deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
+
+        assertDoesNotThrow(() -> deliverySystem.getCargoMealKit(cargoId, A_MEALKIT_ID));
+
+        deliverySystem.removeMealKitFromLocker(A_MEALKIT_ID);
+
+        assertThrows(InvalidMealKitIdException.class, () -> deliverySystem.getCargoMealKit(cargoId, A_MEALKIT_ID));
+    }
+
+    @Test
+    public void whenRemovingMealKitFromLocker_shouldDeleteMeal() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
+        UniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
+        deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
+        deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+        deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
+        MealKit mealKit = deliverySystem.getCargoMealKit(cargoId, A_MEALKIT_ID);
+        Locker locker = mealKit.getDeliveryLocation().findLockerById(mealKit.getLockerId().get());
+
+        assertTrue(locker.isAssigned());
+
+        deliverySystem.removeMealKitFromLocker(A_MEALKIT_ID);
+
+        assertTrue(locker.isUnassigned());
+    }
+
+    @Test
+    public void givenWaitingMealkit_whenRemovingMealKitFromLocker_shouldAssignLockerToWaitingMealkit() {
+        DeliverySystem deliverySystem = createDeliverySystemWithOneLocker();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
+        UniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
+        deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
+        deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+        deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
+        MealKit mealKit = deliverySystem.getCargoMealKit(cargoId, A_MEALKIT_ID);
+        MealKit anotherMealKit = deliverySystem.getCargoMealKit(cargoId, ANOTHER_MEALKIT_ID);
+        Locker locker = mealKit.getDeliveryLocation().findLockerById(mealKit.getLockerId().get());
+
+        assertTrue(locker.isAssigned());
+
+        deliverySystem.removeMealKitFromLocker(A_MEALKIT_ID);
+
+        assertTrue(locker.isAssigned());
+        assertEquals(locker.getLockerId(), anotherMealKit.getLockerId().get());
+    }
+
     private DeliverySystem createDeliverySystem() {
         return new DeliverySystemFixture().withLocationsCatalog(
             new LocationsCatalogFixture().addDeliveryLocation(new DeliveryLocation(A_DELIVERY_LOCATION_ID, A_LOCATION_NAME, 100))
+                .addKitchenLocation(new KitchenLocation(A_KITCHEN_LOCATION_ID, ANOTHER_LOCATION_NAME)).build()).build();
+    }
+
+    private DeliverySystem createDeliverySystemWithOneLocker() {
+        return new DeliverySystemFixture().withLocationsCatalog(
+            new LocationsCatalogFixture().addDeliveryLocation(new DeliveryLocation(A_DELIVERY_LOCATION_ID, A_LOCATION_NAME, 1))
                 .addKitchenLocation(new KitchenLocation(A_KITCHEN_LOCATION_ID, ANOTHER_LOCATION_NAME)).build()).build();
     }
 }
