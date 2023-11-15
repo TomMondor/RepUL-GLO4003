@@ -28,13 +28,13 @@ public class NotificationContextInitializer {
         deliveryDeliveryPersonAccountRepository = new InMemoryDeliveryPersonAccountRepository();
     private NotificationSender notificationSender = new LogNotificationSender();
 
-    public NotificationContextInitializer withDeliveryAccountRepository(
+    public NotificationContextInitializer withEmptyDeliveryAccountRepository(
         DeliveryPersonAccountRepository deliveryDeliveryPersonAccountRepository) {
         this.deliveryDeliveryPersonAccountRepository = deliveryDeliveryPersonAccountRepository;
         return this;
     }
 
-    public NotificationContextInitializer withUserAccountRepository(
+    public NotificationContextInitializer withEmptyUserAccountRepository(
         UserAccountRepository userAccountRepository) {
         this.userAccountRepository = userAccountRepository;
         return this;

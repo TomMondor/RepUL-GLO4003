@@ -43,7 +43,7 @@ public class SubscriptionContextInitializer {
         this.subscriptionFactory = subscriptionFactory;
     }
 
-    public SubscriptionContextInitializer withSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
+    public SubscriptionContextInitializer withEmptySubscriptionRepository(SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
         return this;
     }

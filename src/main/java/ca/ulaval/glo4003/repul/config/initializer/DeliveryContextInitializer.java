@@ -36,7 +36,7 @@ public class DeliveryContextInitializer {
     private final List<List<UniqueIdentifier>> cargosToAdd = new ArrayList<>();
     private DeliverySystemRepository deliverySystemRepository = new InMemoryDeliverySystemRepository();
 
-    public DeliveryContextInitializer withDeliverySystemRepository(DeliverySystemRepository deliverySystemRepository) {
+    public DeliveryContextInitializer withEmptyDeliverySystemRepository(DeliverySystemRepository deliverySystemRepository) {
         this.deliverySystemRepository = deliverySystemRepository;
         return this;
     }

@@ -40,7 +40,7 @@ public class CookingContextInitializer {
     private KitchenRepository kitchenRepository = new InMemoryKitchenRepository();
     private final List<Order> mealKitsToAdd = new ArrayList<>();
 
-    public CookingContextInitializer withKitchenRepository(KitchenRepository kitchenRepository) {
+    public CookingContextInitializer withEmptyKitchenRepository(KitchenRepository kitchenRepository) {
         this.kitchenRepository = kitchenRepository;
         return this;
     }

@@ -45,12 +45,12 @@ public class UserContextInitializer {
         this.accountFactory = new AccountFactory();
     }
 
-    public UserContextInitializer withAccountRepository(AccountRepository accountRepository) {
+    public UserContextInitializer withEmptyAccountRepository(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
         return this;
     }
 
-    public UserContextInitializer withUserRepository(UserRepository userRepository) {
+    public UserContextInitializer withEmptyUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
         return this;
     }

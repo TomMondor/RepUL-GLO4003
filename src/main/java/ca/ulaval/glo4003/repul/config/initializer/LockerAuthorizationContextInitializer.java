@@ -21,7 +21,7 @@ public class LockerAuthorizationContextInitializer {
     private LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository = new InMemoryLockerAuthorizationSystemRepository();
     private List<Map.Entry<UniqueIdentifier, UniqueIdentifier>> orders = new ArrayList<>();
 
-    public LockerAuthorizationContextInitializer withLockerAuthorizationSystemRepository(LockerAuthorizationSystemRepository repository) {
+    public LockerAuthorizationContextInitializer withEmptyLockerAuthorizationSystemRepository(LockerAuthorizationSystemRepository repository) {
         lockerAuthorizationSystemRepository = repository;
         return this;
     }
