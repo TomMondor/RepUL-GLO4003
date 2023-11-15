@@ -44,6 +44,10 @@ Afin d'avoir la vérification que l'envoi de courriel fonctionne correctement po
 ajouter votre adresse Ulaval dans le `.env` à la variable d'environnement "DELIVERY_PERSON_EMAIL". C'est obligatoire lorsqu'on lance 
 l'application dans un autre contexte que celui de test.
 
+Afin de recevoir le courriel qui affiche où le colis est livré pour le client, il faut
+ajouter votre adresse Ulaval dans le `.env` à la variable d'environnement "CLIENT_EMAIL". C'est obligatoire lorsqu'on lance
+l'application dans un autre contexte que celui de test.
+
 ### Lancer l'application
 * Dans un terminal, exécutez start.sh si vous êtes sur Linux / OSX
 * Dans un terminal, exécutez start.bat si vous êtes sur Windows

@@ -82,8 +82,8 @@ public class UserContextInitializer {
 
     public UserService createService() {
         LOGGER.info("Creating User service");
-        UserService service = new UserService(accountRepository, userRepository, accountFactory,
-            userFactory, uniqueIdentifierFactory, tokenGenerator, eventBus);
+        UserService service =
+            new UserService(accountRepository, userRepository, accountFactory, userFactory, uniqueIdentifierFactory, tokenGenerator, eventBus);
         eventBus.register(service);
         return service;
     }

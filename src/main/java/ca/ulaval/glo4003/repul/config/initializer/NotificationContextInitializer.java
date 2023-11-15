@@ -18,14 +18,13 @@ import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryDeliveryPersonAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryUserAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.LogNotificationSender;
+import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 
 public class NotificationContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationContextInitializer.class);
 
-    private UserAccountRepository
-        userAccountRepository = new InMemoryUserAccountRepository();
-    private DeliveryPersonAccountRepository
-        deliveryDeliveryPersonAccountRepository = new InMemoryDeliveryPersonAccountRepository();
+    private UserAccountRepository userAccountRepository = new InMemoryUserAccountRepository();
+    private DeliveryPersonAccountRepository deliveryDeliveryPersonAccountRepository = new InMemoryDeliveryPersonAccountRepository();
     private NotificationSender notificationSender = new LogNotificationSender();
 
     public NotificationContextInitializer withEmptyDeliveryAccountRepository(
@@ -46,14 +45,24 @@ public class NotificationContextInitializer {
     }
 
     public NotificationContextInitializer withDeliveryAccounts(List<Map<UniqueIdentifier, String>> accounts) {
-        accounts.forEach(account -> account.forEach((id, email) ->
-            deliveryDeliveryPersonAccountRepository.saveOrUpdate(new DeliveryPersonAccount(id, new Email(email)))));
+        accounts.forEach(
+            account -> account.forEach((id, email) -> deliveryDeliveryPersonAccountRepository.saveOrUpdate(new DeliveryPersonAccount(id, new Email(email)))));
         return this;
     }
 
     public NotificationContextInitializer withUserAccounts(List<Map<UniqueIdentifier, String>> accounts) {
-        accounts.forEach(account -> account.forEach((id, email) ->
-            userAccountRepository.saveOrUpdate(new UserAccount(id, new Email(email)))));
+        accounts.forEach(account -> account.forEach((id, email) -> userAccountRepository.saveOrUpdate(new UserAccount(id, new Email(email)))));
+        return this;
+    }
+
+    public NotificationContextInitializer withConfirmedSubscriptions(List<Subscription> subscriptions) {
+        subscriptions.forEach(subscription -> {
+            UserAccount userAccount = userAccountRepository.getAccountById(subscription.getSubscriberId())
+                .orElseThrow(() -> new RuntimeException("Subscription's user account must be in notification context."));
+            userAccount.addMealKit(
+                subscription.findCurrentOrder().orElseThrow(() -> new RuntimeException("Subscription must have a current order.")).getOrderId());
+            userAccountRepository.saveOrUpdate(userAccount);
+        });
         return this;
     }
 
@@ -66,8 +75,7 @@ public class NotificationContextInitializer {
 
     public NotificationService createNotificationService(RepULEventBus eventBus) {
         LOGGER.info("Creating Notification service");
-        NotificationService notificationService = new NotificationService(userAccountRepository,
-            deliveryDeliveryPersonAccountRepository, notificationSender);
+        NotificationService notificationService = new NotificationService(userAccountRepository, deliveryDeliveryPersonAccountRepository, notificationSender);
         eventBus.register(notificationService);
         return notificationService;
     }

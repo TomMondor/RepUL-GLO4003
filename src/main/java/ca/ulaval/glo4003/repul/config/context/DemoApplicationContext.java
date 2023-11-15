@@ -55,9 +55,11 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory().generate();
     private static final RegistrationQuery COOK_REGISTRATION_QUERY =
         RegistrationQuery.from("paul@ulaval.ca", "paul123", "PAUL123", "Paul", "1990-01-01", "MAN");
+    private static final String CLIENT_EMAIL =
+        ENV_PARSER.readVariable("CLIENT_EMAIL").isBlank() ? "alexandra@ulaval.ca" : ENV_PARSER.readVariable("CLIENT_EMAIL");
     private static final UniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory().generate();
     private static final RegistrationQuery CLIENT_REGISTRATION_QUERY =
-        RegistrationQuery.from("alexandra@ulaval.ca", "alexandra123", "alexa228", "Alexandra", "1999-06-08", "WOMAN");
+        RegistrationQuery.from(CLIENT_EMAIL, "alexandra123", "alexa228", "Alexandra", "1999-06-08", "WOMAN");
     private static final Order FIRST_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory().generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order SECOND_MEAL_KIT_ORDER =
@@ -91,7 +93,8 @@ public class DemoApplicationContext implements ApplicationContext {
 
         NotificationContextInitializer notificationContextInitializer =
             new NotificationContextInitializer().withNotificationSender(new EmailNotificationSender())
-                .withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)));
+                .withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL))).withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL)))
+                .withConfirmedSubscriptions(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION));
         notificationContextInitializer.createNotificationService(eventBus);
 
         PaymentService paymentService = new PaymentService();
