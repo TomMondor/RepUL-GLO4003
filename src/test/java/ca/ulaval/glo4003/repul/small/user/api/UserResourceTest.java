@@ -1,7 +1,5 @@
 package ca.ulaval.glo4003.repul.small.user.api;
 
-import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.user.AccountInformationPayloadFixture;
 import ca.ulaval.glo4003.repul.fixture.user.AddCardRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
@@ -38,7 +37,7 @@ import static org.mockito.Mockito.verify;
 public class UserResourceTest {
     private static final RegistrationRequest A_REGISTRATION_REQUEST = new RegistrationRequestFixture().build();
     private static final AccountInformationPayload AN_ACCOUNT_INFORMATION_PAYLOAD = new AccountInformationPayloadFixture().build();
-    private static final UniqueIdentifier A_UID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory().generate();
     private static final LoginRequest A_LOGIN_REQUEST = new LoginRequestFixture().build();
     private static final AddCardRequest AN_ADD_CARD_REQUEST = new AddCardRequestFixture().build();
     private static final Token A_TOKEN = new Token("aToken", 3600);

@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
@@ -31,9 +32,9 @@ public class CargoResourceTest {
     private static final String A_DELIVERY_PERSON_ID = UUID.randomUUID().toString();
     private static final String A_CARGO_ID = UUID.randomUUID().toString();
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
-    private static final UniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_DELIVERY_PERSON_ID);
-    private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_CARGO_ID);
-    private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_MEAL_KIT_ID);
+    private static final UniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_DELIVERY_PERSON_ID);
+    private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_CARGO_ID);
+    private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_MEAL_KIT_ID);
     private static final LockerId A_LOCKER_ID = new LockerId("10", 1234);
 
     private CargoResource cargoResource;

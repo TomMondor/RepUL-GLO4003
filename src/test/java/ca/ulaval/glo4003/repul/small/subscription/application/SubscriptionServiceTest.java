@@ -4,7 +4,6 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
@@ -51,12 +51,12 @@ public class SubscriptionServiceTest {
     private static final String A_DAY_STRING = "MONDAY";
     private static final String A_MEALKIT_TYPE = "STANDARD";
     private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_LOCATION_STRING, A_DAY_STRING, A_MEALKIT_TYPE);
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier AN_ID_NOT_MATCHING_ANY_SUBSCRIPTION = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier AN_ID_NOT_MATCHING_ANY_SUBSCRIPTION = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory().generate();
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId(A_LOCATION_STRING);
     private static final Optional<LockerId> OPTIONAL_OF_A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
@@ -417,8 +417,7 @@ public class SubscriptionServiceTest {
         SubscriptionPayload expectedPayload = SubscriptionPayload.from(subscription);
         when(mockSubscriptionRepository.getById(subscription.getSubscriptionId())).thenReturn(Optional.of(subscription));
 
-        SubscriptionPayload subscriptionPayload = subscriptionService.getSubscriptionById(AN_ACCOUNT_ID,
-            subscription.getSubscriptionId());
+        SubscriptionPayload subscriptionPayload = subscriptionService.getSubscriptionById(AN_ACCOUNT_ID, subscription.getSubscriptionId());
 
         assertEquals(expectedPayload, subscriptionPayload);
     }

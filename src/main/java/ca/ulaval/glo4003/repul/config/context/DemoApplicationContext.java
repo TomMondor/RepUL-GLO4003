@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.config.context;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -19,6 +18,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.env.EnvParserFactory;
@@ -51,30 +51,30 @@ import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 public class DemoApplicationContext implements ApplicationContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(DemoApplicationContext.class);
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
-    private static final UniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier COOK_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory().generate();
     private static final RegistrationQuery COOK_REGISTRATION_QUERY =
         RegistrationQuery.from("paul@ulaval.ca", "paul123", "PAUL123", "Paul", "1990-01-01", "MAN");
-    private static final UniqueIdentifier CLIENT_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory().generate();
     private static final RegistrationQuery CLIENT_REGISTRATION_QUERY =
         RegistrationQuery.from("alexandra@ulaval.ca", "alexandra123", "alexa228", "Alexandra", "1999-06-08", "WOMAN");
     private static final Order FIRST_MEAL_KIT_ORDER =
-        new Order(new UniqueIdentifier(UUID.randomUUID()), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
+        new Order(new UniqueIdentifierFactory().generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order SECOND_MEAL_KIT_ORDER =
-        new Order(new UniqueIdentifier(UUID.randomUUID()), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
+        new Order(new UniqueIdentifierFactory().generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order THIRD_MEAL_KIT_ORDER =
-        new Order(new UniqueIdentifier(UUID.randomUUID()), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
+        new Order(new UniqueIdentifierFactory().generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Frequency A_WEEKLY_FREQUENCY = new Frequency(LocalDate.now().getDayOfWeek());
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.parse("2023-09-04"), LocalDate.parse("2023-12-15"));
     private static final Subscription FIRST_SUBSCRIPTION =
-        new Subscription(new UniqueIdentifier(UUID.randomUUID()), CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID,
+        new Subscription(new UniqueIdentifierFactory().generate(), CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID,
             LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final Subscription SECOND_SUBSCRIPTION =
-        new Subscription(new UniqueIdentifier(UUID.randomUUID()), CLIENT_ID, List.of(SECOND_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID,
+        new Subscription(new UniqueIdentifierFactory().generate(), CLIENT_ID, List.of(SECOND_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID,
             LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final Subscription THIRD_SUBSCRIPTION =
-        new Subscription(new UniqueIdentifier(UUID.randomUUID()), CLIENT_ID, List.of(THIRD_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID,
+        new Subscription(new UniqueIdentifierFactory().generate(), CLIENT_ID, List.of(THIRD_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID,
             LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final int PORT = 8080;
     private static final String DELIVERY_PERSON_EMAIL =
@@ -121,8 +121,8 @@ public class DemoApplicationContext implements ApplicationContext {
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
 
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
-        LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(lockerAuthorizationContextInitializer
-            .createLockerAuthorizationService(eventBus));
+        LockerAuthorizationResource lockerAuthorizationResource =
+            new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {

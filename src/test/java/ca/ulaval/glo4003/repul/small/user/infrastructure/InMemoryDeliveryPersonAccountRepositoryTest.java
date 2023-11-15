@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.repul.small.user.infrastructure;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.domain.account.Account;
 import ca.ulaval.glo4003.repul.user.domain.account.AccountRepository;
 import ca.ulaval.glo4003.repul.user.domain.account.IDUL;
@@ -23,7 +23,7 @@ import static org.mockito.BDDMockito.given;
 public class InMemoryDeliveryPersonAccountRepositoryTest {
 
     private static final IDUL ACCOUNT_VALID_IDUL = new IDUL("ALMAT69");
-    private static final UniqueIdentifier ACCOUNT_VALID_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier ACCOUNT_VALID_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
 
     @Mock
     private Account account;

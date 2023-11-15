@@ -52,17 +52,15 @@ public class SubscriptionResourceTest {
     private static final LocalDate AN_ORDER_DELIVERY_DATE = LocalDate.now().plusDays(4);
     private static final OrderStatus AN_ORDER_STATUS = OrderStatus.PENDING;
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
-    private static final UniqueIdentifier AN_ORDER_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory().generate();
     private static final OrdersPayload AN_ORDERS_PAYLOAD =
         new OrdersPayload(List.of(new OrderPayload(AN_ORDER_ID, A_MEAL_KIT_TYPE, AN_ORDER_DELIVERY_DATE, AN_ORDER_STATUS)));
     private static final String PATH_TO_API = "/api/subscriptions/";
-    private static final Frequency A_FREQUENCY =  new Frequency(DayOfWeek.MONDAY);
+    private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Here");
-    private static final Semester A_SEMESTER = new Semester(new SemesterCode("H24"),
-        LocalDate.now().minusMonths(3), LocalDate.now().plusMonths(3));
+    private static final Semester A_SEMESTER = new Semester(new SemesterCode("H24"), LocalDate.now().minusMonths(3), LocalDate.now().plusMonths(3));
     private static final SubscriptionPayload A_SUBSCRIPTION_PAYLOAD =
-        new SubscriptionPayload(ACCOUNT_ID, A_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-            MealKitType.STANDARD, A_SEMESTER);
+        new SubscriptionPayload(ACCOUNT_ID, A_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(), MealKitType.STANDARD, A_SEMESTER);
 
     private SubscriptionResource subscriptionResource;
     @Mock
@@ -133,8 +131,7 @@ public class SubscriptionResourceTest {
             A_SUBSCRIPTION_ID);
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 
-        assertEquals(PATH_TO_API + A_SUBSCRIPTION_ID.value().toString(),
-            response.getHeaderString("Location"));
+        assertEquals(PATH_TO_API + A_SUBSCRIPTION_ID.value().toString(), response.getHeaderString("Location"));
     }
 
     @Test
@@ -157,8 +154,7 @@ public class SubscriptionResourceTest {
 
     @Test
     public void whenGettingSubscriptionById_shouldGetSubscription() {
-        when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID))
-            .thenReturn(A_SUBSCRIPTION_PAYLOAD);
+        when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID)).thenReturn(A_SUBSCRIPTION_PAYLOAD);
 
         subscriptionResource.getSubscription(containerRequestContext, A_SUBSCRIPTION_ID.value().toString());
 
@@ -167,11 +163,9 @@ public class SubscriptionResourceTest {
 
     @Test
     public void whenGettingSubscription_shouldReturn200() {
-        when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID))
-            .thenReturn(A_SUBSCRIPTION_PAYLOAD);
+        when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID)).thenReturn(A_SUBSCRIPTION_PAYLOAD);
 
-        Response response = subscriptionResource.getSubscription(containerRequestContext,
-            A_SUBSCRIPTION_ID.value().toString());
+        Response response = subscriptionResource.getSubscription(containerRequestContext, A_SUBSCRIPTION_ID.value().toString());
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }

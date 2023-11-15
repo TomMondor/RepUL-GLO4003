@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.repul.config.context;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -16,6 +15,7 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMap
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.env.EnvParserFactory;
@@ -43,10 +43,10 @@ public class DevApplicationContext implements ApplicationContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(DevApplicationContext.class);
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final int PORT = 8080;
-    private static final UniqueIdentifier COOK_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory().generate();
     private static final RegistrationQuery COOK_REGISTRATION_QUERY =
         RegistrationQuery.from("paul@ulaval.ca", "paul123", "PAUL123", "Paul", "1990-01-01", "MAN");
-    private static final UniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
     private static final String DELIVERY_PERSON_EMAIL =
         ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL").isBlank() ? "roger@ulaval.ca" : ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL");
     private static final RegistrationQuery DELIVERY_PERSON_REGISTRATION_EMAIL =
@@ -85,8 +85,8 @@ public class DevApplicationContext implements ApplicationContext {
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
 
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
-        LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(
-            lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
+        LockerAuthorizationResource lockerAuthorizationResource =
+            new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {

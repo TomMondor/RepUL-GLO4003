@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import ca.ulaval.glo4003.repul.commons.api.UriFactory;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.api.assembler.OrdersResponseAssembler;
 import ca.ulaval.glo4003.repul.subscription.api.assembler.SubscriptionsResponseAssembler;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
@@ -70,8 +71,7 @@ public class SubscriptionResource {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         UniqueIdentifier subscriptionId = new UniqueIdentifier(UUID.fromString(subscriptionIdAsString));
 
-        SubscriptionPayload
-            subscription = subscriptionService.getSubscriptionById(accountId, subscriptionId);
+        SubscriptionPayload subscription = subscriptionService.getSubscriptionById(accountId, subscriptionId);
 
         SubscriptionResponse subscriptionResponse = subscriptionsResponseAssembler.toSubscriptionResponse(subscription);
         return Response.ok(subscriptionResponse).build();
@@ -97,7 +97,7 @@ public class SubscriptionResource {
     public Response confirmMealKit(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
-        subscriptionService.confirmNextMealKitForSubscription(accountId, UniqueIdentifier.from(subscriptionId));
+        subscriptionService.confirmNextMealKitForSubscription(accountId, new UniqueIdentifierFactory().generateFrom(subscriptionId));
         return Response.noContent().build();
     }
 
@@ -108,7 +108,7 @@ public class SubscriptionResource {
     public Response declineMealKit(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
-        subscriptionService.declineNextMealKitForSubscription(accountId, UniqueIdentifier.from(subscriptionId));
+        subscriptionService.declineNextMealKitForSubscription(accountId, new UniqueIdentifierFactory().generateFrom(subscriptionId));
         return Response.noContent().build();
     }
 

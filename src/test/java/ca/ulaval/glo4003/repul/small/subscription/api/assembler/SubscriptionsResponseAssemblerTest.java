@@ -3,13 +3,13 @@ package ca.ulaval.glo4003.repul.small.subscription.api.assembler;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.subscription.api.assembler.SubscriptionsResponseAssembler;
 import ca.ulaval.glo4003.repul.subscription.api.response.SubscriptionResponse;
@@ -21,7 +21,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubscriptionsResponseAssemblerTest {
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
     private static final LocalDate A_DATE = LocalDate.now();

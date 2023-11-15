@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
@@ -21,17 +21,15 @@ import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedEx
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class KitchenTest {
-    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory().generate();
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
-    private static final UniqueIdentifier A_COOK_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory().generate();
 
     private Kitchen kitchen;
 

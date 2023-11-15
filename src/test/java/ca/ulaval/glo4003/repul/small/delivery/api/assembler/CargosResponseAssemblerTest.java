@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.api.assembler.CargosResponseAssembler;
 import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
 import ca.ulaval.glo4003.repul.delivery.api.response.MealKitResponse;
@@ -25,16 +26,16 @@ public class CargosResponseAssemblerTest {
     private static final String A_LOCKER_NUMBER = "1";
     private static final String ANOTHER_LOCKER_NUMBER = "2";
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
-    private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_MEAL_KIT_ID);
+    private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_MEAL_KIT_ID);
     private static final MealKitPayload A_MEAL_KIT_PAYLOAD = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.value(), A_LOCKER_NUMBER);
     private static final String ANOTHER_MEAL_KIT_ID = UUID.randomUUID().toString();
-    private static final UniqueIdentifier ANOTHER_MEAL_KIT_UNIQUE_IDENTIFIER = UniqueIdentifier.from(ANOTHER_MEAL_KIT_ID);
+    private static final UniqueIdentifier ANOTHER_MEAL_KIT_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(ANOTHER_MEAL_KIT_ID);
     private static final MealKitPayload ANOTHER_MEAL_KIT_PAYLOAD =
         new MealKitPayload(ANOTHER_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.value(), ANOTHER_LOCKER_NUMBER);
     private static final String A_CARGO_ID = UUID.randomUUID().toString();
-    private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = UniqueIdentifier.from(A_CARGO_ID);
+    private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_CARGO_ID);
     private static final String ANOTHER_CARGO_ID = UUID.randomUUID().toString();
-    private static final UniqueIdentifier ANOTHER_CARGO_UNIQUE_IDENTIFIER = UniqueIdentifier.from(ANOTHER_CARGO_ID);
+    private static final UniqueIdentifier ANOTHER_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(ANOTHER_CARGO_ID);
     private static final KitchenLocationId KITCHEN_LOCATION_ID = new KitchenLocationId("VACHON");
     private static final String KITCHEN_LOCATION_NAME = "Pavillon Alexandre-Vachon";
     private static final KitchenLocation KITCHEN_LOCATION = new KitchenLocation(KITCHEN_LOCATION_ID, KITCHEN_LOCATION_NAME);

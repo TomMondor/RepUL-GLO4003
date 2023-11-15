@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
@@ -39,15 +39,15 @@ import static org.mockito.Mockito.when;
 public class DeliverySystemTest {
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("A_LOCATION_ID");
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("ANOTHER_LOCATION_ID");
-    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory().generate();
     private static final String A_LOCATION_NAME = "A_LOCATION_NAME";
     private static final String ANOTHER_LOCATION_NAME = "ANOTHER_LOCATION_NAME";
-    private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier ANOTHER_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_INVALID_CARGO_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_INVALID_MEALKIT_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier ANOTHER_DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_INVALID_CARGO_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_INVALID_MEALKIT_ID = new UniqueIdentifierFactory().generate();
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("A_LOCATION_NAME 1", 1));
 
     @Mock
@@ -348,7 +348,7 @@ public class DeliverySystemTest {
     @Test
     public void whenAddingDeliveryPerson_shouldBeAbleToGet() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        UniqueIdentifier expectedId = new UniqueIdentifier(UUID.randomUUID());
+        UniqueIdentifier expectedId = new UniqueIdentifierFactory().generate();
 
         deliverySystem.addDeliveryPerson(expectedId);
         List<UniqueIdentifier> deliveryPersonIds = deliverySystem.getDeliveryPeople();

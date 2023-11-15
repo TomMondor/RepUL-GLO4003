@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.repul.small.user.application;
 
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +58,7 @@ public class UserServiceTest {
     private static final String A_CARD_NUMBER = "123456789";
     private static final AddCardQuery AN_ADD_CARD_QUERY = AddCardQuery.from(A_CARD_NUMBER);
 
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
 
     private UserService userService;
 
@@ -143,7 +142,7 @@ public class UserServiceTest {
 
     @Test
     public void whenRegistering_shouldCreateUser() {
-        UniqueIdentifier uniqueIdentifier = new UniqueIdentifier(UUID.randomUUID());
+        UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory().generate();
         given(uniqueIdentifierFactory.generate()).willReturn(uniqueIdentifier);
         given(userRepository.exists(any())).willReturn(false);
         given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());
@@ -172,7 +171,7 @@ public class UserServiceTest {
 
     @Test
     public void whenRegistering_shouldCreateAccount() {
-        UniqueIdentifier uniqueIdentifier = new UniqueIdentifier(UUID.randomUUID());
+        UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory().generate();
         given(uniqueIdentifierFactory.generate()).willReturn(uniqueIdentifier);
         given(userRepository.exists(any())).willReturn(false);
         given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());

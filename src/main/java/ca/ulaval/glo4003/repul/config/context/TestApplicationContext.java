@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.config.context;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -19,6 +18,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.http.CORSResponseFilter;
@@ -47,38 +47,38 @@ import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 
 public class TestApplicationContext implements ApplicationContext {
-    public static final UniqueIdentifier CLIENT_ID = new UniqueIdentifier(UUID.randomUUID());
+    public static final UniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory().generate();
     public static final String CLIENT_EMAIL = "alexandra@ulaval.ca";
     public static final String CLIENT_PASSWORD = "alexandra123";
-    public static final UniqueIdentifier COOK_ID = new UniqueIdentifier(UUID.randomUUID());
+    public static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory().generate();
     public static final String COOK_EMAIL = "paul@ulaval.ca";
     public static final String COOK_PASSWORD = "paul123";
-    public static final UniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier SECOND_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
+    public static final UniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier SECOND_DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
     public static final String DELIVERY_PERSON_EMAIL = "roger@ulaval.ca";
     public static final String DELIVERY_PERSON_PASSWORD = "roger123";
     public static final String SECOND_DELIVERY_PERSON_EMAIL = "john@ulaval.ca";
     public static final String SECOND_DELIVERY_PERSON_PASSWORD = "john123";
-    public static final UniqueIdentifier FIRST_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier SECOND_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier THIRD_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier FOURTH_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier FIFTH_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier SIXTH_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier SEVENTH_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier EIGHTH_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier NINTH_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier TENTH_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier FIRST_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier SECOND_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier THIRD_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier FOURTH_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier FIFTH_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier SIXTH_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier SEVENTH_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier EIGHTH_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier NINTH_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    public static final UniqueIdentifier TENTH_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
+    public static final UniqueIdentifier FIRST_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier SECOND_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier THIRD_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier FOURTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier FIFTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier SIXTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier SEVENTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier EIGHTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier NINTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier TENTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier FIRST_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier SECOND_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier THIRD_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier FOURTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier FIFTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier SIXTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier SEVENTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier EIGHTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier NINTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final UniqueIdentifier TENTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
     private static final Order FIRST_MEAL_KIT_ORDER = new Order(FIRST_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order SECOND_MEAL_KIT_ORDER = new Order(SECOND_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order THIRD_MEAL_KIT_ORDER = new Order(THIRD_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
@@ -111,10 +111,8 @@ public class TestApplicationContext implements ApplicationContext {
         HealthResource healthResource = new HealthResource();
 
         NotificationContextInitializer notificationContextInitializer =
-            new NotificationContextInitializer()
-                .withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)))
-                .withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL)))
-                .withMealKitIdForUser(TENTH_MEAL_KIT_ID, CLIENT_ID);
+            new NotificationContextInitializer().withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)))
+                .withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL))).withMealKitIdForUser(TENTH_MEAL_KIT_ID, CLIENT_ID);
         notificationContextInitializer.createNotificationService(eventBus);
 
         PaymentService paymentService = new PaymentService();

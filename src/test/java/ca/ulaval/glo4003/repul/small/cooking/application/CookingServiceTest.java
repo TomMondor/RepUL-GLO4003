@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.small.cooking.application;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
@@ -33,15 +33,14 @@ import static org.mockito.Mockito.when;
 public class CookingServiceTest {
     private static final LocalDate A_DATE = LocalDate.of(2022, 1, 1);
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
-    private static final UniqueIdentifier A_UNIQUE_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier ANOTHER_UNIQUE_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_COOK_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_UNIQUE_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier ANOTHER_UNIQUE_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory().generate();
     private static final List<UniqueIdentifier> MANY_IDS = List.of(A_UNIQUE_ID, ANOTHER_UNIQUE_ID);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("DESJARDINS");
     private static final MealKitConfirmedEvent MEALKIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_UNIQUE_ID, A_UNIQUE_ID, A_UNIQUE_ID, A_MEALKIT_TYPE, null, A_DATE);
-    private static final PickedUpCargoEvent PICKED_UP_CARGO_EVENT =
-        new PickedUpCargoEvent(List.of(A_UNIQUE_ID));
+    private static final PickedUpCargoEvent PICKED_UP_CARGO_EVENT = new PickedUpCargoEvent(List.of(A_UNIQUE_ID));
 
     private CookingService cookingService;
     @Mock

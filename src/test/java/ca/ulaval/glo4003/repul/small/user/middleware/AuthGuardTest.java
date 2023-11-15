@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.repul.small.user.middleware;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserRepository;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthGuardTest {
-    private static final UniqueIdentifier A_UID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory().generate();
     private static final String A_TOKEN = "valid-token-yolo";
     private static final DecodedToken A_DECODED_TOKEN = new DecodedToken(A_UID, Role.CLIENT);
     private static final String A_NOT_BEARER_AUTHORIZATION_HEADER = "Ours uehriwhriehwiuhriwhr";

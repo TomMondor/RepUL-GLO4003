@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.cooking.api;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.api.assembler.MealKitsResponseAssembler;
 import ca.ulaval.glo4003.repul.cooking.api.request.ConfirmCookedRequest;
 import ca.ulaval.glo4003.repul.cooking.api.request.SelectionRequest;
@@ -56,7 +57,7 @@ public class MealKitResource {
     @Path("/mealKits:select")
     public Response select(@Context ContainerRequestContext context, SelectionRequest request) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
-        cookingService.select(cookId, UniqueIdentifier.from(request.ids));
+        cookingService.select(cookId, new UniqueIdentifierFactory().generateFrom(request.ids));
 
         return Response.noContent().build();
     }
@@ -81,7 +82,7 @@ public class MealKitResource {
     @Path("/mealKits/{mealKitId}:cancelSelection")
     public Response cancelOneSelection(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
-        cookingService.cancelOneSelected(cookId, UniqueIdentifier.from(mealKitId));
+        cookingService.cancelOneSelected(cookId, new UniqueIdentifierFactory().generateFrom(mealKitId));
 
         return Response.noContent().build();
     }
@@ -103,7 +104,7 @@ public class MealKitResource {
     @Path("/mealKits/{mealKitId}:confirmCooked")
     public Response confirmCooked(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
-        cookingService.confirmCooked(cookId, UniqueIdentifier.from(mealKitId));
+        cookingService.confirmCooked(cookId, new UniqueIdentifierFactory().generateFrom(mealKitId));
 
         return Response.noContent().build();
     }
@@ -114,7 +115,7 @@ public class MealKitResource {
     @Path("/mealKits:confirmCooked")
     public Response confirmCooked(@Context ContainerRequestContext context, ConfirmCookedRequest request) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
-        cookingService.confirmCooked(cookId, UniqueIdentifier.from(request.ids));
+        cookingService.confirmCooked(cookId, new UniqueIdentifierFactory().generateFrom(request.ids));
 
         return Response.noContent().build();
     }
@@ -125,7 +126,7 @@ public class MealKitResource {
     @Path("/mealKits/{mealKitId}:recallCooked")
     public Response recallCooked(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
-        cookingService.recallCooked(cookId, UniqueIdentifier.from(mealKitId));
+        cookingService.recallCooked(cookId, new UniqueIdentifierFactory().generateFrom(mealKitId));
 
         return Response.noContent().build();
     }

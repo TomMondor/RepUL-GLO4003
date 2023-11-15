@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,8 +43,8 @@ public class SubscriptionServiceTest {
     private static final String A_MEALKIT_TYPE = "STANDARD";
     private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_LOCATION_STRING, A_DAY_STRING, A_MEALKIT_TYPE);
     private static final SubscriptionQuery ANOTHER_SUBSCRIPTION_QUERY = new SubscriptionQuery(ANOTHER_LOCATION_STRING, A_DAY_STRING, A_MEALKIT_TYPE);
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(2));
     private static final DeliveryLocationId A_LOCATION_ID = new DeliveryLocationId(A_LOCATION_STRING);
     private static final DeliveryLocationId ANOTHER_LOCATION_ID = new DeliveryLocationId(ANOTHER_LOCATION_STRING);

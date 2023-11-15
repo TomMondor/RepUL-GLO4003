@@ -4,11 +4,11 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
@@ -26,8 +26,8 @@ public class SubscriptionFixture {
     private MealKitType mealKitType;
 
     public SubscriptionFixture() {
-        subscriptionId = new UniqueIdentifier(UUID.randomUUID());
-        subscriberId = new UniqueIdentifier(UUID.randomUUID());
+        subscriptionId = new UniqueIdentifierFactory().generate();
+        subscriberId = new UniqueIdentifierFactory().generate();
         orders = new ArrayList<>();
         frequency = new Frequency(DayOfWeek.FRIDAY);
         deliveryLocationId = new DeliveryLocationId("location");

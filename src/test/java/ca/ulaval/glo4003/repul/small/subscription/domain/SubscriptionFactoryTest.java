@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.small.subscription.domain;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,15 +23,13 @@ import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SemesterNotFoundException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SubscriptionFactoryTest {
-    private static final UniqueIdentifier A_UNIQUE_IDENTIFIER = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final UniqueIdentifier A_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory().generate();
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now().minusDays(60), LocalDate.now().plusDays(17));
     private static final DeliveryLocationId A_VALID_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final DeliveryLocationId ANOTHER_VALID_DELIVERY_LOCATION_ID = new DeliveryLocationId("POULIOT");
@@ -114,8 +111,7 @@ public class SubscriptionFactoryTest {
     @Test
     public void givenUnsupportedLocationId_whenCreatingSubscription_shouldThrowInvalidLocationException() {
         DeliveryLocationId unsupportedDeliveryLocationId = new DeliveryLocationId("UNSUPPORTED");
-        subscriptionFactory =
-            new SubscriptionFactory(uniqueIdentifierFactory, List.of(CURRENT_SEMESTER), List.of(A_VALID_DELIVERY_LOCATION_ID));
+        subscriptionFactory = new SubscriptionFactory(uniqueIdentifierFactory, List.of(CURRENT_SEMESTER), List.of(A_VALID_DELIVERY_LOCATION_ID));
 
         assertThrows(InvalidLocationIdException.class,
             () -> subscriptionFactory.createSubscription(A_SUBSCRIBER_ID, unsupportedDeliveryLocationId, A_WEEKDAY, A_MEALKIT_TYPE));
