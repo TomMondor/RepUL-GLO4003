@@ -31,12 +31,12 @@ _Le setup est recommandé pour IntelliJ_
 
 ### Variable d'environnement
 
-Vous devez ajouter les informations suivantes : EMAIL_SENDER, PASSWORD_SENDER et JWT_SECRET dans le `.env`.
+Vous devez ajouter les informations suivantes : EMAIL_SENDER, PASSWORD_SENDER, LOCKER_API_KEY et JWT_SECRET dans le `.env`.
 
-Afin de faire fonctionner l'encriptage des mots de passe, vous devez ajouter la variable JWT_SECRET dans le `.env`.
+Afin de faire fonctionner l'encryptage des mots de passe, vous devez ajouter la variable JWT_SECRET dans le `.env`.
 Vous pouvez mettre la valeur que vous voulez pour cette variable.
 
-Afin de faire fonctionner l'envoi de courriel, vous devez ajouter les variables EMAIL_SENDER et PASSWORD_SENDER dans le `.env`.
+Afin de faire fonctionner l'envoi de courriels, vous devez ajouter les variables EMAIL_SENDER et PASSWORD_SENDER dans le `.env`.
 Vous ne pouvez pas mettre n'importe quelle valeur dans ces variables. Pour obtenir les valeurs à inscrire, vous devez allez directement sur le
 discord de l'équipe 01 dans le salon suivant : https://discord.com/channels/870753929317744660/1167630977959469216. (credentials-gmail-repul)
 
@@ -48,11 +48,14 @@ Afin de recevoir le courriel qui affiche où le colis est livré pour le client,
 ajouter votre adresse Ulaval dans le `.env` à la variable d'environnement "CLIENT_EMAIL". C'est obligatoire lorsqu'on lance
 l'application dans un autre contexte que celui de test.
 
+Afin de savoir quelle valeur de clé d'API est valide pour l'authentification des lockers, il faut ajouter la variable LOCKER_API_KEY
+dans le `.env`. La valeur ajoutée doit être la même que dans la collection _Postman_.
+
 ### Lancer l'application
 * Dans un terminal, exécutez start.sh si vous êtes sur Linux / OSX
 * Dans un terminal, exécutez start.bat si vous êtes sur Windows
 * Dans un IDE, exécutez la classe `Main` en tant que "Java Application"
-* Une fois démarré, vous trouverez l'API à l'URL suivante:
+* Une fois démarrée, vous trouverez l'API à l'URL suivante:
   * http://localhost:8080/api/
 * Afin de valider votre projet, vous pouvez:
   * Exécuter toutes les vérifications (test, dependency-check, etc...) et produire un artifact pour votre application (se trouvant sous
@@ -70,15 +73,15 @@ de pouvoir tester les parties demandant une boîte-repas confirmée.
 
 Pour lancer l'application en mode demo, exécuter start.sh ou start.bat en ajoutant l'argument de ligne de commande "--demo".
 
-#### Information sur les comptes déjà présent dans l'application
-Ces informations sont nécessaires afin de se connecter avec chacun des comptes à l'aide de la route logIn
+#### Information sur les comptes déjà présents dans l'application
+Ces informations sont nécessaires afin de se connecter avec chacun des comptes à l'aide de la route de _log in_.
 
 Compte du cuisinier :
   - courriel : paul@ulaval.ca
   - mot de passe : paul123
 
 Compte du livreur :
-  - courriel : (l'adresse Ulaval que vous avez mis dans le `.env`)
+  - courriel : (l'adresse Ulaval que vous avez mise dans le `.env`)
   - mot de passe : roger123
 
 **En mode démo seulement:
@@ -105,7 +108,7 @@ S'assurer d'installer le plugin CheckStyle-IDEA (Redémarrer l'IDE si demandé)
 // Pour faire apparaître les erreurs dans le code
 File -> Settings -> Tools -> Checkstyle
 Dans le tableau Configuration File, cliquer sur Add
-Sélectionner "Use a local Checkstyle file" et sélectionner le fichier checkstyle.xml à la root du projet
+Sélectionner "Use a local Checkstyle file" et sélectionner le fichier checkstyle.xml à la racine du projet
 Saisir une description pour le fichier et appuyer sur NEXT
 Une fois la nouvelle configuration ajoutée, la sélectionner dans le tableau
 Appuyer sur APPLY et ensuite sur OK

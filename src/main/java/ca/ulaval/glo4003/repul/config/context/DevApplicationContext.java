@@ -32,6 +32,7 @@ import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
+import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
 import ca.ulaval.glo4003.repul.payment.application.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
@@ -87,6 +88,7 @@ public class DevApplicationContext implements ApplicationContext {
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
         LockerAuthorizationResource lockerAuthorizationResource =
             new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
+        ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {
@@ -103,8 +105,8 @@ public class DevApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(authGuard).register(new CORSResponseFilter()).register(new CatchallExceptionMapper()).register(new NotFoundExceptionMapper())
-            .register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
+            .register(authGuard).register(apiKeyGuard).register(new CORSResponseFilter()).register(new CatchallExceptionMapper())
+            .register(new NotFoundExceptionMapper()).register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
     }
 
     @Override

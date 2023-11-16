@@ -35,6 +35,7 @@ import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
+import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
 import ca.ulaval.glo4003.repul.payment.application.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
@@ -57,9 +58,9 @@ public class DemoApplicationContext implements ApplicationContext {
         RegistrationQuery.from("paul@ulaval.ca", "paul123", "PAUL123", "Paul", "1990-01-01", "MAN");
     private static final String CLIENT_EMAIL =
         ENV_PARSER.readVariable("CLIENT_EMAIL").isBlank() ? "alexandra@ulaval.ca" : ENV_PARSER.readVariable("CLIENT_EMAIL");
-    private static final UniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory().generate();
     private static final RegistrationQuery CLIENT_REGISTRATION_QUERY =
         RegistrationQuery.from(CLIENT_EMAIL, "alexandra123", "alexa228", "Alexandra", "1999-06-08", "WOMAN");
+    private static final UniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory().generate();
     private static final Order FIRST_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory().generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order SECOND_MEAL_KIT_ORDER =
@@ -126,6 +127,7 @@ public class DemoApplicationContext implements ApplicationContext {
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
         LockerAuthorizationResource lockerAuthorizationResource =
             new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
+        ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {
@@ -142,8 +144,8 @@ public class DemoApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(authGuard).register(new CORSResponseFilter()).register(new CatchallExceptionMapper()).register(new NotFoundExceptionMapper())
-            .register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
+            .register(authGuard).register(apiKeyGuard).register(new CORSResponseFilter()).register(new CatchallExceptionMapper())
+            .register(new NotFoundExceptionMapper()).register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
     }
 
     @Override

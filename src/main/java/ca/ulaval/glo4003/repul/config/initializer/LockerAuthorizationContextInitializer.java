@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizati
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
 import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemRepository;
+import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 
 public class LockerAuthorizationContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestApplicationContext.class);
@@ -47,5 +48,9 @@ public class LockerAuthorizationContextInitializer {
             lockerAuthorizationSystem.createOrder(accountId, mealKitId);
         });
         lockerAuthorizationSystemRepository.saveOrUpdate(lockerAuthorizationSystem);
+    }
+
+    public ApiKeyGuard createApiKeyGuard() {
+        return new ApiKeyGuard();
     }
 }

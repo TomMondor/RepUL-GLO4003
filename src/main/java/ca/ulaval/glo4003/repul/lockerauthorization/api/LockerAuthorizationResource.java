@@ -3,10 +3,9 @@ package ca.ulaval.glo4003.repul.lockerauthorization.api;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.request.OpenLockerRequest;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
-import ca.ulaval.glo4003.repul.user.middleware.Roles;
-import ca.ulaval.glo4003.repul.user.middleware.Secure;
+import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKey;
 
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -25,10 +24,9 @@ public class LockerAuthorizationResource {
     }
 
     @POST
-    @Secure
-    @Roles(Role.LOCKER)
+    @ApiKey
     @Path("/locker:open")
-    public Response openLocker(OpenLockerRequest request) {
+    public Response openLocker(@Valid OpenLockerRequest request) {
         OpenLockerQuery query = OpenLockerQuery.from(
             request.userCardNumber,
             request.lockerId);
