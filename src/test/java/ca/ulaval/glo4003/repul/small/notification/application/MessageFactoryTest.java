@@ -14,8 +14,10 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.notification.application.MessageFactory;
+import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class MessageFactoryTest {
     private static final UniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
@@ -45,17 +47,19 @@ public class MessageFactoryTest {
     }
     @Test
     public void whenCreatingDeliveryMessage_shouldReturnMessage() {
-        String message = messageFactory.createDeliveredMessage(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID,
+        NotificationMessage message = messageFactory.createDeliveredMessage(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID,
             A_DELIVERY_TIME, A_LOCKER_ID);
 
-        assertEquals(message, EXPECTED_CREATED_DELIVERY_MESSAGE);
+        assertEquals(message.body(), EXPECTED_CREATED_DELIVERY_MESSAGE);
+        assertFalse(message.title().isEmpty());
     }
 
     @Test
     public void whenCreatingReadyToBeDeliveredMessage_shouldReturnMessage() {
-        String message = messageFactory.createReadyToBeDeliveredMessage(A_CARGO_ID,
+        NotificationMessage message = messageFactory.createReadyToBeDeliveredMessage(A_CARGO_ID,
             A_KITCHEN_LOCATION_ID, A_MEAL_KIT_DTO);
 
-        assertEquals(message, EXPECTED_CREATED_READY_TO_BE_DELIVERED_MESSAGE);
+        assertEquals(message.body(), EXPECTED_CREATED_READY_TO_BE_DELIVERED_MESSAGE);
+        assertFalse(message.title().isEmpty());
     }
 }

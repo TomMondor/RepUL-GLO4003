@@ -28,6 +28,7 @@ import ca.ulaval.glo4003.repul.notification.application.exception.DeliveryPerson
 import ca.ulaval.glo4003.repul.notification.application.exception.UserAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
+import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryDeliveryPersonAccountRepository;
@@ -83,7 +84,7 @@ public class NotificationServiceTest {
 
         eventBus.publish(new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_DELIVERY_TIME));
 
-        verify(notificationSender).send(any(Account.class), any(String.class));
+        verify(notificationSender).send(any(Account.class), any(NotificationMessage.class));
     }
 
     @Test
@@ -99,16 +100,16 @@ public class NotificationServiceTest {
         eventBus.publish(new DeliveryPersonAccountCreatedEvent(A_DELIVERY_PERSON_ID, AN_EMAIL));
         eventBus.publish(new DeliveryPersonAccountCreatedEvent(ANOTHER_DELIVERY_PERSON_ID, ANOTHER_EMAIL));
 
-        MealKitDto mealKitDto = new MealKitDto(A_DELIVERY_LOCATION_ID,  A_LOCKER_ID, A_MEAL_KIT_ID);
+        MealKitDto mealKitDto = new MealKitDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID);
         eventBus.publish(new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_ID,
             List.of(A_DELIVERY_PERSON_ID, ANOTHER_DELIVERY_PERSON_ID), List.of(mealKitDto)));
 
-        verify(notificationSender, times(2)).send(any(Account.class), any(String.class));
+        verify(notificationSender, times(2)).send(any(Account.class), any(NotificationMessage.class));
     }
 
     @Test
     public void givenNoMatchingDeliveryPersonAccountCreated_whenHandlingMealKitReceivedForDeliveryEvent_shouldThrowDeliveryPersonAccountNotFoundException() {
-        MealKitDto mealKitDto = new MealKitDto(A_DELIVERY_LOCATION_ID,  A_LOCKER_ID, A_MEAL_KIT_ID);
+        MealKitDto mealKitDto = new MealKitDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID);
 
         assertThrows(DeliveryPersonAccountNotFoundException.class,
             () -> eventBus.publish(new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_ID, List.of(A_DELIVERY_PERSON_ID), List.of(mealKitDto))));

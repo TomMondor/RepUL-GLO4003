@@ -27,6 +27,7 @@ import ca.ulaval.glo4003.repul.notification.application.exception.UserAccountNot
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
+import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccount;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
@@ -37,11 +38,7 @@ import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreat
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationServiceTest {
@@ -122,41 +119,27 @@ public class NotificationServiceTest {
 
         this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
 
-        verify(notificationSender, times(AVAILABLE_DELIVERY_PEOPLE_IDS.size())).send(any(Account.class), anyString());
+        verify(notificationSender, times(AVAILABLE_DELIVERY_PEOPLE_IDS.size())).send(any(Account.class), any(NotificationMessage.class));
     }
 
     @Test
-    public void whenHandlingMealKitReceivedForDeliveryEvent_shouldCallNotificationSenderWithRightAccountAndMessage() {
+    public void whenHandlingMealKitReceivedForDeliveryEvent_shouldCallNotificationSenderWithRightAccountAndAMessage() {
         when(deliveryPersonAccountRepository.getByAccountId(A_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(Optional.of(A_DELIVERY_ACCOUNT));
         when(deliveryPersonAccountRepository.getByAccountId(ANOTHER_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(Optional.of(ANOTHER_DELIVERY_ACCOUNT));
 
         this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
 
-        String message =
-            "Your meal kits (cargo id: " + A_CARGO_ID.value().toString() + ") are ready to be fetched from " + A_KITCHEN_LOCATION_ID.value() + ".\n";
-        message += "Here is the list of meal kits to be delivered:\n";
-        message += "MealKit ID " + A_MEAL_KIT_ID.value() + " to " + A_DELIVERY_LOCATION_ID.value() + " in box " + A_LOCKER_ID.get().lockerNumber() + "\n";
-        message +=
-            "MealKit ID " + ANOTHER_MEAL_KIT_ID.value() + " to " + ANOTHER_DELIVERY_LOCATION_ID.value() + " in box " + ANOTHER_LOCKER_ID.get().lockerNumber() +
-                "\n";
-
-        verify(notificationSender, times(1)).send(A_DELIVERY_ACCOUNT, message);
-        verify(notificationSender, times(1)).send(ANOTHER_DELIVERY_ACCOUNT, message);
+        verify(notificationSender, times(1)).send(eq(A_DELIVERY_ACCOUNT), any(NotificationMessage.class));
+        verify(notificationSender, times(1)).send(eq(ANOTHER_DELIVERY_ACCOUNT), any(NotificationMessage.class));
     }
 
     @Test
-    public void whenHandlingMealKitDeliveredEvent_shouldCallNotificationSenderWithRightAccountAndMessage() {
+    public void whenHandlingMealKitDeliveredEvent_shouldCallNotificationSenderWithRightAccountAndAMessage() {
         when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(Optional.of(A_VALID_USER_ACCOUNT));
-        String expectedMessage = "Your meal kit with id " + A_MEAL_KIT_ID.value();
-        expectedMessage += " is ready to be fetched from " + A_DELIVERY_LOCATION_ID.value();
-        expectedMessage += " in the locker " + A_LOCKER_ID.get().lockerNumber();
-        expectedMessage += ".\n";
-        expectedMessage += "It arrived at " + A_TIME.toString() + ".\n";
-        expectedMessage += "Come get it!";
 
         this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
 
-        verify(notificationSender, times(1)).send(A_VALID_USER_ACCOUNT, expectedMessage);
+        verify(notificationSender, times(1)).send(eq(A_VALID_USER_ACCOUNT), any(NotificationMessage.class));
     }
 
     @Test
@@ -174,7 +157,7 @@ public class NotificationServiceTest {
 
         this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
 
-        verify(notificationSender, times(1)).send(eq(A_VALID_USER_ACCOUNT), any(String.class));
+        verify(notificationSender, times(1)).send(eq(A_VALID_USER_ACCOUNT), any(NotificationMessage.class));
     }
 
     @Test

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
+import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 
 public class EmailNotificationSender implements NotificationSender {
@@ -34,9 +35,9 @@ public class EmailNotificationSender implements NotificationSender {
         this.senderPassword = envParser.readVariable("PASSWORD_SENDER");
     }
 
-    public void send(Account account, String messageBody) {
+    public void send(Account account, NotificationMessage notificationMessage) {
         try {
-            Message message = createMessage(account, messageBody);
+            Message message = createMessage(account, notificationMessage);
             Transport.send(message);
             LOGGER.info("Email sent successfully to {}.", account.getEmail().value());
         } catch (MessagingException e) {
@@ -53,7 +54,7 @@ public class EmailNotificationSender implements NotificationSender {
         properties.put("mail.smtp.starttls.enable", "true");
     }
 
-    private Message createMessage(Account account, String messageBody) throws MessagingException {
+    private Message createMessage(Account account, NotificationMessage notificationMessage) throws MessagingException {
         Session session = Session.getInstance(properties, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(senderEmail, senderPassword);
@@ -63,9 +64,8 @@ public class EmailNotificationSender implements NotificationSender {
         try {
             message.setFrom(new InternetAddress(this.senderEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(account.getEmail().value()));
-            // TODO: 2023-10-20 change the email subject
-            message.setSubject("REPUL Notif");
-            message.setText(messageBody);
+            message.setSubject(notificationMessage.title());
+            message.setText(notificationMessage.body());
         } catch (MessagingException e) {
             LOGGER.info("Error sending email to {}.", account.getEmail().value());
             throw e;

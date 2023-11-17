@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.repul.notification.application.exception.UserAccountNot
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
+import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccount;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
@@ -46,7 +47,7 @@ public class NotificationService {
 
     @Subscribe
     public void handleMealKitReceivedForDeliveryEvent(MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent) {
-        String message = messageFactory.createReadyToBeDeliveredMessage(mealKitReceivedForDeliveryEvent.cargoId,
+        NotificationMessage message = messageFactory.createReadyToBeDeliveredMessage(mealKitReceivedForDeliveryEvent.cargoId,
             mealKitReceivedForDeliveryEvent.kitchenLocationId,
             mealKitReceivedForDeliveryEvent.mealKitDtos);
         for (UniqueIdentifier availableShipperId : mealKitReceivedForDeliveryEvent.availableDeliveryPeople) {
@@ -58,7 +59,7 @@ public class NotificationService {
 
     @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent confirmedDeliveryEvent) {
-        String message = messageFactory.createDeliveredMessage(confirmedDeliveryEvent.mealKitId,
+        NotificationMessage message = messageFactory.createDeliveredMessage(confirmedDeliveryEvent.mealKitId,
             confirmedDeliveryEvent.deliveryLocationId, confirmedDeliveryEvent.deliveryTime,
             confirmedDeliveryEvent.lockerId);
         UserAccount userAccount = userAccountRepository
