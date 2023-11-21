@@ -22,6 +22,7 @@ import ca.ulaval.glo4003.repul.user.middleware.Roles;
 import ca.ulaval.glo4003.repul.user.middleware.Secure;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -51,7 +52,8 @@ public class SubscriptionResource {
     @Roles(Role.CLIENT)
     @Path("/subscriptions")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createSubscription(@Context ContainerRequestContext context, @Valid SubscriptionRequest subscriptionRequest) {
+    public Response createSubscription(@Context ContainerRequestContext context,
+                                       @NotNull(message = "The body must not be null.") @Valid SubscriptionRequest subscriptionRequest) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
         SubscriptionQuery subscriptionQuery =
             SubscriptionQuery.from(subscriptionRequest.locationId, subscriptionRequest.dayOfWeek, subscriptionRequest.mealKitType);
@@ -116,8 +118,8 @@ public class SubscriptionResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/subscriptions:currentOrders")
-    public Response getMyCurrentOrders(@Context ContainerRequestContext requestContext) {
-        UniqueIdentifier accountId = (UniqueIdentifier) requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+    public Response getMyCurrentOrders(@Context ContainerRequestContext context) {
+        UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(accountId);
 

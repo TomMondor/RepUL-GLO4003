@@ -6,6 +6,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizati
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKey;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -26,10 +27,10 @@ public class LockerAuthorizationResource {
     @POST
     @ApiKey
     @Path("/locker:open")
-    public Response openLocker(@Valid OpenLockerRequest request) {
+    public Response openLocker(@NotNull(message = "The body must not be null.") @Valid OpenLockerRequest openLockerRequest) {
         OpenLockerQuery query = OpenLockerQuery.from(
-            request.userCardNumber,
-            request.lockerId);
+            openLockerRequest.userCardNumber,
+            openLockerRequest.lockerId);
 
         lockerAuthorizationService.openLocker(query);
 

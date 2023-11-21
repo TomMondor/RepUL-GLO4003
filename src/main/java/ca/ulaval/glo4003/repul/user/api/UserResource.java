@@ -20,6 +20,7 @@ import ca.ulaval.glo4003.repul.user.middleware.Roles;
 import ca.ulaval.glo4003.repul.user.middleware.Secure;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -46,7 +47,7 @@ public class UserResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/users:register")
-    public Response register(@Valid RegistrationRequest registrationRequest) {
+    public Response register(@NotNull(message = "The body must not be null.") @Valid RegistrationRequest registrationRequest) {
         userService.register(RegistrationQuery.from(registrationRequest.email, registrationRequest.password, registrationRequest.idul, registrationRequest.name,
             registrationRequest.birthdate, registrationRequest.gender));
         URI location = uriFactory.createURI("/api/users");
@@ -57,7 +58,7 @@ public class UserResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/users:login")
-    public Response login(@Valid LoginRequest loginRequest) {
+    public Response login(@NotNull(message = "The body must not be null.") @Valid LoginRequest loginRequest) {
         Token token = userService.login(LoginQuery.from(loginRequest.email, loginRequest.password));
         LoginResponse loginResponse = userResponseAssembler.toLoginResponse(token);
 
@@ -82,7 +83,7 @@ public class UserResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/users:addCard")
-    public Response addCard(@Context ContainerRequestContext context, @Valid AddCardRequest addCardRequest) {
+    public Response addCard(@Context ContainerRequestContext context, @NotNull(message = "The body must not be null.") @Valid AddCardRequest addCardRequest) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
 
         userService.addCard(accountId, AddCardQuery.from(addCardRequest.cardNumber));

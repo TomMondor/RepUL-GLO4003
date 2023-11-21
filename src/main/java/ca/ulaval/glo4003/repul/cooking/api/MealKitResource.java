@@ -15,6 +15,8 @@ import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.middleware.Roles;
 import ca.ulaval.glo4003.repul.user.middleware.Secure;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -55,9 +57,10 @@ public class MealKitResource {
     @Secure
     @Roles(Role.COOK)
     @Path("/mealKits:select")
-    public Response select(@Context ContainerRequestContext context, SelectionRequest request) {
+    public Response select(@Context ContainerRequestContext context,
+                           @NotNull(message = "The body must not be null.") @Valid SelectionRequest selectionRequest) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
-        cookingService.select(cookId, new UniqueIdentifierFactory().generateFrom(request.ids));
+        cookingService.select(cookId, new UniqueIdentifierFactory().generateFrom(selectionRequest.ids));
 
         return Response.noContent().build();
     }
@@ -113,9 +116,10 @@ public class MealKitResource {
     @Secure
     @Roles(Role.COOK)
     @Path("/mealKits:confirmCooked")
-    public Response confirmCooked(@Context ContainerRequestContext context, ConfirmCookedRequest request) {
+    public Response confirmCooked(@Context ContainerRequestContext context,
+                                  @NotNull(message = "The body must not be null.") @Valid ConfirmCookedRequest confirmCookedRequest) {
         UniqueIdentifier cookId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
-        cookingService.confirmCooked(cookId, new UniqueIdentifierFactory().generateFrom(request.ids));
+        cookingService.confirmCooked(cookId, new UniqueIdentifierFactory().generateFrom(confirmCookedRequest.ids));
 
         return Response.noContent().build();
     }
