@@ -9,6 +9,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSys
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinkedToUserException;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.UserCardNotAuthorizedException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -78,5 +79,19 @@ class LockerAuthorizationSystemTest {
         lockerAuthorizationSystem.authorize(A_LOCKER_ID, A_USER_CARD_NUMBER);
 
         assertThrows(LockerNotAssignedException.class, () -> lockerAuthorizationSystem.authorize(A_LOCKER_ID, A_USER_CARD_NUMBER));
+    }
+
+    @Test
+    public void givenNoOrder_whenAssigningLocker_shouldThrowOrderNotFoundException() {
+        LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
+
+        assertThrows(OrderNotFoundException.class, () -> lockerAuthorizationSystem.assignLocker(A_MEAL_KIT_ID, A_LOCKER_ID));
+    }
+
+    @Test
+    public void givenNoOrder_whenUnassigningLocker_shouldThrowOrderNotFoundException() {
+        LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
+
+        assertThrows(OrderNotFoundException.class, () -> lockerAuthorizationSystem.unassignLocker(A_MEAL_KIT_ID));
     }
 }

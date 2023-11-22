@@ -7,6 +7,7 @@ import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinkedToUserException;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.UserCardNotAuthorizedException;
 
 public class LockerAuthorizationSystem {
@@ -22,11 +23,13 @@ public class LockerAuthorizationSystem {
     }
 
     public void assignLocker(UniqueIdentifier mealKitId, LockerId lockerId) {
-        orders.get(mealKitId).assignLocker(lockerId);
+        Order order = getOrderFrom(mealKitId);
+        order.assignLocker(lockerId);
     }
 
     public void unassignLocker(UniqueIdentifier mealKitId) {
-        orders.get(mealKitId).unassignLocker();
+        Order order = getOrderFrom(mealKitId);
+        order.unassignLocker();
     }
 
     public UniqueIdentifier authorize(LockerId lockerId, UserCardNumber userCardNumberToValidate) {
@@ -51,5 +54,13 @@ public class LockerAuthorizationSystem {
 
     private void removeTakenOrder(Order order) {
         orders.remove(order.getMealKitId());
+    }
+
+    private Order getOrderFrom(UniqueIdentifier mealKitId) {
+        Order order = orders.get(mealKitId);
+        if (order == null) {
+            throw new OrderNotFoundException();
+        }
+        return order;
     }
 }

@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.InvalidLocke
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerAuthorizationException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinkedToUserException;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.UserCardNotAuthorizedException;
 
 import jakarta.ws.rs.core.Response;
@@ -25,6 +26,7 @@ public class LockerAuthorizationStatusMapper {
     private static void createExceptionMapper() {
         exceptionMapper = new WeakHashMap<>();
 
+        exceptionMapper.put(OrderNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
         exceptionMapper.put(LockerAuthorizationSystemNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
 
         exceptionMapper.put(LockerNotAssignedException.class, Response.Status.BAD_REQUEST);
