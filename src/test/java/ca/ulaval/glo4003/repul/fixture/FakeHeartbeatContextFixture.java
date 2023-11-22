@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.fixture;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
-import ca.ulaval.glo4003.repul.config.http.CORSResponseFilter;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -14,7 +13,7 @@ public class FakeHeartbeatContextFixture implements ApplicationContext {
 
     @Override
     public ResourceConfig initializeResourceConfig() {
-        return new ResourceConfig().register(new FakeHeartbeatResource()).register(new CORSResponseFilter());
+        return new ResourceConfig().register(new FakeHeartbeatResource());
     }
 
     @Override

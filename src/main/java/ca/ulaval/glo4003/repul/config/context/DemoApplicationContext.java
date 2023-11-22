@@ -22,7 +22,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.env.EnvParserFactory;
-import ca.ulaval.glo4003.repul.config.http.CORSResponseFilter;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInitializer;
@@ -144,7 +143,7 @@ public class DemoApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(authGuard).register(apiKeyGuard).register(new CORSResponseFilter()).register(new CatchallExceptionMapper())
+            .register(authGuard).register(apiKeyGuard).register(new CatchallExceptionMapper())
             .register(new NotFoundExceptionMapper()).register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
     }
 
