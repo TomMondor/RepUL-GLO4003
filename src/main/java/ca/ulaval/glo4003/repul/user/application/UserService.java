@@ -7,6 +7,7 @@ import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
 import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.user.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
@@ -96,6 +97,8 @@ public class UserService {
         validateCardNumber(addCardQuery.cardNumber());
         account.get().setCardNumber(addCardQuery.cardNumber());
         accountRepository.saveOrUpdate(account.get());
+
+        eventBus.publish(new UserCardAddedEvent(accountId, addCardQuery.cardNumber()));
     }
 
     private void validateCardNumber(UserCardNumber cardNumber) {

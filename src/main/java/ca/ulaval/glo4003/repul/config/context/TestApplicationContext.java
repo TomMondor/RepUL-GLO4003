@@ -31,6 +31,7 @@ import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
+import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
@@ -79,6 +80,8 @@ public class TestApplicationContext implements ApplicationContext {
     public static final UniqueIdentifier EIGHTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
     public static final UniqueIdentifier NINTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
     public static final UniqueIdentifier TENTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
+    public static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Entrée Vachon #1", 30);
     private static final Order FIRST_MEAL_KIT_ORDER = new Order(FIRST_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order SECOND_MEAL_KIT_ORDER = new Order(SECOND_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order THIRD_MEAL_KIT_ORDER = new Order(THIRD_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
@@ -90,7 +93,6 @@ public class TestApplicationContext implements ApplicationContext {
     private static final Order NINTH_MEAL_KIT_ORDER = new Order(NINTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order TENTH_MEAL_KIT_ORDER = new Order(TENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_DELIVER);
     private static final Frequency A_WEEKLY_FREQUENCY = new Frequency(LocalDate.now().getDayOfWeek());
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusWeeks(10));
     private static final RegistrationQuery CLIENT_REGISTRATION_QUERY =
         RegistrationQuery.from(CLIENT_EMAIL, CLIENT_PASSWORD, "ALEXA123", "Alexandra", "1999-01-01", "WOMAN");
@@ -112,7 +114,8 @@ public class TestApplicationContext implements ApplicationContext {
 
         NotificationContextInitializer notificationContextInitializer =
             new NotificationContextInitializer().withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)))
-                .withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL))).withMealKitIdForUser(TENTH_MEAL_KIT_ID, CLIENT_ID);
+                .withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL))).withMealKitIdForUser(FIRST_MEAL_KIT_ID, CLIENT_ID)
+                .withMealKitIdForUser(TENTH_MEAL_KIT_ID, CLIENT_ID);
         notificationContextInitializer.createNotificationService(eventBus);
 
         PaymentService paymentService = new PaymentService();

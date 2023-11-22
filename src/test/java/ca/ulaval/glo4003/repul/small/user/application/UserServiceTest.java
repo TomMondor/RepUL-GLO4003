@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.user.AccountFixture;
 import ca.ulaval.glo4003.repul.user.application.UserService;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
 import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
 import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
@@ -280,19 +281,19 @@ public class UserServiceTest {
     }
 
     @Test
-    public void givenInexistentAccount_whenAddingCard_shouldThrowAccountNotFoundException() {
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.empty());
-
-        assertThrows(AccountNotFoundException.class, () -> userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY));
-    }
-
-    @Test
     public void whenAddingCard_shouldGetAccountById() {
         given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
 
         userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
 
         verify(accountRepository).getByAccountId(AN_ACCOUNT_ID);
+    }
+
+    @Test
+    public void givenInexistentAccount_whenAddingCard_shouldThrowAccountNotFoundException() {
+        given(accountRepository.getByAccountId(any())).willReturn(Optional.empty());
+
+        assertThrows(AccountNotFoundException.class, () -> userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY));
     }
 
     @Test
@@ -311,5 +312,14 @@ public class UserServiceTest {
         userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
 
         verify(accountRepository).saveOrUpdate(any(Account.class));
+    }
+
+    @Test
+    public void whenAddingCard_shouldPublishUserCardAddedEvent() {
+        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
+
+        userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
+
+        verify(repULEventBus).publish(any(UserCardAddedEvent.class));
     }
 }
