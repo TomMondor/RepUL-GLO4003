@@ -105,8 +105,9 @@ public class DeliverySystem {
     }
 
     public void moveMealKitFromCargosToPending(UniqueIdentifier mealKitId) {
-        MealKit removedMealKitFromCargos = removeMealKitFromCargos(mealKitId);
-        pendingMealKits.put(mealKitId, removedMealKitFromCargos);
+        MealKit mealKitRemovedFromCargo = removeMealKitFromCargos(mealKitId);
+        lockerAssignator.unassignLocker(mealKitRemovedFromCargo);
+        pendingMealKits.put(mealKitId, mealKitRemovedFromCargo);
     }
 
     private MealKit removeMealKitFromCargos(UniqueIdentifier mealKitId) {

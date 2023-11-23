@@ -381,7 +381,7 @@ public class DeliverySystemTest {
     }
 
     @Test
-    public void whenMovingMealKitFromCargosToPending_shouldMakeMealKitBeAbleToBeReadyToBeDelivered() {
+    public void whenMovingMealKitFromCargosToPending_shouldMakeMealKitReadyToBeDeliveredAgain() {
         DeliverySystem deliverySystem = createDeliverySystem();
         deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         List<UniqueIdentifier> newMealKitId = new ArrayList<>(List.of(A_MEALKIT_ID));
@@ -390,6 +390,18 @@ public class DeliverySystemTest {
         deliverySystem.moveMealKitFromCargosToPending(A_MEALKIT_ID);
 
         assertDoesNotThrow(() -> deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, newMealKitId));
+    }
+
+    @Test
+    public void whenMovingMealKitFromCargosToPending_shouldUnassignLocker() {
+        DeliverySystem deliverySystem = createDeliverySystemWithOneLocker();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        List<UniqueIdentifier> newMealKitId = new ArrayList<>(List.of(A_MEALKIT_ID));
+        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, newMealKitId);
+
+        deliverySystem.moveMealKitFromCargosToPending(A_MEALKIT_ID);
+
+        assertEquals(1, deliverySystem.getDeliveryLocations().get(0).getRemainingCapacity());
     }
 
     @Test
