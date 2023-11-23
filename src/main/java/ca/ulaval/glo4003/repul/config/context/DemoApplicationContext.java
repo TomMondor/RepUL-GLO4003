@@ -66,7 +66,7 @@ public class DemoApplicationContext implements ApplicationContext {
         new Order(new UniqueIdentifierFactory().generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order THIRD_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory().generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Frequency A_WEEKLY_FREQUENCY = new Frequency(LocalDate.now().getDayOfWeek());
+    private static final Frequency A_WEEKLY_FREQUENCY = new Frequency(LocalDate.now().getDayOfWeek().plus(1));
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.parse("2023-09-04"), LocalDate.parse("2023-12-15"));
     private static final Subscription FIRST_SUBSCRIPTION =
@@ -123,7 +123,10 @@ public class DemoApplicationContext implements ApplicationContext {
         CargoResource cargoResource = new CargoResource(deliveryContextInitializer.createDeliveryService(eventBus));
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
 
-        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
+        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer().withOrders(
+            List.of(Map.entry(CLIENT_ID, FIRST_MEAL_KIT_ORDER.getOrderId()),
+                Map.entry(CLIENT_ID, SECOND_MEAL_KIT_ORDER.getOrderId()),
+                Map.entry(CLIENT_ID, THIRD_MEAL_KIT_ORDER.getOrderId())));
         LockerAuthorizationResource lockerAuthorizationResource =
             new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
@@ -143,8 +146,8 @@ public class DemoApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(authGuard).register(apiKeyGuard).register(new CatchallExceptionMapper())
-            .register(new NotFoundExceptionMapper()).register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
+            .register(authGuard).register(apiKeyGuard).register(new CatchallExceptionMapper()).register(new NotFoundExceptionMapper())
+            .register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
     }
 
     @Override

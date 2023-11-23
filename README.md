@@ -48,6 +48,8 @@ Afin de recevoir le courriel qui affiche où le colis est livré pour le client,
 ajouter votre adresse Ulaval dans le `.env` à la variable d'environnement "CLIENT_EMAIL". C'est obligatoire lorsqu'on lance
 l'application dans un autre contexte que celui de test.
 
+Il est important de noter que ces deux adresses emails doivent être différentes. 
+
 Afin de savoir quelle valeur de clé d'API est valide pour l'authentification des lockers, il faut ajouter la variable LOCKER_API_KEY
 dans le `.env`. La valeur ajoutée doit être la même que dans la collection _Postman_.
 
