@@ -35,7 +35,7 @@ public class CookingExceptionStatusMapper {
         exceptionMapper.put(InvalidRecipeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitAlreadySelectedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotInSelectionException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(MealKitNotCookedException.class, Response.Status.NOT_FOUND);
+        exceptionMapper.put(MealKitNotCookedException.class, Response.Status.BAD_REQUEST);
 
         exceptionMapper.put(MealKitNotFoundException.class, Response.Status.NOT_FOUND);
     }
