@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidEmailException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationIdException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidMealKitTypeException;
+import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidUniqueIdentifierException;
 import ca.ulaval.glo4003.repul.config.exception.EnvFileNotFoundException;
 
 import jakarta.ws.rs.core.Response;
@@ -33,6 +34,8 @@ public class CommonExceptionStatusMapper {
         exceptionMapper.put(InvalidLocationIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidMealKitTypeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidDayOfWeekException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidUniqueIdentifierException.class, Response.Status.BAD_REQUEST);
+
         exceptionMapper.put(EnvFileNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
     }
 }

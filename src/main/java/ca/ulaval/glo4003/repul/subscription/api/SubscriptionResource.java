@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.repul.subscription.api;
 
 import java.net.URI;
 import java.util.List;
-import java.util.UUID;
 
 import ca.ulaval.glo4003.repul.commons.api.UriFactory;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
@@ -71,9 +70,9 @@ public class SubscriptionResource {
     @Roles(Role.CLIENT)
     public Response getSubscription(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionIdAsString) {
         UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
-        UniqueIdentifier subscriptionId = new UniqueIdentifier(UUID.fromString(subscriptionIdAsString));
 
-        SubscriptionPayload subscription = subscriptionService.getSubscriptionById(accountId, subscriptionId);
+        SubscriptionPayload subscription =
+            subscriptionService.getSubscriptionById(accountId, new UniqueIdentifierFactory().generateFrom(subscriptionIdAsString));
 
         SubscriptionResponse subscriptionResponse = subscriptionsResponseAssembler.toSubscriptionResponse(subscription);
         return Response.ok(subscriptionResponse).build();

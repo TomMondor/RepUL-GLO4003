@@ -1,8 +1,7 @@
 package ca.ulaval.glo4003.repul.user.infrastructure.identitymanagement;
 
-import java.util.UUID;
-
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.TokenVerificationFailedException;
@@ -24,7 +23,7 @@ public class JWTTokenDecoder implements TokenDecoder {
 
         try {
             DecodedJWT decodedJWT = verifier.verify(token);
-            UniqueIdentifier uniqueIdentifier = new UniqueIdentifier(UUID.fromString(decodedJWT.getClaim("UID").asString()));
+            UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory().generateFrom(decodedJWT.getClaim("UID").asString());
             Role role = Role.valueOf(decodedJWT.getClaim("Role").asString());
 
             return new DecodedToken(uniqueIdentifier, role);
