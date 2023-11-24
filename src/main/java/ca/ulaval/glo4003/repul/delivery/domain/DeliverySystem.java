@@ -128,9 +128,7 @@ public class DeliverySystem {
     }
 
     public void removeMealKitFromLocker(UniqueIdentifier mealKitId) {
-        Cargo cargo = cargos.stream().filter(c -> c.containsMealKit(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new);
-        MealKit mealKit = cargo.getMealKit(mealKitId);
-        lockerAssignator.unassignLocker(mealKit);
-        cargo.removeMealKit(mealKitId);
+        MealKit mealKitRemovedFromCargo = removeMealKitFromCargos(mealKitId);
+        lockerAssignator.unassignLocker(mealKitRemovedFromCargo);
     }
 }

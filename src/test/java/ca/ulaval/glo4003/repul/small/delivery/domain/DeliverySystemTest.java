@@ -478,17 +478,31 @@ public class DeliverySystemTest {
     public void whenRemovingMealKitFromLocker_shouldDeleteMealKitFromCargo() {
         DeliverySystem deliverySystem = createDeliverySystem();
         deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
-        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
         UniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
         deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
         deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
-        assertDoesNotThrow(() -> deliverySystem.getCargoMealKit(cargoId, A_MEALKIT_ID));
-
         deliverySystem.removeMealKitFromLocker(A_MEALKIT_ID);
 
         assertThrows(InvalidMealKitIdException.class, () -> deliverySystem.getCargoMealKit(cargoId, A_MEALKIT_ID));
+    }
+
+    @Test
+    public void givenCargoWithOnlyOneMealKitRemaining_whenRemovingMealKitFromLocker_shouldDeleteCargo() {
+        DeliverySystem deliverySystem = createDeliverySystemWithOneLocker();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID,List.of(A_MEALKIT_ID));
+        UniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
+        deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
+        deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+        deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
+
+        deliverySystem.removeMealKitFromLocker(A_MEALKIT_ID);
+
+        assertTrue(deliverySystem.getCargos().isEmpty());
     }
 
     @Test
