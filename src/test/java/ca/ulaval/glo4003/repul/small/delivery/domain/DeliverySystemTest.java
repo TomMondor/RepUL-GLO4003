@@ -28,10 +28,14 @@ import ca.ulaval.glo4003.repul.delivery.domain.exception.CargoAlreadyPickedUpExc
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidCargoIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidDeliveryPersonIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInCargoException;
 import ca.ulaval.glo4003.repul.fixture.delivery.DeliverySystemFixture;
 import ca.ulaval.glo4003.repul.fixture.delivery.LocationsCatalogFixture;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -279,7 +283,7 @@ public class DeliverySystemTest {
     }
 
     @Test
-    public void givenValidCargoIdButInvalidMealKitId_whenConfirmDelivery_shouldThrowInvalidMealKitIdException() {
+    public void givenValidCargoIdButInvalidMealKitId_whenConfirmDelivery_shouldThrowMealKitNotInCargoException() {
         DeliverySystem deliverySystem = createDeliverySystem();
         deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
@@ -287,7 +291,7 @@ public class DeliverySystemTest {
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
         deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
 
-        assertThrows(InvalidMealKitIdException.class, () -> deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, ANOTHER_MEALKIT_ID));
+        assertThrows(MealKitNotInCargoException.class, () -> deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, ANOTHER_MEALKIT_ID));
     }
 
     @Test
@@ -326,7 +330,7 @@ public class DeliverySystemTest {
     }
 
     @Test
-    public void givenInvalidMealKitId_whenRecallDelivery_shouldThrowInvalidMealKitIdException() {
+    public void givenMealKitIdNotInCargo_whenRecallDelivery_shouldThrowMealKitNotInCargoException() {
         DeliverySystem deliverySystem = createDeliverySystem();
         deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
@@ -335,7 +339,7 @@ public class DeliverySystemTest {
         deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
         deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
-        assertThrows(InvalidMealKitIdException.class, () -> deliverySystem.recallDelivery(A_DELIVERY_PERSON_ID, cargoId, ANOTHER_MEALKIT_ID));
+        assertThrows(MealKitNotInCargoException.class, () -> deliverySystem.recallDelivery(A_DELIVERY_PERSON_ID, cargoId, ANOTHER_MEALKIT_ID));
     }
 
     @Test

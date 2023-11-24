@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdExcepti
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitAlreadyPickedUpException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInCargoException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 
 import jakarta.ws.rs.core.Response;
@@ -44,5 +45,6 @@ public class DeliveryExceptionStatusMapper {
         exceptionMapper.put(CargoAlreadyPickedUpException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(LockerNotAssignedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitAlreadyPickedUpException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(MealKitNotInCargoException.class, Response.Status.BAD_REQUEST);
     }
 }

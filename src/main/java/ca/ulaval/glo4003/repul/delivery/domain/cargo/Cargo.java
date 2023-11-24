@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.CargoAlreadyPickedUpException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidDeliveryPersonIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInCargoException;
 
 public class Cargo {
     private final UniqueIdentifier cargoId;
@@ -62,15 +63,15 @@ public class Cargo {
 
     public void confirmDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier mealKitId) {
         validateIsSameDeliveryPersonId(deliveryPersonId);
-        mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new).confirmDelivery();
+        mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(MealKitNotInCargoException::new)
+            .confirmDelivery();
     }
 
     public MealKit recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier mealKitId) {
         validateIsSameDeliveryPersonId(deliveryPersonId);
 
-        MealKit mealKitToRecall = mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId))
-            .findFirst()
-            .orElseThrow(InvalidMealKitIdException::new);
+        MealKit mealKitToRecall =
+            mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(MealKitNotInCargoException::new);
         mealKitToRecall.recallDelivery();
 
         return mealKitToRecall;
