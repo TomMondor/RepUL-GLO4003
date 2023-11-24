@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
+import ca.ulaval.glo4003.repul.user.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.application.exception.InvalidDateException;
 import ca.ulaval.glo4003.repul.user.domain.account.exception.InvalidBirthdateException;
 import ca.ulaval.glo4003.repul.user.domain.account.exception.InvalidGenderException;
@@ -46,6 +47,7 @@ public class UserExceptionStatusMapper {
         exceptionMapper.put(InvalidTokenException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(IDULAlreadyInUseException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(EmailAlreadyInUseException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(CardNumberAlreadyInUseException.class, Response.Status.BAD_REQUEST);
 
         exceptionMapper.put(InvalidCredentialsException.class, Response.Status.UNAUTHORIZED);
         exceptionMapper.put(InvalidPasswordException.class, Response.Status.UNAUTHORIZED);

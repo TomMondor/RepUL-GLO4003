@@ -5,6 +5,7 @@ import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.commons.domain.exception.CommonException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidAmountException;
+import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidCardNumberException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidDayOfWeekException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidEmailException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationException;
@@ -35,6 +36,7 @@ public class CommonExceptionStatusMapper {
         exceptionMapper.put(InvalidMealKitTypeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidDayOfWeekException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidUniqueIdentifierException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidCardNumberException.class, Response.Status.BAD_REQUEST);
 
         exceptionMapper.put(EnvFileNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
     }
