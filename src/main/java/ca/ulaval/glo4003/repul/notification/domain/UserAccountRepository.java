@@ -5,7 +5,7 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 
 public interface UserAccountRepository {
-    void saveOrUpdate(UserAccount account);
+    void save(UserAccount account);
 
     Optional<UserAccount> getAccountByMealKitId(UniqueIdentifier mealKitId);
 

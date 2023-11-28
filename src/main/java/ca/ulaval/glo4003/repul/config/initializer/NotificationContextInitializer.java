@@ -46,12 +46,12 @@ public class NotificationContextInitializer {
 
     public NotificationContextInitializer withDeliveryAccounts(List<Map<UniqueIdentifier, String>> accounts) {
         accounts.forEach(
-            account -> account.forEach((id, email) -> deliveryDeliveryPersonAccountRepository.saveOrUpdate(new DeliveryPersonAccount(id, new Email(email)))));
+            account -> account.forEach((id, email) -> deliveryDeliveryPersonAccountRepository.save(new DeliveryPersonAccount(id, new Email(email)))));
         return this;
     }
 
     public NotificationContextInitializer withUserAccounts(List<Map<UniqueIdentifier, String>> accounts) {
-        accounts.forEach(account -> account.forEach((id, email) -> userAccountRepository.saveOrUpdate(new UserAccount(id, new Email(email)))));
+        accounts.forEach(account -> account.forEach((id, email) -> userAccountRepository.save(new UserAccount(id, new Email(email)))));
         return this;
     }
 
@@ -61,7 +61,7 @@ public class NotificationContextInitializer {
                 .orElseThrow(() -> new RuntimeException("Subscription's user account must be in notification context."));
             userAccount.addMealKit(
                 subscription.findCurrentOrder().orElseThrow(() -> new RuntimeException("Subscription must have a current order.")).getOrderId());
-            userAccountRepository.saveOrUpdate(userAccount);
+            userAccountRepository.save(userAccount);
         });
         return this;
     }
@@ -69,7 +69,7 @@ public class NotificationContextInitializer {
     public NotificationContextInitializer withMealKitIdForUser(UniqueIdentifier mealKitId, UniqueIdentifier accountId) {
         UserAccount userAccount = userAccountRepository.getAccountById(accountId).get();
         userAccount.addMealKit(mealKitId);
-        userAccountRepository.saveOrUpdate(userAccount);
+        userAccountRepository.save(userAccount);
         return this;
     }
 

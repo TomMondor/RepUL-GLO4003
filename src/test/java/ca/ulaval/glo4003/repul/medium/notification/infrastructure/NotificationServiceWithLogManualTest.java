@@ -56,8 +56,8 @@ public class NotificationServiceWithLogManualTest {
         NotificationService notificationService = new NotificationService(userAccountRepository,
             deliveryDeliveryPersonAccountRepository, notificationSender);
 
-        deliveryDeliveryPersonAccountRepository.saveOrUpdate(A_DELIVERY_ACCOUNT);
-        deliveryDeliveryPersonAccountRepository.saveOrUpdate(ANOTHER_DELIVERY_ACCOUNT);
+        deliveryDeliveryPersonAccountRepository.save(A_DELIVERY_ACCOUNT);
+        deliveryDeliveryPersonAccountRepository.save(ANOTHER_DELIVERY_ACCOUNT);
 
         notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
     }

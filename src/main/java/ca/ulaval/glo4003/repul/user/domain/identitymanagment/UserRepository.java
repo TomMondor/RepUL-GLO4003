@@ -10,5 +10,5 @@ public interface UserRepository {
 
     boolean exists(Email email);
 
-    void saveOrUpdate(User user);
+    void save(User user);
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 
 public interface SubscriptionRepository {
-    void saveOrUpdate(Subscription subscription);
+    void save(Subscription subscription);
 
     Optional<Subscription> getById(UniqueIdentifier subscriptionId);
 

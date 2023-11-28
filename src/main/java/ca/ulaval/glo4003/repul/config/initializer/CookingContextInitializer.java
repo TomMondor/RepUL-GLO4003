@@ -62,7 +62,7 @@ public class CookingContextInitializer {
         RecipesCatalog recipesCatalog = new RecipesCatalog(getRecipes());
         Kitchen kitchen = new Kitchen(recipesCatalog);
         mealKitsToAdd.forEach(mealKit -> kitchen.addMealKit(mealKit.getOrderId(), mealKit.getMealKitType(), mealKit.getDeliveryDate()));
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
     }
 
     private Map<MealKitType, List<Recipe>> getRecipes() {

@@ -95,21 +95,21 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void whenHandlingUserAccountCreation_shouldSaveOrUpdateUserAccountRepository() {
+    public void whenHandlingUserAccountCreation_shouldSaveUserAccountRepository() {
         AccountCreatedEvent accountCreatedEvent = new AccountCreatedEvent(A_VALID_ACCOUNT_ID, AN_EMAIL);
 
         this.notificationService.handleUserAccountCreated(accountCreatedEvent);
 
-        verify(userAccountRepository, times(1)).saveOrUpdate(any(UserAccount.class));
+        verify(userAccountRepository, times(1)).save(any(UserAccount.class));
     }
 
     @Test
-    public void whenHandlingAccountDeliveryCreation_shouldSaveOrUpdateDeliveryAccountRepository() {
+    public void whenHandlingAccountDeliveryCreation_shouldSaveDeliveryAccountRepository() {
         DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent = new DeliveryPersonAccountCreatedEvent(A_VALID_ACCOUNT_ID, AN_EMAIL);
 
         this.notificationService.handleDeliveryAccountCreated(deliveryPersonAccountCreatedEvent);
 
-        verify(deliveryPersonAccountRepository, times(1)).saveOrUpdate(
+        verify(deliveryPersonAccountRepository, times(1)).save(
             any(DeliveryPersonAccount.class));
     }
 
@@ -188,25 +188,25 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void whenHandlingMealKitConfirmedEvent_shouldSaveOrUpdateMealKitInUserAccountRepository() {
+    public void whenHandlingMealKitConfirmedEvent_shouldSaveMealKitInUserAccountRepository() {
         when(userAccountRepository.getAccountById(A_VALID_ACCOUNT_ID)).thenReturn(Optional.of(A_VALID_USER_ACCOUNT));
 
         this.notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
-        verify(userAccountRepository).saveOrUpdate(any(UserAccount.class));
+        verify(userAccountRepository).save(any(UserAccount.class));
     }
 
     @Test
-    public void whenHandlingUserAccountCreated_shouldSaveOrUpdateInUserAccountRepository() {
+    public void whenHandlingUserAccountCreated_shouldSaveInUserAccountRepository() {
         this.notificationService.handleUserAccountCreated(AN_ACCOUNT_CREATED_EVENT);
 
-        verify(userAccountRepository).saveOrUpdate(any(UserAccount.class));
+        verify(userAccountRepository).save(any(UserAccount.class));
     }
 
     @Test
-    public void whenHandlingDeliveryPersonAccountCreated_shouldSaveOrUpdateInDeliveryPersonAccountRepository() {
+    public void whenHandlingDeliveryPersonAccountCreated_shouldSaveInDeliveryPersonAccountRepository() {
         this.notificationService.handleDeliveryAccountCreated(A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT);
 
-        verify(deliveryPersonAccountRepository).saveOrUpdate(any(DeliveryPersonAccount.class));
+        verify(deliveryPersonAccountRepository).save(any(DeliveryPersonAccount.class));
     }
 }

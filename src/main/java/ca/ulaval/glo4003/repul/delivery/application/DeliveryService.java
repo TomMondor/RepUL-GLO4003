@@ -43,7 +43,7 @@ public class DeliveryService {
 
         deliverySystem.addDeliveryPerson(deliveryPersonAccountCreatedEvent.accountId);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
     }
 
     @Subscribe
@@ -52,7 +52,7 @@ public class DeliveryService {
 
         deliverySystem.createMealKit(mealKitConfirmedEvent.deliveryLocationId, mealKitConfirmedEvent.mealKitId);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
     }
 
     @Subscribe
@@ -63,7 +63,7 @@ public class DeliveryService {
 
         Cargo cargo = deliverySystem.receiveReadyToBeDeliveredMealKits(kitchenLocationId, mealKitsCookedEvent.mealKitIds);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
 
         sendMealKitReceivedForDeliveryEvent(cargo, deliverySystem);
     }
@@ -74,7 +74,7 @@ public class DeliveryService {
 
         deliverySystem.moveMealKitFromCargosToPending(recallCookedMealKitEvent.mealKitId);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
     }
 
     @Subscribe
@@ -83,7 +83,7 @@ public class DeliveryService {
 
         deliverySystem.removeMealKitFromLocker(mealKitPickedUpByUserEvent.mealKitId);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
     }
 
     private void sendMealKitReceivedForDeliveryEvent(Cargo cargo, DeliverySystem deliverySystem) {
@@ -105,7 +105,7 @@ public class DeliveryService {
 
         List<MealKit> mealKits = deliverySystem.pickupCargo(deliveryPersonId, cargoId);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
 
         sendPickedUpCargoEvent(mealKits);
     }
@@ -119,7 +119,7 @@ public class DeliveryService {
 
         List<MealKit> mealKits = deliverySystem.cancelCargo(deliveryPersonId, cargoId);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
 
         eventBus.publish(new CanceledCargoEvent(mealKits.stream().map(MealKit::getMealKitId).toList()));
     }
@@ -131,7 +131,7 @@ public class DeliveryService {
 
         MealKit mealKit = deliverySystem.getCargoMealKit(cargoId, mealKitId);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
 
         eventBus.publish(
             new ConfirmedDeliveryEvent(mealKit.getMealKitId(), mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(), LocalTime.now()));
@@ -143,7 +143,7 @@ public class DeliveryService {
         MealKit mealKit = deliverySystem.recallDelivery(deliveryPersonId, cargoId, mealKitId);
         LockerId lockerId = mealKit.getLockerId().orElseThrow(LockerNotAssignedException::new);
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
 
         eventBus.publish(new RecalledDeliveryEvent(
             mealKitId,

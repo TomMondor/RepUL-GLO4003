@@ -53,7 +53,7 @@ public class DeliveryServiceTest {
     @BeforeEach
     public void createDeliveryService() {
         deliverySystemRepository = new InMemoryDeliverySystemRepository();
-        deliverySystemRepository.saveOrUpdate(new DeliverySystem(A_LOCATIONS_CATALOG));
+        deliverySystemRepository.save(new DeliverySystem(A_LOCATIONS_CATALOG));
         eventBus = new GuavaEventBus();
         deliveryService = new DeliveryService(deliverySystemRepository, eventBus);
         eventBus.register(deliveryService);

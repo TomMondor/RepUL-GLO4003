@@ -56,12 +56,12 @@ public class UserService {
         }
         UniqueIdentifier uniqueIdentifier = uniqueIdentifierFactory.generate();
         User newUser = userFactory.createUser(uniqueIdentifier, registrationQuery.email(), Role.CLIENT, registrationQuery.password());
-        userRepository.saveOrUpdate(newUser);
+        userRepository.save(newUser);
 
         Account createdAccount =
             accountFactory.createAccount(uniqueIdentifier, registrationQuery.idul(), registrationQuery.name(), registrationQuery.birthdate(),
                 registrationQuery.gender(), registrationQuery.email());
-        accountRepository.saveOrUpdate(createdAccount);
+        accountRepository.save(createdAccount);
 
         eventBus.publish(new AccountCreatedEvent(createdAccount.getAccountId(), createdAccount.getEmail()));
     }
@@ -96,7 +96,7 @@ public class UserService {
         }
         validateCardNumber(addCardQuery.cardNumber());
         account.get().setCardNumber(addCardQuery.cardNumber());
-        accountRepository.saveOrUpdate(account.get());
+        accountRepository.save(account.get());
 
         eventBus.publish(new UserCardAddedEvent(accountId, addCardQuery.cardNumber()));
     }

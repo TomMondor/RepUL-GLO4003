@@ -9,7 +9,7 @@ public class InMemoryDeliverySystemRepository implements DeliverySystemRepositor
     private Optional<DeliverySystem> deliverySystem = Optional.empty();
 
     @Override
-    public void saveOrUpdate(DeliverySystem deliverySystem) {
+    public void save(DeliverySystem deliverySystem) {
         this.deliverySystem = Optional.of(deliverySystem);
     }
 

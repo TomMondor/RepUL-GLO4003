@@ -9,7 +9,7 @@ public class InMemoryLockerAuthorizationSystemRepository implements LockerAuthor
     private Optional<LockerAuthorizationSystem> lockerAuthorizationSystem = Optional.empty();
 
     @Override
-    public void saveOrUpdate(LockerAuthorizationSystem lockerAuthorizationSystem) {
+    public void save(LockerAuthorizationSystem lockerAuthorizationSystem) {
         this.lockerAuthorizationSystem = Optional.of(lockerAuthorizationSystem);
     }
 

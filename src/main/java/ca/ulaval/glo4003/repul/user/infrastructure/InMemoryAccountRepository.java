@@ -14,7 +14,7 @@ public class InMemoryAccountRepository implements AccountRepository {
     private final Map<IDUL, Account> accounts = new HashMap<>();
 
     @Override
-    public void saveOrUpdate(Account account) {
+    public void save(Account account) {
         accounts.put(account.getIdul(), account);
     }
 

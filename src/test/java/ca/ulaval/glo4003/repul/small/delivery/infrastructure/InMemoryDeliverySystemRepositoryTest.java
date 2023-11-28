@@ -28,7 +28,7 @@ public class InMemoryDeliverySystemRepositoryTest {
 
     @Test
     public void whenSavingDeliverySystemAndGettingDeliverySystem_shouldReturnOptionalOfRightDeliverySystem() {
-        inMemoryDeliverySystemRepository.saveOrUpdate(deliverySystem);
+        inMemoryDeliverySystemRepository.save(deliverySystem);
         Optional<DeliverySystem> deliverySystemFound = inMemoryDeliverySystemRepository.get();
 
         assertEquals(Optional.of(deliverySystem), deliverySystemFound);

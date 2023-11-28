@@ -49,7 +49,7 @@ public class SubscriptionContextInitializer {
     }
 
     public SubscriptionContextInitializer withSubscriptions(List<Subscription> subscriptions) {
-        subscriptions.forEach(subscriptionRepository::saveOrUpdate);
+        subscriptions.forEach(subscriptionRepository::save);
         return this;
     }
 

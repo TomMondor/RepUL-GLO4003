@@ -27,7 +27,7 @@ public class InMemoryUserAccountRepository implements UserAccountRepository {
     }
 
     @Override
-    public void saveOrUpdate(UserAccount userAccount) {
+    public void save(UserAccount userAccount) {
         accounts.put(userAccount.getAccountId(), userAccount);
     }
 }

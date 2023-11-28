@@ -88,7 +88,7 @@ public class LockerAuthorizationServiceTest {
     public void whenHandlingMealKitConfirmedEvent_shouldSaveLockerAuthorizationSystem() {
         lockerAuthorizationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
-        verify(lockerAuthorizationSystemRepository).saveOrUpdate(lockerAuthorizationSystem);
+        verify(lockerAuthorizationSystemRepository).save(lockerAuthorizationSystem);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class LockerAuthorizationServiceTest {
     public void whenHandlingConfirmedDeliveryEvent_shouldSaveLockerAuthorizationSystem() {
         lockerAuthorizationService.handleConfirmedDeliveryEvent(A_CONFIRMED_DELIVERY_EVENT);
 
-        verify(lockerAuthorizationSystemRepository).saveOrUpdate(lockerAuthorizationSystem);
+        verify(lockerAuthorizationSystemRepository).save(lockerAuthorizationSystem);
     }
 
     @Test
@@ -130,7 +130,7 @@ public class LockerAuthorizationServiceTest {
     public void whenHandlingRecalledDeliveryEvent_shouldSaveLockerAuthorizationSystem() {
         lockerAuthorizationService.handleRecalledDeliveryEvent(A_RECALLED_DELIVERY_EVENT);
 
-        verify(lockerAuthorizationSystemRepository).saveOrUpdate(lockerAuthorizationSystem);
+        verify(lockerAuthorizationSystemRepository).save(lockerAuthorizationSystem);
     }
 
     @Test
@@ -151,7 +151,7 @@ public class LockerAuthorizationServiceTest {
     public void whenHandlingUserCardAddedEvent_shouldSaveLockerAuthorizationSystem() {
         lockerAuthorizationService.handleUserCardAddedEvent(A_USER_CARD_ADDED_EVENT);
 
-        verify(lockerAuthorizationSystemRepository).saveOrUpdate(lockerAuthorizationSystem);
+        verify(lockerAuthorizationSystemRepository).save(lockerAuthorizationSystem);
     }
 
     @Test
@@ -172,7 +172,7 @@ public class LockerAuthorizationServiceTest {
     public void whenOpenLocker_shouldSaveLockerAuthorizationSystem() {
         lockerAuthorizationService.openLocker(OPEN_LOCKER_QUERY);
 
-        verify(lockerAuthorizationSystemRepository).saveOrUpdate(lockerAuthorizationSystem);
+        verify(lockerAuthorizationSystemRepository).save(lockerAuthorizationSystem);
     }
 
     @Test

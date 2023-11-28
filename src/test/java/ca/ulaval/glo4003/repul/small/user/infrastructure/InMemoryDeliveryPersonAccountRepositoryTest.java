@@ -39,7 +39,7 @@ public class InMemoryDeliveryPersonAccountRepositoryTest {
     public void whenSavingAccountAndGettingAccountByIdul_shouldReturnOptionalOfRightAccount() {
         given(account.getIdul()).willReturn(ACCOUNT_VALID_IDUL);
 
-        inMemoryAccountRepository.saveOrUpdate(account);
+        inMemoryAccountRepository.save(account);
         Optional<Account> accountFound = inMemoryAccountRepository.getByIDUL(ACCOUNT_VALID_IDUL);
 
         assertEquals(Optional.of(account), accountFound);
@@ -56,7 +56,7 @@ public class InMemoryDeliveryPersonAccountRepositoryTest {
     public void whenSavingAccountAndGettingById_shouldReturnOptionalOfRightAccount() {
         given(account.getAccountId()).willReturn(ACCOUNT_VALID_ACCOUNT_ID);
 
-        inMemoryAccountRepository.saveOrUpdate(account);
+        inMemoryAccountRepository.save(account);
         Optional<Account> accountFound = inMemoryAccountRepository.getByAccountId(ACCOUNT_VALID_ACCOUNT_ID);
 
         assertEquals(Optional.of(account), accountFound);

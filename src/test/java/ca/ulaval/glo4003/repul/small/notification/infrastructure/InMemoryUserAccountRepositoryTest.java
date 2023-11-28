@@ -37,7 +37,7 @@ public class InMemoryUserAccountRepositoryTest {
     public void whenSavingAccountAndGettingAccountById_shouldReturnOptionalOfRightAccount() {
         given(userAccount.getAccountId()).willReturn(AN_ACCOUNT_VALID_ID);
 
-        inMemoryUserAccountRepository.saveOrUpdate(userAccount);
+        inMemoryUserAccountRepository.save(userAccount);
         Optional<UserAccount> accountFound = inMemoryUserAccountRepository.getAccountById(
             AN_ACCOUNT_VALID_ID);
 
@@ -57,7 +57,7 @@ public class InMemoryUserAccountRepositoryTest {
         given(userAccount.getAccountId()).willReturn(AN_ACCOUNT_VALID_ID);
         given(userAccount.getMealKitIds()).willReturn(List.of(A_MEAL_KIT_ID));
 
-        inMemoryUserAccountRepository.saveOrUpdate(userAccount);
+        inMemoryUserAccountRepository.save(userAccount);
         Optional<UserAccount> accountFound = inMemoryUserAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID);
 
         assertEquals(Optional.of(userAccount), accountFound);

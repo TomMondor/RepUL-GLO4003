@@ -96,8 +96,8 @@ public class UserContextInitializer {
     private void createAndSaveUser(Map<UniqueIdentifier, RegistrationQuery> query, Role role) {
         UniqueIdentifier userId = query.keySet().iterator().next();
         RegistrationQuery registrationQuery = query.get(userId);
-        userRepository.saveOrUpdate(userFactory.createUser(userId, registrationQuery.email(), role, registrationQuery.password()));
-        accountRepository.saveOrUpdate(
+        userRepository.save(userFactory.createUser(userId, registrationQuery.email(), role, registrationQuery.password()));
+        accountRepository.save(
             accountFactory.createAccount(userId, registrationQuery.idul(), registrationQuery.name(), registrationQuery.birthdate(), registrationQuery.gender(),
                 registrationQuery.email()));
     }

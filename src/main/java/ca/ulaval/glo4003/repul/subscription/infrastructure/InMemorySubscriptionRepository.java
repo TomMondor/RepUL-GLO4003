@@ -14,7 +14,7 @@ public class InMemorySubscriptionRepository implements SubscriptionRepository {
     private final Map<UniqueIdentifier, Subscription> subscriptionsById = new HashMap<>();
 
     @Override
-    public void saveOrUpdate(Subscription subscription) {
+    public void save(Subscription subscription) {
         subscriptionsById.put(subscription.getSubscriptionId(), subscription);
     }
 

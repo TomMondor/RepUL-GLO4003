@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 
 public interface AccountRepository {
-    void saveOrUpdate(Account account);
+    void save(Account account);
 
     Optional<Account> getByIDUL(IDUL idul);
 

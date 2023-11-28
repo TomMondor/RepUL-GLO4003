@@ -87,7 +87,7 @@ public class DeliveryContextInitializer {
             deliverySystem.receiveReadyToBeDeliveredMealKits(new KitchenLocationId("DESJARDINS"), cargo);
         });
 
-        deliverySystemRepository.saveOrUpdate(deliverySystem);
+        deliverySystemRepository.save(deliverySystem);
     }
 
     private List<DeliveryLocation> parseDeliveryLocations() {

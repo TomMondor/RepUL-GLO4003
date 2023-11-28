@@ -41,7 +41,7 @@ public class CookingServiceTest {
     @BeforeEach
     public void createCookingService() {
         kitchenRepository = new InMemoryKitchenRepository();
-        kitchenRepository.saveOrUpdate(createKitchenWithAnUnselectedMealKit());
+        kitchenRepository.save(createKitchenWithAnUnselectedMealKit());
         eventBus = new GuavaEventBus();
         cookingService = new CookingService(kitchenRepository, eventBus);
         eventBus.register(cookingService);

@@ -45,7 +45,7 @@ public class SubscriptionService {
             subscriptionQuery.dayOfWeek(),
             subscriptionQuery.mealKitType());
 
-        subscriptionRepository.saveOrUpdate(subscription);
+        subscriptionRepository.save(subscription);
 
         return subscription.getSubscriptionId();
     }
@@ -55,7 +55,7 @@ public class SubscriptionService {
         Subscription subscription =
             subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
         subscription.markOrderAsPickedUp(event.mealKitId);
-        subscriptionRepository.saveOrUpdate(subscription);
+        subscriptionRepository.save(subscription);
     }
 
     @Subscribe
@@ -63,7 +63,7 @@ public class SubscriptionService {
         for (UniqueIdentifier orderId : event.mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
             subscription.markCurrentOrderAsToDeliver();
-            subscriptionRepository.saveOrUpdate(subscription);
+            subscriptionRepository.save(subscription);
         }
     }
 
@@ -72,7 +72,7 @@ public class SubscriptionService {
         Subscription subscription =
             subscriptionRepository.getSubscriptionByOrderId(recallCookedMealKitEvent.mealKitId).orElseThrow(OrderNotFoundException::new);
         subscription.markCurrentOrderAsToCook();
-        subscriptionRepository.saveOrUpdate(subscription);
+        subscriptionRepository.save(subscription);
     }
 
     @Subscribe
@@ -80,7 +80,7 @@ public class SubscriptionService {
         for (UniqueIdentifier orderId : event.mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
             subscription.markCurrentOrderAsInDelivery();
-            subscriptionRepository.saveOrUpdate(subscription);
+            subscriptionRepository.save(subscription);
         }
     }
 
@@ -89,7 +89,7 @@ public class SubscriptionService {
         for (UniqueIdentifier orderId : event.mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
             subscription.markCurrentOrderAsToDeliver();
-            subscriptionRepository.saveOrUpdate(subscription);
+            subscriptionRepository.save(subscription);
         }
     }
 
@@ -97,14 +97,14 @@ public class SubscriptionService {
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent event) {
         Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
         subscription.markCurrentOrderAsToPickUp();
-        subscriptionRepository.saveOrUpdate(subscription);
+        subscriptionRepository.save(subscription);
     }
 
     @Subscribe
     public void handleRecalledDeliveryEvent(RecalledDeliveryEvent event) {
         Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
         subscription.markCurrentOrderAsInDelivery();
-        subscriptionRepository.saveOrUpdate(subscription);
+        subscriptionRepository.save(subscription);
     }
 
     public SubscriptionsPayload getSubscriptions(UniqueIdentifier subscriberId) {
@@ -125,7 +125,7 @@ public class SubscriptionService {
 
         Order confirmedOrder = subscription.confirmNextMealKit();
 
-        subscriptionRepository.saveOrUpdate(subscription);
+        subscriptionRepository.save(subscription);
 
         eventBus.publish(new MealKitConfirmedEvent(confirmedOrder.getOrderId(), subscription.getSubscriptionId(), subscription.getSubscriberId(),
             subscription.getMealKitType(), subscription.getDeliveryLocationId(), confirmedOrder.getDeliveryDate()));
@@ -136,7 +136,7 @@ public class SubscriptionService {
 
         subscription.declineNextMealKit();
 
-        subscriptionRepository.saveOrUpdate(subscription);
+        subscriptionRepository.save(subscription);
     }
 
     private Subscription getSubscription(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {

@@ -113,8 +113,8 @@ public class UserServiceTest {
             // Ignoring the exception because we want to check the repositories
         }
 
-        verify(userRepository, never()).saveOrUpdate(any());
-        verify(accountRepository, never()).saveOrUpdate(any());
+        verify(userRepository, never()).save(any());
+        verify(accountRepository, never()).save(any());
     }
 
     @Test
@@ -137,8 +137,8 @@ public class UserServiceTest {
             // Ignoring the exception because we want to check the repositories
         }
 
-        verify(userRepository, never()).saveOrUpdate(any());
-        verify(accountRepository, never()).saveOrUpdate(any());
+        verify(userRepository, never()).save(any());
+        verify(accountRepository, never()).save(any());
     }
 
     @Test
@@ -167,7 +167,7 @@ public class UserServiceTest {
 
         userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
 
-        verify(userRepository).saveOrUpdate(newUser);
+        verify(userRepository).save(newUser);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class UserServiceTest {
 
         userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
 
-        verify(accountRepository).saveOrUpdate(newAccount);
+        verify(accountRepository).save(newAccount);
     }
 
     @Test
@@ -306,12 +306,12 @@ public class UserServiceTest {
     }
 
     @Test
-    public void whenAddingCard_shouldSaveOrUpdateAccount() {
+    public void whenAddingCard_shouldSaveAccount() {
         given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
 
         userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
 
-        verify(accountRepository).saveOrUpdate(any(Account.class));
+        verify(accountRepository).save(any(Account.class));
     }
 
     @Test

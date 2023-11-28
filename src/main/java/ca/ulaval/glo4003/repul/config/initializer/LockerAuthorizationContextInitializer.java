@@ -47,7 +47,7 @@ public class LockerAuthorizationContextInitializer {
             UniqueIdentifier mealKitId = order.getValue();
             lockerAuthorizationSystem.createOrder(accountId, mealKitId);
         });
-        lockerAuthorizationSystemRepository.saveOrUpdate(lockerAuthorizationSystem);
+        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }
 
     public ApiKeyGuard createApiKeyGuard() {

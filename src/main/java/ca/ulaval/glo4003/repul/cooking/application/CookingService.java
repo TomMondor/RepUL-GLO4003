@@ -32,7 +32,7 @@ public class CookingService {
 
         kitchen.addMealKit(event.mealKitId, event.mealKitType, event.deliveryDate);
 
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
     }
 
     @Subscribe
@@ -41,7 +41,7 @@ public class CookingService {
 
         kitchen.removeMealKitsFromKitchen(event.mealKitIds);
 
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
     }
 
     public MealKitsPayload getMealKitsToCook() {
@@ -57,7 +57,7 @@ public class CookingService {
 
         kitchen.select(cookId, selectedMealKitIds);
 
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
     }
 
     public List<UniqueIdentifier> getSelection(UniqueIdentifier cookId) {
@@ -71,7 +71,7 @@ public class CookingService {
 
         kitchen.cancelOneSelected(cookId, mealKitId);
 
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
     }
 
     public void cancelAllSelected(UniqueIdentifier cookId) {
@@ -79,7 +79,7 @@ public class CookingService {
 
         kitchen.cancelAllSelected(cookId);
 
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
     }
 
     public void confirmCooked(UniqueIdentifier cookId, UniqueIdentifier mealKitId) {
@@ -87,7 +87,7 @@ public class CookingService {
 
         kitchen.confirmCooked(cookId, mealKitId);
 
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
 
         eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().value(), List.of(mealKitId)));
     }
@@ -97,7 +97,7 @@ public class CookingService {
 
         kitchen.confirmCooked(cookId, mealKitIds);
 
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
 
         eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().value(), mealKitIds));
     }
@@ -107,7 +107,7 @@ public class CookingService {
 
         kitchen.recallCooked(cookId, mealKitId);
 
-        kitchenRepository.saveOrUpdate(kitchen);
+        kitchenRepository.save(kitchen);
 
         eventBus.publish(new RecallCookedMealKitEvent(mealKitId));
     }

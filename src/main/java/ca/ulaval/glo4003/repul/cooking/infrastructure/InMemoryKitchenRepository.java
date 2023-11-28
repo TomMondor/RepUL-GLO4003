@@ -9,7 +9,7 @@ public class InMemoryKitchenRepository implements KitchenRepository {
     private Optional<Kitchen> kitchen = Optional.empty();
 
     @Override
-    public void saveOrUpdate(Kitchen kitchen) {
+    public void save(Kitchen kitchen) {
         this.kitchen = Optional.of(kitchen);
     }
 

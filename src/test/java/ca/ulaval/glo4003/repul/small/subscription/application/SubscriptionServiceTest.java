@@ -92,13 +92,13 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void whenCreatingSubscription_shouldSaveOrUpdateSubscription() {
+    public void whenCreatingSubscription_shouldSaveSubscription() {
         when(mockSubscriptionFactory.createSubscription(any(UniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
 
         subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
     }
 
     @Test
@@ -133,13 +133,13 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void whenHandlingMealKitPickedUpByUserEvent_shouldSaveOrUpdateSubscription() {
+    public void whenHandlingMealKitPickedUpByUserEvent_shouldSaveSubscription() {
         MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(A_MEALKIT_ID);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
 
         subscriptionService.handleMealKitPickedUpByUserEvent(event);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
     }
 
     @Test
@@ -187,13 +187,13 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void whenHandlingRecallCookedMealKitEvent_shouldSaveOrUpdateSubscription() {
+    public void whenHandlingRecallCookedMealKitEvent_shouldSaveSubscription() {
         RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEALKIT_ID);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
 
         subscriptionService.handleRecallCookedMealKitEvent(recallCookedMealKitEvent);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
     }
 
     @Test
@@ -204,8 +204,8 @@ public class SubscriptionServiceTest {
 
         subscriptionService.handleMealKitsCookedEvent(event);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
-        verify(mockSubscriptionRepository).saveOrUpdate(otherMockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
+        verify(mockSubscriptionRepository).save(otherMockSubscription);
     }
 
     @Test
@@ -258,8 +258,8 @@ public class SubscriptionServiceTest {
 
         subscriptionService.handlePickedUpCargoEvent(event);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
-        verify(mockSubscriptionRepository).saveOrUpdate(otherMockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
+        verify(mockSubscriptionRepository).save(otherMockSubscription);
     }
 
     @Test
@@ -303,8 +303,8 @@ public class SubscriptionServiceTest {
 
         subscriptionService.handleCanceledCargoEvent(event);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
-        verify(mockSubscriptionRepository).saveOrUpdate(otherMockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
+        verify(mockSubscriptionRepository).save(otherMockSubscription);
     }
 
     @Test
@@ -342,7 +342,7 @@ public class SubscriptionServiceTest {
 
         subscriptionService.handleConfirmedDeliveryEvent(event);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
     }
 
     @Test
@@ -380,7 +380,7 @@ public class SubscriptionServiceTest {
 
         subscriptionService.handleRecalledDeliveryEvent(event);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
     }
 
     @Test
@@ -445,14 +445,14 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void whenConfirmingNextMealKitForSubscription_shouldSaveOrUpdateSubscription() {
+    public void whenConfirmingNextMealKitForSubscription_shouldSaveSubscription() {
         when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.confirmNextMealKit()).thenReturn(mockOrder);
 
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
     }
 
     @Test
@@ -506,14 +506,14 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void whenDecliningNextMealKitForSubscription_shouldSaveOrUpdateSubscription() {
+    public void whenDecliningNextMealKitForSubscription_shouldSaveSubscription() {
         when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.declineNextMealKit()).thenReturn(mockOrder);
 
         subscriptionService.declineNextMealKitForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
 
-        verify(mockSubscriptionRepository).saveOrUpdate(mockSubscription);
+        verify(mockSubscriptionRepository).save(mockSubscription);
     }
 
     @Test

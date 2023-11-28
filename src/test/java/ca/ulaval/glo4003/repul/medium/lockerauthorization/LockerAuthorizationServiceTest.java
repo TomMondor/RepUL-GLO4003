@@ -73,7 +73,7 @@ public class LockerAuthorizationServiceTest {
         eventBus = new GuavaEventBus();
         lockerAuthorizationSystemRepository = new InMemoryLockerAuthorizationSystemRepository();
         lockerAuthorizationSystem = new LockerAuthorizationSystem();
-        lockerAuthorizationSystemRepository.saveOrUpdate(lockerAuthorizationSystem);
+        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
         lockerAuthorizationService = new LockerAuthorizationService(eventBus, lockerAuthorizationSystemRepository);
         eventBus.register(lockerAuthorizationService);
     }

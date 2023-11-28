@@ -31,7 +31,7 @@ public class LockerAuthorizationService {
 
         lockerAuthorizationSystem.createOrder(mealKitConfirmedEvent.accountId, mealKitConfirmedEvent.mealKitId);
 
-        lockerAuthorizationSystemRepository.saveOrUpdate(lockerAuthorizationSystem);
+        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }
 
     @Subscribe
@@ -43,7 +43,7 @@ public class LockerAuthorizationService {
             confirmedDeliveryEvent.mealKitId,
             new LockerId(confirmedDeliveryEvent.lockerId.id()));
 
-        lockerAuthorizationSystemRepository.saveOrUpdate(lockerAuthorizationSystem);
+        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }
 
     @Subscribe
@@ -53,7 +53,7 @@ public class LockerAuthorizationService {
 
         lockerAuthorizationSystem.unassignLocker(recalledDeliveryEvent.mealKitId);
 
-        lockerAuthorizationSystemRepository.saveOrUpdate(lockerAuthorizationSystem);
+        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }
 
     @Subscribe
@@ -63,7 +63,7 @@ public class LockerAuthorizationService {
 
         lockerAuthorizationSystem.registerUserCardNumber(userCardAddedEvent.accountId, userCardAddedEvent.userCardNumber);
 
-        lockerAuthorizationSystemRepository.saveOrUpdate(lockerAuthorizationSystem);
+        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }
 
     public void openLocker(OpenLockerQuery openLockerQuery) {
@@ -72,7 +72,7 @@ public class LockerAuthorizationService {
 
         UniqueIdentifier mealKitId = lockerAuthorizationSystem.authorize(openLockerQuery.lockerId(), openLockerQuery.userCardNumber());
 
-        lockerAuthorizationSystemRepository.saveOrUpdate(lockerAuthorizationSystem);
+        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
 
         eventBus.publish(new MealKitPickedUpByUserEvent(mealKitId));
     }

@@ -28,7 +28,7 @@ public class InMemoryKitchenRepositoryTest {
 
     @Test
     public void whenSavingKitchenAndGettingKitchen_shouldReturnOptionalOfRightKitchen() {
-        inMemorykitchenRepository.saveOrUpdate(kitchen);
+        inMemorykitchenRepository.save(kitchen);
         Optional<Kitchen> kitchenFound = inMemorykitchenRepository.get();
 
         assertEquals(Optional.of(kitchen), kitchenFound);

@@ -40,7 +40,7 @@ public class InMemoryUserRepositoryTest {
     public void whenSavingAndGettingUserByEmail_shouldReturnRightUser() {
         given(user.getEmail()).willReturn(AN_EMAIL);
 
-        inMemoryUserRepository.saveOrUpdate(user);
+        inMemoryUserRepository.save(user);
         User userFound = inMemoryUserRepository.findByEmail(AN_EMAIL);
 
         assertEquals(user, userFound);
@@ -56,7 +56,7 @@ public class InMemoryUserRepositoryTest {
         given(user.getEmail()).willReturn(AN_EMAIL);
         given(user.getUid()).willReturn(A_UID);
 
-        inMemoryUserRepository.saveOrUpdate(user);
+        inMemoryUserRepository.save(user);
         User userFound = inMemoryUserRepository.findByUid(A_UID);
 
         assertEquals(user, userFound);
@@ -72,7 +72,7 @@ public class InMemoryUserRepositoryTest {
     @Test
     public void givenExistingUser_whenCheckingIfUserExists_shouldReturnTrue() {
         given(user.getEmail()).willReturn(AN_EMAIL);
-        inMemoryUserRepository.saveOrUpdate(user);
+        inMemoryUserRepository.save(user);
 
         boolean userExists = inMemoryUserRepository.exists(AN_EMAIL);
 

@@ -35,14 +35,14 @@ public class NotificationService {
     @Subscribe
     public void handleUserAccountCreated(AccountCreatedEvent accountCreatedEvent) {
         UserAccount userAccount = new UserAccount(accountCreatedEvent.accountId, accountCreatedEvent.email);
-        userAccountRepository.saveOrUpdate(userAccount);
+        userAccountRepository.save(userAccount);
     }
 
     @Subscribe
     public void handleDeliveryAccountCreated(DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent) {
         DeliveryPersonAccount deliveryPersonAccount =
             new DeliveryPersonAccount(deliveryPersonAccountCreatedEvent.accountId, deliveryPersonAccountCreatedEvent.email);
-        deliveryPersonAccountRepository.saveOrUpdate(deliveryPersonAccount);
+        deliveryPersonAccountRepository.save(deliveryPersonAccount);
     }
 
     @Subscribe
@@ -74,6 +74,6 @@ public class NotificationService {
             .getAccountById(mealKitConfirmedEvent.accountId)
             .orElseThrow(UserAccountNotFoundException::new);
         userAccount.addMealKit(mealKitConfirmedEvent.mealKitId);
-        userAccountRepository.saveOrUpdate(userAccount);
+        userAccountRepository.save(userAccount);
     }
 }

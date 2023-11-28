@@ -28,7 +28,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public void saveOrUpdate(User user) {
+    public void save(User user) {
         users.put(user.getEmail(), user);
     }
 }

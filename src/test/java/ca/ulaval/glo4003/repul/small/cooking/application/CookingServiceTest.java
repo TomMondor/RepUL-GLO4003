@@ -71,10 +71,10 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenHandleMealKitConfirmedEvent_shouldSaveOrUpdateKitchen() {
+    public void whenHandleMealKitConfirmedEvent_shouldSaveKitchen() {
         cookingService.handleMealKitConfirmedEvent(MEALKIT_CONFIRMED_EVENT);
 
-        verify(kitchenRepository).saveOrUpdate(kitchen);
+        verify(kitchenRepository).save(kitchen);
     }
 
     @Test
@@ -113,10 +113,10 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenSelect_shouldSaveOrUpdateKitchen() {
+    public void whenSelect_shouldSaveKitchen() {
         cookingService.select(A_COOK_ID, MANY_IDS);
 
-        verify(kitchenRepository).saveOrUpdate(kitchen);
+        verify(kitchenRepository).save(kitchen);
     }
 
     @Test
@@ -148,10 +148,10 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenCancelOneSelected_shouldSaveOrUpdateKitchen() {
+    public void whenCancelOneSelected_shouldSaveKitchen() {
         cookingService.cancelOneSelected(A_COOK_ID, A_UNIQUE_ID);
 
-        verify(kitchenRepository).saveOrUpdate(kitchen);
+        verify(kitchenRepository).save(kitchen);
     }
 
     @Test
@@ -169,10 +169,10 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenCancelAllSelected_shouldSaveOrUpdateKitchen() {
+    public void whenCancelAllSelected_shouldSaveKitchen() {
         cookingService.cancelAllSelected(A_COOK_ID);
 
-        verify(kitchenRepository).saveOrUpdate(kitchen);
+        verify(kitchenRepository).save(kitchen);
     }
 
     @Test
@@ -194,12 +194,12 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenConfirmCooked_shouldSaveOrUpdateKitchen() {
+    public void whenConfirmCooked_shouldSaveKitchen() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
 
         cookingService.confirmCooked(A_COOK_ID, A_UNIQUE_ID);
 
-        verify(kitchenRepository).saveOrUpdate(kitchen);
+        verify(kitchenRepository).save(kitchen);
     }
 
     @Test
@@ -234,12 +234,12 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenConfirmCookedWithMultipleIds_shouldSaveOrUpdateKitchen() {
+    public void whenConfirmCookedWithMultipleIds_shouldSaveKitchen() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
 
         cookingService.confirmCooked(A_COOK_ID, MANY_IDS);
 
-        verify(kitchenRepository).saveOrUpdate(kitchen);
+        verify(kitchenRepository).save(kitchen);
     }
 
     @Test
@@ -256,12 +256,12 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenConfirmCookedWithMultipleIds_shouldSaveOrUpdate() {
+    public void whenConfirmCookedWithMultipleIds_shouldSave() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
 
         cookingService.confirmCooked(A_COOK_ID, List.of(A_UNIQUE_ID, ANOTHER_UNIQUE_ID));
 
-        verify(kitchenRepository).saveOrUpdate(kitchen);
+        verify(kitchenRepository).save(kitchen);
     }
 
     @Test
@@ -279,9 +279,9 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenHandlingPickedUpCargoEvent_shouldSaveOrUpdateKitchen() {
+    public void whenHandlingPickedUpCargoEvent_shouldSaveKitchen() {
         cookingService.handlePickedUpCargoEvent(PICKED_UP_CARGO_EVENT);
 
-        verify(kitchenRepository).saveOrUpdate(kitchen);
+        verify(kitchenRepository).save(kitchen);
     }
 }

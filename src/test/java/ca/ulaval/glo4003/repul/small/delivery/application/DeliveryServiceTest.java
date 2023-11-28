@@ -107,12 +107,12 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandlingDeliveryPersonAccountCreatedEvent_shouldSaveOrUpdateDeliverySystem() {
+    public void whenHandlingDeliveryPersonAccountCreatedEvent_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.handleDeliveryPersonAccountCreatedEvent(DELIVERY_ACCOUNT_CREATED_EVENT);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test
@@ -134,12 +134,12 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenPickupCargo_shouldSaveOrUpdateDeliverySystem() {
+    public void whenPickupCargo_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test
@@ -161,12 +161,12 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenCancelCargo_shouldSaveOrUpdateDeliverySystem() {
+    public void whenCancelCargo_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test
@@ -198,13 +198,13 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandlingMealKitsCookedEvent_shouldSaveOrUpdateDeliverySystem() {
+    public void whenHandlingMealKitsCookedEvent_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
         when(mockDeliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
 
         deliveryService.handleMealKitsCookedEvent(A_MEAL_KITS_COOKED_EVENT);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test
@@ -237,12 +237,12 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandlingMealKitConfirmedEvent_shouldSaveOrUpdateDeliverySystem() {
+    public void whenHandlingMealKitConfirmedEvent_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test
@@ -273,12 +273,12 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandlingRecallCookedMealKitEvent_shouldSaveOrUpdateDeliverySystem() {
+    public void whenHandlingRecallCookedMealKitEvent_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.handleRecallCookedMealKitEvent(A_RECALL_COOKED_MEAL_KIT_EVENT);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test
@@ -292,13 +292,13 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenConfirmDelivery_shouldSaveOrUpdateDeliverySystem() {
+    public void whenConfirmDelivery_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
         when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test
@@ -334,7 +334,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenRecallDelivery_shouldSaveOrUpdateDeliverySystem() {
+    public void whenRecallDelivery_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
         when(mockDeliverySystem.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
             A_DELIVERED_MEALKIT);
@@ -342,7 +342,7 @@ public class DeliveryServiceTest {
 
         deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test
@@ -397,12 +397,12 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHandlingMealKitPickedUpByUserEvent_shouldSaveOrUpdateDeliverySystem() {
+    public void whenHandlingMealKitPickedUpByUserEvent_shouldSaveDeliverySystem() {
         when(mockDeliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
 
         deliveryService.handleMealKitPickedUpByUserEvent(A_MEAL_KIT_PICKED_UP_BY_USER_EVENT);
 
-        verify(mockDeliverySystemRepository).saveOrUpdate(mockDeliverySystem);
+        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
     }
 
     @Test

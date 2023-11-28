@@ -12,7 +12,7 @@ public class InMemoryDeliveryPersonAccountRepository implements DeliveryPersonAc
     private final Map<UniqueIdentifier, DeliveryPersonAccount> accounts = new HashMap<>();
 
     @Override
-    public void saveOrUpdate(DeliveryPersonAccount account) {
+    public void save(DeliveryPersonAccount account) {
         accounts.put(account.getAccountId(), account);
     }
 

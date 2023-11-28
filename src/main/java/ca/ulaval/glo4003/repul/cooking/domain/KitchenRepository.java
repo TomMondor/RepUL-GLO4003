@@ -5,5 +5,5 @@ import java.util.Optional;
 public interface KitchenRepository {
     Optional<Kitchen> get();
 
-    void saveOrUpdate(Kitchen kitchen);
+    void save(Kitchen kitchen);
 }

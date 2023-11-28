@@ -40,7 +40,7 @@ public class InMemorySubscriptionRepositoryTest {
     public void whenSavingSubscriptionAndGettingSubscriptionById_shouldReturnOptionalOfRightSubscription() {
         given(subscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
 
-        inMemorySubscriptionRepository.saveOrUpdate(subscription);
+        inMemorySubscriptionRepository.save(subscription);
         Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getById(A_SUBSCRIPTION_VALID_ID);
 
         assertEquals(Optional.of(subscription), subscriptionFound);
@@ -67,8 +67,8 @@ public class InMemorySubscriptionRepositoryTest {
         given(subscription.getSubscriberId()).willReturn(A_SUBSCRIBER_VALID_ID);
         given(anotherSubscription.getSubscriptionId()).willReturn(ANOTHER_SUBSCRIPTION_VALID_ID);
         given(anotherSubscription.getSubscriberId()).willReturn(A_SUBSCRIBER_VALID_ID);
-        inMemorySubscriptionRepository.saveOrUpdate(subscription);
-        inMemorySubscriptionRepository.saveOrUpdate(anotherSubscription);
+        inMemorySubscriptionRepository.save(subscription);
+        inMemorySubscriptionRepository.save(anotherSubscription);
 
         List<Subscription> subscriptionsFound = inMemorySubscriptionRepository.getBySubscriberId(A_SUBSCRIBER_VALID_ID);
 
@@ -90,7 +90,7 @@ public class InMemorySubscriptionRepositoryTest {
         Order anOrder = mock(Order.class);
         given(anOrder.getOrderId()).willReturn(AN_ORDER_ID);
         given(subscription.findCurrentOrder()).willReturn(Optional.of(anOrder));
-        inMemorySubscriptionRepository.saveOrUpdate(subscription);
+        inMemorySubscriptionRepository.save(subscription);
 
         Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getSubscriptionByOrderId(AN_ORDER_ID);
 
