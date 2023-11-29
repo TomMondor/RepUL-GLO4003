@@ -3,7 +3,10 @@ package ca.ulaval.glo4003.repul.cooking.domain;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidQuantityUnitException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidQuantityValueException;
 
-public record Quantity(double value, String unit) {
+public record Quantity(
+    double value,
+    String unit
+) {
     public Quantity {
         if (value <= 0) {
             throw new InvalidQuantityValueException();

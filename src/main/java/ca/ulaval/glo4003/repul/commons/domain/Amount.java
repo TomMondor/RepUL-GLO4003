@@ -2,7 +2,9 @@ package ca.ulaval.glo4003.repul.commons.domain;
 
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidAmountException;
 
-public record Amount(double value) {
+public record Amount(
+    double value
+) {
     public Amount(double value) {
         if (value < 0) {
             throw new InvalidAmountException();

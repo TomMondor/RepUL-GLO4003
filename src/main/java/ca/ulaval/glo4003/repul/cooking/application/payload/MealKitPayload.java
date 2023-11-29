@@ -6,5 +6,9 @@ import java.util.List;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 
-public record MealKitPayload(UniqueIdentifier mealKitId, LocalDate deliveryDate, List<Recipe> recipes) {
+public record MealKitPayload(
+    UniqueIdentifier mealKitId,
+    LocalDate deliveryDate,
+    List<Recipe> recipes
+) {
 }

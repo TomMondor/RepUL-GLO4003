@@ -5,7 +5,9 @@ import java.time.Period;
 
 import ca.ulaval.glo4003.repul.user.domain.account.exception.InvalidBirthdateException;
 
-public record Birthdate(LocalDate value) {
+public record Birthdate(
+    LocalDate value
+) {
     public Birthdate {
         if (value.isAfter(LocalDate.now())) {
             throw new InvalidBirthdateException();

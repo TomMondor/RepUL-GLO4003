@@ -7,7 +7,12 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 
-public record OrderPayload(UniqueIdentifier orderId, MealKitType mealKitType, LocalDate deliveryDate, OrderStatus orderStatus) {
+public record OrderPayload(
+    UniqueIdentifier orderId,
+    MealKitType mealKitType,
+    LocalDate deliveryDate,
+    OrderStatus orderStatus
+) {
     public static OrderPayload from(Order order) {
         return new OrderPayload(order.getOrderId(), order.getMealKitType(), order.getDeliveryDate(), order.getOrderStatus());
     }

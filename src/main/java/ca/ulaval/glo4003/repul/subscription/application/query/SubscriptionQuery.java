@@ -6,7 +6,11 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidDayOfWeekException;
 
-public record SubscriptionQuery(DeliveryLocationId deliveryLocationId, DayOfWeek dayOfWeek, MealKitType mealKitType) {
+public record SubscriptionQuery(
+    DeliveryLocationId deliveryLocationId,
+    DayOfWeek dayOfWeek,
+    MealKitType mealKitType
+) {
     public SubscriptionQuery(String deliveryLocationId, String dayOfWeek, String mealKitType) {
         this(new DeliveryLocationId(deliveryLocationId), DayOfWeek.valueOf(dayOfWeek), MealKitType.from(mealKitType));
     }

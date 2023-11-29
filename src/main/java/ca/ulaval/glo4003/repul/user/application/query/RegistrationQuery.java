@@ -11,7 +11,14 @@ import ca.ulaval.glo4003.repul.user.domain.account.IDUL;
 import ca.ulaval.glo4003.repul.user.domain.account.Name;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
 
-public record RegistrationQuery(Email email, Password password, IDUL idul, Name name, Birthdate birthdate, Gender gender) {
+public record RegistrationQuery(
+    Email email,
+    Password password,
+    IDUL idul,
+    Name name,
+    Birthdate birthdate,
+    Gender gender
+) {
     public static RegistrationQuery from(String email, String password, String idul, String name, String birthdate, String gender) {
         try {
             LocalDate.parse(birthdate);
