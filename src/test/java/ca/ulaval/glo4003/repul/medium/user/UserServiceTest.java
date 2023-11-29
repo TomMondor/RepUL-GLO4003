@@ -42,8 +42,9 @@ public class UserServiceTest {
     @BeforeEach
     public void createUserService() {
         tokenDecoder = new JWTTokenDecoder();
-        userService = new UserService(new InMemoryAccountRepository(), new InMemoryUserRepository(), new AccountFactory(),
-                new UserFactory(new CryptPasswordEncoder()), new UniqueIdentifierFactory(), new JWTTokenGenerator(), new GuavaEventBus());
+        userService =
+            new UserService(new InMemoryAccountRepository(), new InMemoryUserRepository(), new AccountFactory(), new UserFactory(new CryptPasswordEncoder()),
+                new UniqueIdentifierFactory(), new JWTTokenGenerator(), new CryptPasswordEncoder(), new GuavaEventBus());
     }
 
     @Test

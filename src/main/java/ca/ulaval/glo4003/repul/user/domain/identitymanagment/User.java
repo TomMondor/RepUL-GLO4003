@@ -10,14 +10,12 @@ public class User {
     private final Password password;
 
     private final Role role;
-    private final PasswordEncoder passwordEncoder;
 
-    public User(UniqueIdentifier uid, Email email, Password password, Role role, PasswordEncoder passwordEncoder) {
+    public User(UniqueIdentifier uid, Email email, Password password, Role role) {
         this.uid = uid;
         this.email = email;
         this.password = password;
         this.role = role;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public UniqueIdentifier getUid() {
@@ -32,7 +30,7 @@ public class User {
         return role;
     }
 
-    public void checkPasswordMatches(Password providedPassword) {
+    public void checkPasswordMatches(PasswordEncoder passwordEncoder, Password providedPassword) {
         if (!passwordEncoder.matches(providedPassword, password)) {
             throw new PasswordNotMatchingException();
         }

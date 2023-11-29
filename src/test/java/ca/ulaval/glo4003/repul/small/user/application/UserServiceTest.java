@@ -92,7 +92,8 @@ public class UserServiceTest {
 
     @BeforeEach
     public void setUp() {
-        userService = new UserService(accountRepository, userRepository, accountFactory, userFactory, uniqueIdentifierFactory, tokenGenerator, repULEventBus);
+        userService = new UserService(accountRepository, userRepository, accountFactory, userFactory, uniqueIdentifierFactory, tokenGenerator, passwordEncoder,
+            repULEventBus);
     }
 
     @Test
@@ -213,7 +214,7 @@ public class UserServiceTest {
 
     @Test
     public void whenLogin_shouldFindUserByEmail() {
-        User user = new User(AN_ACCOUNT_ID, new Email(AN_EMAIL), AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
+        User user = new User(AN_ACCOUNT_ID, new Email(AN_EMAIL), AN_ENCRYPTED_PASSWORD, Role.CLIENT);
         given(passwordEncoder.matches(new Password(A_PASSWORD), AN_ENCRYPTED_PASSWORD)).willReturn(true);
         given(userRepository.findByEmail(new Email(AN_EMAIL))).willReturn(user);
 
@@ -236,12 +237,12 @@ public class UserServiceTest {
 
         userService.login(LoginQuery.from(AN_EMAIL, A_PASSWORD));
 
-        verify(mockUser).checkPasswordMatches(new Password(A_PASSWORD));
+        verify(mockUser).checkPasswordMatches(passwordEncoder, new Password(A_PASSWORD));
     }
 
     @Test
     public void whenLogin_shouldGenerateToken() {
-        User user = new User(AN_ACCOUNT_ID, new Email(AN_EMAIL), AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
+        User user = new User(AN_ACCOUNT_ID, new Email(AN_EMAIL), AN_ENCRYPTED_PASSWORD, Role.CLIENT);
         given(passwordEncoder.matches(new Password(A_PASSWORD), AN_ENCRYPTED_PASSWORD)).willReturn(true);
         given(userRepository.findByEmail(new Email(AN_EMAIL))).willReturn(user);
 

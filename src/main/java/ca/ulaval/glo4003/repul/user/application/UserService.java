@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.domain.account.Account;
 import ca.ulaval.glo4003.repul.user.domain.account.AccountFactory;
 import ca.ulaval.glo4003.repul.user.domain.account.AccountRepository;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.PasswordEncoder;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserFactory;
@@ -35,9 +36,11 @@ public class UserService {
     private final UniqueIdentifierFactory uniqueIdentifierFactory;
     private final TokenGenerator tokenGenerator;
     private final RepULEventBus eventBus;
+    private final PasswordEncoder passwordEncoder;
 
     public UserService(AccountRepository accountRepository, UserRepository userRepository, AccountFactory accountFactory, UserFactory userFactory,
-                       UniqueIdentifierFactory uniqueIdentifierFactory, TokenGenerator tokenGenerator, RepULEventBus eventBus) {
+                       UniqueIdentifierFactory uniqueIdentifierFactory, TokenGenerator tokenGenerator, PasswordEncoder passwordEncoder,
+                       RepULEventBus eventBus) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.accountFactory = accountFactory;
@@ -45,6 +48,7 @@ public class UserService {
         this.uniqueIdentifierFactory = uniqueIdentifierFactory;
         this.tokenGenerator = tokenGenerator;
         this.eventBus = eventBus;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void register(RegistrationQuery registrationQuery) {
@@ -70,7 +74,7 @@ public class UserService {
         try {
             User user = userRepository.findByEmail(loginQuery.email());
 
-            user.checkPasswordMatches(loginQuery.password());
+            user.checkPasswordMatches(passwordEncoder, loginQuery.password());
 
             Token token = tokenGenerator.generate(user.getUid(), user.getRole());
 

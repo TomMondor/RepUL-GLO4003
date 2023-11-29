@@ -16,22 +16,34 @@ import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.PasswordN
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class UserTest {
     private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory().generate();
     private static final Email AN_EMAIL = new Email("anEmail@ulaval.ca");
-    private static final Password AN_ENCRYPTED_PASSWORD = new Password("encryptedPassword");
+    private static final Password A_NOT_ENCRYPTED_PASSWORD = new Password("aNotEncryptedPassword");
+    private static final Password AN_ENCRYPTED_PASSWORD = new Password(A_NOT_ENCRYPTED_PASSWORD.value());
     private static final Password A_WRONG_PASSWORD = new Password("a@*nfF8KA1");
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
     @Test
+    public void whenCheckingPassword_shouldMatchPassword() {
+        given(passwordEncoder.matches(A_NOT_ENCRYPTED_PASSWORD, AN_ENCRYPTED_PASSWORD)).willReturn(true);
+        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT);
+
+        user.checkPasswordMatches(passwordEncoder, A_NOT_ENCRYPTED_PASSWORD);
+
+        verify(passwordEncoder).matches(A_NOT_ENCRYPTED_PASSWORD, AN_ENCRYPTED_PASSWORD);
+    }
+
+    @Test
     public void givenIncorrectPassword_whenCheckingPassword_shouldThrowPasswordNotMatchingException() {
         given(passwordEncoder.matches(A_WRONG_PASSWORD, AN_ENCRYPTED_PASSWORD)).willReturn(false);
-        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT, passwordEncoder);
+        User user = new User(A_UID, AN_EMAIL, AN_ENCRYPTED_PASSWORD, Role.CLIENT);
 
-        assertThrows(PasswordNotMatchingException.class, () -> user.checkPasswordMatches(A_WRONG_PASSWORD));
+        assertThrows(PasswordNotMatchingException.class, () -> user.checkPasswordMatches(passwordEncoder, A_WRONG_PASSWORD));
     }
 }

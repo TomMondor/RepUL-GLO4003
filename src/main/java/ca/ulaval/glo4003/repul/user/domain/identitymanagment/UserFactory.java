@@ -11,7 +11,7 @@ public class UserFactory {
     }
 
     public User createUser(UniqueIdentifier uid, Email email, Role role, Password password) {
-        return new User(uid, email, encryptPassword(password), role, passwordEncoder);
+        return new User(uid, email, encryptPassword(password), role);
     }
 
     private Password encryptPassword(Password password) {
