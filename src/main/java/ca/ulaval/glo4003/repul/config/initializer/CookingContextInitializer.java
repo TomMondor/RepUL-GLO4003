@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
+import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Ingredient;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
@@ -53,9 +54,13 @@ public class CookingContextInitializer {
     public CookingService createCookingService(RepULEventBus eventBus) {
         LOGGER.info("Creating cooking service");
         initializeKitchen(kitchenRepository);
-        CookingService service = new CookingService(kitchenRepository, eventBus);
-        eventBus.register(service);
-        return service;
+        return new CookingService(kitchenRepository, eventBus);
+    }
+
+    public MealKitEventHandler createMealKitEventHandler(CookingService cookingService, RepULEventBus eventBus) {
+        MealKitEventHandler mealKitEventHandler = new MealKitEventHandler(cookingService);
+        eventBus.register(mealKitEventHandler);
+        return mealKitEventHandler;
     }
 
     private void initializeKitchen(KitchenRepository kitchenRepository) {

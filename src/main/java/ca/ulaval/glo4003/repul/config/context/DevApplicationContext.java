@@ -25,6 +25,7 @@ import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInit
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.UserContextInitializer;
+import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
@@ -76,6 +77,7 @@ public class DevApplicationContext implements ApplicationContext {
         CookingContextInitializer cookingContextInitializer = new CookingContextInitializer();
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
+        MealKitEventHandler mealKitEventHandler = cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer();
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionContextInitializer.createSubscriptionService(eventBus));

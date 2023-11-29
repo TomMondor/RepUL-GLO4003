@@ -22,7 +22,6 @@ import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
-import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -38,8 +37,6 @@ public class CookingServiceTest {
     private static final UniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory().generate();
     private static final List<UniqueIdentifier> MANY_IDS = List.of(A_UNIQUE_ID, ANOTHER_UNIQUE_ID);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("DESJARDINS");
-    private static final MealKitConfirmedEvent MEALKIT_CONFIRMED_EVENT =
-        new MealKitConfirmedEvent(A_UNIQUE_ID, A_UNIQUE_ID, A_UNIQUE_ID, A_MEALKIT_TYPE, null, A_DATE);
     private static final PickedUpCargoEvent PICKED_UP_CARGO_EVENT = new PickedUpCargoEvent(List.of(A_UNIQUE_ID));
 
     private CookingService cookingService;
@@ -57,22 +54,22 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenHandleMealKitConfirmedEvent_shouldGetKitchen() {
-        cookingService.handleMealKitConfirmedEvent(MEALKIT_CONFIRMED_EVENT);
+    public void whenReceivingMealKitInTheKitchen_shouldGetKitchen() {
+        cookingService.receiveMealKitInKitchen(A_UNIQUE_ID, A_MEALKIT_TYPE, A_DATE);
 
         verify(kitchenRepository).get();
     }
 
     @Test
-    public void whenHandleMealKitConfirmedEvent_shouldAddMealKit() {
-        cookingService.handleMealKitConfirmedEvent(MEALKIT_CONFIRMED_EVENT);
+    public void whenReceivingMealKitInTheKitchen_shouldAddMealKitToKitchen() {
+        cookingService.receiveMealKitInKitchen(A_UNIQUE_ID, A_MEALKIT_TYPE, A_DATE);
 
         verify(kitchen).addMealKit(A_UNIQUE_ID, A_MEALKIT_TYPE, A_DATE);
     }
 
     @Test
-    public void whenHandleMealKitConfirmedEvent_shouldSaveKitchen() {
-        cookingService.handleMealKitConfirmedEvent(MEALKIT_CONFIRMED_EVENT);
+    public void whenReceivingMealKitInTheKitchen_shouldSaveKitchen() {
+        cookingService.receiveMealKitInKitchen(A_UNIQUE_ID, A_MEALKIT_TYPE, A_DATE);
 
         verify(kitchenRepository).save(kitchen);
     }
@@ -265,22 +262,22 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenHandlingPickedUpCargoEvent_shouldGetKitchen() {
-        cookingService.handlePickedUpCargoEvent(PICKED_UP_CARGO_EVENT);
+    public void whenRemovingMealKits_shouldGetKitchen() {
+        cookingService.giveMealKitToDelivery(List.of(A_UNIQUE_ID));
 
         verify(kitchenRepository).get();
     }
 
     @Test
-    public void whenHandlingPickedUpCargoEvent_shouldRemoveMealKitsFromKitchen() {
-        cookingService.handlePickedUpCargoEvent(PICKED_UP_CARGO_EVENT);
+    public void whenGivingMealKitToDelivery_shouldRemoveMealKitsFromKitchen() {
+        cookingService.giveMealKitToDelivery(List.of(A_UNIQUE_ID));
 
         verify(kitchen).removeMealKitsFromKitchen(List.of(A_UNIQUE_ID));
     }
 
     @Test
-    public void whenHandlingPickedUpCargoEvent_shouldSaveKitchen() {
-        cookingService.handlePickedUpCargoEvent(PICKED_UP_CARGO_EVENT);
+    public void whenGivingMealKitToDelivery_shouldSaveKitchen() {
+        cookingService.giveMealKitToDelivery(List.of(A_UNIQUE_ID));
 
         verify(kitchenRepository).save(kitchen);
     }

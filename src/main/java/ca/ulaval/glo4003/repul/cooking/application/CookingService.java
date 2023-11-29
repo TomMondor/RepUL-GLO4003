@@ -1,8 +1,10 @@
 package ca.ulaval.glo4003.repul.cooking.application;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
@@ -11,10 +13,6 @@ import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
-import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
-import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-
-import com.google.common.eventbus.Subscribe;
 
 public class CookingService {
     private final KitchenRepository kitchenRepository;
@@ -26,20 +24,18 @@ public class CookingService {
         this.eventBus = eventBus;
     }
 
-    @Subscribe
-    public void handleMealKitConfirmedEvent(MealKitConfirmedEvent event) {
+    public void receiveMealKitInKitchen(UniqueIdentifier mealKitId, MealKitType mealKitType, LocalDate deliveryDate) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
-        kitchen.addMealKit(event.mealKitId, event.mealKitType, event.deliveryDate);
+        kitchen.addMealKit(mealKitId, mealKitType, deliveryDate);
 
         kitchenRepository.save(kitchen);
     }
 
-    @Subscribe
-    public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
+    public void giveMealKitToDelivery(List<UniqueIdentifier> mealKitIds) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
-        kitchen.removeMealKitsFromKitchen(event.mealKitIds);
+        kitchen.removeMealKitsFromKitchen(mealKitIds);
 
         kitchenRepository.save(kitchen);
     }
