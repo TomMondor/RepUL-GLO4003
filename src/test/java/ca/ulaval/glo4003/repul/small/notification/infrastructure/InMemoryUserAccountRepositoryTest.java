@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.repul.small.notification.infrastructure;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,11 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.notification.application.exception.UserAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccount;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryUserAccountRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,40 +34,35 @@ public class InMemoryUserAccountRepositoryTest {
     }
 
     @Test
-    public void whenSavingAccountAndGettingAccountById_shouldReturnOptionalOfRightAccount() {
+    public void whenSavingAccountAndGettingAccountById_shouldReturnTheRightAccount() {
         given(userAccount.getAccountId()).willReturn(AN_ACCOUNT_VALID_ID);
 
         inMemoryUserAccountRepository.save(userAccount);
-        Optional<UserAccount> accountFound = inMemoryUserAccountRepository.getAccountById(
+        UserAccount accountFound = inMemoryUserAccountRepository.getAccountById(
             AN_ACCOUNT_VALID_ID);
 
-        assertEquals(Optional.of(userAccount), accountFound);
+        assertEquals(userAccount, accountFound);
     }
 
     @Test
-    public void givenNoAccount_whenGettingAccountById_shouldReturnOptionalOfEmpty() {
-        Optional<UserAccount> accountFound = inMemoryUserAccountRepository.getAccountById(
-            AN_ACCOUNT_INVALID_ID);
-
-        assertTrue(accountFound.isEmpty());
+    public void givenNoAccount_whenGettingAccountById_shouldThrowUserAccountNotFoundException() {
+        assertThrows(UserAccountNotFoundException.class, () -> inMemoryUserAccountRepository.getAccountById(AN_ACCOUNT_INVALID_ID));
     }
 
     @Test
-    public void whenSavingAccountAndGettingAccountByMealKitId_shouldReturnOptionalOfRightAccount() {
+    public void whenSavingAccountAndGettingAccountByMealKitId_shouldReturnTheRightAccount() {
         given(userAccount.getAccountId()).willReturn(AN_ACCOUNT_VALID_ID);
         given(userAccount.getMealKitIds()).willReturn(List.of(A_MEAL_KIT_ID));
 
         inMemoryUserAccountRepository.save(userAccount);
-        Optional<UserAccount> accountFound = inMemoryUserAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID);
+        UserAccount accountFound = inMemoryUserAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID);
 
-        assertEquals(Optional.of(userAccount), accountFound);
+        assertEquals(userAccount, accountFound);
     }
 
     @Test
-    public void givenNoAccount_whenGettingAccountByMealKitId_shouldReturnOptionalOfEmpty() {
-        Optional<UserAccount> accountFound = inMemoryUserAccountRepository.getAccountByMealKitId(
-            AN_ACCOUNT_INVALID_ID);
-
-        assertTrue(accountFound.isEmpty());
+    public void givenNoAccount_whenGettingAccountByMealKitId_shouldThrowUserAccountNotFoundException() {
+        assertThrows(UserAccountNotFoundException.class,
+            () -> inMemoryUserAccountRepository.getAccountByMealKitId(AN_ACCOUNT_INVALID_ID));
     }
 }

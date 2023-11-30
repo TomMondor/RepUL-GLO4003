@@ -2,9 +2,9 @@ package ca.ulaval.glo4003.repul.notification.infrastructure;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.notification.application.exception.DeliveryPersonAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
 
@@ -17,7 +17,11 @@ public class InMemoryDeliveryPersonAccountRepository implements DeliveryPersonAc
     }
 
     @Override
-    public Optional<DeliveryPersonAccount> getByAccountId(UniqueIdentifier accountId) {
-        return Optional.ofNullable(accounts.get(accountId));
+    public DeliveryPersonAccount getByAccountId(UniqueIdentifier accountId) {
+        DeliveryPersonAccount deliveryPersonAccount = accounts.get(accountId);
+        if (deliveryPersonAccount == null) {
+            throw new DeliveryPersonAccountNotFoundException();
+        }
+        return deliveryPersonAccount;
     }
 }

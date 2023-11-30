@@ -57,8 +57,7 @@ public class NotificationContextInitializer {
 
     public NotificationContextInitializer withConfirmedSubscriptions(List<Subscription> subscriptions) {
         subscriptions.forEach(subscription -> {
-            UserAccount userAccount = userAccountRepository.getAccountById(subscription.getSubscriberId())
-                .orElseThrow(() -> new RuntimeException("Subscription's user account must be in notification context."));
+            UserAccount userAccount = userAccountRepository.getAccountById(subscription.getSubscriberId());
             userAccount.addMealKit(
                 subscription.findCurrentOrder().orElseThrow(() -> new RuntimeException("Subscription must have a current order.")).getOrderId());
             userAccountRepository.save(userAccount);
@@ -67,7 +66,7 @@ public class NotificationContextInitializer {
     }
 
     public NotificationContextInitializer withMealKitIdForUser(UniqueIdentifier mealKitId, UniqueIdentifier accountId) {
-        UserAccount userAccount = userAccountRepository.getAccountById(accountId).get();
+        UserAccount userAccount = userAccountRepository.getAccountById(accountId);
         userAccount.addMealKit(mealKitId);
         userAccountRepository.save(userAccount);
         return this;

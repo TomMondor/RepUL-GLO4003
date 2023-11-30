@@ -22,8 +22,6 @@ import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.notification.application.NotificationService;
-import ca.ulaval.glo4003.repul.notification.application.exception.DeliveryPersonAccountNotFoundException;
-import ca.ulaval.glo4003.repul.notification.application.exception.UserAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
@@ -36,7 +34,6 @@ import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -115,7 +112,7 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingMealKitReceivedForDeliveryEvent_shouldCallNotificationSenderGoodAmountOfTimes() {
-        when(deliveryPersonAccountRepository.getByAccountId(any())).thenReturn(Optional.of(A_DELIVERY_ACCOUNT));
+        when(deliveryPersonAccountRepository.getByAccountId(any())).thenReturn(A_DELIVERY_ACCOUNT);
 
         this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
 
@@ -124,8 +121,8 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingMealKitReceivedForDeliveryEvent_shouldCallNotificationSenderWithRightAccountAndAMessage() {
-        when(deliveryPersonAccountRepository.getByAccountId(A_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(Optional.of(A_DELIVERY_ACCOUNT));
-        when(deliveryPersonAccountRepository.getByAccountId(ANOTHER_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(Optional.of(ANOTHER_DELIVERY_ACCOUNT));
+        when(deliveryPersonAccountRepository.getByAccountId(A_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(A_DELIVERY_ACCOUNT);
+        when(deliveryPersonAccountRepository.getByAccountId(ANOTHER_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(ANOTHER_DELIVERY_ACCOUNT);
 
         this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
 
@@ -135,25 +132,16 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingMealKitDeliveredEvent_shouldCallNotificationSenderWithRightAccountAndAMessage() {
-        when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(Optional.of(A_VALID_USER_ACCOUNT));
+        when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
 
         this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
 
         verify(notificationSender, times(1)).send(eq(A_VALID_USER_ACCOUNT), any(NotificationMessage.class));
-    }
-
-    @Test
-    public void givenAnInvalidAccount_whenHandlingMealKitReceivedForDeliveryEvent_shouldThrowDeliveryPersonAccountNotFoundException() {
-        when(deliveryPersonAccountRepository.getByAccountId(A_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(Optional.of(A_DELIVERY_ACCOUNT));
-        when(deliveryPersonAccountRepository.getByAccountId(AN_INVALID_ACCOUNT_ID)).thenReturn(Optional.empty());
-
-        assertThrows(DeliveryPersonAccountNotFoundException.class,
-            () -> this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEventWithInvalidDeliveryAccount));
     }
 
     @Test
     public void whenHandleMealKitDeliveredEvent_shouldCallNotificationSenderWithGoodAccount() {
-        when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(Optional.of(A_VALID_USER_ACCOUNT));
+        when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
 
         this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
 
@@ -161,17 +149,8 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void givenMealKitAssociatedWithNoAccount_whenHandleMealKitDeliveredEvent_shouldThrowUserAccountNotFoundException() {
-        when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(Optional.empty());
-
-        assertThrows(UserAccountNotFoundException.class,
-            () -> this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT));
-    }
-
-    @Test
     public void whenHandlingMealKitConfirmedEvent_ShouldAddMealKitToUser() {
-        when(userAccountRepository.getAccountById(A_VALID_ACCOUNT_ID)).thenReturn(
-            Optional.of(A_VALID_USER_ACCOUNT));
+        when(userAccountRepository.getAccountById(A_VALID_ACCOUNT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
         int numberOfMealKits = A_VALID_USER_ACCOUNT.getMealKitIds().size();
 
         this.notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
@@ -180,16 +159,8 @@ public class NotificationServiceTest {
     }
 
     @Test
-    public void givenNoAccount_whenHandleMealKitConfirmedEvent_shouldThrowUserAccountNotFoundException() {
-        when(userAccountRepository.getAccountById(A_VALID_ACCOUNT_ID)).thenReturn(Optional.empty());
-
-        assertThrows(UserAccountNotFoundException.class,
-            () -> this.notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT));
-    }
-
-    @Test
     public void whenHandlingMealKitConfirmedEvent_shouldSaveMealKitInUserAccountRepository() {
-        when(userAccountRepository.getAccountById(A_VALID_ACCOUNT_ID)).thenReturn(Optional.of(A_VALID_USER_ACCOUNT));
+        when(userAccountRepository.getAccountById(A_VALID_ACCOUNT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
 
         this.notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 

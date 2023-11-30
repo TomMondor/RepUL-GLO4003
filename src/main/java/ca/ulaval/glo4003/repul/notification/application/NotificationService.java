@@ -3,8 +3,6 @@ package ca.ulaval.glo4003.repul.notification.application;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
-import ca.ulaval.glo4003.repul.notification.application.exception.DeliveryPersonAccountNotFoundException;
-import ca.ulaval.glo4003.repul.notification.application.exception.UserAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
@@ -51,8 +49,7 @@ public class NotificationService {
             mealKitReceivedForDeliveryEvent.kitchenLocationId,
             mealKitReceivedForDeliveryEvent.mealKitDtos);
         for (UniqueIdentifier availableShipperId : mealKitReceivedForDeliveryEvent.availableDeliveryPeople) {
-            Account account = deliveryPersonAccountRepository.getByAccountId(availableShipperId)
-                .orElseThrow(DeliveryPersonAccountNotFoundException::new);
+            Account account = deliveryPersonAccountRepository.getByAccountId(availableShipperId);
             notificationSender.send(account, message);
         }
     }
@@ -63,16 +60,14 @@ public class NotificationService {
             confirmedDeliveryEvent.deliveryLocationId, confirmedDeliveryEvent.deliveryTime,
             confirmedDeliveryEvent.lockerId);
         UserAccount userAccount = userAccountRepository
-            .getAccountByMealKitId(confirmedDeliveryEvent.mealKitId)
-            .orElseThrow(UserAccountNotFoundException::new);
+            .getAccountByMealKitId(confirmedDeliveryEvent.mealKitId);
         notificationSender.send(userAccount, message);
     }
 
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
         UserAccount userAccount = userAccountRepository
-            .getAccountById(mealKitConfirmedEvent.accountId)
-            .orElseThrow(UserAccountNotFoundException::new);
+            .getAccountById(mealKitConfirmedEvent.accountId);
         userAccount.addMealKit(mealKitConfirmedEvent.mealKitId);
         userAccountRepository.save(userAccount);
     }

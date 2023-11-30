@@ -1,7 +1,5 @@
 package ca.ulaval.glo4003.repul.small.notification.infrastructure;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,11 +8,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.notification.application.exception.DeliveryPersonAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryDeliveryPersonAccountRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,19 +29,18 @@ public class InMemoryDeliveryPersonAccountRepositoryTest {
     }
 
     @Test
-    public void whenSavingAccountAndGettingAccount_shouldReturnOptionalOfRightAccount() {
+    public void whenSavingAccountAndGettingAccount_shouldReturnTheRightAccount() {
         given(deliveryPersonAccount.getAccountId()).willReturn(ACCOUNT_VALID_ID);
 
         inMemoryDeliveryPersonAccountRepository.save(deliveryPersonAccount);
-        Optional<DeliveryPersonAccount> accountFound = inMemoryDeliveryPersonAccountRepository.getByAccountId(ACCOUNT_VALID_ID);
+        DeliveryPersonAccount accountFound = inMemoryDeliveryPersonAccountRepository.getByAccountId(ACCOUNT_VALID_ID);
 
-        assertEquals(Optional.of(deliveryPersonAccount), accountFound);
+        assertEquals(deliveryPersonAccount, accountFound);
     }
 
     @Test
-    public void givenNoAccount_whenGettingAccount_shouldReturnOptionalOfEmpty() {
-        Optional<DeliveryPersonAccount> accountFound = inMemoryDeliveryPersonAccountRepository.getByAccountId(ACCOUNT_VALID_ID);
-
-        assertTrue(accountFound.isEmpty());
+    public void givenNoAccount_whenGettingAccount_shouldThrowDeliveryPersonAccountNotFoundException() {
+        assertThrows(DeliveryPersonAccountNotFoundException.class,
+            () -> inMemoryDeliveryPersonAccountRepository.getByAccountId(ACCOUNT_VALID_ID));
     }
 }
