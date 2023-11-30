@@ -11,12 +11,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
+import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -37,20 +38,18 @@ public class InMemorySubscriptionRepositoryTest {
     }
 
     @Test
-    public void whenSavingSubscriptionAndGettingSubscriptionById_shouldReturnOptionalOfRightSubscription() {
+    public void whenSavingSubscriptionAndGettingSubscriptionById_shouldReturnTheRightSubscription() {
         given(subscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
 
         inMemorySubscriptionRepository.save(subscription);
-        Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getById(A_SUBSCRIPTION_VALID_ID);
+        Subscription subscriptionFound = inMemorySubscriptionRepository.getById(A_SUBSCRIPTION_VALID_ID);
 
-        assertEquals(Optional.of(subscription), subscriptionFound);
+        assertEquals(subscription, subscriptionFound);
     }
 
     @Test
-    public void givenNoSubscription_whenGettingSubscriptionById_shouldReturnOptionalOfEmpty() {
-        Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getById(A_SUBSCRIPTION_VALID_ID);
-
-        assertTrue(subscriptionFound.isEmpty());
+    public void givenNoSubscription_whenGettingSubscriptionById_shouldThrowSubscriptionNotFoundException() {
+        assertThrows(SubscriptionNotFoundException.class, () -> inMemorySubscriptionRepository.getById(A_SUBSCRIPTION_VALID_ID));
     }
 
     @Test
@@ -78,10 +77,8 @@ public class InMemorySubscriptionRepositoryTest {
     }
 
     @Test
-    public void givenNoSubscriptionWithSpecificOrder_whenGettingSubscriptionByOrderId_shouldReturnOptionalOfEmpty() {
-        Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getSubscriptionByOrderId(AN_ORDER_ID);
-
-        assertTrue(subscriptionFound.isEmpty());
+    public void givenNoSubscriptionWithSpecificOrder_whenGettingSubscriptionByOrderId_shouldThrowOrderNotFoundException() {
+        assertThrows(OrderNotFoundException.class, () -> inMemorySubscriptionRepository.getSubscriptionByOrderId(AN_ORDER_ID));
     }
 
     @Test
@@ -92,8 +89,8 @@ public class InMemorySubscriptionRepositoryTest {
         given(subscription.findCurrentOrder()).willReturn(Optional.of(anOrder));
         inMemorySubscriptionRepository.save(subscription);
 
-        Optional<Subscription> subscriptionFound = inMemorySubscriptionRepository.getSubscriptionByOrderId(AN_ORDER_ID);
+        Subscription subscriptionFound = inMemorySubscriptionRepository.getSubscriptionByOrderId(AN_ORDER_ID);
 
-        assertEquals(Optional.of(subscription), subscriptionFound);
+        assertEquals(subscription, subscriptionFound);
     }
 }

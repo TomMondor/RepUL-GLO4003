@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
+import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
@@ -19,8 +21,12 @@ public class InMemorySubscriptionRepository implements SubscriptionRepository {
     }
 
     @Override
-    public Optional<Subscription> getById(UniqueIdentifier subscriptionId) {
-        return Optional.ofNullable(subscriptionsById.get(subscriptionId));
+    public Subscription getById(UniqueIdentifier subscriptionId) {
+        Subscription subscription = subscriptionsById.get(subscriptionId);
+        if (subscription == null) {
+            throw new SubscriptionNotFoundException();
+        }
+        return subscription;
     }
 
     @Override
@@ -29,14 +35,13 @@ public class InMemorySubscriptionRepository implements SubscriptionRepository {
     }
 
     @Override
-    public Optional<Subscription> getSubscriptionByOrderId(UniqueIdentifier orderId) {
+    public Subscription getSubscriptionByOrderId(UniqueIdentifier orderId) {
         for (Subscription subscription : subscriptionsById.values()) {
             Optional<Order> order = subscription.findCurrentOrder();
             if (order.isPresent() && order.get().getOrderId().equals(orderId)) {
-                return Optional.of(subscription);
+                return subscription;
             }
         }
-        return Optional.empty();
+        throw new OrderNotFoundException();
     }
-
 }

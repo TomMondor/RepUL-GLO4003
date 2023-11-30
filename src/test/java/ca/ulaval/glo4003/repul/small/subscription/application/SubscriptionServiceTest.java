@@ -28,7 +28,6 @@ import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
@@ -115,7 +114,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingMealKitPickedUpByUserEvent_shouldGetSubscriptionsByOrderIdInRepository() {
         MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(A_MEALKIT_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleMealKitPickedUpByUserEvent(event);
 
@@ -125,7 +124,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingMealKitPickedUpByUserEvent_shouldMarkOrderAsPickedUp() {
         MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(A_MEALKIT_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleMealKitPickedUpByUserEvent(event);
 
@@ -135,7 +134,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingMealKitPickedUpByUserEvent_shouldSaveSubscription() {
         MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(A_MEALKIT_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleMealKitPickedUpByUserEvent(event);
 
@@ -145,8 +144,8 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldGetSubscriptionsByOrderIdInRepository() {
         MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handleMealKitsCookedEvent(event);
 
@@ -157,8 +156,8 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldMarkSubscriptionsAsToDeliver() {
         MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handleMealKitsCookedEvent(event);
 
@@ -169,7 +168,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldGetSubscriptionByOrderIdInRepository() {
         RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEALKIT_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleRecallCookedMealKitEvent(recallCookedMealKitEvent);
 
@@ -179,7 +178,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingRecallCookedMealKitEvent_shouldMarkSubscriptionAsToCookO() {
         RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEALKIT_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleRecallCookedMealKitEvent(recallCookedMealKitEvent);
 
@@ -189,7 +188,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingRecallCookedMealKitEvent_shouldSaveSubscription() {
         RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEALKIT_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleRecallCookedMealKitEvent(recallCookedMealKitEvent);
 
@@ -199,8 +198,8 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldSaveSubscriptionsInRepository() {
         MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handleMealKitsCookedEvent(event);
 
@@ -209,19 +208,10 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void givenInexistantMealKit_whenHandlingMealKitsCookedEvent_shouldThrowOrderNotFoundException() {
-        MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.empty());
-
-        assertThrows(OrderNotFoundException.class, () -> subscriptionService.handleMealKitsCookedEvent(event));
-    }
-
-    @Test
     public void whenHandlingPickedUpCargoEvent_shouldGetSubscriptionsByOrderIdInRepository() {
         PickedUpCargoEvent event = new PickedUpCargoEvent(List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handlePickedUpCargoEvent(event);
 
@@ -230,19 +220,10 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void givenInexistantMealKit_whenHandlingPickedUpCargoEvent_shouldThrowOrderNotFoundException() {
-        PickedUpCargoEvent event = new PickedUpCargoEvent(List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.empty());
-
-        assertThrows(OrderNotFoundException.class, () -> subscriptionService.handlePickedUpCargoEvent(event));
-    }
-
-    @Test
     public void whenHandlingPickedUpCargoEvent_shouldMarkSubscriptionsAsInDelivery() {
         PickedUpCargoEvent event = new PickedUpCargoEvent(List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handlePickedUpCargoEvent(event);
 
@@ -253,8 +234,8 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingPickedUpCargoEvent_shouldSaveSubscriptionsInRepository() {
         PickedUpCargoEvent event = new PickedUpCargoEvent(List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handlePickedUpCargoEvent(event);
 
@@ -265,8 +246,8 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingCanceledCargoEvent_shouldGetSubscriptionsByOrderIdInRepository() {
         CanceledCargoEvent event = new CanceledCargoEvent(List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handleCanceledCargoEvent(event);
 
@@ -275,19 +256,10 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void givenInexistantMealKit_whenHandlingCanceledCargoEvent_shouldThrowOrderNotFoundException() {
-        CanceledCargoEvent event = new CanceledCargoEvent(List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.empty());
-
-        assertThrows(OrderNotFoundException.class, () -> subscriptionService.handleCanceledCargoEvent(event));
-    }
-
-    @Test
     public void whenHandlingCanceledCargoEvent_shouldMarkMatchingOrdersAsToDeliver() {
         CanceledCargoEvent event = new CanceledCargoEvent(List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handleCanceledCargoEvent(event);
 
@@ -298,8 +270,8 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingCanceledCargoEvent_shouldSaveSubscriptionsInRepository() {
         CanceledCargoEvent event = new CanceledCargoEvent(List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(Optional.of(otherMockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
         subscriptionService.handleCanceledCargoEvent(event);
 
@@ -310,7 +282,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldGetSubscriptionsByOrderIdInRepository() {
         ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, OPTIONAL_OF_A_LOCKER_ID, LocalTime.now());
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleConfirmedDeliveryEvent(event);
 
@@ -318,17 +290,9 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void givenInexistantMealKit_whenHandlingConfirmedDeliveryEvent_shouldThrowOrderNotFoundException() {
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, OPTIONAL_OF_A_LOCKER_ID, LocalTime.now());
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.empty());
-
-        assertThrows(OrderNotFoundException.class, () -> subscriptionService.handleConfirmedDeliveryEvent(event));
-    }
-
-    @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldMarkMatchingOrdersAsToPickup() {
         ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, OPTIONAL_OF_A_LOCKER_ID, LocalTime.now());
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleConfirmedDeliveryEvent(event);
 
@@ -338,7 +302,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldSaveSubscriptionsInRepository() {
         ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(A_MEALKIT_ID, A_DELIVERY_LOCATION_ID, OPTIONAL_OF_A_LOCKER_ID, LocalTime.now());
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleConfirmedDeliveryEvent(event);
 
@@ -348,7 +312,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingRecalledDeliveryEvent_shouldGetSubscriptionsByOrderIdInRepository() {
         RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleRecalledDeliveryEvent(event);
 
@@ -356,17 +320,9 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void givenInexistantMealKit_whenHandlingRecalledDeliveryEvent_shouldThrowOrderNotFoundException() {
-        RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.empty());
-
-        assertThrows(OrderNotFoundException.class, () -> subscriptionService.handleRecalledDeliveryEvent(event));
-    }
-
-    @Test
     public void whenHandlingRecalledDeliveryEvent_shouldMarkMatchingOrdersAsInDelivery() {
         RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleRecalledDeliveryEvent(event);
 
@@ -376,7 +332,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenHandlingRecalledDeliveryEvent_shouldSaveSubscriptionsInRepository() {
         RecalledDeliveryEvent event = new RecalledDeliveryEvent(A_MEALKIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
-        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
 
         subscriptionService.handleRecalledDeliveryEvent(event);
 
@@ -403,7 +359,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenGettingSubscriptionById_shouldGetSubscriptionFromRepository() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
 
         subscriptionService.getSubscriptionById(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
@@ -415,7 +371,7 @@ public class SubscriptionServiceTest {
     public void whenGettingSubscriptionById_shouldReturnMatchingSubscriptionsPayload() {
         Subscription subscription = new SubscriptionFixture().withSubscriberId(AN_ACCOUNT_ID).build();
         SubscriptionPayload expectedPayload = SubscriptionPayload.from(subscription);
-        when(mockSubscriptionRepository.getById(subscription.getSubscriptionId())).thenReturn(Optional.of(subscription));
+        when(mockSubscriptionRepository.getById(subscription.getSubscriptionId())).thenReturn(subscription);
 
         SubscriptionPayload subscriptionPayload = subscriptionService.getSubscriptionById(AN_ACCOUNT_ID, subscription.getSubscriptionId());
 
@@ -424,7 +380,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenConfirmingNextMealKitForSubscription_shouldGetSubscriptionFromRepository() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.confirmNextMealKit()).thenReturn(mockOrder);
 
@@ -435,7 +391,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenConfirmingNextMealKitForSubscription_shouldConfirmNextMealKitForSubscription() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.confirmNextMealKit()).thenReturn(mockOrder);
 
@@ -446,7 +402,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenConfirmingNextMealKitForSubscription_shouldSaveSubscription() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.confirmNextMealKit()).thenReturn(mockOrder);
 
@@ -457,7 +413,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenConfirmingNextMealKitForSubscription_shouldPublishMatchingEvent() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.confirmNextMealKit()).thenReturn(mockOrder);
 
@@ -467,25 +423,19 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void givenNonexistentSubscription_whenConfirmingNextMealKitForSubscription_shouldThrow() {
-        assertThrows(SubscriptionNotFoundException.class,
-            () -> subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, AN_ID_NOT_MATCHING_ANY_SUBSCRIPTION));
-    }
-
-    @Test
     public void givenSubscriptionNotForThisSubscriber_whenConfirmingNextMealKitForSubscription_shouldThrow() {
         when(mockSubscriptionFactory.createSubscription(any(UniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
-        when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(mockSubscription);
 
         assertThrows(SubscriptionNotFoundException.class, () -> subscriptionService.confirmNextMealKitForSubscription(ANOTHER_ACCOUNT_ID, subscriptionId));
     }
 
     @Test
     public void whenDecliningNextMealKitForSubscription_shouldGetSubscriptionFromRepository() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.declineNextMealKit()).thenReturn(mockOrder);
 
@@ -496,7 +446,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenDecliningNextMealKitForSubscription_shouldDeclineNextMealKitForSubscription() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.declineNextMealKit()).thenReturn(mockOrder);
 
@@ -507,7 +457,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenDecliningNextMealKitForSubscription_shouldSaveSubscription() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         when(mockSubscription.declineNextMealKit()).thenReturn(mockOrder);
 
@@ -517,18 +467,12 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void givenNonexistentSubscription_whenDecliningNextMealKitForSubscription_shouldThrow() {
-        assertThrows(SubscriptionNotFoundException.class,
-            () -> subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, AN_ID_NOT_MATCHING_ANY_SUBSCRIPTION));
-    }
-
-    @Test
     public void givenSubscriptionNotForThisSubscriber_whenDecliningNextMealKitForSubscription_shouldThrow() {
         when(mockSubscriptionFactory.createSubscription(any(UniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
-        when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(Optional.of(mockSubscription));
+        when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(mockSubscription);
 
         assertThrows(SubscriptionNotFoundException.class, () -> subscriptionService.confirmNextMealKitForSubscription(ANOTHER_ACCOUNT_ID, subscriptionId));
     }

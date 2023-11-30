@@ -13,7 +13,6 @@ import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
@@ -53,7 +52,7 @@ public class SubscriptionService {
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
         Subscription subscription =
-            subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
+            subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
         subscription.markOrderAsPickedUp(event.mealKitId);
         subscriptionRepository.save(subscription);
     }
@@ -61,7 +60,7 @@ public class SubscriptionService {
     @Subscribe
     public void handleMealKitsCookedEvent(MealKitsCookedEvent event) {
         for (UniqueIdentifier orderId : event.mealKitIds) {
-            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
+            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
             subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.save(subscription);
         }
@@ -70,7 +69,7 @@ public class SubscriptionService {
     @Subscribe
     public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
         Subscription subscription =
-            subscriptionRepository.getSubscriptionByOrderId(recallCookedMealKitEvent.mealKitId).orElseThrow(OrderNotFoundException::new);
+            subscriptionRepository.getSubscriptionByOrderId(recallCookedMealKitEvent.mealKitId);
         subscription.markCurrentOrderAsToCook();
         subscriptionRepository.save(subscription);
     }
@@ -78,7 +77,7 @@ public class SubscriptionService {
     @Subscribe
     public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
         for (UniqueIdentifier orderId : event.mealKitIds) {
-            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
+            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
             subscription.markCurrentOrderAsInDelivery();
             subscriptionRepository.save(subscription);
         }
@@ -87,7 +86,7 @@ public class SubscriptionService {
     @Subscribe
     public void handleCanceledCargoEvent(CanceledCargoEvent event) {
         for (UniqueIdentifier orderId : event.mealKitIds) {
-            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId).orElseThrow(OrderNotFoundException::new);
+            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
             subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.save(subscription);
         }
@@ -95,14 +94,14 @@ public class SubscriptionService {
 
     @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent event) {
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
         subscription.markCurrentOrderAsToPickUp();
         subscriptionRepository.save(subscription);
     }
 
     @Subscribe
     public void handleRecalledDeliveryEvent(RecalledDeliveryEvent event) {
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId).orElseThrow(OrderNotFoundException::new);
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
         subscription.markCurrentOrderAsInDelivery();
         subscriptionRepository.save(subscription);
     }
@@ -140,11 +139,8 @@ public class SubscriptionService {
     }
 
     private Subscription getSubscription(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {
-        Optional<Subscription> optionalSubscription = subscriptionRepository.getById(subscriptionId);
-        if (optionalSubscription.isEmpty()) {
-            throw new SubscriptionNotFoundException();
-        }
-        Subscription subscription = optionalSubscription.get();
+        Subscription subscription = subscriptionRepository.getById(subscriptionId);
+
         if (!subscription.getSubscriberId().equals(subscriberId)) {
             throw new SubscriptionNotFoundException();
         }
