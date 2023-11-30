@@ -19,6 +19,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
+import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -39,8 +40,8 @@ public class SubscriptionContextInitializer {
         List<Semester> semesters = parseSemesters();
         List<DeliveryLocationId> deliveryLocationIds = parseDeliveryLocationIds();
 
-        SubscriptionFactory subscriptionFactory = new SubscriptionFactory(new UniqueIdentifierFactory(), semesters, deliveryLocationIds);
-        this.subscriptionFactory = subscriptionFactory;
+        UniqueIdentifierFactory uniqueIdentifierFactory = new UniqueIdentifierFactory();
+        this.subscriptionFactory = new SubscriptionFactory(uniqueIdentifierFactory, new OrdersFactory(uniqueIdentifierFactory), semesters, deliveryLocationIds);
     }
 
     public SubscriptionContextInitializer withEmptySubscriptionRepository(SubscriptionRepository subscriptionRepository) {

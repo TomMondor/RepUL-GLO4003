@@ -31,6 +31,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
+import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,8 +57,10 @@ public class SubscriptionServiceTest {
     public void createService() {
         eventBus = new GuavaEventBus();
         SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
+        UniqueIdentifierFactory uniqueIdentifierFactory = new UniqueIdentifierFactory();
         SubscriptionFactory subscriptionFactory =
-            new SubscriptionFactory(new UniqueIdentifierFactory(), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
+            new SubscriptionFactory(uniqueIdentifierFactory, new OrdersFactory(uniqueIdentifierFactory), List.of(CURRENT_SEMESTER),
+                List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
         subscriptionService = new SubscriptionService(subscriptionRepository, subscriptionFactory, eventBus);
         eventBus.register(subscriptionService);
     }
