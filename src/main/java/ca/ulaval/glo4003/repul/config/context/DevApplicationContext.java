@@ -14,7 +14,8 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationE
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
@@ -44,10 +45,10 @@ public class DevApplicationContext implements ApplicationContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(DevApplicationContext.class);
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final int PORT = 8080;
-    private static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory().generate();
+    private static final CookUniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     private static final RegistrationQuery COOK_REGISTRATION_QUERY =
         RegistrationQuery.from("paul@ulaval.ca", "paul123", "PAUL123", "Paul", "1990-01-01", "MAN");
-    private static final UniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
+    private static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final String DELIVERY_PERSON_EMAIL =
         ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL").isBlank() ? "roger@ulaval.ca" : ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL");
     private static final RegistrationQuery DELIVERY_PERSON_REGISTRATION_EMAIL =

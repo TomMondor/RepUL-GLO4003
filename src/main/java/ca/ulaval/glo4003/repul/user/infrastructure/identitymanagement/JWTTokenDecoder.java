@@ -23,9 +23,8 @@ public class JWTTokenDecoder implements TokenDecoder {
 
         try {
             DecodedJWT decodedJWT = verifier.verify(token);
-            UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory().generateFrom(decodedJWT.getClaim("UID").asString());
             Role role = Role.valueOf(decodedJWT.getClaim("Role").asString());
-
+            UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generateFrom(decodedJWT.getClaim("UID").asString());
             return new DecodedToken(uniqueIdentifier, role);
         } catch (Exception e) {
             throw new TokenVerificationFailedException();

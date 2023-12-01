@@ -17,7 +17,11 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
@@ -49,38 +53,39 @@ import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 
 public class TestApplicationContext implements ApplicationContext {
-    public static final UniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory().generate();
+    public static final SubscriberUniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     public static final String CLIENT_EMAIL = "alexandra@ulaval.ca";
     public static final String CLIENT_PASSWORD = "alexandra123";
-    public static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory().generate();
+    public static final CookUniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     public static final String COOK_EMAIL = "paul@ulaval.ca";
     public static final String COOK_PASSWORD = "paul123";
-    public static final UniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier SECOND_DELIVERY_PERSON_ID = new UniqueIdentifierFactory().generate();
+    public static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
+    public static final DeliveryPersonUniqueIdentifier SECOND_DELIVERY_PERSON_ID =
+        new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     public static final String DELIVERY_PERSON_EMAIL = "roger@ulaval.ca";
     public static final String DELIVERY_PERSON_PASSWORD = "roger123";
     public static final String SECOND_DELIVERY_PERSON_EMAIL = "john@ulaval.ca";
     public static final String SECOND_DELIVERY_PERSON_PASSWORD = "john123";
-    public static final UniqueIdentifier FIRST_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier SECOND_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier THIRD_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier FOURTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier FIFTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier SIXTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier SEVENTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier EIGHTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier NINTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier TENTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier FIRST_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier SECOND_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier THIRD_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier FOURTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier FIFTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier SIXTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier SEVENTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier EIGHTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier NINTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    public static final UniqueIdentifier TENTH_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    public static final SubscriptionUniqueIdentifier FIRST_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier SECOND_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier THIRD_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier FOURTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier FIFTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier SIXTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier SEVENTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier EIGHTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier NINTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final SubscriptionUniqueIdentifier TENTH_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier FIRST_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier SECOND_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier THIRD_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier FOURTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier FIFTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier SIXTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier SEVENTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier EIGHTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier NINTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier TENTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     public static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     public static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Entrée Vachon #1", 30);
     private static final Order FIRST_MEAL_KIT_ORDER = new Order(FIRST_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
@@ -168,13 +173,13 @@ public class TestApplicationContext implements ApplicationContext {
         CargoResource cargoResource = new CargoResource(deliveryContextInitializer.createDeliveryService(eventBus));
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
 
-        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer()
-            .withOrders(List.of(Map.entry(CLIENT_ID, FIRST_MEAL_KIT_ID), Map.entry(CLIENT_ID, SECOND_MEAL_KIT_ID),
-                Map.entry(CLIENT_ID, THIRD_MEAL_KIT_ID), Map.entry(CLIENT_ID, FOURTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, FIFTH_MEAL_KIT_ID),
-                Map.entry(CLIENT_ID, SIXTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, SEVENTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, EIGHTH_MEAL_KIT_ID),
-                Map.entry(CLIENT_ID, NINTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, TENTH_MEAL_KIT_ID)));
-        LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(
-            lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
+        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer().withOrders(
+            List.of(Map.entry(CLIENT_ID, FIRST_MEAL_KIT_ID), Map.entry(CLIENT_ID, SECOND_MEAL_KIT_ID), Map.entry(CLIENT_ID, THIRD_MEAL_KIT_ID),
+                Map.entry(CLIENT_ID, FOURTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, FIFTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, SIXTH_MEAL_KIT_ID),
+                Map.entry(CLIENT_ID, SEVENTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, EIGHTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, NINTH_MEAL_KIT_ID),
+                Map.entry(CLIENT_ID, TENTH_MEAL_KIT_ID)));
+        LockerAuthorizationResource lockerAuthorizationResource =
+            new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 
         // Setup resource config
@@ -192,8 +197,8 @@ public class TestApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(authGuard).register(apiKeyGuard).register(new CatchallExceptionMapper())
-            .register(new NotFoundExceptionMapper()).register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
+            .register(authGuard).register(apiKeyGuard).register(new CatchallExceptionMapper()).register(new NotFoundExceptionMapper())
+            .register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
     }
 
     @Override

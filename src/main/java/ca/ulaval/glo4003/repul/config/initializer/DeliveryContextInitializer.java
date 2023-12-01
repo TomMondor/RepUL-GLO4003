@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.LocationsCatalogService;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
@@ -31,9 +32,9 @@ public class DeliveryContextInitializer {
     private static final String LOCATION_FIELD_NAME_IN_JSON = "location";
     private static final String NAME_FIELD_NAME_IN_JSON = "name";
     private static final String CAPACITY_FIELD_NAME_IN_JSON = "capacity";
-    private final List<UniqueIdentifier> deliveryPeopleToAdd = new ArrayList<>();
-    private final List<Map<UniqueIdentifier, DeliveryLocationId>> pendingMealKitsToAdd = new ArrayList<>();
-    private final List<List<UniqueIdentifier>> cargosToAdd = new ArrayList<>();
+    private final List<DeliveryPersonUniqueIdentifier> deliveryPeopleToAdd = new ArrayList<>();
+    private final List<Map<MealKitUniqueIdentifier, DeliveryLocationId>> pendingMealKitsToAdd = new ArrayList<>();
+    private final List<List<MealKitUniqueIdentifier>> cargosToAdd = new ArrayList<>();
     private DeliverySystemRepository deliverySystemRepository = new InMemoryDeliverySystemRepository();
 
     public DeliveryContextInitializer withEmptyDeliverySystemRepository(DeliverySystemRepository deliverySystemRepository) {
@@ -41,17 +42,17 @@ public class DeliveryContextInitializer {
         return this;
     }
 
-    public DeliveryContextInitializer withDeliveryPeople(List<UniqueIdentifier> deliveryPersonIds) {
+    public DeliveryContextInitializer withDeliveryPeople(List<DeliveryPersonUniqueIdentifier> deliveryPersonIds) {
         deliveryPeopleToAdd.addAll(deliveryPersonIds);
         return this;
     }
 
-    public DeliveryContextInitializer withPendingMealKits(List<Map<UniqueIdentifier, DeliveryLocationId>> mealKits) {
+    public DeliveryContextInitializer withPendingMealKits(List<Map<MealKitUniqueIdentifier, DeliveryLocationId>> mealKits) {
         pendingMealKitsToAdd.addAll(mealKits);
         return this;
     }
 
-    public DeliveryContextInitializer withCargo(List<UniqueIdentifier> mealKits) {
+    public DeliveryContextInitializer withCargo(List<MealKitUniqueIdentifier> mealKits) {
         cargosToAdd.add(mealKits);
         return this;
     }
@@ -79,9 +80,9 @@ public class DeliveryContextInitializer {
         DeliverySystem deliverySystem = new DeliverySystem(locationsCatalog);
         deliveryPeopleToAdd.forEach(deliverySystem::addDeliveryPerson);
         pendingMealKitsToAdd.forEach(mealKit -> {
-            UniqueIdentifier parcelId = mealKit.keySet().iterator().next();
-            DeliveryLocationId deliveryLocationId = mealKit.get(parcelId);
-            deliverySystem.createMealKit(deliveryLocationId, parcelId);
+            MealKitUniqueIdentifier mealKitId = mealKit.keySet().iterator().next();
+            DeliveryLocationId deliveryLocationId = mealKit.get(mealKitId);
+            deliverySystem.createMealKit(deliveryLocationId, mealKitId);
         });
         cargosToAdd.forEach(cargo -> {
             deliverySystem.receiveReadyToBeDeliveredMealKits(new KitchenLocationId("DESJARDINS"), cargo);

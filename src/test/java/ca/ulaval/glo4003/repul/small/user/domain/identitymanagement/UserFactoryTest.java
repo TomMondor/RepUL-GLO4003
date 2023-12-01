@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class UserFactoryTest {
-    private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generate();
     private static final Email AN_EMAIL = new Email("anEmail@ulaval.ca");
     private static final Password A_PASSWORD = new Password("a@*nfF8KA1");
     private static final Password AN_ENCRYPTED_PASSWORD = new Password("encryptedPassword");

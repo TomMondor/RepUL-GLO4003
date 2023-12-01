@@ -4,24 +4,25 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 
 public class MealKit {
-    private final UniqueIdentifier mealKitId;
+    private final MealKitUniqueIdentifier mealKitId;
     private final List<Recipe> recipes;
     private final LocalDate deliveryDate;
-    private Optional<UniqueIdentifier> cookId = Optional.empty();
+    private Optional<CookUniqueIdentifier> cookId = Optional.empty();
     private boolean isCooked;
 
-    public MealKit(UniqueIdentifier mealKitId, LocalDate deliveryDate, List<Recipe> recipes) {
+    public MealKit(MealKitUniqueIdentifier mealKitId, LocalDate deliveryDate, List<Recipe> recipes) {
         this.mealKitId = mealKitId;
         this.recipes = recipes;
         this.deliveryDate = deliveryDate;
         this.isCooked = false;
     }
 
-    public UniqueIdentifier getMealKitId() {
+    public MealKitUniqueIdentifier getMealKitId() {
         return mealKitId;
     }
 
@@ -33,7 +34,7 @@ public class MealKit {
         return deliveryDate;
     }
 
-    public void selectBy(UniqueIdentifier cookId) {
+    public void selectBy(CookUniqueIdentifier cookId) {
         this.cookId = Optional.of(cookId);
     }
 
@@ -41,7 +42,7 @@ public class MealKit {
         cookId = Optional.empty();
     }
 
-    public boolean isSelectedBy(UniqueIdentifier cookId) {
+    public boolean isSelectedBy(CookUniqueIdentifier cookId) {
         return this.cookId.equals(Optional.of(cookId)) && !isCooked;
     }
 
@@ -58,7 +59,7 @@ public class MealKit {
         this.isCooked = true;
     }
 
-    public void recallMealKit(UniqueIdentifier cookId) {
+    public void recallMealKit(CookUniqueIdentifier cookId) {
         if (!isCooked()) {
             throw new MealKitNotCookedException();
         }

@@ -3,7 +3,8 @@ package ca.ulaval.glo4003.repul.user.api;
 import java.net.URI;
 
 import ca.ulaval.glo4003.repul.commons.api.UriFactory;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.api.assembler.UserResponseAssembler;
 import ca.ulaval.glo4003.repul.user.api.request.AddCardRequest;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
@@ -71,9 +72,10 @@ public class UserResource {
     @Roles(Role.CLIENT)
     @Path("/users")
     public Response getMyAccount(@Context ContainerRequestContext context) {
-        UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+        SubscriberUniqueIdentifier subscriberUniqueIdentifier =
+            new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        AccountResponse accountResponse = userResponseAssembler.toAccountResponse(userService.getAccount(accountId));
+        AccountResponse accountResponse = userResponseAssembler.toAccountResponse(userService.getAccount(subscriberUniqueIdentifier));
 
         return Response.ok(accountResponse).build();
     }
@@ -84,9 +86,10 @@ public class UserResource {
     @Roles(Role.CLIENT)
     @Path("/users:addCard")
     public Response addCard(@Context ContainerRequestContext context, @NotNull(message = "The body must not be null.") @Valid AddCardRequest addCardRequest) {
-        UniqueIdentifier accountId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+        SubscriberUniqueIdentifier subscriberUniqueIdentifier =
+            new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        userService.addCard(accountId, AddCardQuery.from(addCardRequest.cardNumber));
+        userService.addCard(subscriberUniqueIdentifier, AddCardQuery.from(addCardRequest.cardNumber));
 
         return Response.noContent().build();
     }

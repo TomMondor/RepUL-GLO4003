@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.notification.application.NotificationService;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
@@ -24,12 +26,12 @@ public class NotificationContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationContextInitializer.class);
 
     private UserAccountRepository userAccountRepository = new InMemoryUserAccountRepository();
-    private DeliveryPersonAccountRepository deliveryDeliveryPersonAccountRepository = new InMemoryDeliveryPersonAccountRepository();
+    private DeliveryPersonAccountRepository deliveryPersonAccountRepository = new InMemoryDeliveryPersonAccountRepository();
     private NotificationSender notificationSender = new LogNotificationSender();
 
     public NotificationContextInitializer withEmptyDeliveryAccountRepository(
         DeliveryPersonAccountRepository deliveryDeliveryPersonAccountRepository) {
-        this.deliveryDeliveryPersonAccountRepository = deliveryDeliveryPersonAccountRepository;
+        this.deliveryPersonAccountRepository = deliveryDeliveryPersonAccountRepository;
         return this;
     }
 
@@ -44,13 +46,13 @@ public class NotificationContextInitializer {
         return this;
     }
 
-    public NotificationContextInitializer withDeliveryAccounts(List<Map<UniqueIdentifier, String>> accounts) {
+    public NotificationContextInitializer withDeliveryAccounts(List<Map<DeliveryPersonUniqueIdentifier, String>> accounts) {
         accounts.forEach(
-            account -> account.forEach((id, email) -> deliveryDeliveryPersonAccountRepository.save(new DeliveryPersonAccount(id, new Email(email)))));
+            account -> account.forEach((id, email) -> deliveryPersonAccountRepository.save(new DeliveryPersonAccount(id, new Email(email)))));
         return this;
     }
 
-    public NotificationContextInitializer withUserAccounts(List<Map<UniqueIdentifier, String>> accounts) {
+    public NotificationContextInitializer withUserAccounts(List<Map<SubscriberUniqueIdentifier, String>> accounts) {
         accounts.forEach(account -> account.forEach((id, email) -> userAccountRepository.save(new UserAccount(id, new Email(email)))));
         return this;
     }
@@ -65,7 +67,7 @@ public class NotificationContextInitializer {
         return this;
     }
 
-    public NotificationContextInitializer withMealKitIdForUser(UniqueIdentifier mealKitId, UniqueIdentifier accountId) {
+    public NotificationContextInitializer withMealKitIdForUser(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier accountId) {
         UserAccount userAccount = userAccountRepository.getAccountById(accountId);
         userAccount.addMealKit(mealKitId);
         userAccountRepository.save(userAccount);
@@ -74,7 +76,7 @@ public class NotificationContextInitializer {
 
     public NotificationService createNotificationService(RepULEventBus eventBus) {
         LOGGER.info("Creating Notification service");
-        NotificationService notificationService = new NotificationService(userAccountRepository, deliveryDeliveryPersonAccountRepository, notificationSender);
+        NotificationService notificationService = new NotificationService(userAccountRepository, deliveryPersonAccountRepository, notificationSender);
         eventBus.register(notificationService);
         return notificationService;
     }

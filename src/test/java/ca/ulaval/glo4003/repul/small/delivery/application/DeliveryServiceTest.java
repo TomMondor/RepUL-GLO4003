@@ -17,7 +17,11 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
@@ -49,8 +53,9 @@ public class DeliveryServiceTest {
     private static final String A_DELIVERY_PERSON_ID = UUID.randomUUID().toString();
     private static final String A_CARGO_ID = UUID.randomUUID().toString();
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
-    private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_CARGO_ID);
-    private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_MEAL_KIT_ID);
+    private static final CargoUniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(A_CARGO_ID);
+    private static final MealKitUniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER =
+        new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(A_MEAL_KIT_ID);
     private static final RecallCookedMealKitEvent A_RECALL_COOKED_MEAL_KIT_EVENT = new RecallCookedMealKitEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER);
     private static final MealKitPickedUpByUserEvent A_MEAL_KIT_PICKED_UP_BY_USER_EVENT = new MealKitPickedUpByUserEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("Vachon");
@@ -65,13 +70,14 @@ public class DeliveryServiceTest {
     private static final MealKit A_DELIVERED_MEALKIT = new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.DELIVERED);
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final MealKit A_MEAL_KIT_WITH_LOCKER = new MealKitFixture().withLockerId(A_LOCKER_ID).build();
-    private static final UniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_DELIVERY_PERSON_ID);
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final DeliveryPersonUniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER =
+        new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom(A_DELIVERY_PERSON_ID);
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_MEAL_KIT_UNIQUE_IDENTIFIER, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, MealKitType.STANDARD, A_DELIVERY_LOCATION_ID,
             A_DELIVERY_DATE);
-    private static final UniqueIdentifier DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final DeliveryPersonUniqueIdentifier DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final Email DELIVERY_ACCOUNT_EMAIL = new Email("email@ulaval.ca");
     private static final DeliveryPersonAccountCreatedEvent DELIVERY_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(DELIVERY_ACCOUNT_ID, DELIVERY_ACCOUNT_EMAIL);
@@ -94,7 +100,7 @@ public class DeliveryServiceTest {
 
         deliveryService.handleDeliveryPersonAccountCreatedEvent(DELIVERY_ACCOUNT_CREATED_EVENT);
 
-        verify(mockDeliverySystem).addDeliveryPerson(any(UniqueIdentifier.class));
+        verify(mockDeliverySystem).addDeliveryPerson(any(DeliveryPersonUniqueIdentifier.class));
     }
 
     @Test

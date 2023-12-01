@@ -50,8 +50,8 @@ public class LockerAuthorizationResourceEnd2EndTest {
     @Test
     public void whenOpeningLocker_shouldReturn204() {
         addCardToUserAccount(A_USER_CARD_NUMBER);
-        cookMealKit(TestApplicationContext.FIRST_MEAL_KIT_ID.value().toString());
-        String lockerId = deliverMealKit(TestApplicationContext.FIRST_MEAL_KIT_ID.value().toString());
+        cookMealKit(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString());
+        String lockerId = deliverMealKit(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString());
         OpenLockerRequest openLockerRequest = new OpenLockerRequestFixture().withUserCardNumber(A_USER_CARD_NUMBER).withLockerId(lockerId).build();
 
         Response response = given().contentType("application/json").header("Authorization", "Bearer " + apiKey).body(openLockerRequest)

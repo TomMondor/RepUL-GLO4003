@@ -38,7 +38,7 @@ public class MealKitsResponseAssemblerTest {
         Recipe mealKitRecipe = A_MEALKIT.getRecipes().get(0);
         IngredientResponse expectedIngredientResponse = new IngredientResponse(mealKitRecipe.ingredients().get(0).name(),
             new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().value(), mealKitRecipe.ingredients().get(0).quantity().unit()));
-        MealKitResponse expectedMealKitsResponse = new MealKitResponse(A_MEALKIT.getMealKitId().value().toString(),
+        MealKitResponse expectedMealKitsResponse = new MealKitResponse(A_MEALKIT.getMealKitId().getUUID().toString(),
             List.of(new RecipeResponse(mealKitRecipe.name(), mealKitRecipe.calories(), List.of(expectedIngredientResponse))),
             A_MEALKIT.getDeliveryDate().toString());
 
@@ -53,7 +53,7 @@ public class MealKitsResponseAssemblerTest {
         Recipe mealKitRecipe = A_MEALKIT.getRecipes().get(0);
         IngredientResponse expectedIngredientResponse = new IngredientResponse(mealKitRecipe.ingredients().get(0).name(),
             new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().value() * 2, mealKitRecipe.ingredients().get(0).quantity().unit()));
-        MealKitResponse expectedMealKitsResponse = new MealKitResponse(A_MEALKIT.getMealKitId().value().toString(), List.of(
+        MealKitResponse expectedMealKitsResponse = new MealKitResponse(A_MEALKIT.getMealKitId().getUUID().toString(), List.of(
             new RecipeResponse(mealKitRecipe.name(), mealKitRecipe.calories(), List.of(new IngredientResponse(mealKitRecipe.ingredients().get(0).name(),
                 new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().value(), mealKitRecipe.ingredients().get(0).quantity().unit()))))),
             A_MEALKIT.getDeliveryDate().toString());

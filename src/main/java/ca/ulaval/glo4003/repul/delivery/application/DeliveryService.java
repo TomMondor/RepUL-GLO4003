@@ -5,7 +5,9 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
@@ -100,7 +102,7 @@ public class DeliveryService {
         return CargosPayload.from(deliverySystem.getCargosReadyToPickUp());
     }
 
-    public void pickupCargo(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId) {
+    public void pickupCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
 
         List<MealKit> mealKits = deliverySystem.pickupCargo(deliveryPersonId, cargoId);
@@ -114,7 +116,7 @@ public class DeliveryService {
         eventBus.publish(new PickedUpCargoEvent(mealKits.stream().map(MealKit::getMealKitId).toList()));
     }
 
-    public void cancelCargo(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId) {
+    public void cancelCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
 
         List<MealKit> mealKits = deliverySystem.cancelCargo(deliveryPersonId, cargoId);
@@ -124,7 +126,7 @@ public class DeliveryService {
         eventBus.publish(new CanceledCargoEvent(mealKits.stream().map(MealKit::getMealKitId).toList()));
     }
 
-    public void confirmDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
+    public void confirmDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
 
         deliverySystem.confirmDelivery(deliveryPersonId, cargoId, mealKitId);
@@ -137,7 +139,7 @@ public class DeliveryService {
             new ConfirmedDeliveryEvent(mealKit.getMealKitId(), mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(), LocalTime.now()));
     }
 
-    public LockerId recallDelivery(UniqueIdentifier deliveryPersonId, UniqueIdentifier cargoId, UniqueIdentifier mealKitId) {
+    public LockerId recallDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
 
         MealKit mealKit = deliverySystem.recallDelivery(deliveryPersonId, cargoId, mealKitId);
@@ -145,10 +147,7 @@ public class DeliveryService {
 
         deliverySystemRepository.save(deliverySystem);
 
-        eventBus.publish(new RecalledDeliveryEvent(
-            mealKitId,
-            lockerId,
-            mealKit.getDeliveryLocation().getLocationId()));
+        eventBus.publish(new RecalledDeliveryEvent(mealKitId, lockerId, mealKit.getDeliveryLocation().getLocationId()));
 
         return lockerId;
     }

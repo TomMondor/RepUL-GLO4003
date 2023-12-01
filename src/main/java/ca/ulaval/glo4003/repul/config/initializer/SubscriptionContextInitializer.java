@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
@@ -40,8 +42,11 @@ public class SubscriptionContextInitializer {
         List<Semester> semesters = parseSemesters();
         List<DeliveryLocationId> deliveryLocationIds = parseDeliveryLocationIds();
 
-        UniqueIdentifierFactory uniqueIdentifierFactory = new UniqueIdentifierFactory();
-        this.subscriptionFactory = new SubscriptionFactory(uniqueIdentifierFactory, new OrdersFactory(uniqueIdentifierFactory), semesters, deliveryLocationIds);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
+            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        this.subscriptionFactory =
+            new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
+                new OrdersFactory(mealKitUniqueIdentifierFactory), semesters, deliveryLocationIds);
     }
 
     public SubscriptionContextInitializer withEmptySubscriptionRepository(SubscriptionRepository subscriptionRepository) {

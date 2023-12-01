@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
@@ -34,9 +34,11 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthGuardTest {
-    private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory().generate();
+
+    private static final SubscriberUniqueIdentifier SUBSCRIBER_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final String A_UID_STRING = SUBSCRIBER_UNIQUE_IDENTIFIER.getUUID().toString();
     private static final String A_TOKEN = "valid-token-yolo";
-    private static final DecodedToken A_DECODED_TOKEN = new DecodedToken(A_UID, Role.CLIENT);
+    private static final DecodedToken A_DECODED_TOKEN = new DecodedToken(SUBSCRIBER_UNIQUE_IDENTIFIER, Role.CLIENT);
     private static final String A_NOT_BEARER_AUTHORIZATION_HEADER = "Ours uehriwhriehwiuhriwhr";
     private static final String A_VALID_BEARER_AUTHORIZATION_HEADER = "Bearer " + A_TOKEN;
     private static final String AN_INVALID_BEARER_AUTHORIZATION_HEADER = "Bearer " + A_TOKEN + "-invalid";
@@ -102,7 +104,7 @@ public class AuthGuardTest {
     @Test
     public void givenBearerToken_whenFilter_shouldCheckUid() throws IOException {
         given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
-        given(userRepository.findByUid(A_UID)).willReturn(mock(User.class));
+        given(userRepository.findByUid(SUBSCRIBER_UNIQUE_IDENTIFIER)).willReturn(mock(User.class));
         given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
 
         authGuard.filter(containerRequestContext);
@@ -113,7 +115,7 @@ public class AuthGuardTest {
     @Test
     public void givenBearerTokenWithInvalidUid_whenFilter_shouldAbortRequest() throws IOException {
         given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
-        given(userRepository.findByUid(A_UID)).willThrow(new UserNotFoundException());
+        given(userRepository.findByUid(SUBSCRIBER_UNIQUE_IDENTIFIER)).willThrow(new UserNotFoundException());
         given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
 
         authGuard.filter(containerRequestContext);
@@ -125,7 +127,7 @@ public class AuthGuardTest {
     public void givenRolesAnnotationAndWrongRole_whenFilter_shouldAbortRequest() throws IOException, NoSuchMethodException, SecurityException {
         User user = mockUserWithRole(Role.ADMIN);
         given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
-        given(userRepository.findByUid(A_UID)).willReturn(user);
+        given(userRepository.findByUid(SUBSCRIBER_UNIQUE_IDENTIFIER)).willReturn(user);
         given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
         Method mockedMethod = AuthGuardTest.class.getMethod("clientRoleMethod");
         given(resourceInfo.getResourceMethod()).willReturn(mockedMethod);
@@ -139,14 +141,14 @@ public class AuthGuardTest {
     public void givenRolesAnnotationAndAuthorizedRole_whenFilter_shouldNotAbortRequest() throws IOException, NoSuchMethodException, SecurityException {
         User user = mockUserWithRole(Role.CLIENT);
         given(containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION)).willReturn(A_VALID_BEARER_AUTHORIZATION_HEADER);
-        given(userRepository.findByUid(A_UID)).willReturn(user);
+        given(userRepository.findByUid(SUBSCRIBER_UNIQUE_IDENTIFIER)).willReturn(user);
         given(tokenDecoder.decode(A_TOKEN)).willReturn(A_DECODED_TOKEN);
         Method mockedMethod = AuthGuardTest.class.getMethod("clientRoleMethod");
         given(resourceInfo.getResourceMethod()).willReturn(mockedMethod);
 
         authGuard.filter(containerRequestContext);
 
-        verify(containerRequestContext).setProperty("uid", A_UID);
+        verify(containerRequestContext).setProperty("uid", A_UID_STRING);
     }
 
     private User mockUserWithRole(Role role) {

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.application.UserService;
@@ -28,7 +29,8 @@ import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 
 public class UserContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserContextInitializer.class);
-    private final UniqueIdentifierFactory uniqueIdentifierFactory = new UniqueIdentifierFactory();
+    private final UniqueIdentifierFactory<SubscriberUniqueIdentifier> subscriberUniqueIdentifierFactory =
+        new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class);
     private final RepULEventBus eventBus;
     private final PasswordEncoder passwordEncoder;
     private final UserFactory userFactory;
@@ -83,7 +85,8 @@ public class UserContextInitializer {
     public UserService createService() {
         LOGGER.info("Creating User service");
         UserService service =
-            new UserService(accountRepository, userRepository, accountFactory, userFactory, uniqueIdentifierFactory, tokenGenerator, passwordEncoder, eventBus);
+            new UserService(accountRepository, userRepository, accountFactory, userFactory, subscriberUniqueIdentifierFactory, tokenGenerator, passwordEncoder,
+                eventBus);
         eventBus.register(service);
         return service;
     }

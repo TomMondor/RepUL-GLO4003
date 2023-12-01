@@ -2,11 +2,11 @@ package ca.ulaval.glo4003.repul.delivery.domain;
 
 import java.util.Optional;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 
 public class Locker {
     private final LockerId lockerId;
-    private Optional<UniqueIdentifier> mealKitId = Optional.empty();
+    private Optional<MealKitUniqueIdentifier> mealKitId = Optional.empty();
 
     public Locker(LockerId lockerId) {
         this.lockerId = lockerId;
@@ -20,7 +20,7 @@ public class Locker {
         return this.mealKitId.isEmpty();
     }
 
-    public void assign(UniqueIdentifier mealKitId) {
+    public void assign(MealKitUniqueIdentifier mealKitId) {
         this.mealKitId = Optional.of(mealKitId);
     }
 

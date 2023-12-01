@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.api.assembler.OrdersResponseAssembler;
 import ca.ulaval.glo4003.repul.subscription.api.response.OrderResponse;
@@ -20,7 +20,7 @@ public class OrdersResponseAssemblerTest {
     private static final LocalDate ORDER_DELIVERY_DATE = LocalDate.now().plusDays(4);
     private static final OrderStatus ORDER_STATUS = OrderStatus.PENDING;
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
-    private static final UniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory().generate();
+    private static final MealKitUniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final OrdersPayload AN_ORDERS_PAYLOAD =
         new OrdersPayload(List.of(new OrderPayload(AN_ORDER_ID, A_MEAL_KIT_TYPE, ORDER_DELIVERY_DATE, ORDER_STATUS)));
 

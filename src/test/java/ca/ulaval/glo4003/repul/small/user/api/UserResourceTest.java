@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.user.AccountInformationPayloadFixture;
 import ca.ulaval.glo4003.repul.fixture.user.AddCardRequestFixture;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.verify;
 public class UserResourceTest {
     private static final RegistrationRequest A_REGISTRATION_REQUEST = new RegistrationRequestFixture().build();
     private static final AccountInformationPayload AN_ACCOUNT_INFORMATION_PAYLOAD = new AccountInformationPayloadFixture().build();
-    private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory().generate();
+    private static final SubscriberUniqueIdentifier A_UID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final LoginRequest A_LOGIN_REQUEST = new LoginRequestFixture().build();
     private static final AddCardRequest AN_ADD_CARD_REQUEST = new AddCardRequestFixture().build();
     private static final Token A_TOKEN = new Token("aToken", 3600);
@@ -112,7 +112,7 @@ public class UserResourceTest {
 
     @Test
     public void whenGettingMyAccount_shouldGetMyAccount() {
-        given(containerRequestContext.getProperty("uid")).willReturn(A_UID);
+        given(containerRequestContext.getProperty("uid")).willReturn(A_UID.getUUID().toString());
         given(userService.getAccount(A_UID)).willReturn(AN_ACCOUNT_INFORMATION_PAYLOAD);
 
         userResource.getMyAccount(containerRequestContext);
@@ -122,7 +122,7 @@ public class UserResourceTest {
 
     @Test
     public void whenGettingMyAccount_shouldReturn200() {
-        given(containerRequestContext.getProperty("uid")).willReturn(A_UID);
+        given(containerRequestContext.getProperty("uid")).willReturn(A_UID.getUUID().toString());
         given(userService.getAccount(A_UID)).willReturn(AN_ACCOUNT_INFORMATION_PAYLOAD);
 
         Response response = userResource.getMyAccount(containerRequestContext);
@@ -132,7 +132,7 @@ public class UserResourceTest {
 
     @Test
     public void whenAddingCard_shouldReturn204() {
-        given(containerRequestContext.getProperty("uid")).willReturn(A_UID);
+        given(containerRequestContext.getProperty("uid")).willReturn(A_UID.getUUID().toString());
 
         Response response = userResource.addCard(containerRequestContext, AN_ADD_CARD_REQUEST);
 
@@ -141,7 +141,7 @@ public class UserResourceTest {
 
     @Test
     public void whenAddingCard_shouldAddCardToAccount() {
-        given(containerRequestContext.getProperty("uid")).willReturn(A_UID);
+        given(containerRequestContext.getProperty("uid")).willReturn(A_UID.getUUID().toString());
         AddCardQuery addCardQuery = AddCardQuery.from(AN_ADD_CARD_REQUEST.cardNumber);
 
         userResource.addCard(containerRequestContext, AN_ADD_CARD_REQUEST);

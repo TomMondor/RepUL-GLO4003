@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEv
 import com.google.common.eventbus.Subscribe;
 
 public class MealKitEventHandler {
-    private CookingService cookingService;
+    private final CookingService cookingService;
 
     public MealKitEventHandler(CookingService cookingService) {
         this.cookingService = cookingService;

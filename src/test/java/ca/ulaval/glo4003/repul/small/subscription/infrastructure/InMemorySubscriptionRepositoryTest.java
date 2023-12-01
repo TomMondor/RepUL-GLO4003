@@ -9,7 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
@@ -23,10 +25,11 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class InMemorySubscriptionRepositoryTest {
-    private static final UniqueIdentifier A_SUBSCRIPTION_VALID_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier ANOTHER_SUBSCRIPTION_VALID_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_SUBSCRIBER_VALID_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory().generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_VALID_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier ANOTHER_SUBSCRIPTION_VALID_ID =
+        new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_VALID_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final MealKitUniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     @Mock
     private Subscription subscription;
 

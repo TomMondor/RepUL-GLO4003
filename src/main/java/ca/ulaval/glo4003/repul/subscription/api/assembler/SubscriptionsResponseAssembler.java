@@ -14,7 +14,7 @@ public class SubscriptionsResponseAssembler {
 
     public SubscriptionResponse toSubscriptionResponse(SubscriptionPayload subscriptionPayload) {
         return new SubscriptionResponse(
-            subscriptionPayload.subscriptionId().value().toString(),
+            subscriptionPayload.subscriptionId().getUUID().toString(),
             subscriptionPayload.frequency().dayOfWeek().name(),
             subscriptionPayload.deliveryLocationId().value(),
             subscriptionPayload.mealKitType().name(),

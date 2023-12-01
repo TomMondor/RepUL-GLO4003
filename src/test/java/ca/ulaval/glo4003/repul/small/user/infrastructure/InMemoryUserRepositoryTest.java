@@ -19,7 +19,7 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class InMemoryUserRepositoryTest {
-    private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier A_UID = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generate();
     private static final Email AN_EMAIL = new Email("anEmail@ulaval.ca");
     private UserRepository inMemoryUserRepository;
 

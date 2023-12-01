@@ -20,7 +20,7 @@ public class PaymentService {
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
         String message = String.format("The account with id %s has been debited $%s for a meal kit of type %s to be delivered on %s",
-            mealKitConfirmedEvent.accountId.value().toString(), mealKitPrices.get(mealKitConfirmedEvent.mealKitType).getValue(),
+            mealKitConfirmedEvent.subscriberId.getUUID().toString(), mealKitPrices.get(mealKitConfirmedEvent.mealKitType).getValue(),
             mealKitConfirmedEvent.mealKitType.toString(), mealKitConfirmedEvent.deliveryDate.toString());
         System.out.println(message);
     }

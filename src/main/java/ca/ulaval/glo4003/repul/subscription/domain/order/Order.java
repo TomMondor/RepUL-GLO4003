@@ -5,25 +5,25 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderNotPendingException;
 
 public class Order {
     private static final int DAYS_TO_CONFIRM = 2;
     private static final LocalTime OPENING_TIME = LocalTime.of(9, 0);
     private final LocalDate deliveryDate;
-    private final UniqueIdentifier orderId;
+    private final MealKitUniqueIdentifier orderId;
     private final MealKitType mealKitType;
     private OrderStatus orderStatus;
 
-    public Order(UniqueIdentifier orderId, MealKitType mealKitType, LocalDate deliveryDate, OrderStatus orderStatus) {
+    public Order(MealKitUniqueIdentifier orderId, MealKitType mealKitType, LocalDate deliveryDate, OrderStatus orderStatus) {
         this.orderId = orderId;
         this.mealKitType = mealKitType;
         this.orderStatus = orderStatus;
         this.deliveryDate = deliveryDate;
     }
 
-    public Order(UniqueIdentifier orderId, MealKitType mealKitType, LocalDate deliveryDate) {
+    public Order(MealKitUniqueIdentifier orderId, MealKitType mealKitType, LocalDate deliveryDate) {
         this(orderId, mealKitType, deliveryDate, OrderStatus.PENDING);
     }
 
@@ -36,7 +36,7 @@ public class Order {
         return orderStatus;
     }
 
-    public UniqueIdentifier getOrderId() {
+    public MealKitUniqueIdentifier getOrderId() {
         return orderId;
     }
 

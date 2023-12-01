@@ -7,7 +7,8 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
@@ -16,8 +17,8 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 
 public class SubscriptionFixture {
-    private UniqueIdentifier subscriberId;
-    private UniqueIdentifier subscriptionId;
+    private SubscriberUniqueIdentifier subscriberId;
+    private SubscriptionUniqueIdentifier subscriptionId;
     private List<Order> orders;
     private Frequency frequency;
     private DeliveryLocationId deliveryLocationId;
@@ -26,8 +27,8 @@ public class SubscriptionFixture {
     private MealKitType mealKitType;
 
     public SubscriptionFixture() {
-        subscriptionId = new UniqueIdentifierFactory().generate();
-        subscriberId = new UniqueIdentifierFactory().generate();
+        subscriptionId = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+        subscriberId = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
         orders = new ArrayList<>();
         frequency = new Frequency(DayOfWeek.FRIDAY);
         deliveryLocationId = new DeliveryLocationId("location");
@@ -36,12 +37,12 @@ public class SubscriptionFixture {
         mealKitType = MealKitType.STANDARD;
     }
 
-    public SubscriptionFixture withSubscriptionId(UniqueIdentifier subscriptionId) {
+    public SubscriptionFixture withSubscriptionId(SubscriptionUniqueIdentifier subscriptionId) {
         this.subscriptionId = subscriptionId;
         return this;
     }
 
-    public SubscriptionFixture withSubscriberId(UniqueIdentifier subscriberId) {
+    public SubscriptionFixture withSubscriberId(SubscriberUniqueIdentifier subscriberId) {
         this.subscriberId = subscriberId;
         return this;
     }

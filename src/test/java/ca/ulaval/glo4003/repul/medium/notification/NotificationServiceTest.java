@@ -17,7 +17,11 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
@@ -44,20 +48,20 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationServiceTest {
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new SubscriberUniqueIdentifier(UUID.randomUUID());
     private static final Email AN_EMAIL = new Email("idul12@ulaval.ca");
     private static final Email ANOTHER_EMAIL = new Email("idul456@ulaval.ca");
-    private static final UniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new MealKitUniqueIdentifier(UUID.randomUUID());
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new SubscriptionUniqueIdentifier(UUID.randomUUID());
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("DESJARDINS");
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(2);
     private static final LocalTime A_DELIVERY_TIME = LocalTime.now().plusHours(48);
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("LOCKER_ID", 121135));
-    private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final CargoUniqueIdentifier A_CARGO_ID = new CargoUniqueIdentifier(UUID.randomUUID());
     private static final KitchenLocationId A_KITCHEN_ID = new KitchenLocationId("KITCHEN_ID");
-    private static final UniqueIdentifier A_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
-    private static final UniqueIdentifier ANOTHER_DELIVERY_PERSON_ID = new UniqueIdentifier(UUID.randomUUID());
+    private static final DeliveryPersonUniqueIdentifier A_DELIVERY_PERSON_ID = new DeliveryPersonUniqueIdentifier(UUID.randomUUID());
+    private static final DeliveryPersonUniqueIdentifier ANOTHER_DELIVERY_PERSON_ID = new DeliveryPersonUniqueIdentifier(UUID.randomUUID());
     private RepULEventBus eventBus;
     @Mock
     private NotificationSender notificationSender;
@@ -101,8 +105,8 @@ public class NotificationServiceTest {
         eventBus.publish(new DeliveryPersonAccountCreatedEvent(ANOTHER_DELIVERY_PERSON_ID, ANOTHER_EMAIL));
 
         MealKitDto mealKitDto = new MealKitDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID);
-        eventBus.publish(new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_ID,
-            List.of(A_DELIVERY_PERSON_ID, ANOTHER_DELIVERY_PERSON_ID), List.of(mealKitDto)));
+        eventBus.publish(
+            new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_ID, List.of(A_DELIVERY_PERSON_ID, ANOTHER_DELIVERY_PERSON_ID), List.of(mealKitDto)));
 
         verify(notificationSender, times(2)).send(any(Account.class), any(NotificationMessage.class));
     }

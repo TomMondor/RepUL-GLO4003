@@ -103,7 +103,7 @@ public class CargoResourceEnd2EndTest {
         pickupCargo(accountToken, cargoId);
 
         Response response = given().header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.value().toString() + ":confirm");
+            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.getUUID().toString() + ":confirm");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -116,7 +116,7 @@ public class CargoResourceEnd2EndTest {
         confirmDelivery(accountToken, cargoId);
 
         Response response = given().header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.value().toString() + ":recall");
+            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.getUUID().toString() + ":recall");
 
         assertEquals(200, response.getStatusCode());
     }
@@ -151,6 +151,6 @@ public class CargoResourceEnd2EndTest {
 
     private void confirmDelivery(String accountToken, String cargoId) {
         given().header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.value().toString() + ":confirm");
+            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.getUUID().toString() + ":confirm");
     }
 }

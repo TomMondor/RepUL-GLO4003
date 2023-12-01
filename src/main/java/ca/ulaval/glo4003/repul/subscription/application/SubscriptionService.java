@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
@@ -30,18 +32,14 @@ public class SubscriptionService {
     private final SubscriptionFactory subscriptionFactory;
     private final RepULEventBus eventBus;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionFactory subscriptionFactory,
-                               RepULEventBus eventBus) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionFactory subscriptionFactory, RepULEventBus eventBus) {
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionFactory = subscriptionFactory;
         this.eventBus = eventBus;
     }
 
-    public UniqueIdentifier createSubscription(UniqueIdentifier subscriberId, SubscriptionQuery subscriptionQuery) {
-        Subscription subscription = subscriptionFactory.createSubscription(
-            subscriberId,
-            subscriptionQuery.deliveryLocationId(),
-            subscriptionQuery.dayOfWeek(),
+    public SubscriptionUniqueIdentifier createSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionQuery subscriptionQuery) {
+        Subscription subscription = subscriptionFactory.createSubscription(subscriberId, subscriptionQuery.deliveryLocationId(), subscriptionQuery.dayOfWeek(),
             subscriptionQuery.mealKitType());
 
         subscriptionRepository.save(subscription);
@@ -51,15 +49,14 @@ public class SubscriptionService {
 
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
-        Subscription subscription =
-            subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
         subscription.markOrderAsPickedUp(event.mealKitId);
         subscriptionRepository.save(subscription);
     }
 
     @Subscribe
     public void handleMealKitsCookedEvent(MealKitsCookedEvent event) {
-        for (UniqueIdentifier orderId : event.mealKitIds) {
+        for (MealKitUniqueIdentifier orderId : event.mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
             subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.save(subscription);
@@ -68,15 +65,14 @@ public class SubscriptionService {
 
     @Subscribe
     public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
-        Subscription subscription =
-            subscriptionRepository.getSubscriptionByOrderId(recallCookedMealKitEvent.mealKitId);
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(recallCookedMealKitEvent.mealKitId);
         subscription.markCurrentOrderAsToCook();
         subscriptionRepository.save(subscription);
     }
 
     @Subscribe
     public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
-        for (UniqueIdentifier orderId : event.mealKitIds) {
+        for (MealKitUniqueIdentifier orderId : event.mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
             subscription.markCurrentOrderAsInDelivery();
             subscriptionRepository.save(subscription);
@@ -85,7 +81,7 @@ public class SubscriptionService {
 
     @Subscribe
     public void handleCanceledCargoEvent(CanceledCargoEvent event) {
-        for (UniqueIdentifier orderId : event.mealKitIds) {
+        for (MealKitUniqueIdentifier orderId : event.mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
             subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.save(subscription);
@@ -106,7 +102,7 @@ public class SubscriptionService {
         subscriptionRepository.save(subscription);
     }
 
-    public SubscriptionsPayload getSubscriptions(UniqueIdentifier subscriberId) {
+    public SubscriptionsPayload getSubscriptions(SubscriberUniqueIdentifier subscriberId) {
         List<Subscription> subscriptions = subscriptionRepository.getBySubscriberId(subscriberId);
 
         List<SubscriptionPayload> subscriptionPayloads = subscriptions.stream().map(SubscriptionPayload::from).toList();
@@ -114,12 +110,12 @@ public class SubscriptionService {
         return new SubscriptionsPayload(subscriptionPayloads);
     }
 
-    public SubscriptionPayload getSubscriptionById(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {
+    public SubscriptionPayload getSubscriptionById(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId) {
         Subscription subscription = getSubscription(subscriberId, subscriptionId);
         return SubscriptionPayload.from(subscription);
     }
 
-    public void confirmNextMealKitForSubscription(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {
+    public void confirmNextMealKitForSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId) {
         Subscription subscription = getSubscription(subscriberId, subscriptionId);
 
         Order confirmedOrder = subscription.confirmNextMealKit();
@@ -130,7 +126,7 @@ public class SubscriptionService {
             subscription.getMealKitType(), subscription.getDeliveryLocationId(), confirmedOrder.getDeliveryDate()));
     }
 
-    public void declineNextMealKitForSubscription(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {
+    public void declineNextMealKitForSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId) {
         Subscription subscription = getSubscription(subscriberId, subscriptionId);
 
         subscription.declineNextMealKit();
@@ -138,7 +134,7 @@ public class SubscriptionService {
         subscriptionRepository.save(subscription);
     }
 
-    private Subscription getSubscription(UniqueIdentifier subscriberId, UniqueIdentifier subscriptionId) {
+    private Subscription getSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId) {
         Subscription subscription = subscriptionRepository.getById(subscriptionId);
 
         if (!subscription.getSubscriberId().equals(subscriberId)) {
@@ -147,13 +143,10 @@ public class SubscriptionService {
         return subscription;
     }
 
-    public OrdersPayload getCurrentOrders(UniqueIdentifier subscriberId) {
+    public OrdersPayload getCurrentOrders(SubscriberUniqueIdentifier subscriberId) {
         List<Subscription> subscriptions = subscriptionRepository.getBySubscriberId(subscriberId);
 
-        List<Order> currentOrders = subscriptions.stream()
-            .map(Subscription::findCurrentOrder)
-            .filter(Optional::isPresent)
-            .map(Optional::get).toList();
+        List<Order> currentOrders = subscriptions.stream().map(Subscription::findCurrentOrder).filter(Optional::isPresent).map(Optional::get).toList();
 
         return OrdersPayload.from(currentOrders);
     }

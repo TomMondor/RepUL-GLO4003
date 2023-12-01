@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.fixture.delivery;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
@@ -12,13 +12,13 @@ import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 
 public class MealKitFixture {
     private DeliveryLocation deliveryLocation;
-    private UniqueIdentifier mealKitId;
+    private MealKitUniqueIdentifier mealKitId;
     private Optional<LockerId> lockerId;
     private DeliveryStatus status;
 
     public MealKitFixture() {
         this.deliveryLocation = new DeliveryLocation(new DeliveryLocationId("Pouliot"), "Pouliot", 10);
-        this.mealKitId = new UniqueIdentifierFactory().generate();
+        this.mealKitId = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
         this.status = DeliveryStatus.READY_TO_BE_DELIVERED;
         this.lockerId = Optional.empty();
     }
@@ -28,7 +28,7 @@ public class MealKitFixture {
         return this;
     }
 
-    public MealKitFixture withMealKitId(UniqueIdentifier mealKitId) {
+    public MealKitFixture withMealKitId(MealKitUniqueIdentifier mealKitId) {
         this.mealKitId = mealKitId;
         return this;
     }

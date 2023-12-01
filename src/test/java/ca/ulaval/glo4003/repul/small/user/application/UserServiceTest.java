@@ -59,7 +59,7 @@ public class UserServiceTest {
     private static final String A_CARD_NUMBER = "123456789";
     private static final AddCardQuery AN_ADD_CARD_QUERY = AddCardQuery.from(A_CARD_NUMBER);
 
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generate();
 
     private UserService userService;
 
@@ -144,7 +144,7 @@ public class UserServiceTest {
 
     @Test
     public void whenRegistering_shouldCreateUser() {
-        UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory().generate();
+        UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generate();
         given(uniqueIdentifierFactory.generate()).willReturn(uniqueIdentifier);
         given(userRepository.exists(any())).willReturn(false);
         given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());
@@ -173,7 +173,7 @@ public class UserServiceTest {
 
     @Test
     public void whenRegistering_shouldCreateAccount() {
-        UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory().generate();
+        UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generate();
         given(uniqueIdentifierFactory.generate()).willReturn(uniqueIdentifier);
         given(userRepository.exists(any())).willReturn(false);
         given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());

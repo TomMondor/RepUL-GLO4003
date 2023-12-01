@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.small.subscription.domain.order;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class OrdersFactoryTest {
-    private static final UniqueIdentifier A_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generate();
+    private static final MealKitUniqueIdentifier A_UNIQUE_IDENTIFIER = new MealKitUniqueIdentifier(UUID.randomUUID());
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private OrdersFactory ordersFactory;
     @Mock
@@ -41,8 +42,8 @@ public class OrdersFactoryTest {
         DayOfWeek chosenDayOfWeek = DayOfWeek.from(firstOrderDate);
         long expectedOrdersCount = 2;
         LocalDate endOfSemester = firstOrderDate.plusDays((expectedOrdersCount - 1) * 7 + 1);
-        List<Order> expectedOrders = List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate),
-            new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)));
+        List<Order> expectedOrders =
+            List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate), new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)));
 
         List<Order> orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
 
@@ -58,9 +59,9 @@ public class OrdersFactoryTest {
         DayOfWeek chosenDayOfWeek = DayOfWeek.from(firstOrderDate);
         int expectedOrdersCount = 3;
         LocalDate endOfSemester = firstOrderDate.plusDays((expectedOrdersCount - 1) * 7 + 1);
-        List<Order> expectedOrders = List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate),
-            new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)),
-            new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(14)));
+        List<Order> expectedOrders =
+            List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate), new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)),
+                new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(14)));
 
         List<Order> orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
 
@@ -77,9 +78,9 @@ public class OrdersFactoryTest {
         DayOfWeek chosenDayOfWeek = DayOfWeek.from(firstOrderDate);
         int expectedOrdersCount = 3;
         LocalDate endOfSemester = firstOrderDate.plusDays((expectedOrdersCount - 1) * 7 + 1);
-        List<Order> expectedOrders = List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate),
-            new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)),
-            new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(14)));
+        List<Order> expectedOrders =
+            List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate), new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)),
+                new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(14)));
 
         List<Order> orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
 

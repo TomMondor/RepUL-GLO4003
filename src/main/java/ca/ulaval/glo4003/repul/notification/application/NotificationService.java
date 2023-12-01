@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.notification.application;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.notification.domain.Account;
@@ -22,8 +22,7 @@ public class NotificationService {
     private final NotificationSender notificationSender;
     private final MessageFactory messageFactory = new MessageFactory();
 
-    public NotificationService(UserAccountRepository userAccountRepository,
-                               DeliveryPersonAccountRepository deliveryPersonAccountRepository,
+    public NotificationService(UserAccountRepository userAccountRepository, DeliveryPersonAccountRepository deliveryPersonAccountRepository,
                                NotificationSender notificationSender) {
         this.userAccountRepository = userAccountRepository;
         this.deliveryPersonAccountRepository = deliveryPersonAccountRepository;
@@ -45,10 +44,10 @@ public class NotificationService {
 
     @Subscribe
     public void handleMealKitReceivedForDeliveryEvent(MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent) {
-        NotificationMessage message = messageFactory.createReadyToBeDeliveredMessage(mealKitReceivedForDeliveryEvent.cargoId,
-            mealKitReceivedForDeliveryEvent.kitchenLocationId,
-            mealKitReceivedForDeliveryEvent.mealKitDtos);
-        for (UniqueIdentifier availableShipperId : mealKitReceivedForDeliveryEvent.availableDeliveryPeople) {
+        NotificationMessage message =
+            messageFactory.createReadyToBeDeliveredMessage(mealKitReceivedForDeliveryEvent.cargoId, mealKitReceivedForDeliveryEvent.kitchenLocationId,
+                mealKitReceivedForDeliveryEvent.mealKitDtos);
+        for (DeliveryPersonUniqueIdentifier availableShipperId : mealKitReceivedForDeliveryEvent.availableDeliveryPeople) {
             Account account = deliveryPersonAccountRepository.getByAccountId(availableShipperId);
             notificationSender.send(account, message);
         }
@@ -56,18 +55,15 @@ public class NotificationService {
 
     @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent confirmedDeliveryEvent) {
-        NotificationMessage message = messageFactory.createDeliveredMessage(confirmedDeliveryEvent.mealKitId,
-            confirmedDeliveryEvent.deliveryLocationId, confirmedDeliveryEvent.deliveryTime,
-            confirmedDeliveryEvent.lockerId);
-        UserAccount userAccount = userAccountRepository
-            .getAccountByMealKitId(confirmedDeliveryEvent.mealKitId);
+        NotificationMessage message = messageFactory.createDeliveredMessage(confirmedDeliveryEvent.mealKitId, confirmedDeliveryEvent.deliveryLocationId,
+            confirmedDeliveryEvent.deliveryTime, confirmedDeliveryEvent.lockerId);
+        UserAccount userAccount = userAccountRepository.getAccountByMealKitId(confirmedDeliveryEvent.mealKitId);
         notificationSender.send(userAccount, message);
     }
 
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
-        UserAccount userAccount = userAccountRepository
-            .getAccountById(mealKitConfirmedEvent.accountId);
+        UserAccount userAccount = userAccountRepository.getAccountById(mealKitConfirmedEvent.subscriberId);
         userAccount.addMealKit(mealKitConfirmedEvent.mealKitId);
         userAccountRepository.save(userAccount);
     }

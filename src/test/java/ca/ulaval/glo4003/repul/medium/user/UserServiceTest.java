@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
@@ -44,7 +45,7 @@ public class UserServiceTest {
         tokenDecoder = new JWTTokenDecoder();
         userService =
             new UserService(new InMemoryAccountRepository(), new InMemoryUserRepository(), new AccountFactory(), new UserFactory(new CryptPasswordEncoder()),
-                new UniqueIdentifierFactory(), new JWTTokenGenerator(), new CryptPasswordEncoder(), new GuavaEventBus());
+                new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class), new JWTTokenGenerator(), new CryptPasswordEncoder(), new GuavaEventBus());
     }
 
     @Test

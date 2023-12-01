@@ -11,7 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
@@ -25,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class KitchenTest {
-    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory().generate();
+    private static final MealKitUniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    private static final MealKitUniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
-    private static final UniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory().generate();
+    private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
 
     private Kitchen kitchen;
 
@@ -83,7 +84,7 @@ public class KitchenTest {
     public void givenSelectedMealKit_whenGetSelection_shouldReturnMealKit() {
         addMealKit(A_MEALKIT_ID, true);
 
-        List<UniqueIdentifier> selection = kitchen.getSelection(A_COOK_ID);
+        List<MealKitUniqueIdentifier> selection = kitchen.getSelection(A_COOK_ID);
 
         assertEquals(A_MEALKIT_ID, selection.get(0));
     }
@@ -125,7 +126,7 @@ public class KitchenTest {
 
         kitchen.confirmCooked(A_COOK_ID, A_MEALKIT_ID);
 
-        List<UniqueIdentifier> mealKitsToCookIds = kitchen.getMealKitsToCook().stream().map(MealKit::getMealKitId).toList();
+        List<MealKitUniqueIdentifier> mealKitsToCookIds = kitchen.getMealKitsToCook().stream().map(MealKit::getMealKitId).toList();
         assertFalse(mealKitsToCookIds.contains(A_MEALKIT_ID));
         assertFalse(mealKitsToCookIds.contains(ANOTHER_MEALKIT_ID));
         assertFalse(kitchen.getSelection(A_COOK_ID).contains(A_MEALKIT_ID));
@@ -146,7 +147,7 @@ public class KitchenTest {
 
         kitchen.confirmCooked(A_COOK_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
 
-        List<UniqueIdentifier> mealKitsToCookIds = kitchen.getMealKitsToCook().stream().map(MealKit::getMealKitId).toList();
+        List<MealKitUniqueIdentifier> mealKitsToCookIds = kitchen.getMealKitsToCook().stream().map(MealKit::getMealKitId).toList();
         assertFalse(mealKitsToCookIds.contains(A_MEALKIT_ID));
         assertFalse(mealKitsToCookIds.contains(ANOTHER_MEALKIT_ID));
         assertFalse(kitchen.getSelection(A_COOK_ID).contains(A_MEALKIT_ID));
@@ -162,7 +163,7 @@ public class KitchenTest {
         assertThrows(MealKitNotFoundException.class, () -> kitchen.recallCooked(A_COOK_ID, A_MEALKIT_ID));
     }
 
-    private void addMealKit(UniqueIdentifier mealKitId, boolean selected) {
+    private void addMealKit(MealKitUniqueIdentifier mealKitId, boolean selected) {
         kitchen.addMealKit(mealKitId, A_MEALKIT_TYPE, TOMORROW);
 
         if (selected) {

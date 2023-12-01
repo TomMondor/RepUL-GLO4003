@@ -3,25 +3,25 @@ package ca.ulaval.glo4003.repul.fixture.subscription;
 import java.time.LocalDate;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 
 public class OrderFixture {
-    private UniqueIdentifier orderId;
+    private MealKitUniqueIdentifier orderId;
     private MealKitType mealKitType;
     private OrderStatus orderStatus;
     private LocalDate deliveryDate;
 
     public OrderFixture() {
-        this.orderId = new UniqueIdentifierFactory().generate();
+        this.orderId = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
         this.mealKitType = MealKitType.STANDARD;
         this.orderStatus = OrderStatus.PENDING;
         this.deliveryDate = LocalDate.now().plusDays(4);
     }
 
-    public OrderFixture withOrderId(UniqueIdentifier orderId) {
+    public OrderFixture withOrderId(MealKitUniqueIdentifier orderId) {
         this.orderId = orderId;
         return this;
     }

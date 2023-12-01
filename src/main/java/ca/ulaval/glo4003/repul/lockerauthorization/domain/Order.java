@@ -2,14 +2,15 @@ package ca.ulaval.glo4003.repul.lockerauthorization.domain;
 
 import java.util.Optional;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 
 public class Order {
-    private final UniqueIdentifier userId;
-    private final UniqueIdentifier mealKitId;
+    private final SubscriberUniqueIdentifier userId;
+    private final MealKitUniqueIdentifier mealKitId;
     private Optional<LockerId> lockerId;
 
-    public Order(UniqueIdentifier userId, UniqueIdentifier mealKitId) {
+    public Order(SubscriberUniqueIdentifier userId, MealKitUniqueIdentifier mealKitId) {
         this.userId = userId;
         this.mealKitId = mealKitId;
         this.lockerId = Optional.empty();
@@ -23,11 +24,11 @@ public class Order {
         this.lockerId = Optional.empty();
     }
 
-    public UniqueIdentifier getUserId() {
+    public SubscriberUniqueIdentifier getUserId() {
         return userId;
     }
 
-    public UniqueIdentifier getMealKitId() {
+    public MealKitUniqueIdentifier getMealKitId() {
         return mealKitId;
     }
 

@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.fixture.user;
 import java.time.LocalDate;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.domain.account.Account;
@@ -20,7 +21,7 @@ public class AccountFixture {
     private Email email;
 
     public AccountFixture() {
-        uid = new UniqueIdentifierFactory().generate();
+        uid = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
         name = new Name("John Doe");
         birthDate = new Birthdate(LocalDate.now().minusYears(23));
         gender = Gender.UNDISCLOSED;

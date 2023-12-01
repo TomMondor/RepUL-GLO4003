@@ -3,7 +3,8 @@ package ca.ulaval.glo4003.repul.small.lockerauthorization.domain;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
@@ -16,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LockerAuthorizationSystemTest {
-    private static final UniqueIdentifier AN_USER_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    private static final SubscriberUniqueIdentifier AN_USER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("123456789");
     private static final UserCardNumber ANOTHER_USER_CARD_NUMBER = new UserCardNumber("987654321");
     private static final LockerId A_LOCKER_ID = new LockerId("1234");

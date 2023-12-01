@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.notification.application.exception.DeliveryPersonAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class InMemoryDeliveryPersonAccountRepositoryTest {
-    private static final UniqueIdentifier ACCOUNT_VALID_ID = new UniqueIdentifierFactory().generate();
+    private static final DeliveryPersonUniqueIdentifier ACCOUNT_VALID_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     @Mock
     private DeliveryPersonAccount deliveryPersonAccount;
     private InMemoryDeliveryPersonAccountRepository inMemoryDeliveryPersonAccountRepository;
@@ -40,7 +40,6 @@ public class InMemoryDeliveryPersonAccountRepositoryTest {
 
     @Test
     public void givenNoAccount_whenGettingAccount_shouldThrowDeliveryPersonAccountNotFoundException() {
-        assertThrows(DeliveryPersonAccountNotFoundException.class,
-            () -> inMemoryDeliveryPersonAccountRepository.getByAccountId(ACCOUNT_VALID_ID));
+        assertThrows(DeliveryPersonAccountNotFoundException.class, () -> inMemoryDeliveryPersonAccountRepository.getByAccountId(ACCOUNT_VALID_ID));
     }
 }

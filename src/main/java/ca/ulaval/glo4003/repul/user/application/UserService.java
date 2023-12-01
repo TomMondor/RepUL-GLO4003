@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
@@ -33,19 +34,19 @@ public class UserService {
     private final AccountFactory accountFactory;
     private final UserRepository userRepository;
     private final UserFactory userFactory;
-    private final UniqueIdentifierFactory uniqueIdentifierFactory;
+    private final UniqueIdentifierFactory<SubscriberUniqueIdentifier> subscriberUniqueIdentifierFactory;
     private final TokenGenerator tokenGenerator;
     private final RepULEventBus eventBus;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(AccountRepository accountRepository, UserRepository userRepository, AccountFactory accountFactory, UserFactory userFactory,
-                       UniqueIdentifierFactory uniqueIdentifierFactory, TokenGenerator tokenGenerator, PasswordEncoder passwordEncoder,
-                       RepULEventBus eventBus) {
+                       UniqueIdentifierFactory<SubscriberUniqueIdentifier> subscriberUniqueIdentifierFactory, TokenGenerator tokenGenerator,
+                       PasswordEncoder passwordEncoder, RepULEventBus eventBus) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.accountFactory = accountFactory;
         this.userFactory = userFactory;
-        this.uniqueIdentifierFactory = uniqueIdentifierFactory;
+        this.subscriberUniqueIdentifierFactory = subscriberUniqueIdentifierFactory;
         this.tokenGenerator = tokenGenerator;
         this.eventBus = eventBus;
         this.passwordEncoder = passwordEncoder;
@@ -58,7 +59,7 @@ public class UserService {
         if (accountRepository.getByIDUL(registrationQuery.idul()).isPresent()) {
             throw new IDULAlreadyInUseException();
         }
-        UniqueIdentifier uniqueIdentifier = uniqueIdentifierFactory.generate();
+        UniqueIdentifier uniqueIdentifier = subscriberUniqueIdentifierFactory.generate();
         User newUser = userFactory.createUser(uniqueIdentifier, registrationQuery.email(), Role.CLIENT, registrationQuery.password());
         userRepository.save(newUser);
 

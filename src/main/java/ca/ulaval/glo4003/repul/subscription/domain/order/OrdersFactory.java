@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
 
 public class OrdersFactory {
-    UniqueIdentifierFactory uniqueIdentifierFactory;
+    UniqueIdentifierFactory<MealKitUniqueIdentifier> uniqueIdentifierFactory;
 
-    public OrdersFactory(UniqueIdentifierFactory uniqueIdentifierFactory) {
+    public OrdersFactory(UniqueIdentifierFactory<MealKitUniqueIdentifier> uniqueIdentifierFactory) {
         this.uniqueIdentifierFactory = uniqueIdentifierFactory;
     }
 

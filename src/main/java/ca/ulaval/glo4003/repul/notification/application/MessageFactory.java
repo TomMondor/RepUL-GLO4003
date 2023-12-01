@@ -5,16 +5,16 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 
 public class MessageFactory {
 
-    public NotificationMessage createReadyToBeDeliveredMessage(UniqueIdentifier cargoId, KitchenLocationId locationId,
-                                                               List<MealKitDto> mealKitDtos) {
-        String messageBody = "Your meal kits (cargo id: " + cargoId.value().toString() + ") are ready to be fetched from " + locationId.value() + ".\n";
+    public NotificationMessage createReadyToBeDeliveredMessage(CargoUniqueIdentifier cargoId, KitchenLocationId locationId, List<MealKitDto> mealKitDtos) {
+        String messageBody = "Your meal kits (cargo id: " + cargoId.getUUID().toString() + ") are ready to be fetched from " + locationId.value() + ".\n";
         messageBody += "Here is the list of meal kits to be delivered:\n";
         for (MealKitDto mealKitDto : mealKitDtos) {
             String lockerId;
@@ -23,16 +23,15 @@ public class MessageFactory {
             } else {
                 lockerId = "To Be Determined";
             }
-            messageBody += "MealKit ID " + mealKitDto.mealKitId().value() + " to " + mealKitDto.deliveryLocationId().value() + " in box " +
-                lockerId + "\n";
+            messageBody += "MealKit ID " + mealKitDto.mealKitId().getUUID() + " to " + mealKitDto.deliveryLocationId().value() + " in box " + lockerId + "\n";
         }
         String messageTitle = "RepUL - Meal kits ready to be delivered";
         return new NotificationMessage(messageTitle, messageBody);
     }
 
-    public NotificationMessage createDeliveredMessage(UniqueIdentifier mealKitId,
-                                         DeliveryLocationId deliveryLocationId, LocalTime localTime, LockerId lockerId) {
-        String messageBody = "Your meal kit with id " + mealKitId.value().toString();
+    public NotificationMessage createDeliveredMessage(MealKitUniqueIdentifier mealKitId, DeliveryLocationId deliveryLocationId, LocalTime localTime,
+                                                      LockerId lockerId) {
+        String messageBody = "Your meal kit with id " + mealKitId.getUUID().toString();
         messageBody += " is ready to be fetched from " + deliveryLocationId.value();
         messageBody += " in the locker " + lockerId.lockerNumber();
         messageBody += ".\n";

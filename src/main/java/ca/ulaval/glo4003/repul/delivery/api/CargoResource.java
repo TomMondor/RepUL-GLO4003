@@ -2,7 +2,9 @@ package ca.ulaval.glo4003.repul.delivery.api;
 
 import java.util.List;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.api.assembler.CargosResponseAssembler;
 import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
@@ -50,9 +52,10 @@ public class CargoResource {
     @Roles(Role.DELIVERY_PERSON)
     @Path("/cargos/{cargoId}:pickUp")
     public Response pickupCargo(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId) {
-        UniqueIdentifier deliveryPersonId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+        DeliveryPersonUniqueIdentifier deliveryPersonId =
+            new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom((String) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY));
 
-        deliveryService.pickupCargo(deliveryPersonId, new UniqueIdentifierFactory().generateFrom(cargoId));
+        deliveryService.pickupCargo(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId));
 
         return Response.noContent().build();
     }
@@ -62,9 +65,10 @@ public class CargoResource {
     @Roles(Role.DELIVERY_PERSON)
     @Path("/cargos/{cargoId}:cancel")
     public Response cancelCargo(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId) {
-        UniqueIdentifier deliveryPersonId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+        DeliveryPersonUniqueIdentifier deliveryPersonId = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom(
+            context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        deliveryService.cancelCargo(deliveryPersonId, new UniqueIdentifierFactory().generateFrom(cargoId));
+        deliveryService.cancelCargo(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId));
 
         return Response.noContent().build();
     }
@@ -74,10 +78,11 @@ public class CargoResource {
     @Roles(Role.DELIVERY_PERSON)
     @Path("/cargos/{cargoId}/mealKits/{mealKitId}:confirm")
     public Response confirmDelivery(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId, @PathParam("mealKitId") String mealKitId) {
-        UniqueIdentifier deliveryPersonId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+        DeliveryPersonUniqueIdentifier deliveryPersonId =
+            new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        deliveryService.confirmDelivery(deliveryPersonId, new UniqueIdentifierFactory().generateFrom(cargoId),
-            new UniqueIdentifierFactory().generateFrom(mealKitId));
+        deliveryService.confirmDelivery(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId),
+            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
 
         return Response.noContent().build();
     }
@@ -87,10 +92,12 @@ public class CargoResource {
     @Roles(Role.DELIVERY_PERSON)
     @Path("/cargos/{cargoId}/mealKits/{mealKitId}:recall")
     public Response recallDelivery(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId, @PathParam("mealKitId") String mealKitId) {
-        UniqueIdentifier deliveryPersonId = (UniqueIdentifier) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY);
+        DeliveryPersonUniqueIdentifier deliveryPersonId =
+            new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        LockerPayload lockerPayload = LockerPayload.from(deliveryService.recallDelivery(deliveryPersonId, new UniqueIdentifierFactory().generateFrom(cargoId),
-            new UniqueIdentifierFactory().generateFrom(mealKitId)));
+        LockerPayload lockerPayload = LockerPayload.from(
+            deliveryService.recallDelivery(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId),
+                new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId)));
 
         return Response.ok(lockerPayload).build();
     }

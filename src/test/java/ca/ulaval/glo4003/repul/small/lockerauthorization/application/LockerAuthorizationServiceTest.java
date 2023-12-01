@@ -15,7 +15,9 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
@@ -34,9 +36,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class LockerAuthorizationServiceTest {
-    private static final UniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId(UUID.randomUUID().toString());
     private static final LocalDate A_DATE = LocalDate.now();
@@ -45,12 +47,12 @@ public class LockerAuthorizationServiceTest {
     private static final ca.ulaval.glo4003.repul.delivery.domain.LockerId A_DELIVERY_LOCKER_ID =
         new ca.ulaval.glo4003.repul.delivery.domain.LockerId("VACHON 1", 1);
     private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("123123123");
-    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT = new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID,
-        A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DATE);
-    private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT = new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID,
-        Optional.of(A_DELIVERY_LOCKER_ID), A_TIME);
-    private static final RecalledDeliveryEvent A_RECALLED_DELIVERY_EVENT = new RecalledDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCKER_ID,
-        A_DELIVERY_LOCATION_ID);
+    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
+        new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DATE);
+    private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT =
+        new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, Optional.of(A_DELIVERY_LOCKER_ID), A_TIME);
+    private static final RecalledDeliveryEvent A_RECALLED_DELIVERY_EVENT =
+        new RecalledDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCKER_ID, A_DELIVERY_LOCATION_ID);
     private static final UserCardAddedEvent A_USER_CARD_ADDED_EVENT = new UserCardAddedEvent(AN_ACCOUNT_ID, A_USER_CARD_NUMBER);
     private static final OpenLockerQuery OPEN_LOCKER_QUERY = new OpenLockerQuery(A_USER_CARD_NUMBER, A_LOCKER_CONTEXT_LOCKER_ID);
 

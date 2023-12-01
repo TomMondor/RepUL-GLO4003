@@ -60,7 +60,7 @@ public class AuthGuard implements ContainerRequestFilter {
                 validateRoles(resourceMethod.getAnnotation(Roles.class).value(), user.getRole(), decodedToken.role(), containerRequestContext);
             }
 
-            containerRequestContext.setProperty("uid", decodedToken.userId());
+            containerRequestContext.setProperty("uid", decodedToken.userId().getUUID().toString());
         } catch (Exception e) {
             Response response = Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("message", "Could not validate identity.")).build();
             containerRequestContext.abortWith(response);

@@ -5,7 +5,8 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitPayload;
@@ -24,7 +25,7 @@ public class CookingService {
         this.eventBus = eventBus;
     }
 
-    public void receiveMealKitInKitchen(UniqueIdentifier mealKitId, MealKitType mealKitType, LocalDate deliveryDate) {
+    public void receiveMealKitInKitchen(MealKitUniqueIdentifier mealKitId, MealKitType mealKitType, LocalDate deliveryDate) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.addMealKit(mealKitId, mealKitType, deliveryDate);
@@ -32,7 +33,7 @@ public class CookingService {
         kitchenRepository.save(kitchen);
     }
 
-    public void giveMealKitToDelivery(List<UniqueIdentifier> mealKitIds) {
+    public void giveMealKitToDelivery(List<MealKitUniqueIdentifier> mealKitIds) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.removeMealKitsFromKitchen(mealKitIds);
@@ -48,7 +49,7 @@ public class CookingService {
                 .toList());
     }
 
-    public void select(UniqueIdentifier cookId, List<UniqueIdentifier> selectedMealKitIds) {
+    public void select(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> selectedMealKitIds) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.select(cookId, selectedMealKitIds);
@@ -56,13 +57,13 @@ public class CookingService {
         kitchenRepository.save(kitchen);
     }
 
-    public List<UniqueIdentifier> getSelection(UniqueIdentifier cookId) {
+    public List<MealKitUniqueIdentifier> getSelection(CookUniqueIdentifier cookId) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         return kitchen.getSelection(cookId);
     }
 
-    public void cancelOneSelected(UniqueIdentifier cookId, UniqueIdentifier mealKitId) {
+    public void cancelOneSelected(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.cancelOneSelected(cookId, mealKitId);
@@ -70,7 +71,7 @@ public class CookingService {
         kitchenRepository.save(kitchen);
     }
 
-    public void cancelAllSelected(UniqueIdentifier cookId) {
+    public void cancelAllSelected(CookUniqueIdentifier cookId) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.cancelAllSelected(cookId);
@@ -78,7 +79,7 @@ public class CookingService {
         kitchenRepository.save(kitchen);
     }
 
-    public void confirmCooked(UniqueIdentifier cookId, UniqueIdentifier mealKitId) {
+    public void confirmCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.confirmCooked(cookId, mealKitId);
@@ -88,7 +89,7 @@ public class CookingService {
         eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().value(), List.of(mealKitId)));
     }
 
-    public void confirmCooked(UniqueIdentifier cookId, List<UniqueIdentifier> mealKitIds) {
+    public void confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.confirmCooked(cookId, mealKitIds);
@@ -98,7 +99,7 @@ public class CookingService {
         eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().value(), mealKitIds));
     }
 
-    public void recallCooked(UniqueIdentifier cookId, UniqueIdentifier mealKitId) {
+    public void recallCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
         Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
 
         kitchen.recallCooked(cookId, mealKitId);

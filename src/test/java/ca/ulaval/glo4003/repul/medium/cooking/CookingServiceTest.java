@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
@@ -19,11 +20,11 @@ import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
 import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenRepository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CookingServiceTest {
-    private static final UniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory().generate();
+    private static final MealKitUniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(1);
     private static final RecipesCatalog A_RECIPES_CATALOG = new RecipesCatalog(Map.of(A_MEAL_KIT_TYPE, new ArrayList<>()));

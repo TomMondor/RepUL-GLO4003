@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinkedToUserException;
@@ -18,7 +20,7 @@ public class LockerAuthorizationSystem {
         userCardNumberByUser.put(userId, userCardNumber);
     }
 
-    public void createOrder(UniqueIdentifier userId, UniqueIdentifier mealKitId) {
+    public void createOrder(SubscriberUniqueIdentifier userId, MealKitUniqueIdentifier mealKitId) {
         orders.put(mealKitId, new Order(userId, mealKitId));
     }
 
@@ -32,7 +34,7 @@ public class LockerAuthorizationSystem {
         order.unassignLocker();
     }
 
-    public UniqueIdentifier authorize(LockerId lockerId, UserCardNumber userCardNumberToValidate) {
+    public MealKitUniqueIdentifier authorize(LockerId lockerId, UserCardNumber userCardNumberToValidate) {
         Order order = getOrderByLockerId(lockerId);
         if (userCardNumberByUser.containsKey(order.getUserId())) {
             UserCardNumber userCardNumber = userCardNumberByUser.get(order.getUserId());

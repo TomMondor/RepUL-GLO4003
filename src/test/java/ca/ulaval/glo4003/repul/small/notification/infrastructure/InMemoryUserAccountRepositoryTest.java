@@ -8,7 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.notification.application.exception.UserAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccount;
@@ -20,9 +21,9 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class InMemoryUserAccountRepositoryTest {
-    private static final UniqueIdentifier AN_ACCOUNT_VALID_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_ACCOUNT_INVALID_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    private static final SubscriberUniqueIdentifier AN_ACCOUNT_VALID_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier AN_ACCOUNT_INVALID_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
 
     @Mock
     private UserAccount userAccount;
@@ -38,8 +39,7 @@ public class InMemoryUserAccountRepositoryTest {
         given(userAccount.getAccountId()).willReturn(AN_ACCOUNT_VALID_ID);
 
         inMemoryUserAccountRepository.save(userAccount);
-        UserAccount accountFound = inMemoryUserAccountRepository.getAccountById(
-            AN_ACCOUNT_VALID_ID);
+        UserAccount accountFound = inMemoryUserAccountRepository.getAccountById(AN_ACCOUNT_VALID_ID);
 
         assertEquals(userAccount, accountFound);
     }
@@ -62,7 +62,6 @@ public class InMemoryUserAccountRepositoryTest {
 
     @Test
     public void givenNoAccount_whenGettingAccountByMealKitId_shouldThrowUserAccountNotFoundException() {
-        assertThrows(UserAccountNotFoundException.class,
-            () -> inMemoryUserAccountRepository.getAccountByMealKitId(AN_ACCOUNT_INVALID_ID));
+        assertThrows(UserAccountNotFoundException.class, () -> inMemoryUserAccountRepository.getAccountByMealKitId(AN_ACCOUNT_INVALID_ID));
     }
 }

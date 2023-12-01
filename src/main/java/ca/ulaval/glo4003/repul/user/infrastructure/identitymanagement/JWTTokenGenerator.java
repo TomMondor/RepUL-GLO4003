@@ -25,6 +25,6 @@ public class JWTTokenGenerator implements TokenGenerator {
     }
 
     private String createJWT(UniqueIdentifier uid, Role role, Date expirationTime) {
-        return JWT.create().withClaim("UID", uid.value().toString()).withClaim("Role", role.name()).withExpiresAt(expirationTime).sign(algorithm);
+        return JWT.create().withClaim("UID", uid.getUUID().toString()).withClaim("Role", role.name()).withExpiresAt(expirationTime).sign(algorithm);
     }
 }

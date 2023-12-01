@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.subscription.OrderFixture;
 import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
@@ -25,8 +26,8 @@ import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SubscriptionTest {
-    private static final UniqueIdentifier AN_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory().generate();
+    private static final SubscriptionUniqueIdentifier AN_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.FRIDAY);
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("123");
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;

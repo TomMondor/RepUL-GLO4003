@@ -6,13 +6,15 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 
 public class Subscription {
-    private final UniqueIdentifier subscriberId;
-    private final UniqueIdentifier subscriptionId;
+    private final SubscriberUniqueIdentifier subscriberId;
+    private final SubscriptionUniqueIdentifier subscriptionId;
     private final List<Order> orders;
     private final Frequency frequency;
     private final DeliveryLocationId deliveryLocationId;
@@ -20,9 +22,8 @@ public class Subscription {
     private final Semester semester;
     private final MealKitType mealKitType;
 
-    public Subscription(UniqueIdentifier subscriptionId, UniqueIdentifier subscriberId, List<Order> orders, Frequency frequency,
-                        DeliveryLocationId deliveryLocationId,
-                        LocalDate startDate, Semester semester, MealKitType mealKitType) {
+    public Subscription(SubscriptionUniqueIdentifier subscriptionId, SubscriberUniqueIdentifier subscriberId, List<Order> orders, Frequency frequency,
+                        DeliveryLocationId deliveryLocationId, LocalDate startDate, Semester semester, MealKitType mealKitType) {
         this.subscriptionId = subscriptionId;
         this.subscriberId = subscriberId;
         this.orders = orders;
@@ -37,11 +38,11 @@ public class Subscription {
         return frequency;
     }
 
-    public UniqueIdentifier getSubscriptionId() {
+    public SubscriptionUniqueIdentifier getSubscriptionId() {
         return subscriptionId;
     }
 
-    public UniqueIdentifier getSubscriberId() {
+    public SubscriberUniqueIdentifier getSubscriberId() {
         return subscriberId;
     }
 
@@ -101,7 +102,7 @@ public class Subscription {
         this.findCurrentOrder().ifPresent(Order::markAsToPickUp);
     }
 
-    public void markOrderAsPickedUp(UniqueIdentifier mealKitId) {
+    public void markOrderAsPickedUp(MealKitUniqueIdentifier mealKitId) {
         this.orders.stream().filter(order -> order.getOrderId().equals(mealKitId)).findFirst().ifPresent(Order::markAsPickedUp);
     }
 }

@@ -15,7 +15,11 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
@@ -39,28 +43,31 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationServiceTest {
-    private static final UniqueIdentifier A_VALID_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_VALID_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_VALID_DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier ANOTHER_VALID_DELIVERY_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_INVALID_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final SubscriberUniqueIdentifier A_VALID_SUBSCRIBER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier A_VALID_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final DeliveryPersonUniqueIdentifier A_VALID_DELIVERY_ACCOUNT_ID =
+        new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
+    private static final DeliveryPersonUniqueIdentifier ANOTHER_VALID_DELIVERY_ACCOUNT_ID =
+        new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
+    private static final DeliveryPersonUniqueIdentifier AN_INVALID_DELIVERY_ACCOUNT_ID =
+        new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final Email AN_EMAIL = new Email("alexandre.mathieu.7@ulaval.ca");
     private static final DeliveryPersonAccount A_DELIVERY_ACCOUNT = new DeliveryPersonAccount(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
     private static final DeliveryPersonAccount ANOTHER_DELIVERY_ACCOUNT = new DeliveryPersonAccount(ANOTHER_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
-    private static final UserAccount
-        A_VALID_USER_ACCOUNT = new UserAccount(A_VALID_ACCOUNT_ID, AN_EMAIL);
+    private static final UserAccount A_VALID_USER_ACCOUNT = new UserAccount(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_EMAIL);
     private static final LocalTime A_TIME = LocalTime.now();
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("A_LOCATION_ID");
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("A_DELIVERY_LOCATION_ID");
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("A_LOCKER_ID", 1));
-    private static final UniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
+    private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final DeliveryLocationId ANOTHER_DELIVERY_LOCATION_ID = new DeliveryLocationId("ANOTHER_DELIVERY_LOCATION_ID");
     private static final Optional<LockerId> ANOTHER_LOCKER_ID = Optional.of(new LockerId("ANOTHER_LOCKER_ID", 2));
-    private static final UniqueIdentifier ANOTHER_MEAL_KIT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory().generate();
-    private static final List<UniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS = List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
-    private static final List<UniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS_WITH_INVALID_ACCOUNT =
-        List.of(A_VALID_DELIVERY_ACCOUNT_ID, AN_INVALID_ACCOUNT_ID);
+    private static final MealKitUniqueIdentifier ANOTHER_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    private static final CargoUniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generate();
+    private static final List<DeliveryPersonUniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS =
+        List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
+    private static final List<DeliveryPersonUniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS_WITH_INVALID_ACCOUNT =
+        List.of(A_VALID_DELIVERY_ACCOUNT_ID, AN_INVALID_DELIVERY_ACCOUNT_ID);
     private static final List<MealKitDto> MEAL_KIT_DTOS = List.of(new MealKitDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID),
         new MealKitDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
@@ -70,9 +77,9 @@ public class NotificationServiceTest {
     private static final ConfirmedDeliveryEvent MEAL_KIT_DELIVERED_EVENT =
         new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_TIME);
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
-        new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_VALID_SUBSCRIPTION_ID, A_VALID_ACCOUNT_ID,
-            MealKitType.STANDARD, A_DELIVERY_LOCATION_ID, LocalDate.now());
-    private static final AccountCreatedEvent AN_ACCOUNT_CREATED_EVENT = new AccountCreatedEvent(A_VALID_ACCOUNT_ID, AN_EMAIL);
+        new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_VALID_SUBSCRIPTION_ID, A_VALID_SUBSCRIBER_ACCOUNT_ID, MealKitType.STANDARD, A_DELIVERY_LOCATION_ID,
+            LocalDate.now());
+    private static final AccountCreatedEvent AN_ACCOUNT_CREATED_EVENT = new AccountCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_EMAIL);
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
 
@@ -87,13 +94,12 @@ public class NotificationServiceTest {
 
     @BeforeEach
     public void createService() {
-        this.notificationService = new NotificationService(userAccountRepository,
-            deliveryPersonAccountRepository, notificationSender);
+        this.notificationService = new NotificationService(userAccountRepository, deliveryPersonAccountRepository, notificationSender);
     }
 
     @Test
     public void whenHandlingUserAccountCreation_shouldSaveUserAccountRepository() {
-        AccountCreatedEvent accountCreatedEvent = new AccountCreatedEvent(A_VALID_ACCOUNT_ID, AN_EMAIL);
+        AccountCreatedEvent accountCreatedEvent = new AccountCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_EMAIL);
 
         this.notificationService.handleUserAccountCreated(accountCreatedEvent);
 
@@ -102,12 +108,11 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingAccountDeliveryCreation_shouldSaveDeliveryAccountRepository() {
-        DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent = new DeliveryPersonAccountCreatedEvent(A_VALID_ACCOUNT_ID, AN_EMAIL);
+        DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent = new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
 
         this.notificationService.handleDeliveryAccountCreated(deliveryPersonAccountCreatedEvent);
 
-        verify(deliveryPersonAccountRepository, times(1)).save(
-            any(DeliveryPersonAccount.class));
+        verify(deliveryPersonAccountRepository, times(1)).save(any(DeliveryPersonAccount.class));
     }
 
     @Test
@@ -150,7 +155,7 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingMealKitConfirmedEvent_ShouldAddMealKitToUser() {
-        when(userAccountRepository.getAccountById(A_VALID_ACCOUNT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
+        when(userAccountRepository.getAccountById(A_VALID_SUBSCRIBER_ACCOUNT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
         int numberOfMealKits = A_VALID_USER_ACCOUNT.getMealKitIds().size();
 
         this.notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
@@ -160,7 +165,7 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingMealKitConfirmedEvent_shouldSaveMealKitInUserAccountRepository() {
-        when(userAccountRepository.getAccountById(A_VALID_ACCOUNT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
+        when(userAccountRepository.getAccountById(A_VALID_SUBSCRIBER_ACCOUNT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
 
         this.notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 

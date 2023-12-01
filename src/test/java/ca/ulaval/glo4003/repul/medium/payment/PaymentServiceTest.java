@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.payment.application.PaymentService;
@@ -17,9 +19,9 @@ import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEv
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class PaymentServiceTest {
-    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
+    private static final MealKitUniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final DeliveryLocationId A_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(3);

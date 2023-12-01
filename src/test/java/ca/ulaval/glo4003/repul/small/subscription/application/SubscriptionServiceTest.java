@@ -14,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
@@ -50,12 +53,13 @@ public class SubscriptionServiceTest {
     private static final String A_DAY_STRING = "MONDAY";
     private static final String A_MEALKIT_TYPE = "STANDARD";
     private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_LOCATION_STRING, A_DAY_STRING, A_MEALKIT_TYPE);
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_ID_NOT_MATCHING_ANY_SUBSCRIPTION = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory().generate();
-    private static final UniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory().generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier AN_ID_NOT_MATCHING_ANY_SUBSCRIPTION =
+        new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final MealKitUniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    private static final MealKitUniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId(A_LOCATION_STRING);
     private static final Optional<LockerId> OPTIONAL_OF_A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
@@ -81,18 +85,18 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenCreatingSubscription_shouldCreateSubscription() {
-        when(mockSubscriptionFactory.createSubscription(any(UniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
+        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
 
         subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
 
-        verify(mockSubscriptionFactory).createSubscription(any(UniqueIdentifier.class), eq(new DeliveryLocationId(A_LOCATION_STRING)),
+        verify(mockSubscriptionFactory).createSubscription(any(SubscriberUniqueIdentifier.class), eq(new DeliveryLocationId(A_LOCATION_STRING)),
             eq(DayOfWeek.valueOf(A_DAY_STRING)), eq(MealKitType.valueOf(A_MEALKIT_TYPE)));
     }
 
     @Test
     public void whenCreatingSubscription_shouldSaveSubscription() {
-        when(mockSubscriptionFactory.createSubscription(any(UniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
+        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
 
         subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
@@ -102,7 +106,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenCreatingSubscription_shouldReturnSubscriptionId() {
-        when(mockSubscriptionFactory.createSubscription(any(UniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
+        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriptionId()).thenReturn(A_SUBSCRIPTION_ID);
 
@@ -424,10 +428,10 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenSubscriptionNotForThisSubscriber_whenConfirmingNextMealKitForSubscription_shouldThrow() {
-        when(mockSubscriptionFactory.createSubscription(any(UniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
+        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
-        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
         when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(mockSubscription);
 
         assertThrows(SubscriptionNotFoundException.class, () -> subscriptionService.confirmNextMealKitForSubscription(ANOTHER_ACCOUNT_ID, subscriptionId));
@@ -468,10 +472,10 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenSubscriptionNotForThisSubscriber_whenDecliningNextMealKitForSubscription_shouldThrow() {
-        when(mockSubscriptionFactory.createSubscription(any(UniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
+        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
-        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
         when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(mockSubscription);
 
         assertThrows(SubscriptionNotFoundException.class, () -> subscriptionService.confirmNextMealKitForSubscription(ANOTHER_ACCOUNT_ID, subscriptionId));

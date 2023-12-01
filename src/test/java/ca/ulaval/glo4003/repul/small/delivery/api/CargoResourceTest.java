@@ -10,7 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
@@ -32,9 +34,11 @@ public class CargoResourceTest {
     private static final String A_DELIVERY_PERSON_ID = UUID.randomUUID().toString();
     private static final String A_CARGO_ID = UUID.randomUUID().toString();
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
-    private static final UniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_DELIVERY_PERSON_ID);
-    private static final UniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_CARGO_ID);
-    private static final UniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory().generateFrom(A_MEAL_KIT_ID);
+    private static final DeliveryPersonUniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER =
+        new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom(A_DELIVERY_PERSON_ID);
+    private static final CargoUniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(A_CARGO_ID);
+    private static final MealKitUniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER =
+        new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(A_MEAL_KIT_ID);
     private static final LockerId A_LOCKER_ID = new LockerId("10", 1234);
 
     private CargoResource cargoResource;
@@ -50,7 +54,7 @@ public class CargoResourceTest {
 
     @Test
     public void whenCancellingCargo_shouldReturnNoContent() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
         Response response = cargoResource.cancelCargo(requestContext, A_CARGO_ID);
 
@@ -59,7 +63,7 @@ public class CargoResourceTest {
 
     @Test
     public void whenCancellingCargo_shouldCancelCargo() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
         cargoResource.cancelCargo(requestContext, A_CARGO_ID);
 
@@ -68,7 +72,7 @@ public class CargoResourceTest {
 
     @Test
     public void whenPickingUpCargo_shouldReturnNoContent() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
         Response response = cargoResource.pickupCargo(requestContext, A_CARGO_ID);
 
@@ -77,7 +81,7 @@ public class CargoResourceTest {
 
     @Test
     public void whenPickingUpCargo_shouldPickupCargo() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
         cargoResource.pickupCargo(requestContext, A_CARGO_ID);
 
@@ -86,7 +90,7 @@ public class CargoResourceTest {
 
     @Test
     public void whenConfirmingDelivery_shouldReturn204() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
         Response response = cargoResource.confirmDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
 
@@ -95,7 +99,7 @@ public class CargoResourceTest {
 
     @Test
     public void whenConfirmingDelivery_shouldConfirmDelivery() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
         cargoResource.confirmDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
 
@@ -104,9 +108,9 @@ public class CargoResourceTest {
 
     @Test
     public void whenRecallingDelivery_shouldReturn200() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
-        when(deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER))
-            .thenReturn(A_LOCKER_ID);
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
+        when(deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
+            A_LOCKER_ID);
 
         Response response = cargoResource.recallDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
 
@@ -115,9 +119,9 @@ public class CargoResourceTest {
 
     @Test
     public void whenRecallingDelivery_shouldRecallDelivery() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
-        when(deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER))
-            .thenReturn(A_LOCKER_ID);
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
+        when(deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
+            A_LOCKER_ID);
 
         cargoResource.recallDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
 

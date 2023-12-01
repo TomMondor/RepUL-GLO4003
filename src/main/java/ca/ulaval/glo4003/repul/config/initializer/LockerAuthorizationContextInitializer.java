@@ -8,7 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
@@ -20,14 +21,14 @@ public class LockerAuthorizationContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestApplicationContext.class);
 
     private LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository = new InMemoryLockerAuthorizationSystemRepository();
-    private List<Map.Entry<UniqueIdentifier, UniqueIdentifier>> orders = new ArrayList<>();
+    private final List<Map.Entry<SubscriberUniqueIdentifier, MealKitUniqueIdentifier>> orders = new ArrayList<>();
 
     public LockerAuthorizationContextInitializer withEmptyLockerAuthorizationSystemRepository(LockerAuthorizationSystemRepository repository) {
         lockerAuthorizationSystemRepository = repository;
         return this;
     }
 
-    public LockerAuthorizationContextInitializer withOrders(List<Map.Entry<UniqueIdentifier, UniqueIdentifier>> orders) {
+    public LockerAuthorizationContextInitializer withOrders(List<Map.Entry<SubscriberUniqueIdentifier, MealKitUniqueIdentifier>> orders) {
         this.orders.addAll(orders);
         return this;
     }
@@ -43,8 +44,8 @@ public class LockerAuthorizationContextInitializer {
     private void initializeLockerAuthorization(LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository) {
         LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
         orders.forEach(order -> {
-            UniqueIdentifier accountId = order.getKey();
-            UniqueIdentifier mealKitId = order.getValue();
+            SubscriberUniqueIdentifier accountId = order.getKey();
+            MealKitUniqueIdentifier mealKitId = order.getValue();
             lockerAuthorizationSystem.createOrder(accountId, mealKitId);
         });
         lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.subscription.api.assembler.SubscriptionsResponseAssembler;
@@ -21,7 +21,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubscriptionsResponseAssemblerTest {
-    private static final UniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory().generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
     private static final LocalDate A_DATE = LocalDate.now();
@@ -40,7 +40,7 @@ public class SubscriptionsResponseAssemblerTest {
 
         List<SubscriptionResponse> subscriptionResponses = subscriptionResponseAssembler.toSubscriptionsResponse(SUBSCRIPTIONS_PAYLOAD);
 
-        assertEquals(A_SUBSCRIPTION_ID.value().toString(), subscriptionResponses.get(0).subscriptionId());
+        assertEquals(A_SUBSCRIPTION_ID.getUUID().toString(), subscriptionResponses.get(0).subscriptionId());
         assertEquals(A_DELIVERY_LOCATION_ID.value(), subscriptionResponses.get(0).locationId());
         assertEquals(A_FREQUENCY.dayOfWeek().name(), subscriptionResponses.get(0).dayOfWeek());
         assertEquals(A_MEALKIT_TYPE.name(), subscriptionResponses.get(0).mealKitType());
@@ -53,7 +53,7 @@ public class SubscriptionsResponseAssemblerTest {
 
         SubscriptionResponse subscriptionResponse = subscriptionResponseAssembler.toSubscriptionResponse(SUBSCRIPTION_PAYLOAD);
 
-        assertEquals(A_SUBSCRIPTION_ID.value().toString(), subscriptionResponse.subscriptionId());
+        assertEquals(A_SUBSCRIPTION_ID.getUUID().toString(), subscriptionResponse.subscriptionId());
         assertEquals(A_DELIVERY_LOCATION_ID.value(), subscriptionResponse.locationId());
         assertEquals(A_FREQUENCY.dayOfWeek().name(), subscriptionResponse.dayOfWeek());
         assertEquals(A_MEALKIT_TYPE.name(), subscriptionResponse.mealKitType());
