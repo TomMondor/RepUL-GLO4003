@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
+import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.user.domain.account.Account;
 import ca.ulaval.glo4003.repul.user.domain.account.AccountRepository;
 import ca.ulaval.glo4003.repul.user.domain.account.IDUL;
@@ -19,13 +20,14 @@ public class InMemoryAccountRepository implements AccountRepository {
     }
 
     @Override
-    public Optional<Account> getByIDUL(IDUL idul) {
-        return Optional.ofNullable(accounts.get(idul));
+    public boolean exists(IDUL idul) {
+        return accounts.containsKey(idul);
     }
 
     @Override
-    public Optional<Account> getByAccountId(UniqueIdentifier accountId) {
-        return accounts.values().stream().filter(account -> account.getAccountId().equals(accountId)).findFirst();
+    public Account getByAccountId(UniqueIdentifier accountId) {
+        Optional<Account> optionalAccount = accounts.values().stream().filter(account -> account.getAccountId().equals(accountId)).findFirst();
+        return optionalAccount.orElseThrow(AccountNotFoundException::new);
     }
 
     @Override

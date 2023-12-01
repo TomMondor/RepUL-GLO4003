@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.repul.small.user.application;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import ca.ulaval.glo4003.repul.fixture.user.AccountFixture;
 import ca.ulaval.glo4003.repul.user.application.UserService;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
-import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
 import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
 import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
@@ -121,7 +119,7 @@ public class UserServiceTest {
     @Test
     public void givenRegistrationQueryWithExistingIDUL_whenRegistering_shouldThrowIDULAlreadyInUseException() {
         given(userRepository.exists(any())).willReturn(false);
-        given(accountRepository.getByIDUL(any())).willReturn(Optional.of(mock(Account.class)));
+        given(accountRepository.exists(any())).willReturn(true);
 
         assertThrows(IDULAlreadyInUseException.class,
             () -> userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER)));
@@ -130,7 +128,7 @@ public class UserServiceTest {
     @Test
     public void givenRegistrationQueryWithExistingIDUL_whenRegistering_shouldNotSaveNewUser() {
         given(userRepository.exists(any())).willReturn(false);
-        given(accountRepository.getByIDUL(any())).willReturn(Optional.of(mock(Account.class)));
+        given(accountRepository.exists(any())).willReturn(true);
 
         try {
             userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
@@ -147,7 +145,7 @@ public class UserServiceTest {
         UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generate();
         given(uniqueIdentifierFactory.generate()).willReturn(uniqueIdentifier);
         given(userRepository.exists(any())).willReturn(false);
-        given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());
+        given(accountRepository.exists(any())).willReturn(false);
         given(userFactory.createUser(any(), any(), any(), any())).willReturn(mock(User.class));
         given(accountFactory.createAccount(any(), any(), any(), any(), any(), any())).willReturn(mock(Account.class));
         doNothing().when(repULEventBus).publish(any(AccountCreatedEvent.class));
@@ -161,7 +159,7 @@ public class UserServiceTest {
     public void whenRegistering_shouldSaveUser() {
         User newUser = mock(User.class);
         given(userRepository.exists(any())).willReturn(false);
-        given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());
+        given(accountRepository.exists(any())).willReturn(false);
         given(userFactory.createUser(any(), any(), any(), any())).willReturn(newUser);
         given(accountFactory.createAccount(any(), any(), any(), any(), any(), any())).willReturn(mock(Account.class));
         doNothing().when(repULEventBus).publish(any(AccountCreatedEvent.class));
@@ -176,7 +174,7 @@ public class UserServiceTest {
         UniqueIdentifier uniqueIdentifier = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generate();
         given(uniqueIdentifierFactory.generate()).willReturn(uniqueIdentifier);
         given(userRepository.exists(any())).willReturn(false);
-        given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());
+        given(accountRepository.exists(any())).willReturn(false);
         given(userFactory.createUser(any(), any(), any(), any())).willReturn(mock(User.class));
         given(accountFactory.createAccount(any(), any(), any(), any(), any(), any())).willReturn(mock(Account.class));
 
@@ -190,7 +188,7 @@ public class UserServiceTest {
     public void whenRegistering_shouldSaveAccount() {
         Account newAccount = mock(Account.class);
         given(userRepository.exists(any())).willReturn(false);
-        given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());
+        given(accountRepository.exists(any())).willReturn(false);
         given(userFactory.createUser(any(), any(), any(), any())).willReturn(mock(User.class));
         given(accountFactory.createAccount(any(), any(), any(), any(), any(), any())).willReturn(newAccount);
 
@@ -203,7 +201,7 @@ public class UserServiceTest {
     public void whenRegistering_shouldPublishAccountCreatedEvent() {
         Account newAccount = mock(Account.class);
         given(userRepository.exists(any())).willReturn(false);
-        given(accountRepository.getByIDUL(any())).willReturn(Optional.empty());
+        given(accountRepository.exists(any())).willReturn(false);
         given(userFactory.createUser(any(), any(), any(), any())).willReturn(mock(User.class));
         given(accountFactory.createAccount(any(), any(), any(), any(), any(), any())).willReturn(newAccount);
 
@@ -253,7 +251,7 @@ public class UserServiceTest {
 
     @Test
     public void whenGettingAccount_shouldFindAccountById() {
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
+        given(accountRepository.getByAccountId(any())).willReturn(new AccountFixture().build());
 
         userService.getAccount(AN_ACCOUNT_ID);
 
@@ -261,16 +259,9 @@ public class UserServiceTest {
     }
 
     @Test
-    public void givenInexistentAccount_whenGettingAccount_shouldThrowAccountNotFoundException() {
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.empty());
-
-        assertThrows(AccountNotFoundException.class, () -> userService.getAccount(AN_ACCOUNT_ID));
-    }
-
-    @Test
     public void givenExistingAccount_whenGettingAccount_shouldReturnAccountInformationPayload() {
         Account account = new AccountFixture().build();
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(account));
+        given(accountRepository.getByAccountId(any())).willReturn(account);
 
         AccountInformationPayload payload = userService.getAccount(AN_ACCOUNT_ID);
 
@@ -283,7 +274,7 @@ public class UserServiceTest {
 
     @Test
     public void whenAddingCard_shouldGetAccountById() {
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
+        given(accountRepository.getByAccountId(any())).willReturn(new AccountFixture().build());
 
         userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
 
@@ -291,15 +282,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void givenInexistentAccount_whenAddingCard_shouldThrowAccountNotFoundException() {
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.empty());
-
-        assertThrows(AccountNotFoundException.class, () -> userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY));
-    }
-
-    @Test
     public void whenAddingCard_shouldSetUserCardOfAccount() {
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(mockAccount));
+        given(accountRepository.getByAccountId(any())).willReturn(mockAccount);
 
         userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
 
@@ -308,7 +292,7 @@ public class UserServiceTest {
 
     @Test
     public void whenAddingCard_shouldSaveAccount() {
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
+        given(accountRepository.getByAccountId(any())).willReturn(new AccountFixture().build());
 
         userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
 
@@ -317,7 +301,7 @@ public class UserServiceTest {
 
     @Test
     public void whenAddingCard_shouldPublishUserCardAddedEvent() {
-        given(accountRepository.getByAccountId(any())).willReturn(Optional.of(new AccountFixture().build()));
+        given(accountRepository.getByAccountId(any())).willReturn(new AccountFixture().build());
 
         userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
 

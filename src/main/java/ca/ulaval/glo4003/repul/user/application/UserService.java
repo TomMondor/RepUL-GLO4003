@@ -1,7 +1,5 @@
 package ca.ulaval.glo4003.repul.user.application;
 
-import java.util.Optional;
-
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
@@ -9,7 +7,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
-import ca.ulaval.glo4003.repul.user.application.exception.AccountNotFoundException;
 import ca.ulaval.glo4003.repul.user.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
 import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
@@ -56,7 +53,7 @@ public class UserService {
         if (userRepository.exists(registrationQuery.email())) {
             throw new EmailAlreadyInUseException();
         }
-        if (accountRepository.getByIDUL(registrationQuery.idul()).isPresent()) {
+        if (accountRepository.exists(registrationQuery.idul())) {
             throw new IDULAlreadyInUseException();
         }
         UniqueIdentifier uniqueIdentifier = subscriberUniqueIdentifierFactory.generate();
@@ -86,22 +83,17 @@ public class UserService {
     }
 
     public AccountInformationPayload getAccount(UniqueIdentifier accountId) {
-        Optional<Account> account = accountRepository.getByAccountId(accountId);
-        if (account.isEmpty()) {
-            throw new AccountNotFoundException();
-        }
+        Account account = accountRepository.getByAccountId(accountId);
 
-        return AccountInformationPayload.fromAccount(account.get());
+        return AccountInformationPayload.fromAccount(account);
     }
 
     public void addCard(UniqueIdentifier accountId, AddCardQuery addCardQuery) {
-        Optional<Account> account = accountRepository.getByAccountId(accountId);
-        if (account.isEmpty()) {
-            throw new AccountNotFoundException();
-        }
+        Account account = accountRepository.getByAccountId(accountId);
+
         validateCardNumber(addCardQuery.cardNumber());
-        account.get().setCardNumber(addCardQuery.cardNumber());
-        accountRepository.save(account.get());
+        account.setCardNumber(addCardQuery.cardNumber());
+        accountRepository.save(account);
 
         eventBus.publish(new UserCardAddedEvent(accountId, addCardQuery.cardNumber()));
     }
