@@ -13,7 +13,6 @@ import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
 
 public class CookingService {
     private final KitchenRepository kitchenRepository;
@@ -26,7 +25,7 @@ public class CookingService {
     }
 
     public void receiveMealKitInKitchen(MealKitUniqueIdentifier mealKitId, MealKitType mealKitType, LocalDate deliveryDate) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         kitchen.addMealKit(mealKitId, mealKitType, deliveryDate);
 
@@ -34,7 +33,7 @@ public class CookingService {
     }
 
     public void giveMealKitToDelivery(List<MealKitUniqueIdentifier> mealKitIds) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         kitchen.removeMealKitsFromKitchen(mealKitIds);
 
@@ -42,7 +41,7 @@ public class CookingService {
     }
 
     public MealKitsPayload getMealKitsToCook() {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         return new MealKitsPayload(
             kitchen.getMealKitsToCook().stream().map(mealKit -> new MealKitPayload(mealKit.getMealKitId(), mealKit.getDeliveryDate(), mealKit.getRecipes()))
@@ -50,7 +49,7 @@ public class CookingService {
     }
 
     public void select(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> selectedMealKitIds) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         kitchen.select(cookId, selectedMealKitIds);
 
@@ -58,13 +57,13 @@ public class CookingService {
     }
 
     public List<MealKitUniqueIdentifier> getSelection(CookUniqueIdentifier cookId) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         return kitchen.getSelection(cookId);
     }
 
     public void cancelOneSelected(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         kitchen.cancelOneSelected(cookId, mealKitId);
 
@@ -72,7 +71,7 @@ public class CookingService {
     }
 
     public void cancelAllSelected(CookUniqueIdentifier cookId) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         kitchen.cancelAllSelected(cookId);
 
@@ -80,7 +79,7 @@ public class CookingService {
     }
 
     public void confirmCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         kitchen.confirmCooked(cookId, mealKitId);
 
@@ -90,7 +89,7 @@ public class CookingService {
     }
 
     public void confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         kitchen.confirmCooked(cookId, mealKitIds);
 
@@ -100,7 +99,7 @@ public class CookingService {
     }
 
     public void recallCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        Kitchen kitchen = kitchenRepository.get().orElseThrow(KitchenNotFoundException::new);
+        Kitchen kitchen = kitchenRepository.get();
 
         kitchen.recallCooked(cookId, mealKitId);
 

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
 
 public class InMemoryKitchenRepository implements KitchenRepository {
     private Optional<Kitchen> kitchen = Optional.empty();
@@ -14,7 +15,7 @@ public class InMemoryKitchenRepository implements KitchenRepository {
     }
 
     @Override
-    public Optional<Kitchen> get() {
-        return kitchen;
+    public Kitchen get() {
+        return kitchen.orElseThrow(KitchenNotFoundException::new);
     }
 }

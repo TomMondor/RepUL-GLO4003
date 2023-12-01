@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.repul.small.cooking.application;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,11 +20,9 @@ import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +48,7 @@ public class CookingServiceTest {
     @BeforeEach
     public void createCookingService() {
         this.cookingService = new CookingService(kitchenRepository, eventBus);
-        when(kitchenRepository.get()).thenReturn(Optional.of(kitchen));
+        when(kitchenRepository.get()).thenReturn(kitchen);
     }
 
     @Test
@@ -73,13 +70,6 @@ public class CookingServiceTest {
         cookingService.receiveMealKitInKitchen(A_UNIQUE_MEAL_KIT_ID, A_MEALKIT_TYPE, A_DATE);
 
         verify(kitchenRepository).save(kitchen);
-    }
-
-    @Test
-    public void givenNoKitchen_whenGettingKitchenFromRepository_shouldThrowKitchenNotFoundException() {
-        when(kitchenRepository.get()).thenReturn(Optional.empty());
-
-        assertThrows(KitchenNotFoundException.class, () -> cookingService.getMealKitsToCook());
     }
 
     @Test
