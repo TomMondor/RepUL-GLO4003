@@ -69,7 +69,7 @@ public class LockerAuthorizationServiceTest {
     public void createLockerAuthorizationService() {
         lockerAuthorizationService = new LockerAuthorizationService(eventBus, lockerAuthorizationSystemRepository);
 
-        when(lockerAuthorizationSystemRepository.get()).thenReturn(Optional.of(lockerAuthorizationSystem));
+        when(lockerAuthorizationSystemRepository.get()).thenReturn(lockerAuthorizationSystem);
     }
 
     @Test

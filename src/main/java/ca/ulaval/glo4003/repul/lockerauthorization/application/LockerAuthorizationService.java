@@ -6,7 +6,6 @@ import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
-import ca.ulaval.glo4003.repul.lockerauthorization.application.exception.LockerAuthorizationSystemNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
@@ -26,8 +25,7 @@ public class LockerAuthorizationService {
 
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
-        LockerAuthorizationSystem lockerAuthorizationSystem =
-            lockerAuthorizationSystemRepository.get().orElseThrow(LockerAuthorizationSystemNotFoundException::new);
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
         lockerAuthorizationSystem.createOrder(mealKitConfirmedEvent.subscriberId, mealKitConfirmedEvent.mealKitId);
 
@@ -36,8 +34,7 @@ public class LockerAuthorizationService {
 
     @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent confirmedDeliveryEvent) {
-        LockerAuthorizationSystem lockerAuthorizationSystem =
-            lockerAuthorizationSystemRepository.get().orElseThrow(LockerAuthorizationSystemNotFoundException::new);
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
         lockerAuthorizationSystem.assignLocker(confirmedDeliveryEvent.mealKitId, new LockerId(confirmedDeliveryEvent.lockerId.id()));
 
@@ -46,8 +43,7 @@ public class LockerAuthorizationService {
 
     @Subscribe
     public void handleRecalledDeliveryEvent(RecalledDeliveryEvent recalledDeliveryEvent) {
-        LockerAuthorizationSystem lockerAuthorizationSystem =
-            lockerAuthorizationSystemRepository.get().orElseThrow(LockerAuthorizationSystemNotFoundException::new);
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
         lockerAuthorizationSystem.unassignLocker(recalledDeliveryEvent.mealKitId);
 
@@ -56,8 +52,7 @@ public class LockerAuthorizationService {
 
     @Subscribe
     public void handleUserCardAddedEvent(UserCardAddedEvent userCardAddedEvent) {
-        LockerAuthorizationSystem lockerAuthorizationSystem =
-            lockerAuthorizationSystemRepository.get().orElseThrow(LockerAuthorizationSystemNotFoundException::new);
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
         lockerAuthorizationSystem.registerUserCardNumber(userCardAddedEvent.accountId, userCardAddedEvent.userCardNumber);
 
@@ -65,8 +60,7 @@ public class LockerAuthorizationService {
     }
 
     public void openLocker(OpenLockerQuery openLockerQuery) {
-        LockerAuthorizationSystem lockerAuthorizationSystem =
-            lockerAuthorizationSystemRepository.get().orElseThrow(LockerAuthorizationSystemNotFoundException::new);
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
         MealKitUniqueIdentifier mealKitId = lockerAuthorizationSystem.authorize(openLockerQuery.lockerId(), openLockerQuery.userCardNumber());
 

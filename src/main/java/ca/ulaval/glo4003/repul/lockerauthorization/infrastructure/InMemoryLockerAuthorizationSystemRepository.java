@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.lockerauthorization.infrastructure;
 
 import java.util.Optional;
 
+import ca.ulaval.glo4003.repul.lockerauthorization.application.exception.LockerAuthorizationSystemNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
 
@@ -14,7 +15,7 @@ public class InMemoryLockerAuthorizationSystemRepository implements LockerAuthor
     }
 
     @Override
-    public Optional<LockerAuthorizationSystem> get() {
-        return lockerAuthorizationSystem;
+    public LockerAuthorizationSystem get() {
+        return lockerAuthorizationSystem.orElseThrow(LockerAuthorizationSystemNotFoundException::new);
     }
 }
