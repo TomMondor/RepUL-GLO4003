@@ -68,7 +68,7 @@ public class DeliveryServiceTest {
 
         eventBus.publish(event);
 
-        assertEquals(1, deliverySystemRepository.get().get().getDeliveryPeople().size());
+        assertEquals(1, deliverySystemRepository.get().getDeliveryPeople().size());
     }
 
     @Test

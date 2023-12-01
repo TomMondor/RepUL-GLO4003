@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.delivery.infrastructure;
 
 import java.util.Optional;
 
+import ca.ulaval.glo4003.repul.delivery.application.exception.DeliverySystemNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
 
@@ -14,7 +15,7 @@ public class InMemoryDeliverySystemRepository implements DeliverySystemRepositor
     }
 
     @Override
-    public Optional<DeliverySystem> get() {
-        return this.deliverySystem;
+    public DeliverySystem get() {
+        return this.deliverySystem.orElseThrow(DeliverySystemNotFoundException::new);
     }
 }

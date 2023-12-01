@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.repul.small.delivery.application;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ public class LocationsCatalogServiceTest {
     public void createLocationsCatalogService() {
         locationsCatalogService = new LocationsCatalogService(deliverySystemRepository);
 
-        when(deliverySystemRepository.get()).thenReturn(Optional.of(mockDeliverySystem));
+        when(deliverySystemRepository.get()).thenReturn(mockDeliverySystem);
     }
 
     @Test

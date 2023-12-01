@@ -1,6 +1,5 @@
 package ca.ulaval.glo4003.repul.delivery.application;
 
-import ca.ulaval.glo4003.repul.delivery.application.exception.DeliverySystemNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationsPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
@@ -14,7 +13,7 @@ public class LocationsCatalogService {
     }
 
     public DeliveryLocationsPayload getDeliveryLocations() {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         return new DeliveryLocationsPayload(deliverySystem.getDeliveryLocations().stream().map(
             deliveryLocation -> new DeliveryLocationPayload(deliveryLocation.getLocationId(), deliveryLocation.getName(), deliveryLocation.getTotalCapacity(),

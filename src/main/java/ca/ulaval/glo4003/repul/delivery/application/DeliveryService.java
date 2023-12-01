@@ -16,7 +16,6 @@ import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
-import ca.ulaval.glo4003.repul.delivery.application.exception.DeliverySystemNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
@@ -41,7 +40,7 @@ public class DeliveryService {
 
     @Subscribe
     public void handleDeliveryPersonAccountCreatedEvent(DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         deliverySystem.addDeliveryPerson(deliveryPersonAccountCreatedEvent.accountId);
 
@@ -50,7 +49,7 @@ public class DeliveryService {
 
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         deliverySystem.createMealKit(mealKitConfirmedEvent.deliveryLocationId, mealKitConfirmedEvent.mealKitId);
 
@@ -59,7 +58,7 @@ public class DeliveryService {
 
     @Subscribe
     public void handleMealKitsCookedEvent(MealKitsCookedEvent mealKitsCookedEvent) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         KitchenLocationId kitchenLocationId = new KitchenLocationId(mealKitsCookedEvent.kitchenLocationId);
 
@@ -72,7 +71,7 @@ public class DeliveryService {
 
     @Subscribe
     public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         deliverySystem.moveMealKitFromCargosToPending(recallCookedMealKitEvent.mealKitId);
 
@@ -81,7 +80,7 @@ public class DeliveryService {
 
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent mealKitPickedUpByUserEvent) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         deliverySystem.removeMealKitFromLocker(mealKitPickedUpByUserEvent.mealKitId);
 
@@ -97,13 +96,13 @@ public class DeliveryService {
     }
 
     public CargosPayload getCargosReadyToPickUp() {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         return CargosPayload.from(deliverySystem.getCargosReadyToPickUp());
     }
 
     public void pickupCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         List<MealKit> mealKits = deliverySystem.pickupCargo(deliveryPersonId, cargoId);
 
@@ -117,7 +116,7 @@ public class DeliveryService {
     }
 
     public void cancelCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         List<MealKit> mealKits = deliverySystem.cancelCargo(deliveryPersonId, cargoId);
 
@@ -127,7 +126,7 @@ public class DeliveryService {
     }
 
     public void confirmDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         deliverySystem.confirmDelivery(deliveryPersonId, cargoId, mealKitId);
 
@@ -140,7 +139,7 @@ public class DeliveryService {
     }
 
     public LockerId recallDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
-        DeliverySystem deliverySystem = deliverySystemRepository.get().orElseThrow(DeliverySystemNotFoundException::new);
+        DeliverySystem deliverySystem = deliverySystemRepository.get();
 
         MealKit mealKit = deliverySystem.recallDelivery(deliveryPersonId, cargoId, mealKitId);
         LockerId lockerId = mealKit.getLockerId().orElseThrow(LockerNotAssignedException::new);
