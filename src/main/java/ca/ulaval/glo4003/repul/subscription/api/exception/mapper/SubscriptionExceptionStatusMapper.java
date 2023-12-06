@@ -5,6 +5,10 @@ import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidBirthdateException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidGenderException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidIDULException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidNameException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSemesterCodeException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
@@ -36,5 +40,9 @@ public class SubscriptionExceptionStatusMapper {
         exceptionMapper.put(NoNextOrderInSubscriptionException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(NoOrdersInDesiredPeriodException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(OrderNotPendingException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidBirthdateException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidGenderException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidIDULException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidNameException.class, Response.Status.BAD_REQUEST);
     }
 }
