@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.LocationsCatalogService;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
@@ -60,14 +61,17 @@ public class DeliveryContextInitializer {
     public DeliveryService createDeliveryService(RepULEventBus eventBus) {
         LOGGER.info("Creating Delivery service");
         initializeDelivery(deliverySystemRepository);
-        DeliveryService service = new DeliveryService(deliverySystemRepository, eventBus);
-        eventBus.register(service);
-        return service;
+        return new DeliveryService(deliverySystemRepository, eventBus);
     }
 
     public LocationsCatalogService createLocationsCatalogService() {
         LOGGER.info("Creating Locations Catalog service");
         return new LocationsCatalogService(deliverySystemRepository);
+    }
+
+    public void createDeliveryEventHandler(DeliveryService deliveryService, RepULEventBus eventBus) {
+        DeliveryEventHandler deliveryEventHandler = new DeliveryEventHandler(deliveryService);
+        eventBus.register(deliveryEventHandler);
     }
 
     private void initializeDelivery(DeliverySystemRepository deliverySystemRepository) {

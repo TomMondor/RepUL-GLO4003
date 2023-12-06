@@ -57,10 +57,9 @@ public class CookingContextInitializer {
         return new CookingService(kitchenRepository, eventBus);
     }
 
-    public MealKitEventHandler createMealKitEventHandler(CookingService cookingService, RepULEventBus eventBus) {
+    public void createMealKitEventHandler(CookingService cookingService, RepULEventBus eventBus) {
         MealKitEventHandler mealKitEventHandler = new MealKitEventHandler(cookingService);
         eventBus.register(mealKitEventHandler);
-        return mealKitEventHandler;
     }
 
     private void initializeKitchen(KitchenRepository kitchenRepository) {

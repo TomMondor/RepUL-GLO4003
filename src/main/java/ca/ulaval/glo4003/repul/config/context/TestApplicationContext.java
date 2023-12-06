@@ -31,11 +31,11 @@ import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInit
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.UserContextInitializer;
-import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
+import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
@@ -139,7 +139,7 @@ public class TestApplicationContext implements ApplicationContext {
                 SEVENTH_MEAL_KIT_ORDER, EIGHTH_MEAL_KIT_ORDER, NINTH_MEAL_KIT_ORDER, TENTH_MEAL_KIT_ORDER));
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
-        MealKitEventHandler mealKitEventHandler = cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
+        cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer().withSubscriptions(List.of(
             new Subscription(FIRST_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
@@ -170,8 +170,10 @@ public class TestApplicationContext implements ApplicationContext {
                 Map.of(FIFTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(SIXTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
                 Map.of(SEVENTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(EIGHTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
                 Map.of(NINTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(TENTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID))).withCargo(List.of(TENTH_MEAL_KIT_ID));
-        CargoResource cargoResource = new CargoResource(deliveryContextInitializer.createDeliveryService(eventBus));
+        DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
+        CargoResource cargoResource = new CargoResource(deliveryService);
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
+        deliveryContextInitializer.createDeliveryEventHandler(deliveryService, eventBus);
 
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer().withOrders(
             List.of(Map.entry(CLIENT_ID, FIRST_MEAL_KIT_ID), Map.entry(CLIENT_ID, SECOND_MEAL_KIT_ID), Map.entry(CLIENT_ID, THIRD_MEAL_KIT_ID),

@@ -4,12 +4,11 @@ import java.time.LocalTime;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
-import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
@@ -23,11 +22,6 @@ import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
-import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
-import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
-
-import com.google.common.eventbus.Subscribe;
 
 public class DeliveryService {
     private final DeliverySystemRepository deliverySystemRepository;
@@ -38,51 +32,44 @@ public class DeliveryService {
         this.eventBus = eventBus;
     }
 
-    @Subscribe
-    public void handleDeliveryPersonAccountCreatedEvent(DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent) {
+    public void createDeliveryPersonAccount(DeliveryPersonUniqueIdentifier accountId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get();
 
-        deliverySystem.addDeliveryPerson(deliveryPersonAccountCreatedEvent.accountId);
+        deliverySystem.addDeliveryPerson(accountId);
 
         deliverySystemRepository.save(deliverySystem);
     }
 
-    @Subscribe
-    public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
+    public void receiveMealKitForDelivery(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get();
 
-        deliverySystem.createMealKit(mealKitConfirmedEvent.deliveryLocationId, mealKitConfirmedEvent.mealKitId);
+        deliverySystem.createMealKit(deliveryLocationId, mealKitId);
 
         deliverySystemRepository.save(deliverySystem);
     }
 
-    @Subscribe
-    public void handleMealKitsCookedEvent(MealKitsCookedEvent mealKitsCookedEvent) {
+    public void createCargo(KitchenLocationId kitchenLocationId, List<MealKitUniqueIdentifier> mealKitIds) {
         DeliverySystem deliverySystem = deliverySystemRepository.get();
 
-        KitchenLocationId kitchenLocationId = new KitchenLocationId(mealKitsCookedEvent.kitchenLocationId);
-
-        Cargo cargo = deliverySystem.receiveReadyToBeDeliveredMealKits(kitchenLocationId, mealKitsCookedEvent.mealKitIds);
+        Cargo cargo = deliverySystem.receiveReadyToBeDeliveredMealKits(kitchenLocationId, mealKitIds);
 
         deliverySystemRepository.save(deliverySystem);
 
         sendMealKitReceivedForDeliveryEvent(cargo, deliverySystem);
     }
 
-    @Subscribe
-    public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
+    public void recallMealKit(MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get();
 
-        deliverySystem.moveMealKitFromCargosToPending(recallCookedMealKitEvent.mealKitId);
+        deliverySystem.moveMealKitFromCargosToPending(mealKitId);
 
         deliverySystemRepository.save(deliverySystem);
     }
 
-    @Subscribe
-    public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent mealKitPickedUpByUserEvent) {
+    public void removeMealKitFromLocker(MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemRepository.get();
 
-        deliverySystem.removeMealKitFromLocker(mealKitPickedUpByUserEvent.mealKitId);
+        deliverySystem.removeMealKitFromLocker(mealKitId);
 
         deliverySystemRepository.save(deliverySystem);
     }

@@ -26,11 +26,11 @@ import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInit
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.UserContextInitializer;
-import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
+import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
@@ -78,14 +78,16 @@ public class DevApplicationContext implements ApplicationContext {
         CookingContextInitializer cookingContextInitializer = new CookingContextInitializer();
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
-        MealKitEventHandler mealKitEventHandler = cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
+        cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer();
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionContextInitializer.createSubscriptionService(eventBus));
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID));
-        CargoResource cargoResource = new CargoResource(deliveryContextInitializer.createDeliveryService(eventBus));
+        DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
+        CargoResource cargoResource = new CargoResource(deliveryService);
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
+        deliveryContextInitializer.createDeliveryEventHandler(deliveryService, eventBus);
 
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
         LockerAuthorizationResource lockerAuthorizationResource =
