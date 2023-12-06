@@ -20,6 +20,7 @@ import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
+import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
@@ -31,11 +32,14 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionFactory subscriptionFactory;
     private final RepULEventBus eventBus;
+    private final PaymentService paymentService;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionFactory subscriptionFactory, RepULEventBus eventBus) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionFactory subscriptionFactory,
+                               PaymentService paymentService, RepULEventBus eventBus) {
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionFactory = subscriptionFactory;
         this.eventBus = eventBus;
+        this.paymentService = paymentService;
     }
 
     public SubscriptionUniqueIdentifier createSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionQuery subscriptionQuery) {
@@ -49,7 +53,8 @@ public class SubscriptionService {
 
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
+        Subscription subscription =
+            subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
         subscription.markOrderAsPickedUp(event.mealKitId);
         subscriptionRepository.save(subscription);
     }
@@ -122,6 +127,8 @@ public class SubscriptionService {
 
         subscriptionRepository.save(subscription);
 
+        paymentService.pay(subscriberId, subscription.getMealKitType(), confirmedOrder.getDeliveryDate());
+
         eventBus.publish(new MealKitConfirmedEvent(confirmedOrder.getOrderId(), subscription.getSubscriptionId(), subscription.getSubscriberId(),
             subscription.getMealKitType(), subscription.getDeliveryLocationId(), confirmedOrder.getDeliveryDate()));
     }
@@ -149,5 +156,12 @@ public class SubscriptionService {
         List<Order> currentOrders = subscriptions.stream().map(Subscription::findCurrentOrder).filter(Optional::isPresent).map(Optional::get).toList();
 
         return OrdersPayload.from(currentOrders);
+    }
+
+    public void processConfirmationForTheDay() {
+        List<Subscription> subscriptions = subscriptionRepository.getAll();
+        for (Subscription subscription : subscriptions) {
+            // TODO: process subscription for the day
+        }
     }
 }

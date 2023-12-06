@@ -23,6 +23,11 @@ public class InMemorySubscriptionRepository implements SubscriptionRepository {
     }
 
     @Override
+    public List<Subscription> getAll() {
+        return subscriptionsById.values().stream().toList();
+    }
+
+    @Override
     public Subscription getById(SubscriptionUniqueIdentifier subscriptionId) {
         Subscription subscription = subscriptionsById.get(subscriptionId);
         if (subscription == null) {

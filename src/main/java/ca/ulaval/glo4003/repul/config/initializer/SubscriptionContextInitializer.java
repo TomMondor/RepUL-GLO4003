@@ -16,6 +16,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
+import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
@@ -59,9 +60,9 @@ public class SubscriptionContextInitializer {
         return this;
     }
 
-    public SubscriptionService createSubscriptionService(RepULEventBus eventBus) {
+    public SubscriptionService createSubscriptionService(RepULEventBus eventBus, PaymentService paymentService) {
         LOGGER.info("Creating Subscription service");
-        SubscriptionService service = new SubscriptionService(subscriptionRepository, subscriptionFactory, eventBus);
+        SubscriptionService service = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus);
         eventBus.register(service);
         return service;
     }

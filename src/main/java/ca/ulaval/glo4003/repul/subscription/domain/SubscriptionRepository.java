@@ -11,6 +11,8 @@ public interface SubscriptionRepository {
 
     Subscription getById(SubscriptionUniqueIdentifier subscriptionId);
 
+    List<Subscription> getAll();
+
     List<Subscription> getBySubscriberId(SubscriberUniqueIdentifier subscriberId);
 
     Subscription getSubscriptionByOrderId(MealKitUniqueIdentifier orderId);

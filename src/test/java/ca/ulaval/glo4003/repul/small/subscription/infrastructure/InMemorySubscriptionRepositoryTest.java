@@ -31,7 +31,9 @@ public class InMemorySubscriptionRepositoryTest {
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_VALID_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     @Mock
-    private Subscription subscription;
+    private Subscription mockSubscription;
+    @Mock
+    private Subscription mockOtherSubscription;
 
     private InMemorySubscriptionRepository inMemorySubscriptionRepository;
 
@@ -42,12 +44,12 @@ public class InMemorySubscriptionRepositoryTest {
 
     @Test
     public void whenSavingSubscriptionAndGettingSubscriptionById_shouldReturnTheRightSubscription() {
-        given(subscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
+        given(mockSubscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
 
-        inMemorySubscriptionRepository.save(subscription);
+        inMemorySubscriptionRepository.save(mockSubscription);
         Subscription subscriptionFound = inMemorySubscriptionRepository.getById(A_SUBSCRIPTION_VALID_ID);
 
-        assertEquals(subscription, subscriptionFound);
+        assertEquals(mockSubscription, subscriptionFound);
     }
 
     @Test
@@ -65,16 +67,16 @@ public class InMemorySubscriptionRepositoryTest {
     @Test
     public void givenSubscriptionsForSubscriber_whenGettingSubscriptionsBySubscriberId_shouldReturnMatchingSubscriptions() {
         Subscription anotherSubscription = mock(Subscription.class);
-        given(subscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
-        given(subscription.getSubscriberId()).willReturn(A_SUBSCRIBER_VALID_ID);
+        given(mockSubscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
+        given(mockSubscription.getSubscriberId()).willReturn(A_SUBSCRIBER_VALID_ID);
         given(anotherSubscription.getSubscriptionId()).willReturn(ANOTHER_SUBSCRIPTION_VALID_ID);
         given(anotherSubscription.getSubscriberId()).willReturn(A_SUBSCRIBER_VALID_ID);
-        inMemorySubscriptionRepository.save(subscription);
+        inMemorySubscriptionRepository.save(mockSubscription);
         inMemorySubscriptionRepository.save(anotherSubscription);
 
         List<Subscription> subscriptionsFound = inMemorySubscriptionRepository.getBySubscriberId(A_SUBSCRIBER_VALID_ID);
 
-        assertTrue(subscriptionsFound.contains(subscription));
+        assertTrue(subscriptionsFound.contains(mockSubscription));
         assertTrue(subscriptionsFound.contains(anotherSubscription));
         assertEquals(2, subscriptionsFound.size());
     }
@@ -86,14 +88,26 @@ public class InMemorySubscriptionRepositoryTest {
 
     @Test
     public void givenSubscriptionWithSpecificOrder_whenGettingSubscriptionByOrderId_shouldReturnMatchingSubscription() {
-        given(subscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
+        given(mockSubscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
         Order anOrder = mock(Order.class);
         given(anOrder.getOrderId()).willReturn(AN_ORDER_ID);
-        given(subscription.findCurrentOrder()).willReturn(Optional.of(anOrder));
-        inMemorySubscriptionRepository.save(subscription);
+        given(mockSubscription.findCurrentOrder()).willReturn(Optional.of(anOrder));
+        inMemorySubscriptionRepository.save(mockSubscription);
 
         Subscription subscriptionFound = inMemorySubscriptionRepository.getSubscriptionByOrderId(AN_ORDER_ID);
 
-        assertEquals(subscription, subscriptionFound);
+        assertEquals(mockSubscription, subscriptionFound);
+    }
+
+    @Test
+    public void givenSubscriptions_whenGetAll_shouldReturnAllSubscriptions() {
+        given(mockSubscription.getSubscriptionId()).willReturn(A_SUBSCRIPTION_VALID_ID);
+        given(mockOtherSubscription.getSubscriptionId()).willReturn(ANOTHER_SUBSCRIPTION_VALID_ID);
+        inMemorySubscriptionRepository.save(mockSubscription);
+        inMemorySubscriptionRepository.save(mockOtherSubscription);
+
+        List<Subscription> subscriptions = inMemorySubscriptionRepository.getAll();
+
+        assertEquals(2, subscriptions.size());
     }
 }

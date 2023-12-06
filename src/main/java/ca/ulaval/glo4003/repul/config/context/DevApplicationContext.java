@@ -13,6 +13,7 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.CatchallExceptionMap
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
+import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
@@ -22,6 +23,7 @@ import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.env.EnvParserFactory;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
+import ca.ulaval.glo4003.repul.config.initializer.JobInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
@@ -35,8 +37,11 @@ import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
-import ca.ulaval.glo4003.repul.payment.application.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
+import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
+import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
+import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
+import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
@@ -66,8 +71,7 @@ public class DevApplicationContext implements ApplicationContext {
                 .withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)));
         notificationContextInitializer.createNotificationService(eventBus);
 
-        PaymentService paymentService = new PaymentService();
-        eventBus.register(paymentService);
+        PaymentService paymentService = new LogPaymentService();
 
         UserContextInitializer userContextInitializer = new UserContextInitializer(eventBus).withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_QUERY)))
             .withShippers(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_REGISTRATION_EMAIL)));
@@ -81,7 +85,9 @@ public class DevApplicationContext implements ApplicationContext {
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer();
-        SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionContextInitializer.createSubscriptionService(eventBus));
+        SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
+        SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);
+        RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID));
         DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
@@ -93,6 +99,9 @@ public class DevApplicationContext implements ApplicationContext {
         LockerAuthorizationResource lockerAuthorizationResource =
             new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
+
+        JobInitializer jobInitializer = new JobInitializer().withJob(processConfirmationForTheDayJob);
+        jobInitializer.launchJobs();
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {

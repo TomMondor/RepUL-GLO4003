@@ -29,6 +29,7 @@ import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
+import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
@@ -36,6 +37,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
+import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,18 +56,20 @@ public class SubscriptionServiceTest {
     private static final DeliveryLocationId ANOTHER_LOCATION_ID = new DeliveryLocationId(ANOTHER_LOCATION_STRING);
     private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
     private RepULEventBus eventBus;
+    private PaymentService paymentService;
     private SubscriptionService subscriptionService;
 
     @BeforeEach
     public void createService() {
         eventBus = new GuavaEventBus();
+        paymentService = new LogPaymentService();
         SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
         UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
             new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
         SubscriptionFactory subscriptionFactory =
             new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
                 new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
-        subscriptionService = new SubscriptionService(subscriptionRepository, subscriptionFactory, eventBus);
+        subscriptionService = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus);
         eventBus.register(subscriptionService);
     }
 

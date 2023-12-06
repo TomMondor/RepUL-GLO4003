@@ -37,6 +37,7 @@ import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
+import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
@@ -77,10 +78,12 @@ public class SubscriptionServiceTest {
     private SubscriptionFactory mockSubscriptionFactory;
     @Mock
     private RepULEventBus mockEventBus;
+    @Mock
+    private PaymentService mockPaymentService;
 
     @BeforeEach
     public void createSubscriptionService() {
-        subscriptionService = new SubscriptionService(mockSubscriptionRepository, mockSubscriptionFactory, mockEventBus);
+        subscriptionService = new SubscriptionService(mockSubscriptionRepository, mockSubscriptionFactory, mockPaymentService, mockEventBus);
     }
 
     @Test
