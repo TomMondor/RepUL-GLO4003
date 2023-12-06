@@ -30,6 +30,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.exception.CargoAlreadyPickedUpExc
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidCargoIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidDeliveryPersonIdException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInCargoException;
 import ca.ulaval.glo4003.repul.fixture.delivery.DeliverySystemFixture;
 import ca.ulaval.glo4003.repul.fixture.delivery.LocationsCatalogFixture;
@@ -307,6 +308,18 @@ public class DeliverySystemTest {
         deliverySystem.recallDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID);
 
         assertEquals(DeliveryStatus.IN_DELIVERY, deliverySystem.getCargos().get(0).getMealKits().get(0).getStatus());
+    }
+
+    @Test
+    public void givenMealKitInDelivery_whenRecallingDelivery_shouldThrowMealKitNotDeliveredException() {
+        DeliverySystem deliverySystem = createDeliverySystem();
+        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
+        CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
+        deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
+        deliverySystem.pickupCargo(A_DELIVERY_PERSON_ID, cargoId);
+
+        assertThrows(MealKitNotDeliveredException.class, () -> deliverySystem.recallDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEALKIT_ID));
     }
 
     @Test

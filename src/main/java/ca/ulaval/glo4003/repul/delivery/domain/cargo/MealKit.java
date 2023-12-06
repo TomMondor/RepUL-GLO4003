@@ -6,7 +6,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
-import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitAlreadyPickedUpException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 
@@ -69,9 +68,7 @@ public class MealKit {
     }
 
     public void recallDelivery() {
-        if (status == DeliveryStatus.PICKED_UP) {
-            throw new MealKitAlreadyPickedUpException();
-        } else if (status != DeliveryStatus.DELIVERED) {
+        if (status != DeliveryStatus.DELIVERED) {
             throw new MealKitNotDeliveredException();
         }
         status = DeliveryStatus.IN_DELIVERY;
