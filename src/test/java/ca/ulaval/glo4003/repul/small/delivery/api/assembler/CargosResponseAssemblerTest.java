@@ -40,13 +40,13 @@ public class CargosResponseAssemblerTest {
     private static final String ANOTHER_CARGO_ID = UUID.randomUUID().toString();
     private static final CargoUniqueIdentifier ANOTHER_CARGO_UNIQUE_IDENTIFIER =
         new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(ANOTHER_CARGO_ID);
-    private static final KitchenLocationId KITCHEN_LOCATION_ID = new KitchenLocationId("VACHON");
+    private static final KitchenLocationId KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final String KITCHEN_LOCATION_NAME = "Pavillon Alexandre-Vachon";
     private static final KitchenLocation KITCHEN_LOCATION = new KitchenLocation(KITCHEN_LOCATION_ID, KITCHEN_LOCATION_NAME);
     private static final CargoPayload A_CARGO_PAYLOAD =
-        new CargoPayload(A_CARGO_UNIQUE_IDENTIFIER, KITCHEN_LOCATION.getLocationId().value(), List.of(A_MEAL_KIT_PAYLOAD));
+        new CargoPayload(A_CARGO_UNIQUE_IDENTIFIER, KITCHEN_LOCATION.getLocationId().toString(), List.of(A_MEAL_KIT_PAYLOAD));
     private static final CargoPayload ANOTHER_CARGO_PAYLOAD =
-        new CargoPayload(ANOTHER_CARGO_UNIQUE_IDENTIFIER, KITCHEN_LOCATION.getLocationId().value(), List.of(ANOTHER_MEAL_KIT_PAYLOAD));
+        new CargoPayload(ANOTHER_CARGO_UNIQUE_IDENTIFIER, KITCHEN_LOCATION.getLocationId().toString(), List.of(ANOTHER_MEAL_KIT_PAYLOAD));
     private static final CargosPayload A_CARGOS_PAYLOAD = new CargosPayload(List.of(A_CARGO_PAYLOAD, ANOTHER_CARGO_PAYLOAD));
 
     private CargosResponseAssembler cargosResponseAssembler;
@@ -58,9 +58,9 @@ public class CargosResponseAssemblerTest {
 
     @Test
     public void givenCargosPayload_whenToCargosResponse_shouldReturnListOfCargoResponse() {
-        CargoResponse expectedFirstCargoResponse = new CargoResponse(A_CARGO_ID, KITCHEN_LOCATION_ID.value(),
+        CargoResponse expectedFirstCargoResponse = new CargoResponse(A_CARGO_ID, KITCHEN_LOCATION_ID.toString(),
             List.of(new MealKitResponse(A_MEAL_KIT_ID, DELIVERY_LOCATION_ID.value(), A_LOCKER_NUMBER)));
-        CargoResponse expectedSecondCargoResponse = new CargoResponse(ANOTHER_CARGO_ID, KITCHEN_LOCATION_ID.value(),
+        CargoResponse expectedSecondCargoResponse = new CargoResponse(ANOTHER_CARGO_ID, KITCHEN_LOCATION_ID.toString(),
             List.of(new MealKitResponse(ANOTHER_MEAL_KIT_ID, DELIVERY_LOCATION_ID.value(), ANOTHER_LOCKER_NUMBER)));
         List<CargoResponse> cargoResponses = cargosResponseAssembler.toCargosResponse(A_CARGOS_PAYLOAD);
 

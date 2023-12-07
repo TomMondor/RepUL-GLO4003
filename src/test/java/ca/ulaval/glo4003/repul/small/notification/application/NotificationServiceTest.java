@@ -56,7 +56,7 @@ public class NotificationServiceTest {
     private static final DeliveryPersonAccount ANOTHER_DELIVERY_ACCOUNT = new DeliveryPersonAccount(ANOTHER_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
     private static final UserAccount A_VALID_USER_ACCOUNT = new UserAccount(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_EMAIL);
     private static final LocalTime A_TIME = LocalTime.now();
-    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("A_LOCATION_ID");
+    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("A_DELIVERY_LOCATION_ID");
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("A_LOCKER_ID", 1));
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();

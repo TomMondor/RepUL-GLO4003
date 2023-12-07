@@ -18,14 +18,14 @@ public class CargoPayloadTest {
 
     private static final String CARGO_ID = UUID.randomUUID().toString();
     private static final CargoUniqueIdentifier CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(CARGO_ID);
-    private static final KitchenLocationId KITCHEN_LOCATION_ID = new KitchenLocationId("Location id");
+    private static final KitchenLocationId KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final String KITCHEN_LOCATION_NAME = "VACHON";
     private static final KitchenLocation KITCHEN_LOCATION = new KitchenLocation(KITCHEN_LOCATION_ID, KITCHEN_LOCATION_NAME);
     private static final Cargo CARGO = new Cargo(CARGO_UNIQUE_IDENTIFIER, KITCHEN_LOCATION, Collections.emptyList());
 
     @Test
     public void whenUsingFrom_shouldReturnCorrectCargoPayload() {
-        CargoPayload expectedCargoPayload = new CargoPayload(CARGO_UNIQUE_IDENTIFIER, KITCHEN_LOCATION_ID.value(), Collections.emptyList());
+        CargoPayload expectedCargoPayload = new CargoPayload(CARGO_UNIQUE_IDENTIFIER, KITCHEN_LOCATION_ID.toString(), Collections.emptyList());
 
         CargoPayload actualCargoPayload = CargoPayload.from(CARGO);
 

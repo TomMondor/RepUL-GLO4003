@@ -21,7 +21,7 @@ public class Kitchen {
 
     public Kitchen(RecipesCatalog recipesCatalog) {
         this.recipesCatalog = recipesCatalog;
-        kitchenLocationId = new KitchenLocationId("DESJARDINS");
+        kitchenLocationId = KitchenLocationId.DESJARDINS;
     }
 
     public KitchenLocationId getKitchenLocationId() {

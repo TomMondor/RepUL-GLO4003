@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LocationsCatalogTest {
     private static final String A_KITCHEN_LOCATION_NAME = "Desjardins";
-    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("id");
+    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
+    private static final KitchenLocationId AN_INVALID_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final KitchenLocation A_KITCHEN_LOCATION = new KitchenLocation(A_KITCHEN_LOCATION_ID, A_KITCHEN_LOCATION_NAME);
     private static final String A_DELIVERY_LOCATION_NAME = "Desjardins";
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("id");
     private static final int A_TOTAL_CAPACITY = 3;
     private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, A_DELIVERY_LOCATION_NAME, A_TOTAL_CAPACITY);
     private static final DeliveryLocationId A_INVALID_DELIVERY_LOCATION_ID = new DeliveryLocationId("id invalid");
-    private static final KitchenLocationId A_INVALID_KITCHEN_LOCATION_ID = new KitchenLocationId("id invalid");
 
     @Test
     public void givenValidKitchenLocationId_whenGetKitchenLocation_shouldReturnRightKitchenLocation() {
@@ -33,6 +33,13 @@ public class LocationsCatalogTest {
         KitchenLocation kitchenLocation = locationsCatalog.getKitchenLocation(A_KITCHEN_LOCATION_ID);
 
         assertEquals(kitchenLocation, A_KITCHEN_LOCATION);
+    }
+
+    @Test
+    public void givenInvalidKitchenLocationId_whenGetKitchenLocation_shouldThrowInvalidLocationException() {
+        LocationsCatalog locationsCatalog = new LocationsCatalogFixture().build();
+
+        assertThrows(InvalidLocationException.class, () -> locationsCatalog.getKitchenLocation(AN_INVALID_KITCHEN_LOCATION_ID));
     }
 
     @Test
@@ -49,13 +56,6 @@ public class LocationsCatalogTest {
         LocationsCatalog locationsCatalog = new LocationsCatalogFixture().build();
 
         assertThrows(InvalidLocationException.class, () -> locationsCatalog.getDeliveryLocation(A_INVALID_DELIVERY_LOCATION_ID));
-    }
-
-    @Test
-    public void givenInvalidKitchenLocationId_whenGetKitchenLocation_shouldThrowInvalidLocationException() {
-        LocationsCatalog locationsCatalog = new LocationsCatalogFixture().build();
-
-        assertThrows(InvalidLocationException.class, () -> locationsCatalog.getKitchenLocation(A_INVALID_KITCHEN_LOCATION_ID));
     }
 
     @Test

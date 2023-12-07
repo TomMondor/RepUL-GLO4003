@@ -53,7 +53,7 @@ public class DeliveryEventHandlerTest {
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID =
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final Email AN_EMAIL = new Email("courriel@ulaval.ca");
-    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("DESJARDINS");
+    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Pouliot");
     private static final LocalDate A_DATE = LocalDate.now();
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
@@ -86,7 +86,7 @@ public class DeliveryEventHandlerTest {
     public void givenConfirmedMealKits_whenHandlingMealKitsCookedEvent_shouldCreateCargo() {
         givenConfirmedMealKit(A_MEAL_KIT_ID);
         givenConfirmedMealKit(ANOTHER_MEAL_KIT_ID);
-        MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.value(), List.of(A_MEAL_KIT_ID, ANOTHER_MEAL_KIT_ID));
+        MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEAL_KIT_ID, ANOTHER_MEAL_KIT_ID));
 
         eventBus.publish(mealKitsCookedEvent);
 

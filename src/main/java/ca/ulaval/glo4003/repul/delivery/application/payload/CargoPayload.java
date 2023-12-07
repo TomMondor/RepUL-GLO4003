@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 
 public record CargoPayload(CargoUniqueIdentifier cargoId, String kitchenLocationId, List<MealKitPayload> mealKitsPayload) {
     public static CargoPayload from(Cargo cargo) {
-        return new CargoPayload(cargo.getCargoId(), cargo.getKitchenLocation().getLocationId().value(),
+        return new CargoPayload(cargo.getCargoId(), cargo.getKitchenLocation().getLocationId().toString(),
             cargo.getMealKits().stream().map(MealKitPayload::from).toList());
     }
 }

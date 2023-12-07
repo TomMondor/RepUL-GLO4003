@@ -24,12 +24,12 @@ public class MessageFactoryTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final CargoUniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generate();
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Desjardins");
-    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("Desjardins");
+    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final LocalTime A_DELIVERY_TIME = LocalTime.now();
     private static final LockerId A_LOCKER_ID = new LockerId("locker", 5);
     private static final List<MealKitDto> A_MEAL_KIT_DTO = List.of(new MealKitDto(A_DELIVERY_LOCATION_ID, Optional.of(A_LOCKER_ID), A_MEAL_KIT_ID));
     private static final String EXPECTED_CREATED_READY_TO_BE_DELIVERED_MESSAGE =
-        "Your meal kits (cargo id: " + A_CARGO_ID.getUUID() + ") are ready to be fetched from " + A_KITCHEN_LOCATION_ID.value() + ".\n" +
+        "Your meal kits (cargo id: " + A_CARGO_ID.getUUID() + ") are ready to be fetched from " + A_KITCHEN_LOCATION_ID.toString() + ".\n" +
             "Here is the list of meal kits to be delivered:\n" + "MealKit ID " + A_MEAL_KIT_DTO.get(0).mealKitId().getUUID() + " to " +
             A_MEAL_KIT_DTO.get(0).deliveryLocationId().value() + " in box 5\n";
     private static final String EXPECTED_CREATED_DELIVERY_MESSAGE =

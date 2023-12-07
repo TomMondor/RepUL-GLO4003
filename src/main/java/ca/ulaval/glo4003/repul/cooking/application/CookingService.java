@@ -85,7 +85,7 @@ public class CookingService {
 
         kitchenRepository.save(kitchen);
 
-        eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().value(), List.of(mealKitId)));
+        eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().toString(), List.of(mealKitId)));
     }
 
     public void confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
@@ -95,7 +95,7 @@ public class CookingService {
 
         kitchenRepository.save(kitchen);
 
-        eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().value(), mealKitIds));
+        eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().toString(), mealKitIds));
     }
 
     public void recallCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {

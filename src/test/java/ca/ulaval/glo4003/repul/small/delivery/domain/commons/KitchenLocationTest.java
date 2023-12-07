@@ -8,7 +8,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KitchenLocationTest {
-    private static final KitchenLocationId A_VALID_KITCHEN_LOCATION_ID = new KitchenLocationId("VACHON");
+    private static final KitchenLocationId A_VALID_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final String A_VALID_KITCHEN_LOCATION_NAME = "Vachon";
 
     @Test

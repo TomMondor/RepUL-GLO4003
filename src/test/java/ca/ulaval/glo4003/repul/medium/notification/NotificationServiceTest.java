@@ -59,7 +59,7 @@ public class NotificationServiceTest {
     private static final LocalTime A_DELIVERY_TIME = LocalTime.now().plusHours(48);
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("LOCKER_ID", 121135));
     private static final CargoUniqueIdentifier A_CARGO_ID = new CargoUniqueIdentifier(UUID.randomUUID());
-    private static final KitchenLocationId A_KITCHEN_ID = new KitchenLocationId("KITCHEN_ID");
+    private static final KitchenLocationId A_KITCHEN_ID = KitchenLocationId.DESJARDINS;
     private static final DeliveryPersonUniqueIdentifier A_DELIVERY_PERSON_ID = new DeliveryPersonUniqueIdentifier(UUID.randomUUID());
     private static final DeliveryPersonUniqueIdentifier ANOTHER_DELIVERY_PERSON_ID = new DeliveryPersonUniqueIdentifier(UUID.randomUUID());
     private RepULEventBus eventBus;

@@ -25,7 +25,7 @@ public class DeliveryEventHandler {
 
     @Subscribe
     public void handleMealKitsCookedEvent(MealKitsCookedEvent mealKitsCookedEvent) {
-        deliveryService.createCargo(new KitchenLocationId(mealKitsCookedEvent.kitchenLocationId),
+        deliveryService.createCargo(KitchenLocationId.valueOf(mealKitsCookedEvent.kitchenLocationId),
             mealKitsCookedEvent.mealKitIds);
     }
 

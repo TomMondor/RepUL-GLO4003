@@ -77,7 +77,7 @@ public class DeliveryContextInitializer {
     private void initializeDelivery(DeliverySystemRepository deliverySystemRepository) {
         List<DeliveryLocation> deliveryLocations = parseDeliveryLocations();
         List<KitchenLocation> kitchenLocations = new ArrayList<>();
-        kitchenLocations.add(new KitchenLocation(new KitchenLocationId("DESJARDINS"), "Desjardins"));
+        kitchenLocations.add(new KitchenLocation(KitchenLocationId.DESJARDINS, "Desjardins"));
 
         LocationsCatalog locationsCatalog = new LocationsCatalog(deliveryLocations, kitchenLocations);
 
@@ -89,7 +89,7 @@ public class DeliveryContextInitializer {
             deliverySystem.createMealKit(deliveryLocationId, mealKitId);
         });
         cargosToAdd.forEach(cargo -> {
-            deliverySystem.receiveReadyToBeDeliveredMealKits(new KitchenLocationId("DESJARDINS"), cargo);
+            deliverySystem.receiveReadyToBeDeliveredMealKits(KitchenLocationId.DESJARDINS, cargo);
         });
 
         deliverySystemRepository.save(deliverySystem);

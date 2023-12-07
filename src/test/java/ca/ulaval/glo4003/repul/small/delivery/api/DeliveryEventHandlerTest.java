@@ -40,15 +40,14 @@ public class DeliveryEventHandlerTest {
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID =
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final Email AN_EMAIL = new Email("unCourriel@ulaval.ca");
-    private static final String A_KITCHEN_LOCATION_ID_AS_STRING = "Id";
-    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId(A_KITCHEN_LOCATION_ID_AS_STRING);
+    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Vachon");
     private static final LocalDate A_DATE = LocalDate.now();
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, AN_EMAIL);
     private static final MealKitsCookedEvent A_MEAL_KITS_COOKED_EVENT =
-        new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID_AS_STRING, List.of(A_MEAL_KIT_ID));
+        new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEAL_KIT_ID));
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID,
             A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE,

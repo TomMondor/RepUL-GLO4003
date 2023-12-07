@@ -14,7 +14,7 @@ import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 public class MessageFactory {
 
     public NotificationMessage createReadyToBeDeliveredMessage(CargoUniqueIdentifier cargoId, KitchenLocationId locationId, List<MealKitDto> mealKitDtos) {
-        String messageBody = "Your meal kits (cargo id: " + cargoId.getUUID().toString() + ") are ready to be fetched from " + locationId.value() + ".\n";
+        String messageBody = "Your meal kits (cargo id: " + cargoId.getUUID().toString() + ") are ready to be fetched from " + locationId.toString() + ".\n";
         messageBody += "Here is the list of meal kits to be delivered:\n";
         for (MealKitDto mealKitDto : mealKitDtos) {
             String lockerId;

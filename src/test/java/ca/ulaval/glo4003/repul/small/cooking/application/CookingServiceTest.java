@@ -34,7 +34,7 @@ public class CookingServiceTest {
     private static final MealKitUniqueIdentifier ANOTHER_UNIQUE_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     private static final List<MealKitUniqueIdentifier> MANY_MEAL_KIT_IDS = List.of(A_UNIQUE_MEAL_KIT_ID, ANOTHER_UNIQUE_MEAL_KIT_ID);
-    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = new KitchenLocationId("DESJARDINS");
+    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final PickedUpCargoEvent PICKED_UP_CARGO_EVENT = new PickedUpCargoEvent(List.of(A_UNIQUE_MEAL_KIT_ID));
 
     private CookingService cookingService;
@@ -199,7 +199,7 @@ public class CookingServiceTest {
 
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
-        assertEquals(A_KITCHEN_LOCATION_ID.value(), publishedEvent.kitchenLocationId);
+        assertEquals(A_KITCHEN_LOCATION_ID.toString(), publishedEvent.kitchenLocationId);
         assertEquals(List.of(A_UNIQUE_MEAL_KIT_ID), publishedEvent.mealKitIds);
     }
 
@@ -239,7 +239,7 @@ public class CookingServiceTest {
 
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
-        assertEquals(A_KITCHEN_LOCATION_ID.value(), publishedEvent.kitchenLocationId);
+        assertEquals(A_KITCHEN_LOCATION_ID.toString(), publishedEvent.kitchenLocationId);
         assertEquals(MANY_MEAL_KIT_IDS, publishedEvent.mealKitIds);
     }
 
