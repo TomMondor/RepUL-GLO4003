@@ -5,8 +5,12 @@ import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
+import ca.ulaval.glo4003.repul.subscription.domain.IDUL;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
 import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
@@ -65,7 +69,9 @@ public class UserService {
                 registrationQuery.gender(), registrationQuery.email());
         accountRepository.save(createdAccount);
 
-        eventBus.publish(new AccountCreatedEvent(createdAccount.getAccountId(), createdAccount.getEmail()));
+        eventBus.publish(
+            new UserCreatedEvent(createdAccount.getAccountId(), new IDUL(registrationQuery.idul().value()), new Name(registrationQuery.name().value()),
+                new Birthdate(registrationQuery.birthdate().value()), Gender.from(registrationQuery.gender().name()), createdAccount.getEmail()));
     }
 
     public Token login(LoginQuery loginQuery) {

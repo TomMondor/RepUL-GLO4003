@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscr
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderNotPendingException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SemesterNotFoundException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.SubscriberNotFound;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SubscriptionException;
 
 import jakarta.ws.rs.core.Response;
@@ -34,6 +35,7 @@ public class SubscriptionExceptionStatusMapper {
         exceptionMapper.put(OrderNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
 
         exceptionMapper.put(SubscriptionNotFoundException.class, Response.Status.NOT_FOUND);
+        exceptionMapper.put(SubscriberNotFound.class, Response.Status.NOT_FOUND);
         exceptionMapper.put(SemesterNotFoundException.class, Response.Status.NOT_FOUND);
 
         exceptionMapper.put(InvalidSemesterCodeException.class, Response.Status.BAD_REQUEST);

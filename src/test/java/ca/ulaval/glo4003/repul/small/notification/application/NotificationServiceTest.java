@@ -34,12 +34,19 @@ import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccount;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
+import ca.ulaval.glo4003.repul.subscription.domain.IDUL;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationServiceTest {
@@ -51,6 +58,10 @@ public class NotificationServiceTest {
         new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final DeliveryPersonUniqueIdentifier AN_INVALID_DELIVERY_ACCOUNT_ID =
         new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
+    private static final IDUL AN_IDUL = new IDUL("ALMAT69");
+    private static final Name A_NAME = new Name("John Doe");
+    private static final Birthdate A_BIRTHDATE = new Birthdate(LocalDate.now().minusYears(20));
+    private static final Gender A_GENDER = Gender.UNDISCLOSED;
     private static final Email AN_EMAIL = new Email("alexandre.mathieu.7@ulaval.ca");
     private static final DeliveryPersonAccount A_DELIVERY_ACCOUNT = new DeliveryPersonAccount(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
     private static final DeliveryPersonAccount ANOTHER_DELIVERY_ACCOUNT = new DeliveryPersonAccount(ANOTHER_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
@@ -79,7 +90,8 @@ public class NotificationServiceTest {
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_VALID_SUBSCRIPTION_ID, A_VALID_SUBSCRIBER_ACCOUNT_ID, MealKitType.STANDARD, A_DELIVERY_LOCATION_ID,
             LocalDate.now());
-    private static final AccountCreatedEvent AN_ACCOUNT_CREATED_EVENT = new AccountCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_EMAIL);
+    private static final UserCreatedEvent AN_ACCOUNT_CREATED_EVENT =
+        new UserCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL);
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
 
@@ -99,9 +111,9 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingUserAccountCreation_shouldSaveUserAccountRepository() {
-        AccountCreatedEvent accountCreatedEvent = new AccountCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_EMAIL);
+        UserCreatedEvent userCreatedEvent = new UserCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL);
 
-        this.notificationService.handleUserAccountCreated(accountCreatedEvent);
+        this.notificationService.handleUserCreated(userCreatedEvent);
 
         verify(userAccountRepository, times(1)).save(any(UserAccount.class));
     }
@@ -174,7 +186,7 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingUserAccountCreated_shouldSaveInUserAccountRepository() {
-        this.notificationService.handleUserAccountCreated(AN_ACCOUNT_CREATED_EVENT);
+        this.notificationService.handleUserCreated(AN_ACCOUNT_CREATED_EVENT);
 
         verify(userAccountRepository).save(any(UserAccount.class));
     }

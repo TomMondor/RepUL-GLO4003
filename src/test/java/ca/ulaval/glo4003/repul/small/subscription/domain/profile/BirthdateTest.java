@@ -1,11 +1,11 @@
-package ca.ulaval.glo4003.repul.small.subscription.domain;
+package ca.ulaval.glo4003.repul.small.subscription.domain.profile;
 
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.subscription.domain.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidBirthdateException;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -38,8 +38,12 @@ import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryDeliveryPersonAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryUserAccountRepository;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
+import ca.ulaval.glo4003.repul.subscription.domain.IDUL;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,8 +51,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
+
 public class NotificationServiceTest {
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new SubscriberUniqueIdentifier(UUID.randomUUID());
+    private static final IDUL AN_IDUL = new IDUL("ALMAT69");
+    private static final Name A_NAME = new Name("John Doe");
+    private static final Birthdate A_BIRTHDATE = new Birthdate(LocalDate.now().minusYears(20));
+    private static final Gender A_GENDER = Gender.UNDISCLOSED;
     private static final Email AN_EMAIL = new Email("idul12@ulaval.ca");
     private static final Email ANOTHER_EMAIL = new Email("idul456@ulaval.ca");
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new MealKitUniqueIdentifier(UUID.randomUUID());
@@ -83,7 +92,7 @@ public class NotificationServiceTest {
 
     @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldSendNotificationToUser() {
-        eventBus.publish(new AccountCreatedEvent(AN_ACCOUNT_ID, AN_EMAIL));
+        eventBus.publish(new UserCreatedEvent(AN_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL));
         eventBus.publish(new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DELIVERY_DATE));
 
         eventBus.publish(new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_DELIVERY_TIME));
@@ -93,7 +102,7 @@ public class NotificationServiceTest {
 
     @Test
     public void givenNoMatchingMealKitConfirmed_whenHandlingConfirmedDeliveryEvent_shouldThrowDeliveryPersonAccountNotFoundException() {
-        eventBus.publish(new AccountCreatedEvent(AN_ACCOUNT_ID, AN_EMAIL));
+        eventBus.publish(new UserCreatedEvent(AN_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL));
 
         assertThrows(UserAccountNotFoundException.class,
             () -> eventBus.publish(new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_DELIVERY_TIME)));

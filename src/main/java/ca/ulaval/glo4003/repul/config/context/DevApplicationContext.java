@@ -39,6 +39,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
+import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
@@ -85,9 +86,11 @@ public class DevApplicationContext implements ApplicationContext {
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer();
+        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService();
         SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);
         RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
+        subscriptionContextInitializer.createUserEventHandler(subscriberService, eventBus);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID));
         DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
@@ -118,8 +121,8 @@ public class DevApplicationContext implements ApplicationContext {
         };
 
         return new ResourceConfig().packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(authGuard).register(apiKeyGuard).register(new CatchallExceptionMapper())
-            .register(new NotFoundExceptionMapper()).register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
+            .register(authGuard).register(apiKeyGuard).register(new CatchallExceptionMapper()).register(new NotFoundExceptionMapper())
+            .register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
     }
 
     @Override

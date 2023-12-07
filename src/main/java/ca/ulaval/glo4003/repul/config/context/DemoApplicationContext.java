@@ -46,6 +46,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
+import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
@@ -128,9 +129,11 @@ public class DemoApplicationContext implements ApplicationContext {
 
         SubscriptionContextInitializer subscriptionContextInitializer =
             new SubscriptionContextInitializer().withSubscriptions(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION));
+        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService();
         SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);
         RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
+        subscriptionContextInitializer.createUserEventHandler(subscriberService, eventBus);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID))
             .withPendingMealKits(

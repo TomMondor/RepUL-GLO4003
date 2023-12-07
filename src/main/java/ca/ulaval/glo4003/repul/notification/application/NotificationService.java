@@ -11,8 +11,8 @@ import ca.ulaval.glo4003.repul.notification.domain.NotificationSender;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccount;
 import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -30,8 +30,8 @@ public class NotificationService {
     }
 
     @Subscribe
-    public void handleUserAccountCreated(AccountCreatedEvent accountCreatedEvent) {
-        UserAccount userAccount = new UserAccount(accountCreatedEvent.accountId, accountCreatedEvent.email);
+    public void handleUserCreated(UserCreatedEvent userCreatedEvent) {
+        UserAccount userAccount = new UserAccount(userCreatedEvent.userId, userCreatedEvent.email);
         userAccountRepository.save(userAccount);
     }
 

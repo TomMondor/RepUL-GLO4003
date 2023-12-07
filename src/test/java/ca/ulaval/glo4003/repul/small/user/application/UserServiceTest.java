@@ -15,8 +15,8 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.user.AccountFixture;
 import ca.ulaval.glo4003.repul.user.application.UserService;
-import ca.ulaval.glo4003.repul.user.application.event.AccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
 import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
 import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
@@ -43,7 +43,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -148,7 +151,7 @@ public class UserServiceTest {
         given(accountRepository.exists(any())).willReturn(false);
         given(userFactory.createUser(any(), any(), any(), any())).willReturn(mock(User.class));
         given(accountFactory.createAccount(any(), any(), any(), any(), any(), any())).willReturn(mock(Account.class));
-        doNothing().when(repULEventBus).publish(any(AccountCreatedEvent.class));
+        doNothing().when(repULEventBus).publish(any(UserCreatedEvent.class));
 
         userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
 
@@ -162,7 +165,7 @@ public class UserServiceTest {
         given(accountRepository.exists(any())).willReturn(false);
         given(userFactory.createUser(any(), any(), any(), any())).willReturn(newUser);
         given(accountFactory.createAccount(any(), any(), any(), any(), any(), any())).willReturn(mock(Account.class));
-        doNothing().when(repULEventBus).publish(any(AccountCreatedEvent.class));
+        doNothing().when(repULEventBus).publish(any(UserCreatedEvent.class));
 
         userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
 

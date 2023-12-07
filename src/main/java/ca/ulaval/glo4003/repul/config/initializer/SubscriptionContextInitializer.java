@@ -15,14 +15,19 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.subscription.api.UserEventHandler;
+import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -37,17 +42,17 @@ public class SubscriptionContextInitializer {
     private static final String CAMPUS_STATIONS_LOCATION_FILE_PATH = "src/main/resources/campus-stations-location.json";
     private static final String LOCATION_FIELD_NAME_IN_JSON = "location";
     private final SubscriptionFactory subscriptionFactory;
+    private final SubscriberFactory subscriberFactory = new SubscriberFactory();
+    private final SubscriberRepository subscriberRepository = new InMemorySubscriberRepository();
     private SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
 
     public SubscriptionContextInitializer() {
         List<Semester> semesters = parseSemesters();
         List<DeliveryLocationId> deliveryLocationIds = parseDeliveryLocationIds();
 
-        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
-            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
-        this.subscriptionFactory =
-            new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
-                new OrdersFactory(mealKitUniqueIdentifierFactory), semesters, deliveryLocationIds);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        this.subscriptionFactory = new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
+            new OrdersFactory(mealKitUniqueIdentifierFactory), semesters, deliveryLocationIds);
     }
 
     public SubscriptionContextInitializer withEmptySubscriptionRepository(SubscriptionRepository subscriptionRepository) {
@@ -65,6 +70,18 @@ public class SubscriptionContextInitializer {
         SubscriptionService service = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus);
         eventBus.register(service);
         return service;
+    }
+
+    public SubscriberService createSubscriberService() {
+        LOGGER.info("Creating Subscriber service");
+        SubscriberService service = new SubscriberService(subscriberRepository, subscriberFactory);
+        return service;
+    }
+
+    public UserEventHandler createUserEventHandler(SubscriberService subscriberService, RepULEventBus eventBus) {
+        UserEventHandler userEventHandler = new UserEventHandler(subscriberService);
+        eventBus.register(userEventHandler);
+        return userEventHandler;
     }
 
     private List<DeliveryLocationId> parseDeliveryLocationIds() {
