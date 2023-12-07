@@ -32,7 +32,7 @@ public class QuantityTest {
 
         Quantity addedQuantity = A_QUANTITY.add(quantityToAdd);
 
-        assertEquals(A_QUANTITY.value() + quantityToAdd.value(), addedQuantity.value());
+        assertEquals(A_QUANTITY.getValue() + quantityToAdd.getValue(), addedQuantity.getValue());
     }
 
     @Test

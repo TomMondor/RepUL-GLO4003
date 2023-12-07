@@ -14,7 +14,7 @@ public class IngredientTest {
 
     @Test
     public void givenIngredientsWithSameName_whenAddingQuantity_shouldAddQuantity() {
-        Quantity expectedQuantity = new Quantity(AN_INGREDIENT.quantity().value() + A_QUANTITY.value(), AN_INGREDIENT.quantity().unit());
+        Quantity expectedQuantity = new Quantity(AN_INGREDIENT.quantity().getValue() + A_QUANTITY.getValue(), AN_INGREDIENT.quantity().getUnit());
 
         Ingredient resultIngredient = AN_INGREDIENT.add(A_QUANTITY);
 

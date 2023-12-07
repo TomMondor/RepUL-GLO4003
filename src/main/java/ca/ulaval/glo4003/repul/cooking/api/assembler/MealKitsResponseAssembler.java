@@ -27,7 +27,7 @@ public class MealKitsResponseAssembler {
         for (Ingredient ingredient : allIngredients) {
             boolean foundInList = false;
             for (Ingredient ingredientInCombinedIngredients : combinedIngredients) {
-                if (ingredient.name().equals(ingredientInCombinedIngredients.name())) {
+                if (ingredient.ingredient().equals(ingredientInCombinedIngredients.ingredient())) {
                     foundInList = true;
                     Ingredient ingredientWithNewQuantity = ingredientInCombinedIngredients.add(ingredient.quantity());
                     combinedIngredients.remove(ingredientInCombinedIngredients);
@@ -68,6 +68,6 @@ public class MealKitsResponseAssembler {
     }
 
     private IngredientResponse toIngredientResponse(Ingredient ingredient) {
-        return new IngredientResponse(ingredient.name(), new QuantityResponse(ingredient.quantity().value(), ingredient.quantity().unit()));
+        return new IngredientResponse(ingredient.ingredient(), new QuantityResponse(ingredient.quantity().getValue(), ingredient.quantity().getUnit()));
     }
 }

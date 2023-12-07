@@ -16,7 +16,7 @@ public class RecipeTest {
     private static final String EMPTY_NAME = "";
     private static final int CALORIES = 1;
     private static final int NEGATIVE_CALORIES = -1;
-    private static final List<Ingredient> INGREDIENTS = List.of(new Ingredient("name", new Quantity(1, "kg")));
+    private static final List<Ingredient> INGREDIENTS = List.of(new Ingredient("ingredient", new Quantity(1, "kg")));
     private static final List<Ingredient> EMPTY_INGREDIENTS = List.of();
 
     @Test

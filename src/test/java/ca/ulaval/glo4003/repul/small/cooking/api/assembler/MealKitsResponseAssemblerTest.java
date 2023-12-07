@@ -36,8 +36,8 @@ public class MealKitsResponseAssemblerTest {
     @Test
     public void givenAMealKit_whenAssemblingResponse_shouldReturnToCookResponseWithMealKitsAndIngredient() {
         Recipe mealKitRecipe = A_MEALKIT.getRecipes().get(0);
-        IngredientResponse expectedIngredientResponse = new IngredientResponse(mealKitRecipe.ingredients().get(0).name(),
-            new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().value(), mealKitRecipe.ingredients().get(0).quantity().unit()));
+        IngredientResponse expectedIngredientResponse = new IngredientResponse(mealKitRecipe.ingredients().get(0).ingredient(),
+            new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().getValue(), mealKitRecipe.ingredients().get(0).quantity().getUnit()));
         MealKitResponse expectedMealKitsResponse = new MealKitResponse(A_MEALKIT.getMealKitId().getUUID().toString(),
             List.of(new RecipeResponse(mealKitRecipe.name(), mealKitRecipe.calories(), List.of(expectedIngredientResponse))),
             A_MEALKIT.getDeliveryDate().toString());
@@ -51,11 +51,11 @@ public class MealKitsResponseAssemblerTest {
     @Test
     public void givenMultipleMealKitWithSameIngredient_whenAssemblingResponse_shouldAddIngredientQuantity() {
         Recipe mealKitRecipe = A_MEALKIT.getRecipes().get(0);
-        IngredientResponse expectedIngredientResponse = new IngredientResponse(mealKitRecipe.ingredients().get(0).name(),
-            new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().value() * 2, mealKitRecipe.ingredients().get(0).quantity().unit()));
+        IngredientResponse expectedIngredientResponse = new IngredientResponse(mealKitRecipe.ingredients().get(0).ingredient(),
+            new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().getValue() * 2, mealKitRecipe.ingredients().get(0).quantity().getUnit()));
         MealKitResponse expectedMealKitsResponse = new MealKitResponse(A_MEALKIT.getMealKitId().getUUID().toString(), List.of(
-            new RecipeResponse(mealKitRecipe.name(), mealKitRecipe.calories(), List.of(new IngredientResponse(mealKitRecipe.ingredients().get(0).name(),
-                new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().value(), mealKitRecipe.ingredients().get(0).quantity().unit()))))),
+            new RecipeResponse(mealKitRecipe.name(), mealKitRecipe.calories(), List.of(new IngredientResponse(mealKitRecipe.ingredients().get(0).ingredient(),
+                new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().getValue(), mealKitRecipe.ingredients().get(0).quantity().getUnit()))))),
             A_MEALKIT.getDeliveryDate().toString());
 
         ToCookResponse toCookResponse = mealKitsResponseAssembler.toToCookResponse(new MealKitsPayload(List.of(A_MEAL_KIT_PAYLOAD, A_MEAL_KIT_PAYLOAD)));
