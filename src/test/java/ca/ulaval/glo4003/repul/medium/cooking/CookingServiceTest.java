@@ -16,9 +16,9 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
-import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
-import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,16 +28,16 @@ public class CookingServiceTest {
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(1);
     private static final RecipesCatalog A_RECIPES_CATALOG = new RecipesCatalog(Map.of(A_MEAL_KIT_TYPE, new ArrayList<>()));
-    private KitchenRepository kitchenRepository;
+    private KitchenPersister kitchenPersister;
     private RepULEventBus eventBus;
     private CookingService cookingService;
 
     @BeforeEach
     public void createCookingService() {
-        kitchenRepository = new InMemoryKitchenRepository();
-        kitchenRepository.save(createKitchenWithAnUnselectedMealKit());
+        kitchenPersister = new InMemoryKitchenPersister();
+        kitchenPersister.save(createKitchenWithAnUnselectedMealKit());
         eventBus = new GuavaEventBus();
-        cookingService = new CookingService(kitchenRepository, eventBus);
+        cookingService = new CookingService(kitchenPersister, eventBus);
     }
 
     @Test

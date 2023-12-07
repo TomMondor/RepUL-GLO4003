@@ -8,33 +8,33 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
-import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class InMemoryKitchenRepositoryTest {
-    private InMemoryKitchenRepository inMemorykitchenRepository;
+public class InMemoryKitchenPersisterTest {
+    private InMemoryKitchenPersister inMemorykitchenPersister;
 
     @Mock
     private Kitchen kitchen;
 
     @BeforeEach
-    public void createKitchenRepository() {
-        this.inMemorykitchenRepository = new InMemoryKitchenRepository();
+    public void createKitchenPersister() {
+        this.inMemorykitchenPersister = new InMemoryKitchenPersister();
     }
 
     @Test
     public void whenSavingKitchenAndGettingKitchen_shouldReturnTheRightKitchen() {
-        inMemorykitchenRepository.save(kitchen);
-        Kitchen kitchenFound = inMemorykitchenRepository.get();
+        inMemorykitchenPersister.save(kitchen);
+        Kitchen kitchenFound = inMemorykitchenPersister.get();
 
         assertEquals(kitchen, kitchenFound);
     }
 
     @Test
     public void givenNoKitchen_whenGettingKitchen_shouldThrowKitchenNotFoundException() {
-        assertThrows(KitchenNotFoundException.class, () -> inMemorykitchenRepository.get());
+        assertThrows(KitchenNotFoundException.class, () -> inMemorykitchenPersister.get());
     }
 }

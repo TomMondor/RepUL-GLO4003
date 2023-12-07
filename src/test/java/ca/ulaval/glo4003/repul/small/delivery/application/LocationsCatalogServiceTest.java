@@ -14,7 +14,7 @@ import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationPayl
 import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationsPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
+import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -27,15 +27,15 @@ public class LocationsCatalogServiceTest {
     private static final List<DeliveryLocation> SOME_DELIVERY_LOCATIONS = List.of(A_DELIVERY_LOCATION);
     private LocationsCatalogService locationsCatalogService;
     @Mock
-    private DeliverySystemRepository deliverySystemRepository;
+    private DeliverySystemPersister deliverySystemPersister;
     @Mock
     private DeliverySystem mockDeliverySystem;
 
     @BeforeEach
     public void createLocationsCatalogService() {
-        locationsCatalogService = new LocationsCatalogService(deliverySystemRepository);
+        locationsCatalogService = new LocationsCatalogService(deliverySystemPersister);
 
-        when(deliverySystemRepository.get()).thenReturn(mockDeliverySystem);
+        when(deliverySystemPersister.get()).thenReturn(mockDeliverySystem);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class LocationsCatalogServiceTest {
 
         locationsCatalogService.getDeliveryLocations();
 
-        verify(deliverySystemRepository).get();
+        verify(deliverySystemPersister).get();
     }
 
     @Test

@@ -19,10 +19,10 @@ import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.LocationsCatalogService;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
+import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
-import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemRepository;
+import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,10 +36,10 @@ public class DeliveryContextInitializer {
     private final List<DeliveryPersonUniqueIdentifier> deliveryPeopleToAdd = new ArrayList<>();
     private final List<Map<MealKitUniqueIdentifier, DeliveryLocationId>> pendingMealKitsToAdd = new ArrayList<>();
     private final List<List<MealKitUniqueIdentifier>> cargosToAdd = new ArrayList<>();
-    private DeliverySystemRepository deliverySystemRepository = new InMemoryDeliverySystemRepository();
+    private DeliverySystemPersister deliverySystemPersister = new InMemoryDeliverySystemPersister();
 
-    public DeliveryContextInitializer withEmptyDeliverySystemRepository(DeliverySystemRepository deliverySystemRepository) {
-        this.deliverySystemRepository = deliverySystemRepository;
+    public DeliveryContextInitializer withEmptyDeliverySystemPersister(DeliverySystemPersister deliverySystemPersister) {
+        this.deliverySystemPersister = deliverySystemPersister;
         return this;
     }
 
@@ -60,13 +60,13 @@ public class DeliveryContextInitializer {
 
     public DeliveryService createDeliveryService(RepULEventBus eventBus) {
         LOGGER.info("Creating Delivery service");
-        initializeDelivery(deliverySystemRepository);
-        return new DeliveryService(deliverySystemRepository, eventBus);
+        initializeDelivery(deliverySystemPersister);
+        return new DeliveryService(deliverySystemPersister, eventBus);
     }
 
     public LocationsCatalogService createLocationsCatalogService() {
         LOGGER.info("Creating Locations Catalog service");
-        return new LocationsCatalogService(deliverySystemRepository);
+        return new LocationsCatalogService(deliverySystemPersister);
     }
 
     public void createDeliveryEventHandler(DeliveryService deliveryService, RepULEventBus eventBus) {
@@ -74,7 +74,7 @@ public class DeliveryContextInitializer {
         eventBus.register(deliveryEventHandler);
     }
 
-    private void initializeDelivery(DeliverySystemRepository deliverySystemRepository) {
+    private void initializeDelivery(DeliverySystemPersister deliverySystemPersister) {
         List<DeliveryLocation> deliveryLocations = parseDeliveryLocations();
         List<KitchenLocation> kitchenLocations = new ArrayList<>();
         kitchenLocations.add(new KitchenLocation(KitchenLocationId.DESJARDINS, "Desjardins"));
@@ -92,7 +92,7 @@ public class DeliveryContextInitializer {
             deliverySystem.receiveReadyToBeDeliveredMealKits(KitchenLocationId.DESJARDINS, cargo);
         });
 
-        deliverySystemRepository.save(deliverySystem);
+        deliverySystemPersister.save(deliverySystem);
     }
 
     private List<DeliveryLocation> parseDeliveryLocations() {

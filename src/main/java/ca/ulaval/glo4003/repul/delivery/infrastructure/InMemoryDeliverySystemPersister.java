@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.delivery.application.exception.DeliverySystemNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
+import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 
-public class InMemoryDeliverySystemRepository implements DeliverySystemRepository {
+public class InMemoryDeliverySystemPersister implements DeliverySystemPersister {
     private Optional<DeliverySystem> deliverySystem = Optional.empty();
 
     @Override

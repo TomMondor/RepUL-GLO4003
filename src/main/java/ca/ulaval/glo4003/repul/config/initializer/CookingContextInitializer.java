@@ -15,10 +15,10 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
-import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
-import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -29,10 +29,10 @@ public class CookingContextInitializer {
     private static final String STANDARD_MEALKIT_FILE_PATH = "src/main/resources/standard-meal-box.json";
     private static final String RECIPES_FIELD_NAME_IN_JSON = "recipes";
     private final List<Order> mealKitsToAdd = new ArrayList<>();
-    private KitchenRepository kitchenRepository = new InMemoryKitchenRepository();
+    private KitchenPersister kitchenPersister = new InMemoryKitchenPersister();
 
-    public CookingContextInitializer withEmptyKitchenRepository(KitchenRepository kitchenRepository) {
-        this.kitchenRepository = kitchenRepository;
+    public CookingContextInitializer withEmptyKitchenPersister(KitchenPersister kitchenPersister) {
+        this.kitchenPersister = kitchenPersister;
         return this;
     }
 
@@ -43,8 +43,8 @@ public class CookingContextInitializer {
 
     public CookingService createCookingService(RepULEventBus eventBus) {
         LOGGER.info("Creating cooking service");
-        initializeKitchen(kitchenRepository);
-        return new CookingService(kitchenRepository, eventBus);
+        initializeKitchen(kitchenPersister);
+        return new CookingService(kitchenPersister, eventBus);
     }
 
     public void createMealKitEventHandler(CookingService cookingService, RepULEventBus eventBus) {
@@ -52,11 +52,11 @@ public class CookingContextInitializer {
         eventBus.register(mealKitEventHandler);
     }
 
-    private void initializeKitchen(KitchenRepository kitchenRepository) {
+    private void initializeKitchen(KitchenPersister kitchenPersister) {
         RecipesCatalog recipesCatalog = new RecipesCatalog(getRecipes());
         Kitchen kitchen = new Kitchen(recipesCatalog);
         mealKitsToAdd.forEach(mealKit -> kitchen.addMealKit(mealKit.getOrderId(), mealKit.getMealKitType(), mealKit.getDeliveryDate()));
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
     }
 
     private Map<MealKitType, List<Recipe>> getRecipes() {

@@ -25,11 +25,11 @@ import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
+import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
-import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemRepository;
+import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
@@ -61,14 +61,14 @@ public class DeliveryEventHandlerTest {
     private DeliveryEventHandler deliveryEventHandler;
     private DeliveryService deliveryService;
     private RepULEventBus eventBus;
-    private DeliverySystemRepository deliverySystemRepository;
+    private DeliverySystemPersister deliverySystemPersister;
 
     @BeforeEach
     public void createDeliveryEventHandler() {
         eventBus = new GuavaEventBus();
-        deliverySystemRepository = new InMemoryDeliverySystemRepository();
-        deliverySystemRepository.save(createDeliverySystem());
-        deliveryService = new DeliveryService(deliverySystemRepository, eventBus);
+        deliverySystemPersister = new InMemoryDeliverySystemPersister();
+        deliverySystemPersister.save(createDeliverySystem());
+        deliveryService = new DeliveryService(deliverySystemPersister, eventBus);
         deliveryEventHandler = new DeliveryEventHandler(deliveryService);
         eventBus.register(deliveryEventHandler);
     }
@@ -79,7 +79,7 @@ public class DeliveryEventHandlerTest {
 
         eventBus.publish(event);
 
-        assertEquals(1, deliverySystemRepository.get().getDeliveryPeople().size());
+        assertEquals(1, deliverySystemPersister.get().getDeliveryPeople().size());
     }
 
     @Test

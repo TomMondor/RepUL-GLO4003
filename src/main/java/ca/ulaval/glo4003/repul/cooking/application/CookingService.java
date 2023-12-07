@@ -12,36 +12,36 @@ import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEven
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
-import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 
 public class CookingService {
-    private final KitchenRepository kitchenRepository;
+    private final KitchenPersister kitchenPersister;
 
     private final RepULEventBus eventBus;
 
-    public CookingService(KitchenRepository kitchenRepository, RepULEventBus eventBus) {
-        this.kitchenRepository = kitchenRepository;
+    public CookingService(KitchenPersister kitchenPersister, RepULEventBus eventBus) {
+        this.kitchenPersister = kitchenPersister;
         this.eventBus = eventBus;
     }
 
     public void receiveMealKitInKitchen(MealKitUniqueIdentifier mealKitId, MealKitType mealKitType, LocalDate deliveryDate) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         kitchen.addMealKit(mealKitId, mealKitType, deliveryDate);
 
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
     }
 
     public void giveMealKitToDelivery(List<MealKitUniqueIdentifier> mealKitIds) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         kitchen.removeMealKitsFromKitchen(mealKitIds);
 
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
     }
 
     public MealKitsPayload getMealKitsToCook() {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         return new MealKitsPayload(
             kitchen.getMealKitsToCook().stream().map(mealKit -> new MealKitPayload(mealKit.getMealKitId(), mealKit.getDeliveryDate(), mealKit.getRecipes()))
@@ -49,61 +49,61 @@ public class CookingService {
     }
 
     public void select(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> selectedMealKitIds) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         kitchen.select(cookId, selectedMealKitIds);
 
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
     }
 
     public List<MealKitUniqueIdentifier> getSelection(CookUniqueIdentifier cookId) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         return kitchen.getSelection(cookId);
     }
 
     public void cancelOneSelected(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         kitchen.cancelOneSelected(cookId, mealKitId);
 
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
     }
 
     public void cancelAllSelected(CookUniqueIdentifier cookId) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         kitchen.cancelAllSelected(cookId);
 
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
     }
 
     public void confirmCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         kitchen.confirmCooked(cookId, mealKitId);
 
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
 
         eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().toString(), List.of(mealKitId)));
     }
 
     public void confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         kitchen.confirmCooked(cookId, mealKitIds);
 
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
 
         eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().toString(), mealKitIds));
     }
 
     public void recallCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        Kitchen kitchen = kitchenRepository.get();
+        Kitchen kitchen = kitchenPersister.get();
 
         kitchen.recallCooked(cookId, mealKitId);
 
-        kitchenRepository.save(kitchen);
+        kitchenPersister.save(kitchen);
 
         eventBus.publish(new RecallCookedMealKitEvent(mealKitId));
     }

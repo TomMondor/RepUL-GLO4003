@@ -26,7 +26,7 @@ import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemRepository;
+import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
@@ -62,7 +62,7 @@ public class DeliveryServiceTest {
 
     private DeliveryService deliveryService;
     @Mock
-    private DeliverySystemRepository mockDeliverySystemRepository;
+    private DeliverySystemPersister mockDeliverySystemPersister;
     @Mock
     private DeliverySystem mockDeliverySystem;
     @Mock
@@ -70,9 +70,9 @@ public class DeliveryServiceTest {
 
     @BeforeEach
     public void createDeliveryService() {
-        deliveryService = new DeliveryService(mockDeliverySystemRepository, mockRepULEventBus);
+        deliveryService = new DeliveryService(mockDeliverySystemPersister, mockRepULEventBus);
 
-        when(mockDeliverySystemRepository.get()).thenReturn(mockDeliverySystem);
+        when(mockDeliverySystemPersister.get()).thenReturn(mockDeliverySystem);
     }
 
     @Test
@@ -86,21 +86,21 @@ public class DeliveryServiceTest {
     public void whenCreatingDeliveryPersonAccount_shouldGetDeliverySystem() {
         deliveryService.createDeliveryPersonAccount(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
     public void whenCreatingDeliveryPersonAccount_shouldSaveDeliverySystem() {
         deliveryService.createDeliveryPersonAccount(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
     public void whenPickupCargo_shouldGetDeliverySystem() {
         deliveryService.pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
@@ -114,7 +114,7 @@ public class DeliveryServiceTest {
     public void whenPickupCargo_shouldSaveDeliverySystem() {
         deliveryService.pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
@@ -128,14 +128,14 @@ public class DeliveryServiceTest {
     public void whenCancelCargo_shouldGetDeliverySystem() {
         deliveryService.cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
     public void whenCancelCargo_shouldSaveDeliverySystem() {
         deliveryService.cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class DeliveryServiceTest {
 
         deliveryService.createCargo(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
@@ -167,7 +167,7 @@ public class DeliveryServiceTest {
 
         deliveryService.createCargo(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
@@ -192,14 +192,14 @@ public class DeliveryServiceTest {
     public void whenHavingAMealKitReadyForDelivery_shouldGetDeliverySystem() {
         deliveryService.receiveMealKitForDelivery(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
     public void whenHavingAMealKitReadyForDelivery_shouldSaveDeliverySystem() {
         deliveryService.receiveMealKitForDelivery(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
@@ -213,7 +213,7 @@ public class DeliveryServiceTest {
     public void whenRecallingMealKit_shouldGetDeliverySystem() {
         deliveryService.recallMealKit(A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
@@ -227,7 +227,7 @@ public class DeliveryServiceTest {
     public void whenRecallingMealKit_shouldSaveDeliverySystem() {
         deliveryService.recallMealKit(A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
@@ -236,7 +236,7 @@ public class DeliveryServiceTest {
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
@@ -245,7 +245,7 @@ public class DeliveryServiceTest {
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
@@ -274,7 +274,7 @@ public class DeliveryServiceTest {
 
         deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
@@ -285,7 +285,7 @@ public class DeliveryServiceTest {
 
         deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
@@ -314,7 +314,7 @@ public class DeliveryServiceTest {
     public void whenGettingCargosReadyToPickUp_shouldGetDeliverySystem() {
         deliveryService.getCargosReadyToPickUp();
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
@@ -328,14 +328,14 @@ public class DeliveryServiceTest {
     public void whenRemovingMealKitFromLocker_shouldGetDeliverySystem() {
         deliveryService.removeMealKitFromLocker(A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).get();
+        verify(mockDeliverySystemPersister).get();
     }
 
     @Test
     public void whenRemovingMealKitFromLocker_shouldSaveDeliverySystem() {
         deliveryService.removeMealKitFromLocker(A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
-        verify(mockDeliverySystemRepository).save(mockDeliverySystem);
+        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test

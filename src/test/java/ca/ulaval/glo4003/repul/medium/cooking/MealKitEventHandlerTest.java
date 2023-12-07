@@ -20,10 +20,10 @@ import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
-import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
-import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 
@@ -44,14 +44,14 @@ public class MealKitEventHandlerTest {
     private MealKitEventHandler mealKitEventHandler;
     private RepULEventBus eventBus;
     private CookingService cookingService;
-    private KitchenRepository kitchenRepository;
+    private KitchenPersister kitchenPersister;
 
     @BeforeEach
     public void createMealKitEventHandler() {
-        kitchenRepository = new InMemoryKitchenRepository();
-        kitchenRepository.save(createKitchenWithAnUnselectedMealKit());
+        kitchenPersister = new InMemoryKitchenPersister();
+        kitchenPersister.save(createKitchenWithAnUnselectedMealKit());
         eventBus = new GuavaEventBus();
-        cookingService = new CookingService(kitchenRepository, eventBus);
+        cookingService = new CookingService(kitchenPersister, eventBus);
         mealKitEventHandler = new MealKitEventHandler(cookingService);
         eventBus.register(mealKitEventHandler);
     }

@@ -19,7 +19,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
-import ca.ulaval.glo4003.repul.cooking.domain.KitchenRepository;
+import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +39,7 @@ public class CookingServiceTest {
 
     private CookingService cookingService;
     @Mock
-    private KitchenRepository kitchenRepository;
+    private KitchenPersister kitchenPersister;
     @Mock
     private Kitchen kitchen;
     @Mock
@@ -47,15 +47,15 @@ public class CookingServiceTest {
 
     @BeforeEach
     public void createCookingService() {
-        this.cookingService = new CookingService(kitchenRepository, eventBus);
-        when(kitchenRepository.get()).thenReturn(kitchen);
+        this.cookingService = new CookingService(kitchenPersister, eventBus);
+        when(kitchenPersister.get()).thenReturn(kitchen);
     }
 
     @Test
     public void whenReceivingMealKitInTheKitchen_shouldGetKitchen() {
         cookingService.receiveMealKitInKitchen(A_UNIQUE_MEAL_KIT_ID, A_MEALKIT_TYPE, A_DATE);
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -69,14 +69,14 @@ public class CookingServiceTest {
     public void whenReceivingMealKitInTheKitchen_shouldSaveKitchen() {
         cookingService.receiveMealKitInKitchen(A_UNIQUE_MEAL_KIT_ID, A_MEALKIT_TYPE, A_DATE);
 
-        verify(kitchenRepository).save(kitchen);
+        verify(kitchenPersister).save(kitchen);
     }
 
     @Test
     public void whenGetMealKitsToCook_shouldGetKitchen() {
         cookingService.getMealKitsToCook();
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -90,7 +90,7 @@ public class CookingServiceTest {
     public void whenSelect_shouldGetKitchen() {
         cookingService.select(A_COOK_ID, MANY_MEAL_KIT_IDS);
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -104,14 +104,14 @@ public class CookingServiceTest {
     public void whenSelect_shouldSaveKitchen() {
         cookingService.select(A_COOK_ID, MANY_MEAL_KIT_IDS);
 
-        verify(kitchenRepository).save(kitchen);
+        verify(kitchenPersister).save(kitchen);
     }
 
     @Test
     public void whenGetSelection_shouldGetKitchen() {
         cookingService.getSelection(A_COOK_ID);
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -125,7 +125,7 @@ public class CookingServiceTest {
     public void whenCancelOneSelected_shouldGetKitchen() {
         cookingService.cancelOneSelected(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -139,14 +139,14 @@ public class CookingServiceTest {
     public void whenCancelOneSelected_shouldSaveKitchen() {
         cookingService.cancelOneSelected(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
 
-        verify(kitchenRepository).save(kitchen);
+        verify(kitchenPersister).save(kitchen);
     }
 
     @Test
     public void whenCancelAllSelected_shouldGetKitchen() {
         cookingService.cancelAllSelected(A_COOK_ID);
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -160,7 +160,7 @@ public class CookingServiceTest {
     public void whenCancelAllSelected_shouldSaveKitchen() {
         cookingService.cancelAllSelected(A_COOK_ID);
 
-        verify(kitchenRepository).save(kitchen);
+        verify(kitchenPersister).save(kitchen);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class CookingServiceTest {
 
         cookingService.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -187,7 +187,7 @@ public class CookingServiceTest {
 
         cookingService.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
 
-        verify(kitchenRepository).save(kitchen);
+        verify(kitchenPersister).save(kitchen);
     }
 
     @Test
@@ -209,7 +209,7 @@ public class CookingServiceTest {
 
         cookingService.confirmCooked(A_COOK_ID, MANY_MEAL_KIT_IDS);
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -227,7 +227,7 @@ public class CookingServiceTest {
 
         cookingService.confirmCooked(A_COOK_ID, MANY_MEAL_KIT_IDS);
 
-        verify(kitchenRepository).save(kitchen);
+        verify(kitchenPersister).save(kitchen);
     }
 
     @Test
@@ -249,14 +249,14 @@ public class CookingServiceTest {
 
         cookingService.confirmCooked(A_COOK_ID, List.of(A_UNIQUE_MEAL_KIT_ID, ANOTHER_UNIQUE_MEAL_KIT_ID));
 
-        verify(kitchenRepository).save(kitchen);
+        verify(kitchenPersister).save(kitchen);
     }
 
     @Test
     public void whenRemovingMealKits_shouldGetKitchen() {
         cookingService.giveMealKitToDelivery(List.of(A_UNIQUE_MEAL_KIT_ID));
 
-        verify(kitchenRepository).get();
+        verify(kitchenPersister).get();
     }
 
     @Test
@@ -270,6 +270,6 @@ public class CookingServiceTest {
     public void whenGivingMealKitToDelivery_shouldSaveKitchen() {
         cookingService.giveMealKitToDelivery(List.of(A_UNIQUE_MEAL_KIT_ID));
 
-        verify(kitchenRepository).save(kitchen);
+        verify(kitchenPersister).save(kitchen);
     }
 }

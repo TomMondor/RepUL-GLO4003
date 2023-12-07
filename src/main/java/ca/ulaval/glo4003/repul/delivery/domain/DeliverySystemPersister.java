@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.delivery.domain;
 
-public interface DeliverySystemRepository {
+public interface DeliverySystemPersister {
     void save(DeliverySystem deliverySystem);
 
     DeliverySystem get();
