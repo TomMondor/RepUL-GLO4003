@@ -31,7 +31,7 @@ public class SubscriptionFixture {
         subscriberId = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
         orders = new ArrayList<>();
         frequency = new Frequency(DayOfWeek.FRIDAY);
-        deliveryLocationId = new DeliveryLocationId("location");
+        deliveryLocationId = DeliveryLocationId.VACHON;
         startDate = LocalDate.now();
         semester = new Semester(new SemesterCode("A23"), startDate.minusMonths(1), startDate.plusMonths(2));
         mealKitType = MealKitType.STANDARD;

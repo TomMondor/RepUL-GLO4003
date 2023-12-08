@@ -43,17 +43,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SubscriptionServiceTest {
-    private static final String A_LOCATION_STRING = "VACHON";
-    private static final String ANOTHER_LOCATION_STRING = "DESJARDINS";
-    private static final String A_DAY_STRING = DayOfWeek.from(LocalDate.now().plusDays(3)).toString();
+    private static final DeliveryLocationId A_LOCATION_ID = DeliveryLocationId.VACHON;
+    private static final DeliveryLocationId ANOTHER_LOCATION_ID = DeliveryLocationId.PEPS;
+    private static final DayOfWeek A_DAY_STRING = DayOfWeek.from(LocalDate.now().plusDays(3));
     private static final String A_MEALKIT_TYPE = "STANDARD";
-    private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_LOCATION_STRING, A_DAY_STRING, A_MEALKIT_TYPE);
-    private static final SubscriptionQuery ANOTHER_SUBSCRIPTION_QUERY = new SubscriptionQuery(ANOTHER_LOCATION_STRING, A_DAY_STRING, A_MEALKIT_TYPE);
+    private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_LOCATION_ID, A_DAY_STRING, A_MEALKIT_TYPE);
+    private static final SubscriptionQuery ANOTHER_SUBSCRIPTION_QUERY = new SubscriptionQuery(ANOTHER_LOCATION_ID, A_DAY_STRING, A_MEALKIT_TYPE);
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(2));
-    private static final DeliveryLocationId A_LOCATION_ID = new DeliveryLocationId(A_LOCATION_STRING);
-    private static final DeliveryLocationId ANOTHER_LOCATION_ID = new DeliveryLocationId(ANOTHER_LOCATION_STRING);
     private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
     private RepULEventBus eventBus;
     private PaymentService paymentService;
@@ -104,7 +102,7 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         List<MealKitUniqueIdentifier> orderIds = ordersPayload.orders().stream().map(OrderPayload::orderId).toList();
-        MealKitsCookedEvent event = new MealKitsCookedEvent(A_LOCATION_STRING, orderIds);
+        MealKitsCookedEvent event = new MealKitsCookedEvent(A_LOCATION_ID.toString(), orderIds);
 
         eventBus.publish(event);
 

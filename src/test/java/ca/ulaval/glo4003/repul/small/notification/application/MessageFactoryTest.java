@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class MessageFactoryTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final CargoUniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generate();
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Desjardins");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final LocalTime A_DELIVERY_TIME = LocalTime.now();
     private static final LockerId A_LOCKER_ID = new LockerId("locker", 5);
@@ -31,9 +31,9 @@ public class MessageFactoryTest {
     private static final String EXPECTED_CREATED_READY_TO_BE_DELIVERED_MESSAGE =
         "Your meal kits (cargo id: " + A_CARGO_ID.getUUID() + ") are ready to be fetched from " + A_KITCHEN_LOCATION_ID.toString() + ".\n" +
             "Here is the list of meal kits to be delivered:\n" + "MealKit ID " + A_MEAL_KIT_DTO.get(0).mealKitId().getUUID() + " to " +
-            A_MEAL_KIT_DTO.get(0).deliveryLocationId().value() + " in box 5\n";
+            A_MEAL_KIT_DTO.get(0).deliveryLocationId().toString() + " in box 5\n";
     private static final String EXPECTED_CREATED_DELIVERY_MESSAGE =
-        "Your meal kit with id " + A_MEAL_KIT_ID.getUUID() + " is ready to be fetched from " + A_DELIVERY_LOCATION_ID.value() + " in the locker " +
+        "Your meal kit with id " + A_MEAL_KIT_ID.getUUID() + " is ready to be fetched from " + A_DELIVERY_LOCATION_ID.toString() + " in the locker " +
             A_LOCKER_ID.lockerNumber() + ".\n" + "It arrived at " + A_DELIVERY_TIME + ".\n" + "Come get it!";
     private MessageFactory messageFactory;
 

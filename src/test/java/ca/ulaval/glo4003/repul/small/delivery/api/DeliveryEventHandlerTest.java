@@ -42,7 +42,7 @@ public class DeliveryEventHandlerTest {
     private static final Email AN_EMAIL = new Email("unCourriel@ulaval.ca");
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Vachon");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final LocalDate A_DATE = LocalDate.now();
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, AN_EMAIL);

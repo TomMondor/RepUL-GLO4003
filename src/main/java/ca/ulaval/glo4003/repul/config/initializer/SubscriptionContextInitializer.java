@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +41,6 @@ public class SubscriptionContextInitializer {
     private static final String SEMESTER_CODE_FIELD_NAME_IN_JSON = "semester_code";
     private static final String START_DATE_FIELD_NAME_IN_JSON = "start_date";
     private static final String END_DATE_FIELD_NAME_IN_JSON = "end_date";
-    private static final String CAMPUS_STATIONS_LOCATION_FILE_PATH = "src/main/resources/campus-stations-location.json";
-    private static final String LOCATION_FIELD_NAME_IN_JSON = "location";
     private final SubscriptionFactory subscriptionFactory;
     private final SubscriberFactory subscriberFactory = new SubscriberFactory();
     private final SubscriberRepository subscriberRepository = new InMemorySubscriberRepository();
@@ -48,7 +48,7 @@ public class SubscriptionContextInitializer {
 
     public SubscriptionContextInitializer() {
         List<Semester> semesters = parseSemesters();
-        List<DeliveryLocationId> deliveryLocationIds = parseDeliveryLocationIds();
+        List<DeliveryLocationId> deliveryLocationIds = new ArrayList<>(EnumSet.allOf(DeliveryLocationId.class));
 
         UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
         this.subscriptionFactory = new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
@@ -82,11 +82,6 @@ public class SubscriptionContextInitializer {
         UserEventHandler userEventHandler = new UserEventHandler(subscriberService);
         eventBus.register(userEventHandler);
         return userEventHandler;
-    }
-
-    private List<DeliveryLocationId> parseDeliveryLocationIds() {
-        List<Map<String, Object>> listOfLocationMaps = getListOfMapsFromJsonFilePath(CAMPUS_STATIONS_LOCATION_FILE_PATH);
-        return listOfLocationMaps.stream().map(map -> new DeliveryLocationId((String) map.get(LOCATION_FIELD_NAME_IN_JSON))).toList();
     }
 
     private List<Semester> parseSemesters() {

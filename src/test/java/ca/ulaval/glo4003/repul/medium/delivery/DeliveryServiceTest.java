@@ -30,7 +30,7 @@ public class DeliveryServiceTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new MealKitUniqueIdentifier(UUID.randomUUID());
     private static final DeliveryPersonUniqueIdentifier A_DELIVERY_PERSON_ACCOUNT_ID = new DeliveryPersonUniqueIdentifier(UUID.randomUUID());
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ACCOUNT_ID = new SubscriberUniqueIdentifier(UUID.randomUUID());
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final LocationsCatalog A_LOCATIONS_CATALOG = new LocationsCatalog(
         List.of(new DeliveryLocation(A_DELIVERY_LOCATION_ID, "vch-1", 10)),

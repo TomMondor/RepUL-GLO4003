@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubscriptionsResponseAssemblerTest {
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
     private static final LocalDate A_DATE = LocalDate.now();
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
@@ -41,7 +41,7 @@ public class SubscriptionsResponseAssemblerTest {
         List<SubscriptionResponse> subscriptionResponses = subscriptionResponseAssembler.toSubscriptionsResponse(SUBSCRIPTIONS_PAYLOAD);
 
         assertEquals(A_SUBSCRIPTION_ID.getUUID().toString(), subscriptionResponses.get(0).subscriptionId());
-        assertEquals(A_DELIVERY_LOCATION_ID.value(), subscriptionResponses.get(0).locationId());
+        assertEquals(A_DELIVERY_LOCATION_ID.toString(), subscriptionResponses.get(0).locationId());
         assertEquals(A_FREQUENCY.dayOfWeek().name(), subscriptionResponses.get(0).dayOfWeek());
         assertEquals(A_MEALKIT_TYPE.name(), subscriptionResponses.get(0).mealKitType());
         assertEquals(A_DATE.toString(), subscriptionResponses.get(0).startDate());
@@ -54,7 +54,7 @@ public class SubscriptionsResponseAssemblerTest {
         SubscriptionResponse subscriptionResponse = subscriptionResponseAssembler.toSubscriptionResponse(SUBSCRIPTION_PAYLOAD);
 
         assertEquals(A_SUBSCRIPTION_ID.getUUID().toString(), subscriptionResponse.subscriptionId());
-        assertEquals(A_DELIVERY_LOCATION_ID.value(), subscriptionResponse.locationId());
+        assertEquals(A_DELIVERY_LOCATION_ID.toString(), subscriptionResponse.locationId());
         assertEquals(A_FREQUENCY.dayOfWeek().name(), subscriptionResponse.dayOfWeek());
         assertEquals(A_MEALKIT_TYPE.name(), subscriptionResponse.mealKitType());
         assertEquals(A_DATE.toString(), subscriptionResponse.startDate());

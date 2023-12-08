@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MealKitPayloadTest {
 
-    private static final DeliveryLocationId DELIVERY_LOCATION_ID = new DeliveryLocationId("Location id");
+    private static final DeliveryLocationId DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final String LOCATION_NAME = "VACHON";
     private static final int LOCATION_TOTAL_CAPACITY = 10;
     private static final DeliveryLocation DELIVERY_LOCATION = new DeliveryLocation(DELIVERY_LOCATION_ID, LOCATION_NAME, LOCATION_TOTAL_CAPACITY);
@@ -33,7 +33,7 @@ public class MealKitPayloadTest {
     @Test
     public void givenMealKitWithNoLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
         MealKit mealKit = new MealKit(DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
-        MealKitPayload expectedMealKitPayload = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.value(), NOT_ASSIGN_LOCKER_NUMBER);
+        MealKitPayload expectedMealKitPayload = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.toString(), NOT_ASSIGN_LOCKER_NUMBER);
 
         MealKitPayload actualMealKitPayload = MealKitPayload.from(mealKit);
 
@@ -44,7 +44,7 @@ public class MealKitPayloadTest {
     public void givenMealKitWithAssignedLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
         MealKit mealKit = new MealKit(DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
         lockerAssignator.assignLocker(mealKit);
-        MealKitPayload expectedMealKitPayload = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.value(), LOCKER_NUMBER);
+        MealKitPayload expectedMealKitPayload = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.toString(), LOCKER_NUMBER);
 
         MealKitPayload actualMealKitPayload = MealKitPayload.from(mealKit);
 

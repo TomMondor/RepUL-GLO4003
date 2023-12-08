@@ -15,8 +15,8 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LocationsCatalogResponseAssemblerTest {
-    private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(new DeliveryLocationId("VACHON"), "vch-1", 10);
-    private static final DeliveryLocation A_SECOND_DELIVERY_LOCATION = new DeliveryLocation(new DeliveryLocationId("PEPS"), "pep-2", 20);
+    private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(DeliveryLocationId.VACHON, "vch-1", 10);
+    private static final DeliveryLocation A_SECOND_DELIVERY_LOCATION = new DeliveryLocation(DeliveryLocationId.PEPS, "pep-2", 20);
     private static final DeliveryLocationPayload A_DELIVERY_LOCATION_PAYLOAD =
         new DeliveryLocationPayload(A_DELIVERY_LOCATION.getLocationId(), A_DELIVERY_LOCATION.getName(), A_DELIVERY_LOCATION.getTotalCapacity(),
             A_DELIVERY_LOCATION.getRemainingCapacity());
@@ -38,10 +38,10 @@ public class LocationsCatalogResponseAssemblerTest {
     public void givenLocationsPayload_whenToLocationsResponse_shouldReturnListOfLocationResponse() {
         List<DeliveryLocationResponse> deliveryLocationRespons = catalogResponseAssembler.toLocationsResponse(A_LOCATIONS_PAYLOAD);
 
-        assertEquals(A_DELIVERY_LOCATION.getLocationId().value(), deliveryLocationRespons.get(0).locationId());
+        assertEquals(A_DELIVERY_LOCATION.getLocationId().toString(), deliveryLocationRespons.get(0).locationId());
         assertEquals(A_DELIVERY_LOCATION.getName(), deliveryLocationRespons.get(0).name());
         assertEquals(A_DELIVERY_LOCATION.getRemainingCapacity(), deliveryLocationRespons.get(0).remainingCapacity());
-        assertEquals(A_SECOND_DELIVERY_LOCATION.getLocationId().value(), deliveryLocationRespons.get(1).locationId());
+        assertEquals(A_SECOND_DELIVERY_LOCATION.getLocationId().toString(), deliveryLocationRespons.get(1).locationId());
         assertEquals(A_SECOND_DELIVERY_LOCATION.getName(), deliveryLocationRespons.get(1).name());
         assertEquals(A_SECOND_DELIVERY_LOCATION.getRemainingCapacity(), deliveryLocationRespons.get(1).remainingCapacity());
     }

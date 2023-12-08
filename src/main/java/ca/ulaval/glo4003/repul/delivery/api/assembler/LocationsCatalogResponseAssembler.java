@@ -8,7 +8,7 @@ import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationsPay
 public class LocationsCatalogResponseAssembler {
     public List<DeliveryLocationResponse> toLocationsResponse(DeliveryLocationsPayload deliveryLocationsPayload) {
         return deliveryLocationsPayload.deliveryLocations().stream().map(
-            deliveryLocation -> new DeliveryLocationResponse(deliveryLocation.deliveryLocationId().value(), deliveryLocation.name(),
+            deliveryLocation -> new DeliveryLocationResponse(deliveryLocation.deliveryLocationId().toString(), deliveryLocation.name(),
                 deliveryLocation.remainingCapacity())).toList();
     }
 }

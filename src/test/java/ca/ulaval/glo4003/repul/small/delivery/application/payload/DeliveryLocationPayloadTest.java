@@ -9,7 +9,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeliveryLocationPayloadTest {
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("a location id");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final String LOCATION_NAME = "a name";
     private static final int LOCATION_TOTAL_CAPACITY = 10;
     private static final int LOCATION_REMAINING_CAPACITY = LOCATION_TOTAL_CAPACITY;

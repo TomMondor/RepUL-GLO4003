@@ -44,11 +44,11 @@ public class SubscriptionResourceTest {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
     private static final String SUBSCRIPTION_ID_STRING = UUID.randomUUID().toString();
     private static final SubscriptionsPayload A_SUBSCRIPTIONS_PAYLOAD = new SubscriptionsPayload(List.of());
-    private static final String A_LOCATION_ID = "VACHON";
-    private static final String A_DAY_OF_WEEK = DayOfWeek.MONDAY.toString();
+    private static final DeliveryLocationId A_LOCATION_ID = DeliveryLocationId.VACHON;
+    private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
     private static final String A_MEAL_KIT_TYPE_STRING = "STANDARD";
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST =
-        new SubscriptionRequestFixture().withLocationId(A_LOCATION_ID).withDayOfWeek(A_DAY_OF_WEEK).build();
+        new SubscriptionRequestFixture().withLocationId(A_LOCATION_ID.toString()).withDayOfWeek(A_DAY_OF_WEEK.toString()).build();
     private static final SubscriberUniqueIdentifier ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final LocalDate AN_ORDER_DELIVERY_DATE = LocalDate.now().plusDays(4);
@@ -59,7 +59,7 @@ public class SubscriptionResourceTest {
         new OrdersPayload(List.of(new OrderPayload(AN_ORDER_ID, A_MEAL_KIT_TYPE, AN_ORDER_DELIVERY_DATE, AN_ORDER_STATUS)));
     private static final String PATH_TO_API = "/api/subscriptions/";
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Here");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("H24"), LocalDate.now().minusMonths(3), LocalDate.now().plusMonths(3));
     private static final SubscriptionPayload A_SUBSCRIPTION_PAYLOAD =
         new SubscriptionPayload(A_SUBSCRIPTION_ID, A_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(), MealKitType.STANDARD, A_SEMESTER);

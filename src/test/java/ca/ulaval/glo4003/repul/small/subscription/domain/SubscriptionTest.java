@@ -29,7 +29,7 @@ public class SubscriptionTest {
     private static final SubscriptionUniqueIdentifier AN_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.FRIDAY);
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("123");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("123"), LocalDate.now().minusMonths(2), LocalDate.now().plusMonths(2));
     private static final LocalDate TODAY = LocalDate.now();

@@ -5,14 +5,15 @@ import java.time.DayOfWeek;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidDayOfWeekException;
+import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationIdException;
 
 public record SubscriptionQuery(
     DeliveryLocationId deliveryLocationId,
     DayOfWeek dayOfWeek,
     MealKitType mealKitType
 ) {
-    public SubscriptionQuery(String deliveryLocationId, String dayOfWeek, String mealKitType) {
-        this(new DeliveryLocationId(deliveryLocationId), DayOfWeek.valueOf(dayOfWeek), MealKitType.from(mealKitType));
+    public SubscriptionQuery(DeliveryLocationId deliveryLocationId, DayOfWeek dayOfWeek, String mealKitType) {
+        this(deliveryLocationId, dayOfWeek, MealKitType.from(mealKitType));
     }
 
     public static SubscriptionQuery from(String deliveryLocationId, String dayOfWeek, String mealKitType) {
@@ -21,6 +22,11 @@ public record SubscriptionQuery(
         } catch (IllegalArgumentException e) {
             throw new InvalidDayOfWeekException();
         }
-        return new SubscriptionQuery(deliveryLocationId, dayOfWeek, mealKitType);
+        try {
+            DeliveryLocationId.valueOf(deliveryLocationId);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidLocationIdException();
+        }
+        return new SubscriptionQuery(DeliveryLocationId.valueOf(deliveryLocationId), DayOfWeek.valueOf(dayOfWeek), mealKitType);
     }
 }

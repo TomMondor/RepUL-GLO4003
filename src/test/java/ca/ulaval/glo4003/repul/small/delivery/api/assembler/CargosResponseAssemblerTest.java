@@ -23,18 +23,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CargosResponseAssemblerTest {
 
-    private static final DeliveryLocationId DELIVERY_LOCATION_ID = new DeliveryLocationId("VANDRY");
+    private static final DeliveryLocationId DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final String A_LOCKER_NUMBER = "1";
     private static final String ANOTHER_LOCKER_NUMBER = "2";
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
     private static final MealKitUniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(A_MEAL_KIT_ID);
-    private static final MealKitPayload A_MEAL_KIT_PAYLOAD = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.value(), A_LOCKER_NUMBER);
+    private static final MealKitPayload A_MEAL_KIT_PAYLOAD = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.toString(), A_LOCKER_NUMBER);
     private static final String ANOTHER_MEAL_KIT_ID = UUID.randomUUID().toString();
     private static final MealKitUniqueIdentifier ANOTHER_MEAL_KIT_UNIQUE_IDENTIFIER =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(ANOTHER_MEAL_KIT_ID);
     private static final MealKitPayload ANOTHER_MEAL_KIT_PAYLOAD =
-        new MealKitPayload(ANOTHER_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.value(), ANOTHER_LOCKER_NUMBER);
+        new MealKitPayload(ANOTHER_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.toString(), ANOTHER_LOCKER_NUMBER);
     private static final String A_CARGO_ID = UUID.randomUUID().toString();
     private static final CargoUniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(A_CARGO_ID);
     private static final String ANOTHER_CARGO_ID = UUID.randomUUID().toString();
@@ -59,9 +59,9 @@ public class CargosResponseAssemblerTest {
     @Test
     public void givenCargosPayload_whenToCargosResponse_shouldReturnListOfCargoResponse() {
         CargoResponse expectedFirstCargoResponse = new CargoResponse(A_CARGO_ID, KITCHEN_LOCATION_ID.toString(),
-            List.of(new MealKitResponse(A_MEAL_KIT_ID, DELIVERY_LOCATION_ID.value(), A_LOCKER_NUMBER)));
+            List.of(new MealKitResponse(A_MEAL_KIT_ID, DELIVERY_LOCATION_ID.toString(), A_LOCKER_NUMBER)));
         CargoResponse expectedSecondCargoResponse = new CargoResponse(ANOTHER_CARGO_ID, KITCHEN_LOCATION_ID.toString(),
-            List.of(new MealKitResponse(ANOTHER_MEAL_KIT_ID, DELIVERY_LOCATION_ID.value(), ANOTHER_LOCKER_NUMBER)));
+            List.of(new MealKitResponse(ANOTHER_MEAL_KIT_ID, DELIVERY_LOCATION_ID.toString(), ANOTHER_LOCKER_NUMBER)));
         List<CargoResponse> cargoResponses = cargosResponseAssembler.toCargosResponse(A_CARGOS_PAYLOAD);
 
         assertEquals(2, cargoResponses.size());

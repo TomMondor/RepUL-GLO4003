@@ -50,10 +50,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SubscriptionServiceTest {
-    private static final String A_LOCATION_STRING = "VACHON";
-    private static final String A_DAY_STRING = "MONDAY";
+    private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
     private static final String A_MEALKIT_TYPE = "STANDARD";
-    private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_LOCATION_STRING, A_DAY_STRING, A_MEALKIT_TYPE);
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
+    private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, A_MEALKIT_TYPE);
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriptionUniqueIdentifier AN_ID_NOT_MATCHING_ANY_SUBSCRIPTION =
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
@@ -61,7 +61,6 @@ public class SubscriptionServiceTest {
     private static final SubscriberUniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId(A_LOCATION_STRING);
     private static final Optional<LockerId> OPTIONAL_OF_A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
     private SubscriptionService subscriptionService;
@@ -93,8 +92,8 @@ public class SubscriptionServiceTest {
 
         subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
 
-        verify(mockSubscriptionFactory).createSubscription(any(SubscriberUniqueIdentifier.class), eq(new DeliveryLocationId(A_LOCATION_STRING)),
-            eq(DayOfWeek.valueOf(A_DAY_STRING)), eq(MealKitType.valueOf(A_MEALKIT_TYPE)));
+        verify(mockSubscriptionFactory).createSubscription(any(SubscriberUniqueIdentifier.class), eq(DeliveryLocationId.VACHON),
+            eq(A_DAY_OF_WEEK), eq(MealKitType.valueOf(A_MEALKIT_TYPE)));
     }
 
     @Test

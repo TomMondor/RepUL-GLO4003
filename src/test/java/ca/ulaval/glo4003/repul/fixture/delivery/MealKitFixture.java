@@ -17,7 +17,7 @@ public class MealKitFixture {
     private DeliveryStatus status;
 
     public MealKitFixture() {
-        this.deliveryLocation = new DeliveryLocation(new DeliveryLocationId("Pouliot"), "Pouliot", 10);
+        this.deliveryLocation = new DeliveryLocation(DeliveryLocationId.VACHON, "Vachon", 10);
         this.mealKitId = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
         this.status = DeliveryStatus.READY_TO_BE_DELIVERED;
         this.lockerId = Optional.empty();

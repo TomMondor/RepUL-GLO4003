@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.small.lockerauthorization.application;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,7 @@ public class LockerAuthorizationServiceTest {
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId(UUID.randomUUID().toString());
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final LocalDate A_DATE = LocalDate.now();
     private static final LocalTime A_TIME = LocalTime.now();
     private static final LockerId A_LOCKER_CONTEXT_LOCKER_ID = new LockerId("VACHON 1");

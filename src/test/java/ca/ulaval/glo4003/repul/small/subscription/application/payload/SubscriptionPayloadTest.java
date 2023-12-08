@@ -30,7 +30,7 @@ public class SubscriptionPayloadTest {
     private static final Order ORDER =
         new OrderFixture().withMealKitType(ORDER_MEALKIT_TYPE).withDeliveryDate(ORDER_DELIVERY_DATE).withOrderStatus(ORDER_STATUS).build();
     private static final Frequency SUBSCRIPTION_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
-    private static final DeliveryLocationId LOCATION_ID = new DeliveryLocationId("a location id");
+    private static final DeliveryLocationId LOCATION_ID = DeliveryLocationId.VACHON;
     private static final LocalDate SUBSCRIPTION_START_DATE = LocalDate.now();
     private static final Semester SEMESTER = new Semester(new SemesterCode("A23"), SUBSCRIPTION_START_DATE, SUBSCRIPTION_START_DATE.minusYears(1));
     private static final MealKitType SUBSCRIPTION_MEALKIT_TYPE = MealKitType.STANDARD;

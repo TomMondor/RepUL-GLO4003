@@ -23,7 +23,8 @@ public class MessageFactory {
             } else {
                 lockerId = "To Be Determined";
             }
-            messageBody += "MealKit ID " + mealKitDto.mealKitId().getUUID() + " to " + mealKitDto.deliveryLocationId().value() + " in box " + lockerId + "\n";
+            messageBody +=
+                "MealKit ID " + mealKitDto.mealKitId().getUUID() + " to " + mealKitDto.deliveryLocationId().toString() + " in box " + lockerId + "\n";
         }
         String messageTitle = "RepUL - Meal kits ready to be delivered";
         return new NotificationMessage(messageTitle, messageBody);
@@ -32,7 +33,7 @@ public class MessageFactory {
     public NotificationMessage createDeliveredMessage(MealKitUniqueIdentifier mealKitId, DeliveryLocationId deliveryLocationId, LocalTime localTime,
                                                       LockerId lockerId) {
         String messageBody = "Your meal kit with id " + mealKitId.getUUID().toString();
-        messageBody += " is ready to be fetched from " + deliveryLocationId.value();
+        messageBody += " is ready to be fetched from " + deliveryLocationId.toString();
         messageBody += " in the locker " + lockerId.lockerNumber();
         messageBody += ".\n";
         messageBody += "It arrived at " + localTime.toString() + ".\n";

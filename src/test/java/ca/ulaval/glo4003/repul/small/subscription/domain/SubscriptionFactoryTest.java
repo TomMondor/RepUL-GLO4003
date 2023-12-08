@@ -38,8 +38,8 @@ public class SubscriptionFactoryTest {
     private static final SubscriptionUniqueIdentifier A_UNIQUE_SUBSCRIPTION_IDENTIFIER = new SubscriptionUniqueIdentifier(UUID.randomUUID());
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new SubscriberUniqueIdentifier(UUID.randomUUID());
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now().minusDays(60), LocalDate.now().plusDays(17));
-    private static final DeliveryLocationId A_VALID_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
-    private static final DeliveryLocationId ANOTHER_VALID_DELIVERY_LOCATION_ID = new DeliveryLocationId("POULIOT");
+    private static final DeliveryLocationId A_VALID_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
+    private static final DeliveryLocationId ANOTHER_VALID_DELIVERY_LOCATION_ID = DeliveryLocationId.PEPS;
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final DayOfWeek A_WEEKDAY = DayOfWeek.MONDAY;
     private static final Order AN_ORDER = new Order(new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate(), A_MEALKIT_TYPE, LocalDate.now());
@@ -82,10 +82,10 @@ public class SubscriptionFactoryTest {
 
     @Test
     public void givenUnsupportedLocationId_whenCreatingSubscription_shouldThrowInvalidLocationException() {
-        DeliveryLocationId unsupportedDeliveryLocationId = new DeliveryLocationId("UNSUPPORTED");
+        DeliveryLocationId unsupportedDeliveryLocationId = DeliveryLocationId.VACHON;
         subscriptionFactory =
             new SubscriptionFactory(mealKitUniqueIdentifierFactory, subscriptionUniqueIdentifierFactory, ordersFactory, List.of(CURRENT_SEMESTER),
-                List.of(A_VALID_DELIVERY_LOCATION_ID));
+                List.of());
 
         assertThrows(InvalidLocationIdException.class,
             () -> subscriptionFactory.createSubscription(A_SUBSCRIBER_ID, unsupportedDeliveryLocationId, A_WEEKDAY, A_MEALKIT_TYPE));

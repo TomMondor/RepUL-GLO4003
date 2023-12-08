@@ -43,7 +43,7 @@ public class LockerAuthorizationServiceTest {
         new ca.ulaval.glo4003.repul.delivery.domain.LockerId("locker", 55);
     private static final LockerId A_LOCKER_AUTHORIZATION_LOCKER_ID = new LockerId("locker");
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("Desjardins");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final LocalDate A_DATE = LocalDate.now();
     private static final LocalTime A_TIME = LocalTime.now();
     private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("111222333");

@@ -82,7 +82,7 @@ public class DemoApplicationContext implements ApplicationContext {
         new Order(new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1),
             OrderStatus.TO_COOK);
     private static final Frequency A_WEEKLY_FREQUENCY = new Frequency(LocalDate.now().getDayOfWeek().plus(1));
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("VACHON");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.parse("2023-09-04"), LocalDate.parse("2023-12-15"));
     private static final Subscription FIRST_SUBSCRIPTION =
         new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER),

@@ -16,7 +16,7 @@ public class SubscriptionsResponseAssembler {
         return new SubscriptionResponse(
             subscriptionPayload.subscriptionId().getUUID().toString(),
             subscriptionPayload.frequency().dayOfWeek().name(),
-            subscriptionPayload.deliveryLocationId().value(),
+            subscriptionPayload.deliveryLocationId().toString(),
             subscriptionPayload.mealKitType().name(),
             subscriptionPayload.startDate().toString(),
             subscriptionPayload.semester().semesterCode().value());

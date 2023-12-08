@@ -63,7 +63,7 @@ public class NotificationServiceTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new MealKitUniqueIdentifier(UUID.randomUUID());
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new SubscriptionUniqueIdentifier(UUID.randomUUID());
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = new DeliveryLocationId("DESJARDINS");
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(2);
     private static final LocalTime A_DELIVERY_TIME = LocalTime.now().plusHours(48);
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("LOCKER_ID", 121135));

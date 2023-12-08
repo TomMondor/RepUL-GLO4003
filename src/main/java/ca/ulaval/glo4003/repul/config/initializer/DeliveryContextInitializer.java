@@ -98,7 +98,7 @@ public class DeliveryContextInitializer {
     private List<DeliveryLocation> parseDeliveryLocations() {
         List<Map<String, Object>> listOfLocationMaps = getListOfMapsFromJsonFilePath(CAMPUS_STATIONS_LOCATION_FILE_PATH);
         return listOfLocationMaps.stream().map(
-            map -> new DeliveryLocation(new DeliveryLocationId((String) map.get(LOCATION_FIELD_NAME_IN_JSON)), (String) map.get(NAME_FIELD_NAME_IN_JSON),
+            map -> new DeliveryLocation(DeliveryLocationId.valueOf((String) map.get(LOCATION_FIELD_NAME_IN_JSON)), (String) map.get(NAME_FIELD_NAME_IN_JSON),
                 (int) map.get(CAPACITY_FIELD_NAME_IN_JSON))).toList();
     }
 
