@@ -11,6 +11,8 @@ import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
 import ca.ulaval.glo4003.repul.health.api.dto.HealthDto;
 
+import jakarta.ws.rs.core.MediaType;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,7 +34,7 @@ public class HealthResourceEnd2EndTest {
 
     @Test
     public void whenGettingHealth_shouldReturn200() {
-        Response response = given().contentType("application/json").get(context.getURI() + "health");
+        Response response = given().contentType(MediaType.APPLICATION_JSON).get(context.getURI() + "health");
 
         assertEquals(200, response.getStatusCode());
     }
@@ -41,7 +43,7 @@ public class HealthResourceEnd2EndTest {
     public void whenGettingHealth_shouldReturnEverythingIsFineMessage() {
         String expectedMessage = "OK - Everything is alright!";
 
-        Response response = given().contentType("application/json").get(context.getURI() + "health");
+        Response response = given().contentType(MediaType.APPLICATION_JSON).get(context.getURI() + "health");
         HealthDto healthDto = response.getBody().as(HealthDto.class);
 
         assertEquals(expectedMessage, healthDto.status());

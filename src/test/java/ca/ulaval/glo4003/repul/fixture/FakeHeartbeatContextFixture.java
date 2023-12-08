@@ -21,7 +21,7 @@ public class FakeHeartbeatContextFixture implements ApplicationContext {
         return String.format("http://localhost:%s/", PORT);
     }
 
-    @Path("/api/heartbeat")
+    @Path("/heartbeat")
     public static class FakeHeartbeatResource {
         @GET
         public Response getHeartbeat() {

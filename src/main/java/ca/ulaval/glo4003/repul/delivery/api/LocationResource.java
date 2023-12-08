@@ -12,7 +12,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/api/locations")
+@Path("/locations")
 public class LocationResource {
     private final LocationsCatalogService locationsCatalogService;
     private final LocationsCatalogResponseAssembler locationsCatalogResponseAssembler = new LocationsCatalogResponseAssembler();

@@ -25,7 +25,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/api")
+@Path("")
 @Produces(MediaType.APPLICATION_JSON)
 public class CargoResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";

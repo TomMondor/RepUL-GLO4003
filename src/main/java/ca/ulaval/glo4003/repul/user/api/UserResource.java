@@ -32,8 +32,9 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/api")
+@Path("")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class UserResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
 
@@ -46,7 +47,6 @@ public class UserResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/users:register")
     public Response register(@NotNull(message = "The body must not be null.") @Valid RegistrationRequest registrationRequest) {
         userService.register(RegistrationQuery.from(registrationRequest.email, registrationRequest.password, registrationRequest.idul, registrationRequest.name,
@@ -57,7 +57,6 @@ public class UserResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Path("/users:login")
     public Response login(@NotNull(message = "The body must not be null.") @Valid LoginRequest loginRequest) {
         Token token = userService.login(LoginQuery.from(loginRequest.email, loginRequest.password));
@@ -67,7 +66,6 @@ public class UserResource {
     }
 
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Secure
     @Roles(Role.CLIENT)
     @Path("/users")
@@ -81,7 +79,6 @@ public class UserResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Secure
     @Roles(Role.CLIENT)
     @Path("/users:addCard")

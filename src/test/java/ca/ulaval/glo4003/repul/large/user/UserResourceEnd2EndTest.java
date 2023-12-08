@@ -19,6 +19,8 @@ import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.api.response.AccountResponse;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 
+import jakarta.ws.rs.core.MediaType;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,7 +53,7 @@ public class UserResourceEnd2EndTest {
     public void whenRegistering_shouldReturn201() {
         RegistrationRequest registrationRequest = new RegistrationRequestFixture().build();
 
-        Response response = given().contentType("application/json").body(registrationRequest).post(CONTEXT.getURI() + "users:register");
+        Response response = given().contentType(MediaType.APPLICATION_JSON).body(registrationRequest).post(CONTEXT.getURI() + "users:register");
 
         assertEquals(201, response.getStatusCode());
     }
@@ -60,7 +62,7 @@ public class UserResourceEnd2EndTest {
     public void whenRegistering_shouldReturnLocationHeader() {
         RegistrationRequest registrationRequest = new RegistrationRequestFixture().build();
 
-        Response response = given().contentType("application/json").body(registrationRequest).post(CONTEXT.getURI() + "users:register");
+        Response response = given().contentType(MediaType.APPLICATION_JSON).body(registrationRequest).post(CONTEXT.getURI() + "users:register");
 
         assertNotNull(response.getHeader("Location"));
     }
@@ -69,7 +71,7 @@ public class UserResourceEnd2EndTest {
     public void givenExistingAccount_whenGettingMyAccount_shouldReturn200() {
         String accountToken = registerAndLogin();
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "users");
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "users");
 
         assertEquals(200, response.getStatusCode());
     }
@@ -78,7 +80,7 @@ public class UserResourceEnd2EndTest {
     public void givenExistingAccount_whenGettingMyAccount_shouldReturnAccountInformation() {
         String accountToken = registerAndLogin();
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "users");
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "users");
         AccountResponse responseBody = response.getBody().as(AccountResponse.class);
 
         assertEquals(ACCOUNT_NAME, responseBody.name());
@@ -94,7 +96,7 @@ public class UserResourceEnd2EndTest {
         String accountToken = registerAndLogin();
         AddCardRequest addCardRequest = new AddCardRequestFixture().build();
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(addCardRequest)
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(addCardRequest)
             .post(CONTEXT.getURI() + "users:addCard");
 
         assertEquals(204, response.getStatusCode());
@@ -102,10 +104,10 @@ public class UserResourceEnd2EndTest {
 
     private String registerAndLogin() {
         RegistrationRequest registrationRequest = createRegistrationRequest();
-        given().contentType("application/json").body(registrationRequest).post(CONTEXT.getURI() + "users:register");
+        given().contentType(MediaType.APPLICATION_JSON).body(registrationRequest).post(CONTEXT.getURI() + "users:register");
 
         LoginRequest loginRequest = new LoginRequestFixture().withEmail(ACCOUNT_EMAIL).withPassword(ACCOUNT_PASSWORD).build();
-        Response loginResponse = given().contentType("application/json").body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
     }

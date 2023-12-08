@@ -36,7 +36,7 @@ public class FakeCommonExceptionThrowerContextFixture implements ApplicationCont
 
     @Override
     public String getURI() {
-        return String.format("http://localhost:%s/", PORT);
+        return String.format("http://localhost:%s/api/", PORT);
     }
 
     @Path("")

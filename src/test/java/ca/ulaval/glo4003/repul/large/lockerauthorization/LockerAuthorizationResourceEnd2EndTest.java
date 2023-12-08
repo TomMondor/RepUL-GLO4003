@@ -25,6 +25,8 @@ import ca.ulaval.glo4003.repul.user.api.request.AddCardRequest;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 
+import jakarta.ws.rs.core.MediaType;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -54,7 +56,7 @@ public class LockerAuthorizationResourceEnd2EndTest {
         String lockerId = deliverMealKit(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString());
         OpenLockerRequest openLockerRequest = new OpenLockerRequestFixture().withUserCardNumber(A_USER_CARD_NUMBER).withLockerId(lockerId).build();
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + apiKey).body(openLockerRequest)
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + apiKey).body(openLockerRequest)
             .post(CONTEXT.getURI() + "locker:open");
 
         assertEquals(204, response.getStatusCode());
@@ -63,7 +65,7 @@ public class LockerAuthorizationResourceEnd2EndTest {
     private String login() {
         LoginRequest loginRequest = new LoginRequestFixture().withEmail(TestApplicationContext.CLIENT_EMAIL)
             .withPassword(TestApplicationContext.CLIENT_PASSWORD).build();
-        Response loginResponse = given().contentType("application/json").body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
     }
@@ -72,29 +74,29 @@ public class LockerAuthorizationResourceEnd2EndTest {
         String accountToken = login();
         AddCardRequest addCardRequest = new AddCardRequestFixture().withCardNumber(cardNumber).build();
 
-        given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(addCardRequest)
+        given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(addCardRequest)
             .post(CONTEXT.getURI() + "users:addCard");
     }
 
     private void cookMealKit(String mealKitId) {
         LoginRequest loginRequest = new LoginRequestFixture().withEmail(TestApplicationContext.COOK_EMAIL)
             .withPassword(TestApplicationContext.COOK_PASSWORD).build();
-        Response loginResponse = given().contentType("application/json").body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
         String accountToken = loginResponse.getBody().as(LoginResponse.class).token();
 
         SelectionRequest selectionRequest = new SelectionRequest();
         selectionRequest.ids = List.of(mealKitId);
 
-        given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(selectionRequest)
+        given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(selectionRequest)
             .post(CONTEXT.getURI() + "mealKits:select");
-        given().contentType("application/json").header("Authorization", "Bearer " + accountToken)
+        given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
             .post(CONTEXT.getURI() + "mealKits/" + mealKitId + ":confirmCooked");
     }
 
     private String deliverMealKit(String mealKitId) {
         LoginRequest loginRequest = new LoginRequestFixture().withEmail(TestApplicationContext.DELIVERY_PERSON_EMAIL)
             .withPassword(TestApplicationContext.DELIVERY_PERSON_PASSWORD).build();
-        Response loginResponse = given().contentType("application/json").body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
         String accountToken = loginResponse.getBody().as(LoginResponse.class).token();
 
         Response response = given().header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "cargos:toPickUp");

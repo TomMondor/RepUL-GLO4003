@@ -19,6 +19,8 @@ import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 
+import jakarta.ws.rs.core.MediaType;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -125,7 +127,7 @@ public class CargoResourceEnd2EndTest {
         LoginRequest loginRequest =
             new LoginRequestFixture().withEmail(TestApplicationContext.DELIVERY_PERSON_EMAIL).withPassword(TestApplicationContext.DELIVERY_PERSON_PASSWORD)
                 .build();
-        Response loginResponse = given().contentType("application/json").body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).when().post(CONTEXT.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
     }
@@ -133,7 +135,7 @@ public class CargoResourceEnd2EndTest {
     private String loginAsADifferentDeliveryPerson() {
         LoginRequest loginRequest = new LoginRequestFixture().withEmail(TestApplicationContext.SECOND_DELIVERY_PERSON_EMAIL)
             .withPassword(TestApplicationContext.SECOND_DELIVERY_PERSON_PASSWORD).build();
-        Response loginResponse = given().contentType("application/json").body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
     }

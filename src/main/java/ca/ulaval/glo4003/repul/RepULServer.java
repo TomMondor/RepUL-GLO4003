@@ -3,7 +3,10 @@ package ca.ulaval.glo4003.repul;
 import java.net.URI;
 
 import org.eclipse.jetty.server.Server;
-import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,27 +28,32 @@ public class RepULServer implements Runnable {
 
     private Server initializeServer() {
         LOGGER.info("Setup http server");
-        return JettyHttpContainerFactory.createServer(URI.create(applicationContext.getURI()), applicationContext.initializeResourceConfig());
+
+        Server server = new Server(URI.create(applicationContext.getURI()).getPort());
+
+        ServletContextHandler context = new ServletContextHandler(server, "/api");
+        ResourceConfig resourceConfig = applicationContext.initializeResourceConfig();
+        ServletContainer container = new ServletContainer(resourceConfig);
+        ServletHolder servletHolder = new ServletHolder(container);
+
+        context.addServlet(servletHolder, "/*");
+
+        return server;
     }
 
     private void start(Server server) {
         try {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    LOGGER.info("Shutting down the application...");
-                    server.stop();
-                    LOGGER.info("Done, exit.");
-                } catch (Exception e) {
-                    LOGGER.error("Error shutting down the server", e);
-                }
-            }));
-
-            LOGGER.info("Application started.%nStop the application using CTRL+C");
-
-            // block and wait shut down signal, like CTRL+C
-            Thread.currentThread().join();
-        } catch (InterruptedException e) {
-            LOGGER.error("Error starting up the server", e);
+            LOGGER.info("Starting the server...");
+            server.start();
+            server.join();
+        } catch (Exception e) {
+            LOGGER.error("Error occurred while starting the server", e);
+        } finally {
+            if (server.isRunning()) {
+                LOGGER.info("Destroying the server...");
+                server.destroy();
+                LOGGER.info("Server destroyed.");
+            }
         }
     }
 }

@@ -26,6 +26,8 @@ import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 
+import jakarta.ws.rs.core.MediaType;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -63,7 +65,7 @@ public class SubscriptionResourceEnd2EndTest {
     public void whenSubscribing_shouldReturn201() {
         String accountToken = login();
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(A_SUBSCRIPTION_REQUEST)
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(A_SUBSCRIPTION_REQUEST)
             .post(CONTEXT.getURI() + "subscriptions");
 
         assertEquals(201, response.getStatusCode());
@@ -73,7 +75,7 @@ public class SubscriptionResourceEnd2EndTest {
     public void whenSubscribing_shouldReturnSubscriptionIdInLocationHeader() {
         String accountToken = login();
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(A_SUBSCRIPTION_REQUEST)
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(A_SUBSCRIPTION_REQUEST)
             .post(CONTEXT.getURI() + "subscriptions");
         String locationHeader = response.getHeader("Location");
 
@@ -84,7 +86,8 @@ public class SubscriptionResourceEnd2EndTest {
     public void whenGettingSubscriptions_shouldReturn200() {
         String accountToken = login();
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "subscriptions");
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+            .get(CONTEXT.getURI() + "subscriptions");
 
         assertEquals(200, response.getStatusCode());
     }
@@ -94,7 +97,8 @@ public class SubscriptionResourceEnd2EndTest {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST);
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "subscriptions");
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+            .get(CONTEXT.getURI() + "subscriptions");
         List<SubscriptionResponse> responseBody = Arrays.asList(response.getBody().as(SubscriptionResponse[].class));
         Optional<SubscriptionResponse> createdSubscriptionResponse =
             responseBody.stream().filter(subscription -> subscription.subscriptionId().equals(subscriptionId)).findFirst();
@@ -112,7 +116,8 @@ public class SubscriptionResourceEnd2EndTest {
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST);
 
         Response response =
-            given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "subscriptions/" + subscriptionId);
+            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+                .get(CONTEXT.getURI() + "subscriptions/" + subscriptionId);
 
         assertEquals(200, response.getStatusCode());
     }
@@ -122,7 +127,7 @@ public class SubscriptionResourceEnd2EndTest {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST);
         String url = CONTEXT.getURI() + "subscriptions/" + subscriptionId;
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(url);
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(url);
         SubscriptionResponse responseBody = response.getBody().as(SubscriptionResponse.class);
 
         assertEquals(subscriptionId, responseBody.subscriptionId());
@@ -137,7 +142,7 @@ public class SubscriptionResourceEnd2EndTest {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS);
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken)
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
             .post(CONTEXT.getURI() + "subscriptions/" + subscriptionId + ":confirm");
 
         assertEquals(204, response.getStatusCode());
@@ -151,7 +156,7 @@ public class SubscriptionResourceEnd2EndTest {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS);
 
-        given().contentType("application/json").header("Authorization", "Bearer " + accountToken)
+        given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
             .post(CONTEXT.getURI() + "subscriptions/" + subscriptionId + ":confirm");
         String paymentServiceLog = outputStream.toString().trim();
 
@@ -163,7 +168,7 @@ public class SubscriptionResourceEnd2EndTest {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS);
 
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken)
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
             .post(CONTEXT.getURI() + "subscriptions/" + subscriptionId + ":decline");
 
         assertEquals(204, response.getStatusCode());
@@ -174,7 +179,8 @@ public class SubscriptionResourceEnd2EndTest {
         String accountToken = login();
 
         Response response =
-            given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "subscriptions:currentOrders");
+            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+                .get(CONTEXT.getURI() + "subscriptions:currentOrders");
 
         assertEquals(200, response.getStatusCode());
     }
@@ -185,7 +191,8 @@ public class SubscriptionResourceEnd2EndTest {
         createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_IN_FIVE_DAYS);
 
         Response response =
-            given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "subscriptions:currentOrders");
+            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+                .get(CONTEXT.getURI() + "subscriptions:currentOrders");
         List<OrderResponse> responseBody = Arrays.asList(response.getBody().as(OrderResponse[].class));
         Optional<OrderResponse> createdOrderResponse =
             responseBody.stream().filter(order -> order.deliveryDate().equals(LocalDate.now().plusDays(5).toString())).findFirst();
@@ -202,7 +209,8 @@ public class SubscriptionResourceEnd2EndTest {
         createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_TODAY);
 
         Response response =
-            given().contentType("application/json").header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "subscriptions:currentOrders");
+            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+                .get(CONTEXT.getURI() + "subscriptions:currentOrders");
         List<OrderResponse> responseBody = Arrays.asList(response.getBody().as(OrderResponse[].class));
         Optional<OrderResponse> createdOrderResponse =
             responseBody.stream().filter(order -> order.deliveryDate().equals(LocalDate.now().toString())).findFirst();
@@ -214,13 +222,13 @@ public class SubscriptionResourceEnd2EndTest {
     private String login() {
         LoginRequest loginRequest =
             new LoginRequestFixture().withEmail(TestApplicationContext.CLIENT_EMAIL).withPassword(TestApplicationContext.CLIENT_PASSWORD).build();
-        Response loginResponse = given().contentType("application/json").body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
     }
 
     private String createSubscription(String accountToken, SubscriptionRequest subscriptionRequest) {
-        Response response = given().contentType("application/json").header("Authorization", "Bearer " + accountToken).body(subscriptionRequest)
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(subscriptionRequest)
             .post(CONTEXT.getURI() + "subscriptions");
         String location = response.getHeader("Location");
         return location.substring(location.indexOf("subscriptions/") + SUBSCRIPTION_ID_LENGTH);
