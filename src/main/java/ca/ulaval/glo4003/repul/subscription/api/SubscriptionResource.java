@@ -56,6 +56,7 @@ public class SubscriptionResource {
                                        @NotNull(message = "The body must not be null.") @Valid SubscriptionRequest subscriptionRequest) {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
+
         SubscriptionQuery subscriptionQuery =
             SubscriptionQuery.from(subscriptionRequest.locationId, subscriptionRequest.dayOfWeek, subscriptionRequest.mealKitType);
 
@@ -105,6 +106,7 @@ public class SubscriptionResource {
 
         subscriptionService.confirmNextMealKitForSubscription(subscriberId,
             new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom(subscriptionId));
+
         return Response.noContent().build();
     }
 
@@ -118,6 +120,7 @@ public class SubscriptionResource {
 
         subscriptionService.declineNextMealKitForSubscription(subscriberId,
             new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom(subscriptionId));
+
         return Response.noContent().build();
     }
 

@@ -63,7 +63,8 @@ public class EmailNotificationSender implements NotificationSender {
         Message message = new MimeMessage(session);
         try {
             message.setFrom(new InternetAddress(this.senderEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(account.getEmail().value()));
+            String accountEmail = account.getEmail().value();
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(accountEmail));
             message.setSubject(notificationMessage.title());
             message.setText(notificationMessage.body());
         } catch (MessagingException e) {

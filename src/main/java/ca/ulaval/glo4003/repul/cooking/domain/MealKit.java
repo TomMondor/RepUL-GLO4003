@@ -55,6 +55,10 @@ public class MealKit {
         return deliveryDate.isEqual(tomorrow);
     }
 
+    public boolean isToCookToday() {
+        return isUnselected() && !isCooked() && isDeliveryTomorrow();
+    }
+
     public void setCooked() {
         this.isCooked = true;
     }

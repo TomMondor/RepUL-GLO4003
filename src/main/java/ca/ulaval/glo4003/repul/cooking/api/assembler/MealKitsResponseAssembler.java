@@ -2,7 +2,6 @@ package ca.ulaval.glo4003.repul.cooking.api.assembler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.api.response.IngredientResponse;
@@ -18,7 +17,8 @@ import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 
 public class MealKitsResponseAssembler {
     public SelectionResponse toSelectionResponse(List<MealKitUniqueIdentifier> mealKitIds) {
-        return new SelectionResponse(mealKitIds.stream().map(id -> id.getUUID().toString()).collect(Collectors.toList()));
+        List<String> mealKitIdsAsString = mealKitIds.stream().map(id -> id.getUUID().toString()).toList();
+        return new SelectionResponse(mealKitIdsAsString);
     }
 
     public ToCookResponse toToCookResponse(MealKitsPayload mealKitsPayload) {
@@ -40,10 +40,8 @@ public class MealKitsResponseAssembler {
             }
         }
 
-        List<MealKitResponse> mealKitResponses =
-            mealKitsPayload.mealKitPayloads().stream().map(this::toMealKitResponse).collect(Collectors.toList());
-        List<IngredientResponse> combinedIngredientsResponses =
-            combinedIngredients.stream().map(this::toIngredientResponse).collect(Collectors.toList());
+        List<MealKitResponse> mealKitResponses = mealKitsPayload.mealKitPayloads().stream().map(this::toMealKitResponse).toList();
+        List<IngredientResponse> combinedIngredientsResponses = combinedIngredients.stream().map(this::toIngredientResponse).toList();
         return new ToCookResponse(mealKitResponses, combinedIngredientsResponses);
     }
 
@@ -58,16 +56,23 @@ public class MealKitsResponseAssembler {
     }
 
     private MealKitResponse toMealKitResponse(MealKitPayload mealKitPayload) {
-        return new MealKitResponse(mealKitPayload.mealKitId().getUUID().toString(),
-            mealKitPayload.recipes().stream().map(this::toRecipeResponse).collect(Collectors.toList()), mealKitPayload.deliveryDate().toString());
+        return new MealKitResponse(
+            mealKitPayload.mealKitId().getUUID().toString(),
+            mealKitPayload.recipes().stream().map(this::toRecipeResponse).toList(),
+            mealKitPayload.deliveryDate().toString()
+        );
     }
 
     private RecipeResponse toRecipeResponse(Recipe recipes) {
-        return new RecipeResponse(recipes.name(), recipes.calories(),
-            recipes.ingredients().stream().map(this::toIngredientResponse).collect(Collectors.toList()));
+        return new RecipeResponse(
+            recipes.name(),
+            recipes.calories(),
+            recipes.ingredients().stream().map(this::toIngredientResponse).toList()
+        );
     }
 
     private IngredientResponse toIngredientResponse(Ingredient ingredient) {
-        return new IngredientResponse(ingredient.ingredient(), new QuantityResponse(ingredient.quantity().getValue(), ingredient.quantity().getUnit()));
+        QuantityResponse quantityResponse = new QuantityResponse(ingredient.quantity().getValue(), ingredient.quantity().getUnit());
+        return new IngredientResponse(ingredient.ingredient(), quantityResponse);
     }
 }

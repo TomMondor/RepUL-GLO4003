@@ -68,8 +68,11 @@ public class CookingContextInitializer {
     private List<Recipe> parseStandardMealKitRecipes() {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            List<Recipe> listOfRecipesMaps = objectMapper.readValue(new File(STANDARD_MEALKIT_FILE_PATH), new TypeReference<Map<String, List<Recipe>>>() {
+            File standardMealKitFile = new File(STANDARD_MEALKIT_FILE_PATH);
+
+            List<Recipe> listOfRecipesMaps = objectMapper.readValue(standardMealKitFile, new TypeReference<Map<String, List<Recipe>>>() {
             }).get(RECIPES_FIELD_NAME_IN_JSON);
+
             return listOfRecipesMaps;
         } catch (IOException e) {
             LOGGER.error("Error while reading " + STANDARD_MEALKIT_FILE_PATH, e);

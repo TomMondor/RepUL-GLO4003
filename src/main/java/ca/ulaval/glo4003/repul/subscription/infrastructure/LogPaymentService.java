@@ -14,8 +14,12 @@ public class LogPaymentService extends PaymentService {
     @Override
     public void pay(SubscriberUniqueIdentifier subscriberId, MealKitType mealKitType, LocalDate deliveryDate) {
         String message = String.format("The account with id %s has been debited $%s for a meal kit of type %s to be delivered on %s",
-            subscriberId.getUUID().toString(), getMealKitPrice(mealKitType).getValue(),
-            mealKitType.toString(), deliveryDate.toString());
+            subscriberId.getUUID().toString(),
+            getMealKitPrice(mealKitType).getValue(),
+            mealKitType.toString(),
+            deliveryDate.toString()
+        );
+
         System.out.println(message);
     }
 }

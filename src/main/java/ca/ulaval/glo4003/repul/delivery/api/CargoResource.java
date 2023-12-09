@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.LockerPayload;
+import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.middleware.Roles;
 import ca.ulaval.glo4003.repul.user.middleware.Secure;
@@ -95,9 +96,9 @@ public class CargoResource {
         DeliveryPersonUniqueIdentifier deliveryPersonId =
             new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        LockerPayload lockerPayload = LockerPayload.from(
-            deliveryService.recallDelivery(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId),
-                new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId)));
+        LockerId lockerId = deliveryService.recallDelivery(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId),
+            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
+        LockerPayload lockerPayload = LockerPayload.from(lockerId);
 
         return Response.ok(lockerPayload).build();
     }

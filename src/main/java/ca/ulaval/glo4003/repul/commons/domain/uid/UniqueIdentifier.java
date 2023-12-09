@@ -18,7 +18,8 @@ public class UniqueIdentifier {
         if (!(other instanceof UniqueIdentifier)) {
             return false;
         }
-        return ((UniqueIdentifier) other).getUUID().equals(this.getUUID());
+        UniqueIdentifier otherUniqueIdentifier = (UniqueIdentifier) other;
+        return otherUniqueIdentifier.getUUID().equals(this.getUUID());
     }
 
     @Override

@@ -35,4 +35,8 @@ public class Order {
     public Optional<LockerId> getLockerId() {
         return lockerId;
     }
+
+    public boolean hasLockerId(LockerId lockerIdToCompare) {
+        return lockerId.isPresent() && lockerId.get().equals(lockerIdToCompare);
+    }
 }

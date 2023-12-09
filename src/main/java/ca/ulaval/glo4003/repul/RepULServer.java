@@ -29,7 +29,8 @@ public class RepULServer implements Runnable {
     private Server initializeServer() {
         LOGGER.info("Setup http server");
 
-        Server server = new Server(URI.create(applicationContext.getURI()).getPort());
+        int port = URI.create(applicationContext.getURI()).getPort();
+        Server server = new Server(port);
 
         ServletContextHandler context = new ServletContextHandler(server, "/api");
         ResourceConfig resourceConfig = applicationContext.initializeResourceConfig();

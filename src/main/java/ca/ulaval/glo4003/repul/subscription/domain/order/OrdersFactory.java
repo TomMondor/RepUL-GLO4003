@@ -22,7 +22,8 @@ public class OrdersFactory {
         List<Order> orders = new ArrayList<>();
 
         while (nextOrderDate.isBefore(semesterEndDate.plusDays(1))) {
-            orders.add(new Order(uniqueIdentifierFactory.generate(), mealKitType, nextOrderDate));
+            Order order = new Order(uniqueIdentifierFactory.generate(), mealKitType, nextOrderDate);
+            orders.add(order);
             nextOrderDate = nextOrderDate.plusDays(7);
         }
 

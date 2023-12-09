@@ -16,7 +16,13 @@ public record AccountInformationPayload(
     Email email
 ) {
     public static AccountInformationPayload fromAccount(Account account) {
-        return new AccountInformationPayload(account.getName(), account.getBirthdate(), account.getGender(),
-            account.getBirthdate().getAge(), account.getIdul(), account.getEmail());
+        return new AccountInformationPayload(
+            account.getName(),
+            account.getBirthdate(),
+            account.getGender(),
+            account.getBirthdate().getAge(),
+            account.getIdul(),
+            account.getEmail()
+        );
     }
 }

@@ -166,8 +166,7 @@ public class SubscriptionService {
         for (Order order : ordersToProcess) {
             paymentService.pay(subscription.getSubscriberId(), subscription.getMealKitType(), order.getDeliveryDate());
 
-            eventBus.publish(new MealKitConfirmedEvent(order.getOrderId(), subscription.getSubscriptionId(), subscription.getSubscriberId(),
-                subscription.getMealKitType(), subscription.getDeliveryLocationId(), order.getDeliveryDate()));
+            sendMealKitConfirmedEvent(subscription, order);
 
             order.markAsToCook();
         }
@@ -176,5 +175,18 @@ public class SubscriptionService {
     private void processPendingOrders(Subscription subscription) {
         List<Order> ordersToProcess = subscription.getOverdueOrders();
         ordersToProcess.forEach(Order::markAsDeclined);
+    }
+
+    private void sendMealKitConfirmedEvent(Subscription subscription, Order confirmedOrder) {
+        MealKitConfirmedEvent event = new MealKitConfirmedEvent(
+            confirmedOrder.getOrderId(),
+            subscription.getSubscriptionId(),
+            subscription.getSubscriberId(),
+            subscription.getMealKitType(),
+            subscription.getDeliveryLocationId(),
+            confirmedOrder.getDeliveryDate()
+        );
+
+        eventBus.publish(event);
     }
 }

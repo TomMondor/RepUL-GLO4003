@@ -15,11 +15,19 @@ public class CargosResponseAssembler {
     }
 
     private CargoResponse toCargoResponse(CargoPayload cargoPayload) {
-        return new CargoResponse(cargoPayload.cargoId().getUUID().toString(), cargoPayload.kitchenLocationId(),
-            cargoPayload.mealKitsPayload().stream().map(this::toMealKitResponse).toList());
+        List<MealKitResponse> mealKitResponses = cargoPayload.mealKitsPayload().stream().map(this::toMealKitResponse).toList();
+        return new CargoResponse(
+            cargoPayload.cargoId().getUUID().toString(),
+            cargoPayload.kitchenLocationId(),
+            mealKitResponses
+        );
     }
 
     private MealKitResponse toMealKitResponse(MealKitPayload mealKitPayload) {
-        return new MealKitResponse(mealKitPayload.mealKitId().getUUID().toString(), mealKitPayload.deliveryLocationId(), mealKitPayload.lockerNumber());
+        return new MealKitResponse(
+            mealKitPayload.mealKitId().getUUID().toString(),
+            mealKitPayload.deliveryLocationId(),
+            mealKitPayload.lockerNumber()
+        );
     }
 }

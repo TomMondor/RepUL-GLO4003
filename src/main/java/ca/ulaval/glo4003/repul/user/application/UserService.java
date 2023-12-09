@@ -64,14 +64,11 @@ public class UserService {
         User newUser = userFactory.createUser(uniqueIdentifier, registrationQuery.email(), Role.CLIENT, registrationQuery.password());
         userRepository.save(newUser);
 
-        Account createdAccount =
-            accountFactory.createAccount(uniqueIdentifier, registrationQuery.idul(), registrationQuery.name(), registrationQuery.birthdate(),
-                registrationQuery.gender(), registrationQuery.email());
+        Account createdAccount = accountFactory.createAccount(uniqueIdentifier, registrationQuery.idul(), registrationQuery.name(),
+            registrationQuery.birthdate(), registrationQuery.gender(), registrationQuery.email());
         accountRepository.save(createdAccount);
 
-        eventBus.publish(
-            new UserCreatedEvent(createdAccount.getAccountId(), new IDUL(registrationQuery.idul().value()), new Name(registrationQuery.name().value()),
-                new Birthdate(registrationQuery.birthdate().value()), Gender.from(registrationQuery.gender().name()), createdAccount.getEmail()));
+        sendUserCreatedEvent(registrationQuery, createdAccount);
     }
 
     public Token login(LoginQuery loginQuery) {
@@ -108,5 +105,15 @@ public class UserService {
         if (accountRepository.isUserCardNumberUsed(cardNumber)) {
             throw new CardNumberAlreadyInUseException();
         }
+    }
+
+    private void sendUserCreatedEvent(RegistrationQuery registrationQuery, Account createdAccount) {
+        IDUL idul = new IDUL(registrationQuery.idul().value());
+        Name name = new Name(registrationQuery.name().value());
+        Birthdate birthdate = new Birthdate(registrationQuery.birthdate().value());
+        Gender gender = Gender.from(registrationQuery.gender().name());
+
+        UserCreatedEvent event = new UserCreatedEvent(createdAccount.getAccountId(), idul, name, birthdate, gender, createdAccount.getEmail());
+        eventBus.publish(event);
     }
 }

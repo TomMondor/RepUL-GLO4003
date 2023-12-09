@@ -11,8 +11,12 @@ public class UserResponseAssembler {
     }
 
     public AccountResponse toAccountResponse(AccountInformationPayload accountInformationPayload) {
-        return new AccountResponse(accountInformationPayload.name().value(), accountInformationPayload.birthdate().value().toString(),
-            accountInformationPayload.gender().toString(), accountInformationPayload.age(), accountInformationPayload.idul().value(),
+        return new AccountResponse(
+            accountInformationPayload.name().value(),
+            accountInformationPayload.birthdate().value().toString(),
+            accountInformationPayload.gender().toString(),
+            accountInformationPayload.age(),
+            accountInformationPayload.idul().value(),
             accountInformationPayload.email().value());
     }
 }

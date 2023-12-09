@@ -25,7 +25,9 @@ public record RegistrationQuery(
         } catch (DateTimeParseException e) {
             throw new InvalidDateException();
         }
-        return new RegistrationQuery(new Email(email), new Password(password), new IDUL(idul.toUpperCase()), new Name(name),
-            new Birthdate(LocalDate.parse(birthdate)), Gender.from(gender));
+        IDUL parsedIdul = new IDUL(idul.toUpperCase());
+        Birthdate parsedBirthdate = new Birthdate(LocalDate.parse(birthdate));
+
+        return new RegistrationQuery(new Email(email), new Password(password), parsedIdul, new Name(name), parsedBirthdate, Gender.from(gender));
     }
 }

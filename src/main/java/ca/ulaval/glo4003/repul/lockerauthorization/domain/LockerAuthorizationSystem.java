@@ -50,8 +50,8 @@ public class LockerAuthorizationSystem {
     }
 
     private Order getOrderByLockerId(LockerId lockerId) {
-        return orders.values().stream().filter(order -> order.getLockerId().isPresent() && order.getLockerId().get().equals(lockerId)).findFirst()
-            .orElseThrow(LockerNotAssignedException::new);
+        return orders.values().stream().filter(order -> order.hasLockerId(lockerId))
+            .findFirst().orElseThrow(LockerNotAssignedException::new);
     }
 
     private void removeTakenOrder(Order order) {

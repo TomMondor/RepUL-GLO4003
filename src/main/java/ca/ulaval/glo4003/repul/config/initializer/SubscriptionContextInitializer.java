@@ -97,8 +97,17 @@ public class SubscriptionContextInitializer {
 
     private List<Semester> parseSemesters() {
         List<Map<String, Object>> listOfSemesterMaps = getListOfMapsFromJsonFilePath(SEMESTERS_FILE_PATH);
-        return listOfSemesterMaps.stream().map(map -> new Semester(new SemesterCode((String) map.get(SEMESTER_CODE_FIELD_NAME_IN_JSON)),
-            parseDate((String) map.get(START_DATE_FIELD_NAME_IN_JSON)), parseDate((String) map.get(END_DATE_FIELD_NAME_IN_JSON)))).toList();
+        List<Semester> semesters = new ArrayList<>();
+
+        for (Map<String, Object> semesterAsMap : listOfSemesterMaps) {
+            String semesterCode = (String) semesterAsMap.get(SEMESTER_CODE_FIELD_NAME_IN_JSON);
+            LocalDate startDate = parseDate((String) semesterAsMap.get(START_DATE_FIELD_NAME_IN_JSON));
+            LocalDate endDate = parseDate((String) semesterAsMap.get(END_DATE_FIELD_NAME_IN_JSON));
+
+            Semester semester = new Semester(new SemesterCode(semesterCode), startDate, endDate);
+            semesters.add(semester);
+        }
+        return semesters;
     }
 
     private LocalDate parseDate(String date) {

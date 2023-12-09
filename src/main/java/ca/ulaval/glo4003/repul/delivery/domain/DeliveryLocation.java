@@ -6,14 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 
 public class DeliveryLocation {
     private final DeliveryLocationId deliveryLocationId;
     private final String name;
     private final int totalCapacity;
     private final List<Locker> lockers = new ArrayList<>();
-    private final List<MealKit> waitingMealKit = new ArrayList<>();
 
     public DeliveryLocation(DeliveryLocationId deliveryLocationId, String name, int totalCapacity) {
         this.deliveryLocationId = deliveryLocationId;
@@ -40,12 +38,13 @@ public class DeliveryLocation {
 
     private void generateLockers() {
         for (int i = 0; i < totalCapacity; i++) {
-            lockers.add(new Locker(this.generateLockerId(i + 1)));
+            LockerId lockerId = generateLockerId(i + 1);
+            lockers.add(new Locker(lockerId));
         }
     }
 
     private LockerId generateLockerId(int lockerNumber) {
-        return new LockerId(this.name + " " + String.valueOf(lockerNumber), lockerNumber);
+        return new LockerId(this.name + " " + lockerNumber, lockerNumber);
     }
 
     public Optional<Locker> findNextAvailableLocker() {

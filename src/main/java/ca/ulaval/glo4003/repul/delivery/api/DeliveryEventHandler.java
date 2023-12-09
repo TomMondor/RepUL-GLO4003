@@ -18,8 +18,7 @@ public class DeliveryEventHandler {
     }
 
     @Subscribe
-    public void handleDeliveryPersonAccountCreatedEvent(
-        DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent) {
+    public void handleDeliveryPersonAccountCreatedEvent(DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent) {
         deliveryService.createDeliveryPersonAccount(deliveryPersonAccountCreatedEvent.accountId);
     }
 

@@ -65,17 +65,20 @@ public class Cargo {
 
     public void confirmDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, MealKitUniqueIdentifier mealKitId) {
         validateIsSameDeliveryPersonId(deliveryPersonId);
-        mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(MealKitNotInCargoException::new)
-            .confirmDelivery();
+
+        MealKit mealKitToConfirm = mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId))
+            .findFirst().orElseThrow(MealKitNotInCargoException::new);
+
+        mealKitToConfirm.confirmDelivery();
     }
 
     public MealKit recallDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, MealKitUniqueIdentifier mealKitId) {
         validateIsSameDeliveryPersonId(deliveryPersonId);
 
-        MealKit mealKitToRecall =
-            mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(MealKitNotInCargoException::new);
-        mealKitToRecall.recallDelivery();
+        MealKit mealKitToRecall = mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId))
+            .findFirst().orElseThrow(MealKitNotInCargoException::new);
 
+        mealKitToRecall.recallDelivery();
         return mealKitToRecall;
     }
 
@@ -84,8 +87,8 @@ public class Cargo {
     }
 
     public MealKit removeMealKit(MealKitUniqueIdentifier mealKitId) {
-        MealKit mealKit =
-            mealKits.stream().filter(currentMealKit -> currentMealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new);
+        MealKit mealKit = mealKits.stream().filter(currentMealKit -> currentMealKit.getMealKitId().equals(mealKitId))
+            .findFirst().orElseThrow(InvalidMealKitIdException::new);
 
         mealKits.remove(mealKit);
 

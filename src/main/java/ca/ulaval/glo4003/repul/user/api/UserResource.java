@@ -49,17 +49,21 @@ public class UserResource {
     @POST
     @Path("/users:register")
     public Response register(@NotNull(message = "The body must not be null.") @Valid RegistrationRequest registrationRequest) {
-        userService.register(RegistrationQuery.from(registrationRequest.email, registrationRequest.password, registrationRequest.idul, registrationRequest.name,
-            registrationRequest.birthdate, registrationRequest.gender));
-        URI location = uriFactory.createURI("/api/users");
+        RegistrationQuery registrationQuery = RegistrationQuery.from(registrationRequest.email, registrationRequest.password,
+            registrationRequest.idul, registrationRequest.name, registrationRequest.birthdate, registrationRequest.gender);
 
+        userService.register(registrationQuery);
+
+        URI location = uriFactory.createURI("/api/users");
         return Response.created(location).build();
     }
 
     @POST
     @Path("/users:login")
     public Response login(@NotNull(message = "The body must not be null.") @Valid LoginRequest loginRequest) {
-        Token token = userService.login(LoginQuery.from(loginRequest.email, loginRequest.password));
+        LoginQuery loginQuery = LoginQuery.from(loginRequest.email, loginRequest.password);
+
+        Token token = userService.login(loginQuery);
         LoginResponse loginResponse = userResponseAssembler.toLoginResponse(token);
 
         return Response.ok(loginResponse).build();

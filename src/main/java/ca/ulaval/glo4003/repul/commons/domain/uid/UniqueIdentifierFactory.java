@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.commons.domain.uid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidUniqueIdentifierException;
 
@@ -31,7 +30,7 @@ public class UniqueIdentifierFactory<T extends UniqueIdentifier> {
     }
 
     public List<T> generateFrom(List<String> ids) {
-        return ids.stream().map(this::generateFrom).collect(Collectors.toList());
+        return ids.stream().map(this::generateFrom).toList();
     }
 
     private T create(UUID uuid) {

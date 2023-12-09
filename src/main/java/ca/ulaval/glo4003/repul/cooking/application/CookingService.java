@@ -43,9 +43,10 @@ public class CookingService {
     public MealKitsPayload getMealKitsToCook() {
         Kitchen kitchen = kitchenPersister.get();
 
-        return new MealKitsPayload(
-            kitchen.getMealKitsToCook().stream().map(mealKit -> new MealKitPayload(mealKit.getMealKitId(), mealKit.getDeliveryDate(), mealKit.getRecipes()))
-                .toList());
+        List<MealKitPayload> mealKitPayloads = kitchen.getMealKitsToCook().stream().map(
+            mealKit -> new MealKitPayload(mealKit.getMealKitId(), mealKit.getDeliveryDate(), mealKit.getRecipes())
+        ).toList();
+        return new MealKitsPayload(mealKitPayloads);
     }
 
     public void select(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> selectedMealKitIds) {
@@ -85,7 +86,8 @@ public class CookingService {
 
         kitchenPersister.save(kitchen);
 
-        eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().toString(), List.of(mealKitId)));
+        String kitchenLocationId = kitchen.getKitchenLocationId().toString();
+        eventBus.publish(new MealKitsCookedEvent(kitchenLocationId, List.of(mealKitId)));
     }
 
     public void confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
@@ -95,7 +97,8 @@ public class CookingService {
 
         kitchenPersister.save(kitchen);
 
-        eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().toString(), mealKitIds));
+        String kitchenLocationId = kitchen.getKitchenLocationId().toString();
+        eventBus.publish(new MealKitsCookedEvent(kitchenLocationId, mealKitIds));
     }
 
     public void recallCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {

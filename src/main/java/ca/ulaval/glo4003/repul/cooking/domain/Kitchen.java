@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
@@ -34,7 +33,7 @@ public class Kitchen {
     }
 
     public List<MealKit> getMealKitsToCook() {
-        return mealKits.values().stream().filter(mealKit -> mealKit.isUnselected() && !mealKit.isCooked() && mealKit.isDeliveryTomorrow()).toList();
+        return mealKits.values().stream().filter(MealKit::isToCookToday).toList();
     }
 
     public void select(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> selectedMealKitIds) {
@@ -47,7 +46,7 @@ public class Kitchen {
     }
 
     public List<MealKitUniqueIdentifier> getSelection(CookUniqueIdentifier cookId) {
-        return getSelectedMealKits(cookId).stream().map(MealKit::getMealKitId).collect(Collectors.toList());
+        return getSelectedMealKits(cookId).stream().map(MealKit::getMealKitId).toList();
     }
 
     public void cancelOneSelected(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {

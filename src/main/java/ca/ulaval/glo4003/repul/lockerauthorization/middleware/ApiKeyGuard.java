@@ -19,8 +19,7 @@ public class ApiKeyGuard implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) {
-        String authorizationHeader =
-            containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+        String authorizationHeader = containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer")) {
             throw new MissingAuthorizationHeaderException();

@@ -21,6 +21,7 @@ import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryDeliveryPerso
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryUserAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.LogNotificationSender;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 
 public class NotificationContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationContextInitializer.class);
@@ -60,8 +61,8 @@ public class NotificationContextInitializer {
     public NotificationContextInitializer withConfirmedSubscriptions(List<Subscription> subscriptions) {
         subscriptions.forEach(subscription -> {
             UserAccount userAccount = userAccountRepository.getAccountById(subscription.getSubscriberId());
-            userAccount.addMealKit(
-                subscription.findCurrentOrder().orElseThrow(() -> new RuntimeException("Subscription must have a current order.")).getOrderId());
+            Order order = subscription.findCurrentOrder().orElseThrow(() -> new RuntimeException("Subscription must have a current order."));
+            userAccount.addMealKit(order.getOrderId());
             userAccountRepository.save(userAccount);
         });
         return this;

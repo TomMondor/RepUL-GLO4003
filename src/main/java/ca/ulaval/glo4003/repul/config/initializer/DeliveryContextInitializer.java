@@ -97,9 +97,18 @@ public class DeliveryContextInitializer {
 
     private List<DeliveryLocation> parseDeliveryLocations() {
         List<Map<String, Object>> listOfLocationMaps = getListOfMapsFromJsonFilePath(CAMPUS_STATIONS_LOCATION_FILE_PATH);
-        return listOfLocationMaps.stream().map(
-            map -> new DeliveryLocation(DeliveryLocationId.valueOf((String) map.get(LOCATION_FIELD_NAME_IN_JSON)), (String) map.get(NAME_FIELD_NAME_IN_JSON),
-                (int) map.get(CAPACITY_FIELD_NAME_IN_JSON))).toList();
+        List<DeliveryLocation> deliveryLocations = new ArrayList<>();
+
+        for (Map<String, Object> locationAsMap : listOfLocationMaps) {
+            String locationId = (String) locationAsMap.get(LOCATION_FIELD_NAME_IN_JSON);
+            String name = (String) locationAsMap.get(NAME_FIELD_NAME_IN_JSON);
+            int capacity = (int) locationAsMap.get(CAPACITY_FIELD_NAME_IN_JSON);
+
+            DeliveryLocation deliveryLocation = new DeliveryLocation(DeliveryLocationId.valueOf(locationId), name, capacity);
+            deliveryLocations.add(deliveryLocation);
+        }
+
+        return deliveryLocations;
     }
 
     private List<Map<String, Object>> getListOfMapsFromJsonFilePath(String filePath) {

@@ -12,10 +12,12 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.application.UserService;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.repul.user.domain.account.Account;
 import ca.ulaval.glo4003.repul.user.domain.account.AccountFactory;
 import ca.ulaval.glo4003.repul.user.domain.account.AccountRepository;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.PasswordEncoder;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserFactory;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserRepository;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.TokenDecoder;
@@ -85,8 +87,8 @@ public class UserContextInitializer {
     public UserService createService() {
         LOGGER.info("Creating User service");
         UserService service =
-            new UserService(accountRepository, userRepository, accountFactory, userFactory, subscriberUniqueIdentifierFactory, tokenGenerator, passwordEncoder,
-                eventBus);
+            new UserService(accountRepository, userRepository, accountFactory, userFactory,
+                subscriberUniqueIdentifierFactory, tokenGenerator, passwordEncoder, eventBus);
         eventBus.register(service);
         return service;
     }
@@ -99,9 +101,10 @@ public class UserContextInitializer {
     private void createAndSaveUser(Map<UniqueIdentifier, RegistrationQuery> query, Role role) {
         UniqueIdentifier userId = query.keySet().iterator().next();
         RegistrationQuery registrationQuery = query.get(userId);
-        userRepository.save(userFactory.createUser(userId, registrationQuery.email(), role, registrationQuery.password()));
-        accountRepository.save(
-            accountFactory.createAccount(userId, registrationQuery.idul(), registrationQuery.name(), registrationQuery.birthdate(), registrationQuery.gender(),
-                registrationQuery.email()));
+        User user = userFactory.createUser(userId, registrationQuery.email(), role, registrationQuery.password());
+        userRepository.save(user);
+        Account account = accountFactory.createAccount(userId, registrationQuery.idul(), registrationQuery.name(),
+            registrationQuery.birthdate(), registrationQuery.gender(), registrationQuery.email());
+        accountRepository.save(account);
     }
 }
