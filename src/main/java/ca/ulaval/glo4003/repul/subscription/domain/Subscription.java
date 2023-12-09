@@ -105,4 +105,12 @@ public class Subscription {
     public void markOrderAsPickedUp(MealKitUniqueIdentifier mealKitId) {
         this.orders.stream().filter(order -> order.getOrderId().equals(mealKitId)).findFirst().ifPresent(Order::markAsPickedUp);
     }
+
+    public List<Order> getOrdersReadyToCook() {
+        return orders.stream().filter(Order::isReadyToCook).toList();
+    }
+
+    public List<Order> getOverdueOrders() {
+        return orders.stream().filter(Order::isOverdue).toList();
+    }
 }

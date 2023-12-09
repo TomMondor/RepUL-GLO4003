@@ -6,7 +6,8 @@ import java.time.LocalTime;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
-import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderNotPendingException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeDeclinedException;
 
 public class Order {
     private static final int DAYS_TO_CONFIRM = 2;
@@ -32,7 +33,6 @@ public class Order {
     }
 
     public OrderStatus getOrderStatus() {
-        updateStatusBasedOnDeliveryDate();
         return orderStatus;
     }
 
@@ -50,30 +50,22 @@ public class Order {
     }
 
     public void confirm() {
-        verifyIfOrderIsPending();
-        if (LocalDateTime.now().isBefore(LocalDateTime.of(this.deliveryDate.minusDays(DAYS_TO_CONFIRM), OPENING_TIME))) {
-            orderStatus = OrderStatus.TO_COOK;
-        } else {
-            orderStatus = OrderStatus.DECLINED;
-            throw new OrderNotPendingException();
+        if (!canBeConfirmedOrDeclined()) {
+            throw new OrderCannotBeConfirmedException();
         }
+        orderStatus = OrderStatus.CONFIRMED;
     }
 
     public void decline() {
-        verifyIfOrderIsPending();
+        if (!canBeConfirmedOrDeclined()) {
+            throw new OrderCannotBeDeclinedException();
+        }
         orderStatus = OrderStatus.DECLINED;
     }
 
-    private void verifyIfOrderIsPending() {
-        if (orderStatus != OrderStatus.PENDING) {
-            throw new OrderNotPendingException();
-        }
-    }
-
-    private void updateStatusBasedOnDeliveryDate() {
-        if (orderStatus == OrderStatus.PENDING && this.deliveryDate.minusDays(DAYS_TO_CONFIRM).isBefore(LocalDate.now())) {
-            orderStatus = OrderStatus.DECLINED;
-        }
+    private boolean canBeConfirmedOrDeclined() {
+        return !isAfterFinalConfirmationDateTime() &&
+            (orderStatus == OrderStatus.PENDING || orderStatus == OrderStatus.DECLINED || orderStatus == OrderStatus.CONFIRMED);
     }
 
     public void markAsToCook() {
@@ -94,5 +86,23 @@ public class Order {
 
     public void markAsPickedUp() {
         orderStatus = OrderStatus.PICKED_UP;
+    }
+
+    public void markAsDeclined() {
+        orderStatus = OrderStatus.DECLINED;
+    }
+
+    public boolean isReadyToCook() {
+        return orderStatus == OrderStatus.CONFIRMED && isAfterFinalConfirmationDateTime();
+    }
+
+    public boolean isOverdue() {
+        return orderStatus == OrderStatus.PENDING && isAfterFinalConfirmationDateTime();
+    }
+
+    private boolean isAfterFinalConfirmationDateTime() {
+        LocalDateTime finalConfirmationDateTime = LocalDateTime.of(this.deliveryDate.minusDays(DAYS_TO_CONFIRM), OPENING_TIME);
+
+        return LocalDateTime.now().isAfter(finalConfirmationDateTime);
     }
 }

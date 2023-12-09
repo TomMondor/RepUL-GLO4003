@@ -19,11 +19,13 @@ import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
-import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderNotPendingException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SubscriptionTest {
     private static final SubscriptionUniqueIdentifier AN_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
@@ -35,7 +37,7 @@ public class SubscriptionTest {
     private static final LocalDate TODAY = LocalDate.now();
 
     @Test
-    public void givenSubscriptionWithPendingOrderInTheFuture_whenConfirming_shouldConfirmNextOrderAndMarkItToCook() {
+    public void givenSubscriptionWithPendingOrderInTheFuture_whenConfirming_shouldConfirmNextOrderAndMarkItAsConfirmed() {
         Order aPendingOrderInTheFuture = new OrderFixture().withDeliveryDateIn(3).build();
         Subscription subscription =
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(aPendingOrderInTheFuture), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER,
@@ -43,29 +45,17 @@ public class SubscriptionTest {
 
         Order confirmedOrder = subscription.confirmNextMealKit();
 
-        Assertions.assertEquals(OrderStatus.TO_COOK, confirmedOrder.getOrderStatus());
+        Assertions.assertEquals(OrderStatus.CONFIRMED, confirmedOrder.getOrderStatus());
     }
 
     @Test
-    public void givenSubscriptionWithPendingOrderTooCloseInTheFuture_whenConfirming_shouldThrowOrderNotPendingException() {
+    public void givenSubscriptionWithPendingOrderTooCloseInTheFuture_whenConfirming_shouldThrowOrderCannotBeConfirmedOrDeniedException() {
         Order aPendingOrderForTomorrow = new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1)).withOrderStatus(OrderStatus.PENDING).build();
         Subscription subscription =
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(aPendingOrderForTomorrow), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER,
                 A_MEALKIT_TYPE);
 
-        assertThrows(OrderNotPendingException.class, () -> subscription.confirmNextMealKit());
-    }
-
-    @Test
-    public void givenSubscriptionWithPendingOrderTooCloseInTheFuture_whenConfirming_shouldUpdateOrderStatusToDECLINED() {
-        Order aPendingOrderForTomorrow = new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1)).withOrderStatus(OrderStatus.PENDING).build();
-        Subscription subscription =
-            new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(aPendingOrderForTomorrow), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER,
-                A_MEALKIT_TYPE);
-
-        assertThrows(OrderNotPendingException.class, () -> subscription.confirmNextMealKit());
-
-        Assertions.assertEquals(OrderStatus.DECLINED, subscription.getOrders().get(0).getOrderStatus());
+        assertThrows(OrderCannotBeConfirmedException.class, () -> subscription.confirmNextMealKit());
     }
 
     @Test
@@ -77,13 +67,15 @@ public class SubscriptionTest {
     }
 
     @Test
-    public void givenSubscriptionWithAlreadyDeclinedOrderInTheFuture_whenConfirming_shouldThrowOrderNotPendingException() {
+    public void givenSubscriptionWithAlreadyDeclinedOrderInTheFuture_whenConfirming_shouldChangeStatusToConfirmed() {
         Order anOrderInTheFuture = new OrderFixture().withDeliveryDateIn(3).build();
         Subscription subscription =
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrderInTheFuture), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
         subscription.declineNextMealKit();
 
-        assertThrows(OrderNotPendingException.class, () -> subscription.confirmNextMealKit());
+        Order confirmedOrder = subscription.confirmNextMealKit();
+
+        Assertions.assertEquals(OrderStatus.CONFIRMED, confirmedOrder.getOrderStatus());
     }
 
     @Test
@@ -107,13 +99,15 @@ public class SubscriptionTest {
     }
 
     @Test
-    public void givenSubscriptionWithAlreadyConfirmedOrderInTheFuture_whenDeclining_shouldThrowOrderNotPendingException() {
+    public void givenSubscriptionWithAlreadyConfirmedOrderInTheFuture_whenDeclining_shouldChangeStatusToDeclined() {
         Order anOrderInTheFuture = new OrderFixture().withDeliveryDateIn(3).build();
         Subscription subscription =
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrderInTheFuture), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
         subscription.confirmNextMealKit();
 
-        assertThrows(OrderNotPendingException.class, () -> subscription.declineNextMealKit());
+        Order declinedOrder = subscription.declineNextMealKit();
+
+        Assertions.assertEquals(OrderStatus.DECLINED, declinedOrder.getOrderStatus());
     }
 
     @Test

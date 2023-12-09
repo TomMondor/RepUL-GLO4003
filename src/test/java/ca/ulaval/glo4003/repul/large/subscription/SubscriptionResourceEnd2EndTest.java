@@ -40,8 +40,6 @@ public class SubscriptionResourceEnd2EndTest {
         new SubscriptionRequestFixture().withDayOfWeek(LocalDate.now().plusDays(3).getDayOfWeek().toString()).build();
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST_STARTING_IN_FIVE_DAYS =
         new SubscriptionRequestFixture().withDayOfWeek(LocalDate.now().plusDays(5).getDayOfWeek().toString()).build();
-    private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST_STARTING_TODAY =
-        new SubscriptionRequestFixture().withDayOfWeek(LocalDate.now().getDayOfWeek().toString()).build();
     private static final ApplicationContext CONTEXT = new TestApplicationContext();
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private ServerFixture server;
@@ -149,21 +147,6 @@ public class SubscriptionResourceEnd2EndTest {
     }
 
     @Test
-    public void whenConfirmingCurrentOrder_shouldChargeClient() {
-        String expectedMessage = String.format("The account with id %s has been debited $%s for a meal kit of type %s to be delivered on %s",
-            TestApplicationContext.CLIENT_ID.getUUID().toString(), 75.0, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS.mealKitType,
-            LocalDate.now().plusDays(3));
-        String accountToken = login();
-        String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS);
-
-        given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "subscriptions/" + subscriptionId + ":confirm");
-        String paymentServiceLog = outputStream.toString().trim();
-
-        assertEquals(expectedMessage, paymentServiceLog);
-    }
-
-    @Test
     public void whenDecliningCurrentOrder_shouldReturn204() {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS);
@@ -201,22 +184,6 @@ public class SubscriptionResourceEnd2EndTest {
         assertEquals(OrderStatus.PENDING.toString(), createdOrderResponse.get().orderStatus());
         assertEquals(A_SUBSCRIPTION_REQUEST_STARTING_IN_FIVE_DAYS.mealKitType, createdOrderResponse.get().mealKitType());
         assertEquals(LocalDate.now().plusDays(5).toString(), createdOrderResponse.get().deliveryDate());
-    }
-
-    @Test
-    public void givenOrderInLessThan48Hours_whenGettingCurrentOrders_shouldReturnDeclinedOrder() {
-        String accountToken = login();
-        createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_TODAY);
-
-        Response response =
-            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-                .get(CONTEXT.getURI() + "subscriptions:currentOrders");
-        List<OrderResponse> responseBody = Arrays.asList(response.getBody().as(OrderResponse[].class));
-        Optional<OrderResponse> createdOrderResponse =
-            responseBody.stream().filter(order -> order.deliveryDate().equals(LocalDate.now().toString())).findFirst();
-
-        assertTrue(createdOrderResponse.isPresent());
-        assertEquals(OrderStatus.DECLINED.toString(), createdOrderResponse.get().orderStatus());
     }
 
     private String login() {

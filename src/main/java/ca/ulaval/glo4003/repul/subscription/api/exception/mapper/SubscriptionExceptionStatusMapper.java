@@ -12,7 +12,8 @@ import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidNameExceptio
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSemesterCodeException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
-import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderNotPendingException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeDeclinedException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SemesterNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SubscriberNotFound;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SubscriptionException;
@@ -41,7 +42,8 @@ public class SubscriptionExceptionStatusMapper {
         exceptionMapper.put(InvalidSemesterCodeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(NoNextOrderInSubscriptionException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(NoOrdersInDesiredPeriodException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(OrderNotPendingException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(OrderCannotBeDeclinedException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(OrderCannotBeConfirmedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidBirthdateException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidGenderException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidIDULException.class, Response.Status.BAD_REQUEST);

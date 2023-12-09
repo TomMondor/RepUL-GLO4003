@@ -23,8 +23,11 @@ import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.fixture.subscription.OrderFixture;
+import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
+import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
@@ -32,8 +35,10 @@ import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
+import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
@@ -41,6 +46,9 @@ import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class SubscriptionServiceTest {
     private static final DeliveryLocationId A_LOCATION_ID = DeliveryLocationId.VACHON;
@@ -180,7 +188,7 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.TO_COOK, updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.CONFIRMED, updatedOrdersPayload.orders().get(0).orderStatus());
     }
 
     @Test
@@ -202,7 +210,7 @@ public class SubscriptionServiceTest {
         OrdersPayload currentOrders = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
 
         assertEquals(2, currentOrders.orders().size());
-        assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.TO_COOK)));
+        assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.CONFIRMED)));
         assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.PENDING)));
     }
 
@@ -218,5 +226,87 @@ public class SubscriptionServiceTest {
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         assertEquals(OrderStatus.PICKED_UP, updatedOrdersPayload.orders().get(0).orderStatus());
+    }
+
+    @Test
+    public void whenProcessingConfirmedAndReadyToProcessOrders_shouldMarkThemAsToCook() {
+        Order order = givenAConfirmedOrderReadyToBeProcessed();
+
+        subscriptionService.processConfirmationForTheDay();
+
+        assertEquals(OrderStatus.TO_COOK, order.getOrderStatus());
+    }
+
+    private Order givenAConfirmedOrderReadyToBeProcessed() {
+        SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
+        SubscriptionFixture subscriptionFixture = new SubscriptionFixture();
+        OrderFixture orderFixture = new OrderFixture();
+        Order order = orderFixture.withOrderStatus(OrderStatus.CONFIRMED).withDeliveryDate(LocalDate.now().plusDays(1)).build();
+        Subscription subscription = subscriptionFixture.withOrders(List.of(order)).build();
+        subscriptionRepository.save(subscription);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
+            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        SubscriptionFactory subscriptionFactory =
+            new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
+                new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
+        subscriptionService = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus);
+        eventBus.register(subscriptionService);
+
+        return order;
+    }
+
+    @Test
+    public void whenProcessingPendingAndReadyToProcessOrders_shouldMarkThemAsDeclined() {
+        Order order = givenAPendingOrderReadyToBeProcessed();
+
+        subscriptionService.processConfirmationForTheDay();
+
+        assertEquals(OrderStatus.DECLINED, order.getOrderStatus());
+    }
+
+    @Test
+    public void whenProcessingPendingAndReadyToProcessOrders_shouldPublishMealKitConfirmedEvent() {
+        givenAConfirmedOrderReadyToBeProcessedWithMockEventBus();
+
+        subscriptionService.processConfirmationForTheDay();
+
+        verify(eventBus).publish(any(MealKitConfirmedEvent.class));
+    }
+
+    private Order givenAPendingOrderReadyToBeProcessed() {
+        SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
+        SubscriptionFixture subscriptionFixture = new SubscriptionFixture();
+        OrderFixture orderFixture = new OrderFixture();
+        Order order = orderFixture.withOrderStatus(OrderStatus.PENDING).withDeliveryDate(LocalDate.now().plusDays(1)).build();
+        Subscription subscription = subscriptionFixture.withOrders(List.of(order)).build();
+        subscriptionRepository.save(subscription);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
+            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        SubscriptionFactory subscriptionFactory =
+            new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
+                new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
+        subscriptionService = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus);
+        eventBus.register(subscriptionService);
+
+        return order;
+    }
+
+    private Order givenAConfirmedOrderReadyToBeProcessedWithMockEventBus() {
+        SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
+        SubscriptionFixture subscriptionFixture = new SubscriptionFixture();
+        OrderFixture orderFixture = new OrderFixture();
+        Order order = orderFixture.withOrderStatus(OrderStatus.CONFIRMED).withDeliveryDate(LocalDate.now().plusDays(1)).build();
+        Subscription subscription = subscriptionFixture.withOrders(List.of(order)).build();
+        subscriptionRepository.save(subscription);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
+            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        SubscriptionFactory subscriptionFactory =
+            new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
+                new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
+        eventBus = mock(RepULEventBus.class);
+        subscriptionService = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus);
+        eventBus.register(subscriptionService);
+
+        return order;
     }
 }

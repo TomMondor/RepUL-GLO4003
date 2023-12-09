@@ -123,14 +123,9 @@ public class SubscriptionService {
     public void confirmNextMealKitForSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId) {
         Subscription subscription = getSubscription(subscriberId, subscriptionId);
 
-        Order confirmedOrder = subscription.confirmNextMealKit();
+        subscription.confirmNextMealKit();
 
         subscriptionRepository.save(subscription);
-
-        paymentService.pay(subscriberId, subscription.getMealKitType(), confirmedOrder.getDeliveryDate());
-
-        eventBus.publish(new MealKitConfirmedEvent(confirmedOrder.getOrderId(), subscription.getSubscriptionId(), subscription.getSubscriberId(),
-            subscription.getMealKitType(), subscription.getDeliveryLocationId(), confirmedOrder.getDeliveryDate()));
     }
 
     public void declineNextMealKitForSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId) {
@@ -161,7 +156,25 @@ public class SubscriptionService {
     public void processConfirmationForTheDay() {
         List<Subscription> subscriptions = subscriptionRepository.getAll();
         for (Subscription subscription : subscriptions) {
-            // TODO: process subscription for the day
+            processConfirmedOrders(subscription);
+            processPendingOrders(subscription);
         }
+    }
+
+    private void processConfirmedOrders(Subscription subscription) {
+        List<Order> ordersToProcess = subscription.getOrdersReadyToCook();
+        for (Order order : ordersToProcess) {
+            paymentService.pay(subscription.getSubscriberId(), subscription.getMealKitType(), order.getDeliveryDate());
+
+            eventBus.publish(new MealKitConfirmedEvent(order.getOrderId(), subscription.getSubscriptionId(), subscription.getSubscriberId(),
+                subscription.getMealKitType(), subscription.getDeliveryLocationId(), order.getDeliveryDate()));
+
+            order.markAsToCook();
+        }
+    }
+
+    private void processPendingOrders(Subscription subscription) {
+        List<Order> ordersToProcess = subscription.getOverdueOrders();
+        ordersToProcess.forEach(Order::markAsDeclined);
     }
 }

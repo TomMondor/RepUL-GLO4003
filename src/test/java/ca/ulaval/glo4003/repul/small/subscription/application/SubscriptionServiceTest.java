@@ -30,7 +30,6 @@ import ca.ulaval.glo4003.repul.fixture.subscription.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
-import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
@@ -46,7 +45,9 @@ import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SubscriptionServiceTest {
@@ -415,17 +416,6 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
 
         verify(mockSubscriptionRepository).save(mockSubscription);
-    }
-
-    @Test
-    public void whenConfirmingNextMealKitForSubscription_shouldPublishMatchingEvent() {
-        when(mockSubscriptionRepository.getById(A_SUBSCRIPTION_ID)).thenReturn(mockSubscription);
-        when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
-        when(mockSubscription.confirmNextMealKit()).thenReturn(mockOrder);
-
-        subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID);
-
-        verify(mockEventBus).publish(any(MealKitConfirmedEvent.class));
     }
 
     @Test
