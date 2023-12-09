@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.subscription.domain;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
@@ -29,6 +30,10 @@ public class Subscriber {
 
     public Profile getProfile() {
         return profile;
+    }
+
+    public Optional<UserCardNumber> getCardNumber() {
+        return profile.getCardNumber();
     }
 
     public void setCardNumber(UserCardNumber cardNumber) {

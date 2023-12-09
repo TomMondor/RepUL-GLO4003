@@ -88,7 +88,7 @@ public class DevApplicationContext implements ApplicationContext {
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer();
-        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService();
+        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus);
         SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);

@@ -141,7 +141,7 @@ public class DemoApplicationContext implements ApplicationContext {
         SubscriptionContextInitializer subscriptionContextInitializer =
             new SubscriptionContextInitializer().withSubscriptions(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION))
                 .withSubscribers(List.of(SUBSCRIBER));
-        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService();
+        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus);
         SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);

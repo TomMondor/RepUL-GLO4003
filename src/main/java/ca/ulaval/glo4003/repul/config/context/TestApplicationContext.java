@@ -169,7 +169,7 @@ public class TestApplicationContext implements ApplicationContext {
                 A_SEMESTER, MealKitType.STANDARD),
             new Subscription(TENTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(TENTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
                 A_SEMESTER, MealKitType.STANDARD)));
-        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService();
+        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus);
         SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);

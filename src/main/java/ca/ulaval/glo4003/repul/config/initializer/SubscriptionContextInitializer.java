@@ -83,9 +83,9 @@ public class SubscriptionContextInitializer {
         return service;
     }
 
-    public SubscriberService createSubscriberService() {
+    public SubscriberService createSubscriberService(RepULEventBus eventBus) {
         LOGGER.info("Creating Subscriber service");
-        SubscriberService service = new SubscriberService(subscriberRepository, subscriberFactory);
+        SubscriberService service = new SubscriberService(subscriberRepository, subscriberFactory, eventBus);
         return service;
     }
 

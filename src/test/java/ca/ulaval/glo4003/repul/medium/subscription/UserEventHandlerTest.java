@@ -41,7 +41,7 @@ public class UserEventHandlerTest {
     public void createUserEventHandler() {
         subscriberRepository = new InMemorySubscriberRepository();
         eventBus = new GuavaEventBus();
-        subscriberService = new SubscriberService(subscriberRepository, new SubscriberFactory());
+        subscriberService = new SubscriberService(subscriberRepository, new SubscriberFactory(), eventBus);
         userEventHandler = new UserEventHandler(subscriberService);
         eventBus.register(userEventHandler);
     }
