@@ -1,18 +1,14 @@
 package ca.ulaval.glo4003.repul.lockerauthorization.application;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
-import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
-import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
-import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
-
-import com.google.common.eventbus.Subscribe;
 
 public class LockerAuthorizationService {
     private final LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository;
@@ -23,38 +19,34 @@ public class LockerAuthorizationService {
         this.eventBus = eventBus;
     }
 
-    @Subscribe
-    public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
+    public void createOrder(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
         LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
-        lockerAuthorizationSystem.createOrder(mealKitConfirmedEvent.subscriberId, mealKitConfirmedEvent.mealKitId);
+        lockerAuthorizationSystem.createOrder(subscriberId, mealKitId);
 
         lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }
 
-    @Subscribe
-    public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent confirmedDeliveryEvent) {
+    public void assignLockerToMealKit(MealKitUniqueIdentifier mealKitId, LockerId lockerId) {
         LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
-        lockerAuthorizationSystem.assignLocker(confirmedDeliveryEvent.mealKitId, new LockerId(confirmedDeliveryEvent.lockerId.id()));
+        lockerAuthorizationSystem.assignLocker(mealKitId, lockerId);
 
         lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }
 
-    @Subscribe
-    public void handleRecalledDeliveryEvent(RecalledDeliveryEvent recalledDeliveryEvent) {
+    public void unassignLocker(MealKitUniqueIdentifier mealKitId) {
         LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
-        lockerAuthorizationSystem.unassignLocker(recalledDeliveryEvent.mealKitId);
+        lockerAuthorizationSystem.unassignLocker(mealKitId);
 
         lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }
 
-    @Subscribe
-    public void handleUserCardAddedEvent(UserCardAddedEvent userCardAddedEvent) {
+    public void registerSubscriberCardNumber(SubscriberUniqueIdentifier subscriberId, UserCardNumber userCardNumber) {
         LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
-        lockerAuthorizationSystem.registerUserCardNumber(userCardAddedEvent.accountId, userCardAddedEvent.userCardNumber);
+        lockerAuthorizationSystem.registerSubscriberCardNumber(subscriberId, userCardNumber);
 
         lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }

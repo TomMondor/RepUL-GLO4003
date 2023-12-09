@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.user.AccountFixture;
@@ -60,7 +61,7 @@ public class UserServiceTest {
     private static final String A_CARD_NUMBER = "123456789";
     private static final AddCardQuery AN_ADD_CARD_QUERY = AddCardQuery.from(A_CARD_NUMBER);
 
-    private static final UniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(UniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
 
     private UserService userService;
 
@@ -215,7 +216,7 @@ public class UserServiceTest {
 
     @Test
     public void whenLogin_shouldFindUserByEmail() {
-        User user = new User(AN_ACCOUNT_ID, new Email(AN_EMAIL), AN_ENCRYPTED_PASSWORD, Role.CLIENT);
+        User user = new User(A_SUBSCRIBER_ID, new Email(AN_EMAIL), AN_ENCRYPTED_PASSWORD, Role.CLIENT);
         given(passwordEncoder.matches(new Password(A_PASSWORD), AN_ENCRYPTED_PASSWORD)).willReturn(true);
         given(userRepository.findByEmail(new Email(AN_EMAIL))).willReturn(user);
 
@@ -243,22 +244,22 @@ public class UserServiceTest {
 
     @Test
     public void whenLogin_shouldGenerateToken() {
-        User user = new User(AN_ACCOUNT_ID, new Email(AN_EMAIL), AN_ENCRYPTED_PASSWORD, Role.CLIENT);
+        User user = new User(A_SUBSCRIBER_ID, new Email(AN_EMAIL), AN_ENCRYPTED_PASSWORD, Role.CLIENT);
         given(passwordEncoder.matches(new Password(A_PASSWORD), AN_ENCRYPTED_PASSWORD)).willReturn(true);
         given(userRepository.findByEmail(new Email(AN_EMAIL))).willReturn(user);
 
         userService.login(LoginQuery.from(AN_EMAIL, A_PASSWORD));
 
-        verify(tokenGenerator).generate(AN_ACCOUNT_ID, Role.CLIENT);
+        verify(tokenGenerator).generate(A_SUBSCRIBER_ID, Role.CLIENT);
     }
 
     @Test
     public void whenGettingAccount_shouldFindAccountById() {
         given(accountRepository.getByAccountId(any())).willReturn(new AccountFixture().build());
 
-        userService.getAccount(AN_ACCOUNT_ID);
+        userService.getAccount(A_SUBSCRIBER_ID);
 
-        verify(accountRepository).getByAccountId(AN_ACCOUNT_ID);
+        verify(accountRepository).getByAccountId(A_SUBSCRIBER_ID);
     }
 
     @Test
@@ -266,7 +267,7 @@ public class UserServiceTest {
         Account account = new AccountFixture().build();
         given(accountRepository.getByAccountId(any())).willReturn(account);
 
-        AccountInformationPayload payload = userService.getAccount(AN_ACCOUNT_ID);
+        AccountInformationPayload payload = userService.getAccount(A_SUBSCRIBER_ID);
 
         assertEquals(account.getIdul(), payload.idul());
         assertEquals(account.getName(), payload.name());
@@ -279,16 +280,16 @@ public class UserServiceTest {
     public void whenAddingCard_shouldGetAccountById() {
         given(accountRepository.getByAccountId(any())).willReturn(new AccountFixture().build());
 
-        userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
+        userService.addCard(A_SUBSCRIBER_ID, AN_ADD_CARD_QUERY);
 
-        verify(accountRepository).getByAccountId(AN_ACCOUNT_ID);
+        verify(accountRepository).getByAccountId(A_SUBSCRIBER_ID);
     }
 
     @Test
     public void whenAddingCard_shouldSetUserCardOfAccount() {
         given(accountRepository.getByAccountId(any())).willReturn(mockAccount);
 
-        userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
+        userService.addCard(A_SUBSCRIBER_ID, AN_ADD_CARD_QUERY);
 
         verify(mockAccount).setCardNumber(new UserCardNumber(A_CARD_NUMBER));
     }
@@ -297,7 +298,7 @@ public class UserServiceTest {
     public void whenAddingCard_shouldSaveAccount() {
         given(accountRepository.getByAccountId(any())).willReturn(new AccountFixture().build());
 
-        userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
+        userService.addCard(A_SUBSCRIBER_ID, AN_ADD_CARD_QUERY);
 
         verify(accountRepository).save(any(Account.class));
     }
@@ -306,7 +307,7 @@ public class UserServiceTest {
     public void whenAddingCard_shouldPublishUserCardAddedEvent() {
         given(accountRepository.getByAccountId(any())).willReturn(new AccountFixture().build());
 
-        userService.addCard(AN_ACCOUNT_ID, AN_ADD_CARD_QUERY);
+        userService.addCard(A_SUBSCRIBER_ID, AN_ADD_CARD_QUERY);
 
         verify(repULEventBus).publish(any(UserCardAddedEvent.class));
     }

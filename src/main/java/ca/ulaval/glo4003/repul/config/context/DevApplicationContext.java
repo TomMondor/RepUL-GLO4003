@@ -35,6 +35,7 @@ import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
+import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
 import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
@@ -101,8 +102,11 @@ public class DevApplicationContext implements ApplicationContext {
         deliveryContextInitializer.createDeliveryEventHandler(deliveryService, eventBus);
 
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
+        LockerAuthorizationService lockerAuthorizationService =
+            lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
         LockerAuthorizationResource lockerAuthorizationResource =
-            new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
+            new LockerAuthorizationResource(lockerAuthorizationService);
+        lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 
         JobInitializer jobInitializer = new JobInitializer().withJob(processConfirmationForTheDayJob);

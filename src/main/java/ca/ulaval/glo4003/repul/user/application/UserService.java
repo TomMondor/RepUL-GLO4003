@@ -94,14 +94,14 @@ public class UserService {
         return AccountInformationPayload.fromAccount(account);
     }
 
-    public void addCard(UniqueIdentifier accountId, AddCardQuery addCardQuery) {
-        Account account = accountRepository.getByAccountId(accountId);
+    public void addCard(SubscriberUniqueIdentifier subscriberId, AddCardQuery addCardQuery) {
+        Account account = accountRepository.getByAccountId(subscriberId);
 
         validateCardNumber(addCardQuery.cardNumber());
         account.setCardNumber(addCardQuery.cardNumber());
         accountRepository.save(account);
 
-        eventBus.publish(new UserCardAddedEvent(accountId, addCardQuery.cardNumber()));
+        eventBus.publish(new UserCardAddedEvent(subscriberId, addCardQuery.cardNumber()));
     }
 
     private void validateCardNumber(UserCardNumber cardNumber) {

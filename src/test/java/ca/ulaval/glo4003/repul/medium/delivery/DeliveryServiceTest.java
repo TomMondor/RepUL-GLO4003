@@ -62,7 +62,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void givenPickedUpCargo_whenConfirmDelivery_should() {
+    public void givenPickedUpCargo_whenConfirmDelivery_shouldThrowMealKitNotInDeliveryExceptionWhenReconfirming() {
         givenDeliveryPerson(A_DELIVERY_PERSON_ACCOUNT_ID);
         givenConfirmedMealKit(A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);

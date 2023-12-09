@@ -41,6 +41,7 @@ import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
+import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
@@ -191,8 +192,11 @@ public class TestApplicationContext implements ApplicationContext {
                 Map.entry(CLIENT_ID, FOURTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, FIFTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, SIXTH_MEAL_KIT_ID),
                 Map.entry(CLIENT_ID, SEVENTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, EIGHTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, NINTH_MEAL_KIT_ID),
                 Map.entry(CLIENT_ID, TENTH_MEAL_KIT_ID)));
+        LockerAuthorizationService lockerAuthorizationService =
+            lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
         LockerAuthorizationResource lockerAuthorizationResource =
-            new LockerAuthorizationResource(lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus));
+            new LockerAuthorizationResource(lockerAuthorizationService);
+        lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 
         JobInitializer jobInitializer = new JobInitializer().withJob(processConfirmationForTheDayJob);

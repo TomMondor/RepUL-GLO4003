@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
+import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationEventHandler;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
@@ -36,9 +37,12 @@ public class LockerAuthorizationContextInitializer {
     public LockerAuthorizationService createLockerAuthorizationService(RepULEventBus eventBus) {
         LOGGER.info("Creating locker authorization service");
         initializeLockerAuthorization(lockerAuthorizationSystemRepository);
-        LockerAuthorizationService service = new LockerAuthorizationService(eventBus, lockerAuthorizationSystemRepository);
-        eventBus.register(service);
-        return service;
+        return new LockerAuthorizationService(eventBus, lockerAuthorizationSystemRepository);
+    }
+
+    public void createLockerAuthorizationEventHandler(LockerAuthorizationService lockerAuthorizationService, RepULEventBus eventBus) {
+        LockerAuthorizationEventHandler lockerAuthorizationEventHandler = new LockerAuthorizationEventHandler(lockerAuthorizationService);
+        eventBus.register(lockerAuthorizationEventHandler);
     }
 
     private void initializeLockerAuthorization(LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository) {

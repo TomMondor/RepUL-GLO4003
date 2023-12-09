@@ -16,7 +16,7 @@ public class LockerAuthorizationSystem {
     private final Map<UniqueIdentifier, UserCardNumber> userCardNumberByUser = new HashMap<>();
     private final Map<UniqueIdentifier, Order> orders = new HashMap<>();
 
-    public void registerUserCardNumber(UniqueIdentifier userId, UserCardNumber userCardNumber) {
+    public void registerSubscriberCardNumber(UniqueIdentifier userId, UserCardNumber userCardNumber) {
         userCardNumberByUser.put(userId, userCardNumber);
     }
 
