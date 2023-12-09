@@ -6,7 +6,7 @@ import java.util.Map;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
-import ca.ulaval.glo4003.repul.subscription.domain.exception.SubscriberNotFound;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.SubscriberNotFoundException;
 
 public class InMemorySubscriberRepository implements SubscriberRepository {
     private final Map<SubscriberUniqueIdentifier, Subscriber> subscribers = new HashMap<>();
@@ -21,7 +21,7 @@ public class InMemorySubscriberRepository implements SubscriberRepository {
         Subscriber subscriber = subscribers.get(subscriberId);
 
         if (subscriber == null) {
-            throw new SubscriberNotFound();
+            throw new SubscriberNotFoundException();
         }
 
         return subscriber;

@@ -42,6 +42,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
+import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
@@ -169,6 +170,7 @@ public class TestApplicationContext implements ApplicationContext {
                 A_SEMESTER, MealKitType.STANDARD)));
         SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService();
         SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
+        AccountResource accountResource = new AccountResource(subscriberService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);
         RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
         subscriptionContextInitializer.createUserEventHandler(subscriberService, eventBus);
@@ -202,6 +204,7 @@ public class TestApplicationContext implements ApplicationContext {
             protected void configure() {
                 bind(healthResource).to(HealthResource.class);
                 bind(userResource).to(UserResource.class);
+                bind(accountResource).to(AccountResource.class);
                 bind(mealKitResource).to(MealKitResource.class);
                 bind(cargoResource).to(CargoResource.class);
                 bind(locationResource).to(LocationResource.class);

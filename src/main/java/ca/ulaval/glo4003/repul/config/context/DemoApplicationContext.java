@@ -44,6 +44,7 @@ import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
+import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
@@ -52,9 +53,14 @@ import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.IDUL;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
@@ -72,6 +78,10 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final RegistrationQuery CLIENT_REGISTRATION_QUERY =
         RegistrationQuery.from(CLIENT_EMAIL, "alexandra123", "alexa228", "Alexandra", "1999-06-08", "WOMAN");
     private static final SubscriberUniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final Subscriber SUBSCRIBER =
+        new Subscriber(CLIENT_ID, new IDUL(CLIENT_REGISTRATION_QUERY.idul().value()), new Name(CLIENT_REGISTRATION_QUERY.name().value()),
+            new Birthdate(CLIENT_REGISTRATION_QUERY.birthdate().value()), Gender.from(CLIENT_REGISTRATION_QUERY.gender().name()),
+            CLIENT_REGISTRATION_QUERY.email());
     private static final Order FIRST_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1),
             OrderStatus.TO_COOK);
@@ -128,9 +138,11 @@ public class DemoApplicationContext implements ApplicationContext {
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer =
-            new SubscriptionContextInitializer().withSubscriptions(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION));
+            new SubscriptionContextInitializer().withSubscriptions(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION))
+                .withSubscribers(List.of(SUBSCRIBER));
         SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService();
         SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
+        AccountResource accountResource = new AccountResource(subscriberService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);
         RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
         subscriptionContextInitializer.createUserEventHandler(subscriberService, eventBus);
@@ -160,6 +172,7 @@ public class DemoApplicationContext implements ApplicationContext {
             protected void configure() {
                 bind(healthResource).to(HealthResource.class);
                 bind(userResource).to(UserResource.class);
+                bind(accountResource).to(AccountResource.class);
                 bind(mealKitResource).to(MealKitResource.class);
                 bind(cargoResource).to(CargoResource.class);
                 bind(locationResource).to(LocationResource.class);

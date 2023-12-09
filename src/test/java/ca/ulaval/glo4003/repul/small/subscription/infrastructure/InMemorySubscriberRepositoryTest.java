@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
-import ca.ulaval.glo4003.repul.subscription.domain.exception.SubscriberNotFound;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.SubscriberNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriberRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,6 +41,6 @@ public class InMemorySubscriberRepositoryTest {
 
     @Test
     public void givenNoSubscriber_whenGettingSubscriberById_shouldThrowSubscriberNotFoundException() {
-        assertThrows(SubscriberNotFound.class, () -> inMemorySubscriberRepository.getById(A_SUBSCRIBER_VALID_ID));
+        assertThrows(SubscriberNotFoundException.class, () -> inMemorySubscriberRepository.getById(A_SUBSCRIBER_VALID_ID));
     }
 }

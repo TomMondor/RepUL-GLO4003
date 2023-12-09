@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.subscription.domain;
+package ca.ulaval.glo4003.repul.subscription.domain.profile;
 
 import java.util.regex.Pattern;
 

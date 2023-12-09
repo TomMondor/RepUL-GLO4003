@@ -23,6 +23,7 @@ import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
@@ -43,7 +44,7 @@ public class SubscriptionContextInitializer {
     private static final String END_DATE_FIELD_NAME_IN_JSON = "end_date";
     private final SubscriptionFactory subscriptionFactory;
     private final SubscriberFactory subscriberFactory = new SubscriberFactory();
-    private final SubscriberRepository subscriberRepository = new InMemorySubscriberRepository();
+    private SubscriberRepository subscriberRepository = new InMemorySubscriberRepository();
     private SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
 
     public SubscriptionContextInitializer() {
@@ -55,13 +56,23 @@ public class SubscriptionContextInitializer {
             new OrdersFactory(mealKitUniqueIdentifierFactory), semesters, deliveryLocationIds);
     }
 
-    public SubscriptionContextInitializer withEmptySubscriptionRepository(SubscriptionRepository subscriptionRepository) {
+    public SubscriptionContextInitializer withSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
+        return this;
+    }
+
+    public SubscriptionContextInitializer withSubscriberRepository(SubscriberRepository subscriberRepository) {
+        this.subscriberRepository = subscriberRepository;
         return this;
     }
 
     public SubscriptionContextInitializer withSubscriptions(List<Subscription> subscriptions) {
         subscriptions.forEach(subscriptionRepository::save);
+        return this;
+    }
+
+    public SubscriptionContextInitializer withSubscribers(List<Subscriber> subscribers) {
+        subscribers.forEach(subscriberRepository::save);
         return this;
     }
 
