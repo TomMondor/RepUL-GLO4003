@@ -22,7 +22,9 @@ import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedEx
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class KitchenTest {
@@ -38,7 +40,8 @@ public class KitchenTest {
     public void createKitchen() {
         Map<MealKitType, List<Recipe>> recipes = new HashMap<>();
         recipes.put(MealKitType.STANDARD, List.of());
-        this.kitchen = new Kitchen(new RecipesCatalog(recipes));
+        RecipesCatalog.getInstance().setRecipes(recipes);
+        this.kitchen = new Kitchen();
     }
 
     @Test

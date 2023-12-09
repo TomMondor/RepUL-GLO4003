@@ -53,8 +53,8 @@ public class CookingContextInitializer {
     }
 
     private void initializeKitchen(KitchenPersister kitchenPersister) {
-        RecipesCatalog recipesCatalog = new RecipesCatalog(getRecipes());
-        Kitchen kitchen = new Kitchen(recipesCatalog);
+        RecipesCatalog.getInstance().setRecipes(getRecipes());
+        Kitchen kitchen = new Kitchen();
         mealKitsToAdd.forEach(mealKit -> kitchen.addMealKit(mealKit.getOrderId(), mealKit.getMealKitType(), mealKit.getDeliveryDate()));
         kitchenPersister.save(kitchen);
     }

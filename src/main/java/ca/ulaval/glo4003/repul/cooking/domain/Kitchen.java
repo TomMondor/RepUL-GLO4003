@@ -14,12 +14,10 @@ import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
 
 public class Kitchen {
-    private final RecipesCatalog recipesCatalog;
     private final KitchenLocationId kitchenLocationId;
     private final Map<MealKitUniqueIdentifier, MealKit> mealKits = new HashMap<>();
 
-    public Kitchen(RecipesCatalog recipesCatalog) {
-        this.recipesCatalog = recipesCatalog;
+    public Kitchen() {
         kitchenLocationId = KitchenLocationId.DESJARDINS;
     }
 
@@ -28,7 +26,7 @@ public class Kitchen {
     }
 
     public void addMealKit(MealKitUniqueIdentifier mealKitId, MealKitType type, LocalDate deliveryDate) {
-        MealKit mealKit = new MealKit(mealKitId, deliveryDate, recipesCatalog.getRecipes(type));
+        MealKit mealKit = new MealKit(mealKitId, deliveryDate, RecipesCatalog.getInstance().getRecipes(type));
         mealKits.put(mealKitId, mealKit);
     }
 

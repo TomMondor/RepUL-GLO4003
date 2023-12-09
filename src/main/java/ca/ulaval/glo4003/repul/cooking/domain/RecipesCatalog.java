@@ -7,10 +7,14 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidMealKitTypeException;
 
 public class RecipesCatalog {
-    private Map<MealKitType, List<Recipe>> recipes;
+    private static RecipesCatalog instance;
+    private Map<MealKitType, List<Recipe>> recipes = Map.of();
 
-    public RecipesCatalog(Map<MealKitType, List<Recipe>> recipes) {
-        this.recipes = recipes;
+    public static RecipesCatalog getInstance() {
+        if (instance == null) {
+            instance = new RecipesCatalog();
+        }
+        return instance;
     }
 
     public List<Recipe> getRecipes(MealKitType mealKitType) {
@@ -18,5 +22,9 @@ public class RecipesCatalog {
             return recipes.get(mealKitType);
         }
         throw new InvalidMealKitTypeException();
+    }
+
+    public void setRecipes(Map<MealKitType, List<Recipe>> recipes) {
+        this.recipes = recipes;
     }
 }
