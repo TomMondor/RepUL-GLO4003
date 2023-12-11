@@ -27,6 +27,12 @@ public class DeliveryEventHandler {
     }
 
     @Subscribe
+    public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
+        mealKitConfirmedEvent.deliveryLocationId.ifPresent(deliveryLocationId ->
+            deliveryService.createMealKitInPreparation(deliveryLocationId, mealKitConfirmedEvent.mealKitId));
+    }
+
+    @Subscribe
     public void handleMealKitsCookedEvent(MealKitsCookedEvent mealKitsCookedEvent) {
         KitchenLocationId kitchenLocationId = KitchenLocationId.valueOf(mealKitsCookedEvent.kitchenLocationId);
 
@@ -34,12 +40,6 @@ public class DeliveryEventHandler {
             .filter(MealKitDto::isToBeDelivered).map(MealKitDto::mealKitId).toList();
 
         deliveryService.createCargo(kitchenLocationId, mealKitsToDeliver);
-    }
-
-    @Subscribe
-    public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
-        deliveryService.receiveMealKitForDelivery(mealKitConfirmedEvent.deliveryLocationId,
-            mealKitConfirmedEvent.mealKitId);
     }
 
     @Subscribe

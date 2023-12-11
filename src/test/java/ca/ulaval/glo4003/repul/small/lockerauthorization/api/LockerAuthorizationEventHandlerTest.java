@@ -42,7 +42,9 @@ public class LockerAuthorizationEventHandlerTest {
     private static final ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId A_LOCKER_AUTH_LOCKER_ID =
         new ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId("Id");
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT = new MealKitConfirmedEvent(A_MEAL_KIT_ID,
-        A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DATE);
+        A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
+    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION = new MealKitConfirmedEvent(
+        A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.empty(), A_DATE);
     private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT = new
         ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, Optional.of(A_LOCKER_ID), A_TIME);
     private static final RecalledDeliveryEvent A_RECALLED_DELIVERY_EVENT =
@@ -60,10 +62,17 @@ public class LockerAuthorizationEventHandlerTest {
     }
 
     @Test
-    public void whenHandlingMealKitConfirmedEvent_shouldCallCreateOrderInService() {
+    public void givenADeliveryLocationIdInEvent_whenHandlingMealKitConfirmedEvent_shouldCallCreateOrderInService() {
         lockerAuthorizationEventHandler.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
         verify(lockerAuthorizationService, times(1)).createOrder(A_SUBSCRIBER_ID, A_MEAL_KIT_ID);
+    }
+
+    @Test
+    public void givenNoDeliveryLocationIdInEvent_whenHandlingMealKitConfirmedEvent_shouldNotCallService() {
+        lockerAuthorizationEventHandler.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION);
+
+        verify(lockerAuthorizationService, times(0)).createOrder(A_SUBSCRIBER_ID, A_MEAL_KIT_ID);
     }
 
     @Test

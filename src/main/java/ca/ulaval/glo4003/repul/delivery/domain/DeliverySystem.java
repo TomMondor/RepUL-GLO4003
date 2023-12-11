@@ -35,7 +35,7 @@ public class DeliverySystem {
         this.lockerAssignator = new LockerAssignator(locationsCatalog.getDeliveryLocations());
     }
 
-    public void createMealKit(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId) {
+    public void createMealKitInPreparation(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId) {
         MealKit createdMealKit = mealKitFactory.createMealKit(locationsCatalog.getDeliveryLocation(deliveryLocationId), mealKitId);
         pendingMealKits.put(mealKitId, createdMealKit);
     }
@@ -49,7 +49,7 @@ public class DeliverySystem {
     }
 
     public Cargo receiveReadyToBeDeliveredMealKits(KitchenLocationId kitchenLocationId, List<MealKitUniqueIdentifier> mealKitIds) {
-        mealKitIds.stream().forEach(mealKitId -> {
+        mealKitIds.forEach(mealKitId -> {
             if (!pendingMealKits.containsKey(mealKitId)) {
                 throw new InvalidMealKitIdException();
             }

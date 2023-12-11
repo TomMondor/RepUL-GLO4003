@@ -103,7 +103,7 @@ public class DeliveryServiceTest {
     }
 
     private void givenConfirmedMealKit(MealKitUniqueIdentifier mealKitId) {
-        deliveryService.receiveMealKitForDelivery(A_DELIVERY_LOCATION_ID, mealKitId);
+        deliveryService.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, mealKitId);
     }
 
     private void givenCookedMealKit(MealKitUniqueIdentifier mealKitId) {

@@ -184,7 +184,7 @@ public class SubscriptionService {
             subscription.getSubscriptionId(),
             subscription.getSubscriberId(),
             subscription.getMealKitType(),
-            subscription.getDeliveryLocationId(),
+            Optional.of(subscription.getDeliveryLocationId()),
             confirmedOrder.getDeliveryDate()
         );
 

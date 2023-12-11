@@ -18,7 +18,9 @@ public class LockerAuthorizationEventHandler {
 
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
-        lockerAuthorizationService.createOrder(mealKitConfirmedEvent.subscriberId, mealKitConfirmedEvent.mealKitId);
+        if (mealKitConfirmedEvent.deliveryLocationId.isPresent()) {
+            lockerAuthorizationService.createOrder(mealKitConfirmedEvent.subscriberId, mealKitConfirmedEvent.mealKitId);
+        }
     }
 
     @Subscribe

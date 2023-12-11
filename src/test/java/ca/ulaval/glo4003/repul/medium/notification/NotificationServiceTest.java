@@ -91,13 +91,14 @@ public class NotificationServiceTest {
     @Test
     public void givenNoMatchingUserAccountCreated_whenHandlingMealKitConfirmedEvent_shouldThrowDeliveryPersonAccountNotFoundException() {
         assertThrows(UserAccountNotFoundException.class, () -> eventBus.publish(
-            new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DELIVERY_DATE)));
+            new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DELIVERY_DATE)));
     }
 
     @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldSendNotificationToUser() {
         eventBus.publish(new UserCreatedEvent(AN_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL));
-        eventBus.publish(new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DELIVERY_DATE));
+        eventBus.publish(new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE,
+            Optional.of(A_DELIVERY_LOCATION_ID), A_DELIVERY_DATE));
 
         eventBus.publish(new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_DELIVERY_TIME));
 
@@ -135,7 +136,8 @@ public class NotificationServiceTest {
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldCallNotificationSenderForEachInKitchenPickUp() {
         eventBus.publish(new UserCreatedEvent(AN_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL));
-        eventBus.publish(new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DELIVERY_DATE));
+        eventBus.publish(new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID,
+            A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DELIVERY_DATE));
         MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(),
             List.of(A_KITCHEN_PICKUP_MEAL_KIT_DTO, A_DELIVERY_PICKUP_MEAL_KIT_DTO));
 

@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.small.delivery.api;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,10 +51,10 @@ public class DeliveryEventHandlerTest {
     private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_MEAL_KIT_ID, true);
     private static final MealKitsCookedEvent A_MEAL_KITS_COOKED_EVENT =
         new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_DTO));
-    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
-        new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID,
-            A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE,
-            A_DELIVERY_LOCATION_ID, A_DATE);
+    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT = new MealKitConfirmedEvent(A_MEAL_KIT_ID,
+        A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
+    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION = new MealKitConfirmedEvent(
+        A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.empty(), A_DATE);
     private static final RecallCookedMealKitEvent A_RECALL_COOKED_MEAL_KIT_EVENT =
         new RecallCookedMealKitEvent(A_MEAL_KIT_ID);
     private static final MealKitPickedUpByUserEvent A_MEAL_KIT_PICKED_UP_BY_USER_EVENT =
@@ -97,11 +98,19 @@ public class DeliveryEventHandlerTest {
     }
 
     @Test
-    public void whenHandlingMealKitConfirmedEvent_shouldCallReceiveMealKitForDeliveryInService() {
+    public void givenMealKitIsToBeDelivered_whenHandlingMealKitConfirmedEvent_shouldCallCreateMealKitInPreparationInService() {
         deliveryEventHandler.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
         verify(deliveryService, times(1))
-            .receiveMealKitForDelivery(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_ID);
+            .createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_ID);
+    }
+
+    @Test
+    public void givenMealKitIsNotToBeDelivered_whenHandlingMealKitConfirmedEvent_shouldNotCallService() {
+        deliveryEventHandler.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION);
+
+        verify(deliveryService, times(0))
+            .createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_ID);
     }
 
     @Test

@@ -66,7 +66,7 @@ public class DeliverySystemTest {
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldCreateCargo() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
@@ -76,7 +76,7 @@ public class DeliverySystemTest {
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldMarkAsReadyToDeliver() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
@@ -86,8 +86,7 @@ public class DeliverySystemTest {
     @Test
     public void whenReceiveReadyToDeliverMealKit_shouldAssignLockerToMealKit() {
         DeliverySystem deliverySystem = createDeliverySystem();
-
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
 
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
@@ -107,7 +106,7 @@ public class DeliverySystemTest {
     @Test
     public void givenValidDeliveryPersonId_whenPickupCargo_shouldSetCargoDeliveryPersonIdToRightValue() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -120,7 +119,7 @@ public class DeliverySystemTest {
     @Test
     public void whenPickupCargo_shouldSetDeliveryStatusToInProgress() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -133,7 +132,7 @@ public class DeliverySystemTest {
     @Test
     public void whenPickupCargo_shouldReturnListOfMealKits() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -154,7 +153,7 @@ public class DeliverySystemTest {
     @Test
     public void givenAlreadyPickedUpCargo_whenPickUpCargo_shouldThrowCargoAlreadyPickedUpException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -166,7 +165,7 @@ public class DeliverySystemTest {
     @Test
     public void whenCancelCargo_shouldSetDeliveryStatusToReadyToDeliver() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -180,7 +179,7 @@ public class DeliverySystemTest {
     @Test
     public void whenCancelCargo_shouldUnassignCargo() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -195,8 +194,8 @@ public class DeliverySystemTest {
     @Test
     public void whenCancelCargo_shouldReturnListOfNotYetDeliveredMealKits() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -219,7 +218,7 @@ public class DeliverySystemTest {
     @Test
     public void givenInvalidDeliveryPersonId_whenCancelCargo_shouldThrowInvalidDeliveryPersonIdException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -231,7 +230,7 @@ public class DeliverySystemTest {
     @Test
     public void whenConfirmDelivery_shouldSetDeliveryStatusToDelivered() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -252,7 +251,7 @@ public class DeliverySystemTest {
     @Test
     public void givenInvalidDeliveryPersonId_whenConfirmDelivery_shouldThrowInvalidDeliveryPersonIdException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -264,7 +263,7 @@ public class DeliverySystemTest {
     @Test
     public void givenValidCargoIdButInvalidMealKitId_whenConfirmDelivery_shouldThrowMealKitNotInCargoException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -276,7 +275,7 @@ public class DeliverySystemTest {
     @Test
     public void whenRecallDelivery_shouldSetDeliveryStatusToInDelivery() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -291,7 +290,7 @@ public class DeliverySystemTest {
     @Test
     public void givenMealKitInDelivery_whenRecallingDelivery_shouldThrowMealKitNotDeliveredException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -310,7 +309,7 @@ public class DeliverySystemTest {
     @Test
     public void givenInvalidDeliveryPersonId_whenRecallDelivery_shouldThrowInvalidDeliveryPersonIdException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -323,7 +322,7 @@ public class DeliverySystemTest {
     @Test
     public void givenMealKitIdNotInCargo_whenRecallDelivery_shouldThrowMealKitNotInCargoException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -355,7 +354,7 @@ public class DeliverySystemTest {
     @Test
     public void givenCargoWithASingleMealKit_whenMovingMealKitFromCargosToPending_shouldRemoveCargo() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
 
         deliverySystem.moveMealKitFromCargosToPending(A_MEALKIT_ID);
@@ -366,8 +365,8 @@ public class DeliverySystemTest {
     @Test
     public void givenCargoWithTwoMealKits_whenMovingMealKitFromCargosToPending_shouldRemoveMealKitFromCargo() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, new ArrayList<>(Arrays.asList(A_MEALKIT_ID, ANOTHER_MEALKIT_ID)));
 
         deliverySystem.moveMealKitFromCargosToPending(A_MEALKIT_ID);
@@ -378,7 +377,7 @@ public class DeliverySystemTest {
     @Test
     public void whenMovingMealKitFromCargosToPending_shouldMakeMealKitReadyToBeDeliveredAgain() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         List<MealKitUniqueIdentifier> newMealKitId = new ArrayList<>(List.of(A_MEALKIT_ID));
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, newMealKitId);
 
@@ -390,7 +389,7 @@ public class DeliverySystemTest {
     @Test
     public void whenMovingMealKitFromCargosToPending_shouldUnassignLocker() {
         DeliverySystem deliverySystem = createDeliverySystemWithOneLocker();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         List<MealKitUniqueIdentifier> newMealKitId = new ArrayList<>(List.of(A_MEALKIT_ID));
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, newMealKitId);
 
@@ -411,7 +410,7 @@ public class DeliverySystemTest {
     @Test
     public void givenOneCargo_whenGettingCargosReadyToPickUpy_shouldReturnListOfOneCargo() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
 
         List<Cargo> cargos = deliverySystem.getCargosReadyToPickUp();
@@ -423,7 +422,7 @@ public class DeliverySystemTest {
     @Test
     public void givenOnePickedUpCargo_whenGettingCargosReadyToPickUp_shouldReturnEmptyList() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -437,7 +436,7 @@ public class DeliverySystemTest {
     @Test
     public void whenGettingMealKit_shouldReturnMealKit() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
 
@@ -449,7 +448,7 @@ public class DeliverySystemTest {
     @Test
     public void givenInvalidCargoId_whenGettingMealKit_shouldThrowInvalidCargoIdException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
 
         assertThrows(InvalidCargoIdException.class, () -> deliverySystem.getCargoMealKit(A_INVALID_CARGO_ID, A_MEALKIT_ID));
@@ -458,7 +457,7 @@ public class DeliverySystemTest {
     @Test
     public void givenInvalidCargoId_whenGettingMealKit_shouldThrowInvalidMealKitIdException() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, new ArrayList<>(List.of(A_MEALKIT_ID)));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargosReadyToPickUp().get(0).getCargoId();
 
@@ -468,8 +467,8 @@ public class DeliverySystemTest {
     @Test
     public void whenRemovingMealKitFromLocker_shouldDeleteMealKitFromCargo() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -484,7 +483,7 @@ public class DeliverySystemTest {
     @Test
     public void givenCargoWithOnlyOneMealKitRemaining_whenRemovingMealKitFromLocker_shouldDeleteCargo() {
         DeliverySystem deliverySystem = createDeliverySystemWithOneLocker();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -499,7 +498,7 @@ public class DeliverySystemTest {
     @Test
     public void whenRemovingMealKitFromLocker_shouldDeleteMeal() {
         DeliverySystem deliverySystem = createDeliverySystem();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);
@@ -518,8 +517,8 @@ public class DeliverySystemTest {
     @Test
     public void givenWaitingMealkit_whenRemovingMealKitFromLocker_shouldAssignLockerToWaitingMealkit() {
         DeliverySystem deliverySystem = createDeliverySystemWithOneLocker();
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
+        deliverySystem.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, ANOTHER_MEALKIT_ID);
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
         CargoUniqueIdentifier cargoId = deliverySystem.getCargos().get(0).getCargoId();
         deliverySystem.addDeliveryPerson(A_DELIVERY_PERSON_ID);

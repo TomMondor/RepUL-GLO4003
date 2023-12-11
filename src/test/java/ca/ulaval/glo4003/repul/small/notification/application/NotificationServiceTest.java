@@ -88,9 +88,8 @@ public class NotificationServiceTest {
         new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_DELIVERY_PEOPLE_IDS_WITH_INVALID_ACCOUNT, MEAL_KIT_DTOS);
     private static final ConfirmedDeliveryEvent MEAL_KIT_DELIVERED_EVENT =
         new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_TIME);
-    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
-        new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_VALID_SUBSCRIPTION_ID, A_VALID_SUBSCRIBER_ACCOUNT_ID, MealKitType.STANDARD, A_DELIVERY_LOCATION_ID,
-            LocalDate.now());
+    private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT = new MealKitConfirmedEvent(A_MEAL_KIT_ID,
+        A_VALID_SUBSCRIPTION_ID, A_VALID_SUBSCRIBER_ACCOUNT_ID, MealKitType.STANDARD, Optional.of(A_DELIVERY_LOCATION_ID), LocalDate.now());
     private static final UserCreatedEvent AN_ACCOUNT_CREATED_EVENT =
         new UserCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL);
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =

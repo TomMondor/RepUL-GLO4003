@@ -40,10 +40,10 @@ public class DeliveryService {
         deliverySystemPersister.save(deliverySystem);
     }
 
-    public void receiveMealKitForDelivery(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId) {
+    public void createMealKitInPreparation(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemPersister.get();
 
-        deliverySystem.createMealKit(deliveryLocationId, mealKitId);
+        deliverySystem.createMealKitInPreparation(deliveryLocationId, mealKitId);
 
         deliverySystemPersister.save(deliverySystem);
     }

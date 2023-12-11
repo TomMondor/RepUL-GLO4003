@@ -86,11 +86,11 @@ public class DeliveryContextInitializer {
         pendingMealKitsToAdd.forEach(mealKit -> {
             MealKitUniqueIdentifier mealKitId = mealKit.keySet().iterator().next();
             DeliveryLocationId deliveryLocationId = mealKit.get(mealKitId);
-            deliverySystem.createMealKit(deliveryLocationId, mealKitId);
+            deliverySystem.createMealKitInPreparation(deliveryLocationId, mealKitId);
         });
-        cargosToAdd.forEach(cargo -> {
-            deliverySystem.receiveReadyToBeDeliveredMealKits(KitchenLocationId.DESJARDINS, cargo);
-        });
+        cargosToAdd.forEach(cargo ->
+            deliverySystem.receiveReadyToBeDeliveredMealKits(KitchenLocationId.DESJARDINS, cargo)
+        );
 
         deliverySystemPersister.save(deliverySystem);
     }

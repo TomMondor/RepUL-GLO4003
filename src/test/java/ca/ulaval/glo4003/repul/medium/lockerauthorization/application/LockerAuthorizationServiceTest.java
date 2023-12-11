@@ -46,7 +46,7 @@ public class LockerAuthorizationServiceTest {
     private static final LocalTime A_TIME = LocalTime.now();
     private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("111222333");
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
-        new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DATE);
+        new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
     private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT =
         new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, Optional.of(A_DELIVERY_LOCKER_ID), A_TIME);
     private static final UserCardAddedEvent

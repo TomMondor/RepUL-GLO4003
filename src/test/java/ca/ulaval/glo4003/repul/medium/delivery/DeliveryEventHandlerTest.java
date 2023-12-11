@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.medium.delivery;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -99,10 +100,8 @@ public class DeliveryEventHandlerTest {
 
     @Test
     public void whenHandlingMealKitConfirmedEvent_shouldAddMealKitToDeliverySystem() {
-        MealKitConfirmedEvent mealKitConfirmedEvent =
-            new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID,
-                A_SUBSCRIBER_ID,
-            A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DATE);
+        MealKitConfirmedEvent mealKitConfirmedEvent = new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID,
+            A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
 
         eventBus.publish(mealKitConfirmedEvent);
 
@@ -147,7 +146,7 @@ public class DeliveryEventHandlerTest {
     }
 
     private void givenConfirmedMealKit(MealKitUniqueIdentifier mealKitId) {
-        deliveryService.receiveMealKitForDelivery(A_DELIVERY_LOCATION_ID, mealKitId);
+        deliveryService.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, mealKitId);
     }
 
     private void givenCookedMealKit(MealKitUniqueIdentifier mealKitId) {

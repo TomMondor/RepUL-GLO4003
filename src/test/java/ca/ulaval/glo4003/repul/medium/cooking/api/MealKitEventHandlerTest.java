@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.medium.cooking.api;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ public class MealKitEventHandlerTest {
     @Test
     public void whenHandlingMealKitConfirmedEvent_shouldAddMealKitToKitchen() {
         MealKitConfirmedEvent mealKitConfirmedEvent =
-            new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_LOCATION_ID, A_DELIVERY_DATE);
+            new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DELIVERY_DATE);
         assertThrows(MealKitNotFoundException.class, () -> cookingService.select(A_COOK_ID, List.of(A_MEAL_KIT_ID)));
 
         eventBus.publish(mealKitConfirmedEvent);
@@ -64,7 +65,7 @@ public class MealKitEventHandlerTest {
     }
 
     @Test
-    public void whenHandlingPickUpCargoEvent_shouldRemoveMealKitToKitchen() {
+    public void whenHandlingPickUpCargoEvent_shouldRemoveMealKitFromKitchen() {
         PickedUpCargoEvent pickedUpCargoEvent = new PickedUpCargoEvent(List.of(DEFAULT_MEAL_KIT_ID));
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
 
