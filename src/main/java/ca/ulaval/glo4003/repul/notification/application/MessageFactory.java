@@ -41,4 +41,13 @@ public class MessageFactory {
         String messageTitle = "RepUL - Meal kit ready to be fetched";
         return new NotificationMessage(messageTitle, messageBody);
     }
+
+    public NotificationMessage createMealKitAvailableForPickUpMessage(MealKitUniqueIdentifier mealKitId, KitchenLocationId kitchenLocationId) {
+        String messageBody = "Your meal kit with id " + mealKitId.getUUID().toString();
+        messageBody += " is ready to be fetched from the " + kitchenLocationId.toString();
+        messageBody += " kitchen.\n";
+        messageBody += "Come get it!";
+        String messageTitle = "RepUL - Meal kit ready to be fetched from kitchen";
+        return new NotificationMessage(messageTitle, messageBody);
+    }
 }

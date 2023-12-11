@@ -22,6 +22,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
@@ -94,7 +95,10 @@ public class NotificationServiceTest {
         new UserCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL);
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
-
+    private static final ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto A_KITCHEN_PICKUP_MEAL_KIT_DTO =
+        new ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto(A_MEAL_KIT_ID, true);
+    private static final ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto A_DELIVERY_PICKUP_MEAL_KIT_DTO =
+        new ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto(A_MEAL_KIT_ID, false);
     private NotificationService notificationService;
 
     @Mock
@@ -106,14 +110,14 @@ public class NotificationServiceTest {
 
     @BeforeEach
     public void createService() {
-        this.notificationService = new NotificationService(userAccountRepository, deliveryPersonAccountRepository, notificationSender);
+        notificationService = new NotificationService(userAccountRepository, deliveryPersonAccountRepository, notificationSender);
     }
 
     @Test
     public void whenHandlingUserAccountCreation_shouldSaveUserAccountRepository() {
         UserCreatedEvent userCreatedEvent = new UserCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL);
 
-        this.notificationService.handleUserCreated(userCreatedEvent);
+        notificationService.handleUserCreated(userCreatedEvent);
 
         verify(userAccountRepository, times(1)).save(any(UserAccount.class));
     }
@@ -122,7 +126,7 @@ public class NotificationServiceTest {
     public void whenHandlingAccountDeliveryCreation_shouldSaveDeliveryAccountRepository() {
         DeliveryPersonAccountCreatedEvent deliveryPersonAccountCreatedEvent = new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
 
-        this.notificationService.handleDeliveryAccountCreated(deliveryPersonAccountCreatedEvent);
+        notificationService.handleDeliveryAccountCreated(deliveryPersonAccountCreatedEvent);
 
         verify(deliveryPersonAccountRepository, times(1)).save(any(DeliveryPersonAccount.class));
     }
@@ -131,7 +135,7 @@ public class NotificationServiceTest {
     public void whenHandlingMealKitReceivedForDeliveryEvent_shouldCallNotificationSenderGoodAmountOfTimes() {
         when(deliveryPersonAccountRepository.getByAccountId(any())).thenReturn(A_DELIVERY_ACCOUNT);
 
-        this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
+        notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
 
         verify(notificationSender, times(AVAILABLE_DELIVERY_PEOPLE_IDS.size())).send(any(Account.class), any(NotificationMessage.class));
     }
@@ -141,7 +145,7 @@ public class NotificationServiceTest {
         when(deliveryPersonAccountRepository.getByAccountId(A_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(A_DELIVERY_ACCOUNT);
         when(deliveryPersonAccountRepository.getByAccountId(ANOTHER_VALID_DELIVERY_ACCOUNT_ID)).thenReturn(ANOTHER_DELIVERY_ACCOUNT);
 
-        this.notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
+        notificationService.handleMealKitReceivedForDeliveryEvent(mealKitReceivedForDeliveryEvent);
 
         verify(notificationSender, times(1)).send(eq(A_DELIVERY_ACCOUNT), any(NotificationMessage.class));
         verify(notificationSender, times(1)).send(eq(ANOTHER_DELIVERY_ACCOUNT), any(NotificationMessage.class));
@@ -151,7 +155,7 @@ public class NotificationServiceTest {
     public void whenHandlingMealKitDeliveredEvent_shouldCallNotificationSenderWithRightAccountAndAMessage() {
         when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
 
-        this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
+        notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
 
         verify(notificationSender, times(1)).send(eq(A_VALID_USER_ACCOUNT), any(NotificationMessage.class));
     }
@@ -160,7 +164,7 @@ public class NotificationServiceTest {
     public void whenHandleMealKitDeliveredEvent_shouldCallNotificationSenderWithGoodAccount() {
         when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
 
-        this.notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
+        notificationService.handleConfirmedDeliveryEvent(MEAL_KIT_DELIVERED_EVENT);
 
         verify(notificationSender, times(1)).send(eq(A_VALID_USER_ACCOUNT), any(NotificationMessage.class));
     }
@@ -170,7 +174,7 @@ public class NotificationServiceTest {
         when(userAccountRepository.getAccountById(A_VALID_SUBSCRIBER_ACCOUNT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
         int numberOfMealKits = A_VALID_USER_ACCOUNT.getMealKitIds().size();
 
-        this.notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
+        notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
         assertEquals(A_VALID_USER_ACCOUNT.getMealKitIds().size(), numberOfMealKits + 1);
     }
@@ -179,22 +183,33 @@ public class NotificationServiceTest {
     public void whenHandlingMealKitConfirmedEvent_shouldSaveMealKitInUserAccountRepository() {
         when(userAccountRepository.getAccountById(A_VALID_SUBSCRIBER_ACCOUNT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
 
-        this.notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
+        notificationService.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
         verify(userAccountRepository).save(any(UserAccount.class));
     }
 
     @Test
     public void whenHandlingUserAccountCreated_shouldSaveInUserAccountRepository() {
-        this.notificationService.handleUserCreated(AN_ACCOUNT_CREATED_EVENT);
+        notificationService.handleUserCreated(AN_ACCOUNT_CREATED_EVENT);
 
         verify(userAccountRepository).save(any(UserAccount.class));
     }
 
     @Test
     public void whenHandlingDeliveryPersonAccountCreated_shouldSaveInDeliveryPersonAccountRepository() {
-        this.notificationService.handleDeliveryAccountCreated(A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT);
+        notificationService.handleDeliveryAccountCreated(A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT);
 
         verify(deliveryPersonAccountRepository).save(any(DeliveryPersonAccount.class));
+    }
+
+    @Test
+    public void whenHandlingMealKitsCookedEvent_shouldCallNotificationSenderForEachInKitchenPickUp() {
+        when(userAccountRepository.getAccountByMealKitId(A_MEAL_KIT_ID)).thenReturn(A_VALID_USER_ACCOUNT);
+        MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(),
+            List.of(A_KITCHEN_PICKUP_MEAL_KIT_DTO, A_DELIVERY_PICKUP_MEAL_KIT_DTO));
+
+        notificationService.handleMealKitsCookedEvent(mealKitsCookedEvent);
+
+        verify(notificationSender, times(1)).send(any(Account.class), any(NotificationMessage.class));
     }
 }
