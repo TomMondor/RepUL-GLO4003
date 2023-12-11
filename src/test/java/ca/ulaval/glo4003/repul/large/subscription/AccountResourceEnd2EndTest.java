@@ -22,8 +22,7 @@ import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 import jakarta.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AccountResourceEnd2EndTest {
     private static final String ACCOUNT_EMAIL = "myAccountEmail@ulaval.ca";
@@ -72,7 +71,7 @@ public class AccountResourceEnd2EndTest {
         assertEquals(ACCOUNT_EMAIL, responseBody.email());
         assertEquals(ACCOUNT_GENDER, responseBody.gender());
         assertEquals(ACCOUNT_IDUL.toUpperCase(), responseBody.idul());
-        assertNotNull(responseBody.age());
+        assertNotEquals(0, responseBody.age());
     }
 
     @Test

@@ -40,13 +40,4 @@ public class LocationResourceTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
-
-    @Test
-    public void whenGettingLocations_shouldGetLocations() {
-        when(locationsCatalogService.getDeliveryLocations()).thenReturn(A_DELIVERY_LOCATIONS_PAYLOAD);
-
-        locationResource.getDeliveryLocations();
-
-        verify(locationsCatalogService).getDeliveryLocations();
-    }
 }

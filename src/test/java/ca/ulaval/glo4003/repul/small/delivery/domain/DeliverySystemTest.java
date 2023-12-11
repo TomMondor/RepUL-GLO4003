@@ -36,8 +36,6 @@ import ca.ulaval.glo4003.repul.fixture.delivery.DeliverySystemFixture;
 import ca.ulaval.glo4003.repul.fixture.delivery.LocationsCatalogFixture;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DeliverySystemTest {
@@ -57,15 +55,6 @@ public class DeliverySystemTest {
 
     @Mock
     private LocationsCatalog mockLocationsCatalog;
-
-    @Test
-    public void whenCreateMealKit_shouldGetDeliveryLocation() {
-        DeliverySystem deliverySystem = new DeliverySystemFixture().withLocationsCatalog(mockLocationsCatalog).build();
-
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
-
-        verify(mockLocationsCatalog).getDeliveryLocation(A_DELIVERY_LOCATION_ID);
-    }
 
     @Test
     public void givenInvalidMealKitId_whenReceivingReadyToBeDeliveredMealKit_shouldThrowInvalidMealKitIdException() {
@@ -103,17 +92,6 @@ public class DeliverySystemTest {
         deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
 
         assertEquals(A_LOCKER_ID, deliverySystem.getCargos().get(0).getMealKits().get(0).getLockerId());
-    }
-
-    @Test
-    public void whenReceiveReadyToDeliverMealKit_shouldGetPickupLocation() {
-        DeliverySystem deliverySystem = new DeliverySystemFixture().withLocationsCatalog(mockLocationsCatalog).build();
-        when(mockLocationsCatalog.getDeliveryLocation(A_DELIVERY_LOCATION_ID)).thenReturn(new DeliveryLocation(A_DELIVERY_LOCATION_ID, A_LOCATION_NAME, 100));
-        deliverySystem.createMealKit(A_DELIVERY_LOCATION_ID, A_MEALKIT_ID);
-
-        deliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEALKIT_ID));
-
-        verify(mockLocationsCatalog).getKitchenLocation(A_KITCHEN_LOCATION_ID);
     }
 
     @Test

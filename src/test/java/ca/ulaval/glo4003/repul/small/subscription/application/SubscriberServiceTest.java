@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.small.subscription.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,6 +21,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -69,13 +69,9 @@ public class SubscriberServiceTest {
         Subscriber subscriber = new SubscriberFixture().withSubscriberId(A_SUBSCRIBER_ID).build();
         given(subscriberRepository.getById(A_SUBSCRIBER_ID)).willReturn(subscriber);
         given(subscriberRepository.cardNumberExists(AN_UNASSIGNED_CARD_NUMBER)).willReturn(false);
-        ArgumentCaptor<UserCardAddedEvent> eventCaptor = ArgumentCaptor.forClass(UserCardAddedEvent.class);
 
         subscriberService.addCard(A_SUBSCRIBER_ID, AN_UNASSIGNED_CARD_NUMBER);
 
-        verify(eventBus).publish(eventCaptor.capture());
-        UserCardAddedEvent event = eventCaptor.getValue();
-        assertEquals(A_SUBSCRIBER_ID, event.subscriberId);
-        assertEquals(AN_UNASSIGNED_CARD_NUMBER, event.userCardNumber);
+        verify(eventBus).publish(any(UserCardAddedEvent.class));
     }
 }

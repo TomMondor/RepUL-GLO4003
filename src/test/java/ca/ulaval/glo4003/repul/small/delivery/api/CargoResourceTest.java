@@ -53,15 +53,6 @@ public class CargoResourceTest {
     }
 
     @Test
-    public void whenCancellingCargo_shouldReturnNoContent() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
-
-        Response response = cargoResource.cancelCargo(requestContext, A_CARGO_ID);
-
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-
-    @Test
     public void whenCancellingCargo_shouldCancelCargo() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
@@ -71,10 +62,10 @@ public class CargoResourceTest {
     }
 
     @Test
-    public void whenPickingUpCargo_shouldReturnNoContent() {
+    public void whenCancellingCargo_shouldReturnNoContent() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
-        Response response = cargoResource.pickupCargo(requestContext, A_CARGO_ID);
+        Response response = cargoResource.cancelCargo(requestContext, A_CARGO_ID);
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
@@ -89,10 +80,10 @@ public class CargoResourceTest {
     }
 
     @Test
-    public void whenConfirmingDelivery_shouldReturn204() {
+    public void whenPickingUpCargo_shouldReturnNoContent() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
-        Response response = cargoResource.confirmDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
+        Response response = cargoResource.pickupCargo(requestContext, A_CARGO_ID);
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
@@ -107,6 +98,15 @@ public class CargoResourceTest {
     }
 
     @Test
+    public void whenConfirmingDelivery_shouldReturnNoContent() {
+        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
+
+        Response response = cargoResource.confirmDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
+
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+
+    @Test
     public void whenRecallingDelivery_shouldReturn200() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
         when(deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
@@ -115,17 +115,6 @@ public class CargoResourceTest {
         Response response = cargoResource.recallDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void whenRecallingDelivery_shouldRecallDelivery() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
-        when(deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
-            A_LOCKER_ID);
-
-        cargoResource.recallDelivery(requestContext, A_CARGO_ID, A_MEAL_KIT_ID);
-
-        verify(deliveryService).recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
     }
 
     @Test

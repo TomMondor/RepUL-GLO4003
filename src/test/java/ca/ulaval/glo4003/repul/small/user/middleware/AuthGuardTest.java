@@ -34,7 +34,6 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthGuardTest {
-
     private static final SubscriberUniqueIdentifier SUBSCRIBER_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final String A_UID_STRING = SUBSCRIBER_UNIQUE_IDENTIFIER.getUUID().toString();
     private static final String A_TOKEN = "valid-token-yolo";

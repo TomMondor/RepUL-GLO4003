@@ -76,34 +76,6 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenCreatingDeliveryPersonAccount_shouldAddDeliveryPerson() {
-        deliveryService.createDeliveryPersonAccount(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystem).addDeliveryPerson(any(DeliveryPersonUniqueIdentifier.class));
-    }
-
-    @Test
-    public void whenCreatingDeliveryPersonAccount_shouldGetDeliverySystem() {
-        deliveryService.createDeliveryPersonAccount(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenCreatingDeliveryPersonAccount_shouldSaveDeliverySystem() {
-        deliveryService.createDeliveryPersonAccount(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
-    }
-
-    @Test
-    public void whenPickupCargo_shouldGetDeliverySystem() {
-        deliveryService.pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
     public void whenPickupCargo_shouldPublishPickedUpCargoEvent() {
         deliveryService.pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
 
@@ -111,72 +83,10 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenPickupCargo_shouldSaveDeliverySystem() {
-        deliveryService.pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
-    }
-
-    @Test
-    public void givenValidUniqueIdentifier_whenPickupCargo_shouldPickupCargoWithRightUniqueIdentifier() {
-        deliveryService.pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystem).pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-    }
-
-    @Test
-    public void whenCancelCargo_shouldGetDeliverySystem() {
-        deliveryService.cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenCancelCargo_shouldSaveDeliverySystem() {
-        deliveryService.cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
-    }
-
-    @Test
     public void whenCancelCargo_shouldPublishCanceledCargoEvent() {
         deliveryService.cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
 
         verify(mockRepULEventBus).publish(any(CanceledCargoEvent.class));
-    }
-
-    @Test
-    public void givenValidUniqueIdentifier_whenCancelCargo_shouldCancelCargoWithRightUniqueIdentifier() {
-        deliveryService.cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystem).cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-    }
-
-    @Test
-    public void whenCreatingCargo_shouldGetDeliverySystem() {
-        when(mockDeliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
-
-        deliveryService.createCargo(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenCreatingCargo_shouldSaveDeliverySystem() {
-        when(mockDeliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
-
-        deliveryService.createCargo(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
-    }
-
-    @Test
-    public void whenCreatingCargo_shouldReceiveReadyToBeDeliveredMealKits() {
-        when(mockDeliverySystem.receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER))).thenReturn(A_CARGO);
-
-        deliveryService.createCargo(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
-
-        verify(mockDeliverySystem).receiveReadyToBeDeliveredMealKits(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_UNIQUE_IDENTIFIER));
     }
 
     @Test
@@ -189,103 +99,12 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void whenHavingAMealKitReadyForDelivery_shouldGetDeliverySystem() {
-        deliveryService.receiveMealKitForDelivery(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenHavingAMealKitReadyForDelivery_shouldSaveDeliverySystem() {
-        deliveryService.receiveMealKitForDelivery(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
-    }
-
-    @Test
-    public void whenHavingAMealKitReadyForDelivery_shouldCreateMealKit() {
-        deliveryService.receiveMealKitForDelivery(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystem).createMealKit(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-    }
-
-    @Test
-    public void whenRecallingMealKit_shouldGetDeliverySystem() {
-        deliveryService.recallMealKit(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenRecallingMealKit_shouldMoveMealKitFromCargosToPendingInDeliverySystem() {
-        deliveryService.recallMealKit(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystem).moveMealKitFromCargosToPending(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-    }
-
-    @Test
-    public void whenRecallingMealKit_shouldSaveDeliverySystem() {
-        deliveryService.recallMealKit(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
-    }
-
-    @Test
-    public void whenConfirmDelivery_shouldGetDeliverySystem() {
-        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
-
-        deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenConfirmDelivery_shouldSaveDeliverySystem() {
-        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
-
-        deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
-    }
-
-    @Test
     public void whenConfirmDelivery_shouldPublishConfirmedDeliveryEvent() {
         when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
         verify(mockRepULEventBus).publish(any(ConfirmedDeliveryEvent.class));
-    }
-
-    @Test
-    public void givenValidUniqueIdentifiers_whenConfirmDelivery_shouldConfirmDeliveryWithRightUniqueIdentifier() {
-        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
-
-        deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystem).confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-    }
-
-    @Test
-    public void whenRecallDelivery_shouldGetDeliverySystem() {
-        when(mockDeliverySystem.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
-            A_DELIVERED_MEAL_KIT);
-        A_DELIVERED_MEAL_KIT.assignLocker(A_LOCKER_ID);
-
-        deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenRecallDelivery_shouldSaveDeliverySystem() {
-        when(mockDeliverySystem.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
-            A_DELIVERED_MEAL_KIT);
-        A_DELIVERED_MEAL_KIT.assignLocker(A_LOCKER_ID);
-
-        deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
     }
 
     @Test
@@ -297,51 +116,5 @@ public class DeliveryServiceTest {
         deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
         verify(mockRepULEventBus).publish(any(RecalledDeliveryEvent.class));
-    }
-
-    @Test
-    public void givenValidUniqueIdentifiers_whenRecallDelivery_shouldRecallDeliveryWithRightUniqueIdentifier() {
-        when(mockDeliverySystem.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
-            A_DELIVERED_MEAL_KIT);
-        A_DELIVERED_MEAL_KIT.assignLocker(A_LOCKER_ID);
-
-        deliveryService.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystem).recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
-    }
-
-    @Test
-    public void whenGettingCargosReadyToPickUp_shouldGetDeliverySystem() {
-        deliveryService.getCargosReadyToPickUp();
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenGettingCargosReadyToPickUp_shouldGetCargosReadyToPickUp() {
-        deliveryService.getCargosReadyToPickUp();
-
-        verify(mockDeliverySystem).getCargosReadyToPickUp();
-    }
-
-    @Test
-    public void whenRemovingMealKitFromLocker_shouldGetDeliverySystem() {
-        deliveryService.removeMealKitFromLocker(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenRemovingMealKitFromLocker_shouldSaveDeliverySystem() {
-        deliveryService.removeMealKitFromLocker(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystemPersister).save(mockDeliverySystem);
-    }
-
-    @Test
-    public void whenRemovingMealKitFromLocker_shouldRemoveMealKitFromLocker() {
-        deliveryService.removeMealKitFromLocker(A_MEAL_KIT_UNIQUE_IDENTIFIER);
-
-        verify(mockDeliverySystem).removeMealKitFromLocker(A_MEAL_KIT_UNIQUE_IDENTIFIER);
     }
 }

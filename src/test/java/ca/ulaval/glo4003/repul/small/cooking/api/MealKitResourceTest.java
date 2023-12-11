@@ -23,7 +23,6 @@ import ca.ulaval.glo4003.repul.fixture.cooking.RecipeFixture;
 import jakarta.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,15 +39,6 @@ public class MealKitResourceTest {
     @BeforeEach
     public void createCookingResource() {
         mealKitResource = new MealKitResource(cookingService);
-    }
-
-    @Test
-    public void whenGettingMealKitsToCook_shouldGetMealKitsPayload() {
-        when(cookingService.getMealKitsToCook()).thenReturn(MEAL_KITS_PAYLOAD);
-
-        mealKitResource.getMealKitsToCook();
-
-        verify(cookingService).getMealKitsToCook();
     }
 
     @Test

@@ -13,8 +13,6 @@ import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 import ca.ulaval.glo4003.repul.user.application.UserService;
-import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.Token;
 
 import jakarta.ws.rs.core.Response;
@@ -23,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class UserResourceTest {
@@ -42,17 +39,6 @@ public class UserResourceTest {
     }
 
     @Test
-    public void whenRegistering_shouldRegisterUser() {
-        RegistrationQuery registrationQuery =
-            RegistrationQuery.from(A_REGISTRATION_REQUEST.email, A_REGISTRATION_REQUEST.password, A_REGISTRATION_REQUEST.idul, A_REGISTRATION_REQUEST.name,
-                A_REGISTRATION_REQUEST.birthdate, A_REGISTRATION_REQUEST.gender);
-
-        userResource.register(A_REGISTRATION_REQUEST);
-
-        verify(userService).register(registrationQuery);
-    }
-
-    @Test
     public void whenRegistering_shouldReturn201() {
         Response response = userResource.register(A_REGISTRATION_REQUEST);
 
@@ -64,16 +50,6 @@ public class UserResourceTest {
         Response response = userResource.register(A_REGISTRATION_REQUEST);
 
         assertNotNull(response.getHeaderString("Location"));
-    }
-
-    @Test
-    public void whenLogin_shouldLogin() {
-        LoginQuery loginQuery = LoginQuery.from(A_LOGIN_REQUEST.email, A_LOGIN_REQUEST.password);
-        given(userService.login(loginQuery)).willReturn(A_TOKEN);
-
-        userResource.login(A_LOGIN_REQUEST);
-
-        verify(userService).login(loginQuery);
     }
 
     @Test

@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.user.application.UserService;
 import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
@@ -37,6 +38,8 @@ public class UserServiceTest {
     private static final String A_NAME = "aName";
     private static final String A_BIRTHDATE = "2000-01-01";
     private static final String A_GENDER = "MAN";
+    private static final String A_CARD_NUMBER = "123456789";
+    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
 
     private UserService userService;
 
@@ -81,6 +84,13 @@ public class UserServiceTest {
     }
 
     @Test
+    public void givenUserNotFound_whenLogin_shouldThrowInvalidCredentialsException() {
+        given(userRepository.findByEmail(new Email(AN_EMAIL))).willReturn(null);
+
+        assertThrows(InvalidCredentialsException.class, () -> userService.login(LoginQuery.from(AN_EMAIL, A_PASSWORD)));
+    }
+
+    @Test
     public void whenRegistering_shouldPublishUserCreatedEvent() {
         given(userRepository.exists(any(Email.class))).willReturn(false);
         given(userRepository.exists(any(IDUL.class))).willReturn(false);
@@ -89,12 +99,5 @@ public class UserServiceTest {
         userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
 
         verify(repULEventBus).publish(any(UserCreatedEvent.class));
-    }
-
-    @Test
-    public void givenUserNotFound_whenLogin_shouldThrowInvalidCredentialsException() {
-        given(userRepository.findByEmail(new Email(AN_EMAIL))).willReturn(null);
-
-        assertThrows(InvalidCredentialsException.class, () -> userService.login(LoginQuery.from(AN_EMAIL, A_PASSWORD)));
     }
 }

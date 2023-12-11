@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.medium.cooking;
+package ca.ulaval.glo4003.repul.medium.cooking.application;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -43,6 +43,7 @@ public class CookingServiceTest {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
 
         assertEquals(1, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(List.of(DEFAULT_MEAL_KIT_ID), cookingService.getSelection(A_COOK_ID));
     }
 
     @Test
@@ -71,6 +72,16 @@ public class CookingServiceTest {
         assertEquals(1, cookingService.getSelection(A_COOK_ID).size());
 
         cookingService.confirmCooked(A_COOK_ID, DEFAULT_MEAL_KIT_ID);
+
+        assertEquals(0, cookingService.getSelection(A_COOK_ID).size());
+    }
+
+    @Test
+    public void givenSelectedMealKit_whenGivingMealKitToDelivery_shouldRemoveMealKitFromSelection() {
+        cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
+        assertEquals(1, cookingService.getSelection(A_COOK_ID).size());
+
+        cookingService.giveMealKitToDelivery(List.of(DEFAULT_MEAL_KIT_ID));
 
         assertEquals(0, cookingService.getSelection(A_COOK_ID).size());
     }

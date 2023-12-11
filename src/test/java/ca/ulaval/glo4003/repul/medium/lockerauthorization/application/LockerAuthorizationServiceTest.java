@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.medium.lockerauthorization;
+package ca.ulaval.glo4003.repul.medium.lockerauthorization.application;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,7 +20,6 @@ import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationEventHandler;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
-import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
@@ -31,12 +30,10 @@ import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLocker
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
 
-import com.google.common.eventbus.Subscribe;
-
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LockerAuthorizationEventHandlerTest {
+public class LockerAuthorizationServiceTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
@@ -97,25 +94,42 @@ public class LockerAuthorizationEventHandlerTest {
     }
 
     @Test
-    public void givenAllNeededEvents_whenOpenLocker_shouldPublishMealKitPickedUpByUserEvent() {
+    public void whenUnassigningLocker_shouldPersistLockerUnassigned() {
         eventBus.publish(A_MEAL_KIT_CONFIRMED_EVENT);
         eventBus.publish(A_CONFIRMED_DELIVERY_EVENT);
         eventBus.publish(A_USER_CARD_ADDED_EVENT);
-        MealKitPickedUpByUserEventListener mealKitPickedUpByUserEventListener = new MealKitPickedUpByUserEventListener();
-        eventBus.register(mealKitPickedUpByUserEventListener);
+
+        lockerAuthorizationService.unassignLocker(A_MEAL_KIT_ID);
+
+        assertThrows(LockerNotAssignedException.class, () -> lockerAuthorizationService.openLocker(A_OPEN_LOCKER_QUERY));
+    }
+
+    @Test
+    public void givenAssignedLocker_whenOpeningLocker_shouldPersistLockerUnassigned() {
+        eventBus.publish(A_MEAL_KIT_CONFIRMED_EVENT);
+        eventBus.publish(A_CONFIRMED_DELIVERY_EVENT);
+        eventBus.publish(A_USER_CARD_ADDED_EVENT);
 
         lockerAuthorizationService.openLocker(A_OPEN_LOCKER_QUERY);
 
-        assertTrue(mealKitPickedUpByUserEventListener.hasBeenCalled);
+        assertThrows(LockerNotAssignedException.class, () -> lockerAuthorizationService.openLocker(A_OPEN_LOCKER_QUERY));
     }
 
-    private class MealKitPickedUpByUserEventListener {
-        public boolean hasBeenCalled;
+    @Test
+    public void givenMealKit_whenAssigningLockerToMealKit_shouldPersistLocker() {
+        eventBus.publish(A_MEAL_KIT_CONFIRMED_EVENT);
+        eventBus.publish(A_CONFIRMED_DELIVERY_EVENT);
+        eventBus.publish(A_USER_CARD_ADDED_EVENT);
 
-        @Subscribe
-        public void handleMealKitPickedUpByUserEvent(
-            MealKitPickedUpByUserEvent mealKitPickedUpByUserEvent) {
-            hasBeenCalled = true;
-        }
+        lockerAuthorizationService.assignLockerToMealKit(A_MEAL_KIT_ID, A_LOCKER_AUTHORIZATION_LOCKER_ID);
+
+        assertDoesNotThrow(() -> lockerAuthorizationService.openLocker(A_OPEN_LOCKER_QUERY));
+    }
+
+    @Test
+    public void whenCreatingOrder_shouldMakeOrderAvailableToAssignToLocker() {
+        lockerAuthorizationService.createOrder(AN_ACCOUNT_ID, A_MEAL_KIT_ID);
+
+        assertDoesNotThrow(() -> lockerAuthorizationService.assignLockerToMealKit(A_MEAL_KIT_ID, A_LOCKER_AUTHORIZATION_LOCKER_ID));
     }
 }

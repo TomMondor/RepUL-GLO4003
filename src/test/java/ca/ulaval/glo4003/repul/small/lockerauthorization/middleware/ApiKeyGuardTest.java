@@ -21,6 +21,7 @@ import static org.mockito.Mockito.verify;
 public class ApiKeyGuardTest {
     private static final String A_NOT_BEARER_AUTHORIZATION_HEADER = "Ours uehriwhriehwiuhriwhr";
     private static final String AN_INVALID_BEARER_API_KEY_HEADER = "Bearer " + "invalid-api-key";
+
     private ApiKeyGuard apiKeyGuard;
 
     @Mock

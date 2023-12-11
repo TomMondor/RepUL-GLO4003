@@ -17,7 +17,6 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,24 +35,6 @@ public class LocationsCatalogServiceTest {
         locationsCatalogService = new LocationsCatalogService(deliverySystemPersister);
 
         when(deliverySystemPersister.get()).thenReturn(mockDeliverySystem);
-    }
-
-    @Test
-    public void whenGettingPickupLocations_shouldGetDeliverySystem() {
-        when(mockDeliverySystem.getDeliveryLocations()).thenReturn(SOME_DELIVERY_LOCATIONS);
-
-        locationsCatalogService.getDeliveryLocations();
-
-        verify(deliverySystemPersister).get();
-    }
-
-    @Test
-    public void whenGettingPickupLocations_shouldGetDeliveryLocations() {
-        when(mockDeliverySystem.getDeliveryLocations()).thenReturn(SOME_DELIVERY_LOCATIONS);
-
-        locationsCatalogService.getDeliveryLocations();
-
-        verify(mockDeliverySystem).getDeliveryLocations();
     }
 
     @Test

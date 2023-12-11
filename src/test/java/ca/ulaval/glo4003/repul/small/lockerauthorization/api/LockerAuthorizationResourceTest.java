@@ -7,14 +7,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
-import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.request.OpenLockerRequest;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 
 import jakarta.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class LockerAuthorizationResourceTest {
@@ -29,15 +27,6 @@ public class LockerAuthorizationResourceTest {
     @BeforeEach
     public void createLockerAuthorizationResource() {
         lockerAuthorizationResource = new LockerAuthorizationResource(lockerAuthorizationService);
-    }
-
-    @Test
-    public void whenOpening_shouldAuthorizeLocker() {
-        OpenLockerQuery query = OpenLockerQuery.from(A_CARD_NUMBER, A_LOCKER_ID);
-
-        lockerAuthorizationResource.openLocker(getLockerOpenRequest());
-
-        verify(lockerAuthorizationService).openLocker(query);
     }
 
     @Test

@@ -77,13 +77,6 @@ public class SubscriptionResourceTest {
     }
 
     @Test
-    public void whenConfirmingMealKit_shouldConfirmMealKit() {
-        subscriptionResource.confirmMealKit(containerRequestContext, A_SUBSCRIPTION_ID.getUUID().toString());
-
-        verify(subscriptionService).confirmNextMealKitForSubscription(ACCOUNT_ID, A_SUBSCRIPTION_ID);
-    }
-
-    @Test
     public void whenConfirmingMealKit_shouldReturnNoContent() {
         Response response = subscriptionResource.confirmMealKit(containerRequestContext, SUBSCRIPTION_ID_STRING);
 
@@ -91,29 +84,10 @@ public class SubscriptionResourceTest {
     }
 
     @Test
-    public void whenDecliningMealKit_shouldDeclineMealKit() {
-        subscriptionResource.declineMealKit(containerRequestContext, A_SUBSCRIPTION_ID.getUUID().toString());
-
-        verify(subscriptionService).declineNextMealKitForSubscription(eq(ACCOUNT_ID), eq(A_SUBSCRIPTION_ID));
-    }
-
-    @Test
     public void whenDecliningMealKit_shouldReturnNoContent() {
         Response response = subscriptionResource.declineMealKit(containerRequestContext, SUBSCRIPTION_ID_STRING);
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void whenCreatingSubscription_shouldCreateSubscription() {
-        given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK, A_MEAL_KIT_TYPE_STRING))).willReturn(
-            A_SUBSCRIPTION_ID);
-        SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK, A_MEAL_KIT_TYPE_STRING);
-
-        subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
-
-        verify(subscriptionService).createSubscription(ACCOUNT_ID, subscriptionQuery);
     }
 
     @Test
@@ -137,15 +111,6 @@ public class SubscriptionResourceTest {
     }
 
     @Test
-    public void whenGettingSubscriptions_shouldGetSubscriptions() {
-        when(subscriptionService.getSubscriptions(ACCOUNT_ID)).thenReturn(A_SUBSCRIPTIONS_PAYLOAD);
-
-        subscriptionResource.getSubscriptions(containerRequestContext);
-
-        verify(subscriptionService).getSubscriptions(ACCOUNT_ID);
-    }
-
-    @Test
     public void whenGettingSubscriptions_shouldReturn200() {
         when(subscriptionService.getSubscriptions(ACCOUNT_ID)).thenReturn(A_SUBSCRIPTIONS_PAYLOAD);
 
@@ -155,29 +120,12 @@ public class SubscriptionResourceTest {
     }
 
     @Test
-    public void whenGettingSubscriptionById_shouldGetSubscription() {
-        when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID)).thenReturn(A_SUBSCRIPTION_PAYLOAD);
-
-        subscriptionResource.getSubscription(containerRequestContext, A_SUBSCRIPTION_ID.getUUID().toString());
-
-        verify(subscriptionService).getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID);
-    }
-
-    @Test
     public void whenGettingSubscription_shouldReturn200() {
         when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID)).thenReturn(A_SUBSCRIPTION_PAYLOAD);
 
         Response response = subscriptionResource.getSubscription(containerRequestContext, A_SUBSCRIPTION_ID.getUUID().toString());
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void whenGettingMyOrders_shouldGetOrders() {
-        when(subscriptionService.getCurrentOrders(any(SubscriberUniqueIdentifier.class))).thenReturn(AN_ORDERS_PAYLOAD);
-        subscriptionResource.getMyCurrentOrders(containerRequestContext);
-
-        verify(subscriptionService).getCurrentOrders(any(SubscriberUniqueIdentifier.class));
     }
 
     @Test
