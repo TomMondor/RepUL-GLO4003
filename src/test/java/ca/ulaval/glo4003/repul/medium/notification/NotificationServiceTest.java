@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
@@ -40,7 +41,6 @@ import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryUserAccountRe
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
-import ca.ulaval.glo4003.repul.subscription.domain.profile.IDUL;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;

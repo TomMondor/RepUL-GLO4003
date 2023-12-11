@@ -4,13 +4,13 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
-import ca.ulaval.glo4003.repul.subscription.domain.profile.IDUL;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 
 public class SubscriberFixture {

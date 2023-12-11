@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper
 import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
@@ -52,9 +53,13 @@ import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
@@ -110,6 +115,10 @@ public class TestApplicationContext implements ApplicationContext {
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusWeeks(10));
     private static final RegistrationQuery CLIENT_REGISTRATION_QUERY =
         RegistrationQuery.from(CLIENT_EMAIL, CLIENT_PASSWORD, "ALEXA123", "Alexandra", "1999-01-01", "WOMAN");
+    private static final Subscriber SUBSCRIBER =
+        new Subscriber(CLIENT_ID, new IDUL(CLIENT_REGISTRATION_QUERY.idul().value()), new Name(CLIENT_REGISTRATION_QUERY.name().value()),
+            new Birthdate(CLIENT_REGISTRATION_QUERY.birthdate().value()), Gender.from(CLIENT_REGISTRATION_QUERY.gender().name()),
+            CLIENT_REGISTRATION_QUERY.email());
     private static final RegistrationQuery COOK_REGISTRATION_QUERY = RegistrationQuery.from(COOK_EMAIL, COOK_PASSWORD, "PAUL123", "Paul", "1990-01-01", "MAN");
     private static final RegistrationQuery DELIVERY_PERSON_REGISTRATION_QUERY =
         RegistrationQuery.from(DELIVERY_PERSON_EMAIL, DELIVERY_PERSON_PASSWORD, "ROGER456", "Roger", "1973-04-24", "MAN");
@@ -148,27 +157,28 @@ public class TestApplicationContext implements ApplicationContext {
         MealKitResource mealKitResource = new MealKitResource(cookingService);
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
-        SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer().withSubscriptions(List.of(
-            new Subscription(FIRST_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(SECOND_SUBSCRIPTION_ID, CLIENT_ID, List.of(SECOND_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(THIRD_SUBSCRIPTION_ID, CLIENT_ID, List.of(THIRD_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(FOURTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(FOURTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(FIFTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIFTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(SIXTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(SIXTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(SEVENTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(SEVENTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(EIGHTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(EIGHTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(NINTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(NINTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD),
-            new Subscription(TENTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(TENTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
-                A_SEMESTER, MealKitType.STANDARD)));
+        SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer().withSubscribers(List.of(SUBSCRIBER))
+            .withSubscriptions(List.of(
+                new Subscription(FIRST_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(SECOND_SUBSCRIPTION_ID, CLIENT_ID, List.of(SECOND_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(THIRD_SUBSCRIPTION_ID, CLIENT_ID, List.of(THIRD_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(FOURTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(FOURTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(FIFTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIFTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(SIXTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(SIXTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(SEVENTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(SEVENTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID,
+                    LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(EIGHTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(EIGHTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(NINTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(NINTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(TENTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(TENTH_MEAL_KIT_ORDER), A_WEEKLY_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(),
+                    A_SEMESTER, MealKitType.STANDARD)));
         SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus);
         SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);
@@ -192,10 +202,8 @@ public class TestApplicationContext implements ApplicationContext {
                 Map.entry(CLIENT_ID, FOURTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, FIFTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, SIXTH_MEAL_KIT_ID),
                 Map.entry(CLIENT_ID, SEVENTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, EIGHTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, NINTH_MEAL_KIT_ID),
                 Map.entry(CLIENT_ID, TENTH_MEAL_KIT_ID)));
-        LockerAuthorizationService lockerAuthorizationService =
-            lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
-        LockerAuthorizationResource lockerAuthorizationResource =
-            new LockerAuthorizationResource(lockerAuthorizationService);
+        LockerAuthorizationService lockerAuthorizationService = lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
+        LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(lockerAuthorizationService);
         lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 

@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.subscription.domain.profile;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 
 public class Profile {

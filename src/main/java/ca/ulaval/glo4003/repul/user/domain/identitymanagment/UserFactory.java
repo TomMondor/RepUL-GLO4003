@@ -1,6 +1,7 @@
 package ca.ulaval.glo4003.repul.user.domain.identitymanagment;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 
 public class UserFactory {
@@ -10,8 +11,8 @@ public class UserFactory {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createUser(UniqueIdentifier uid, Email email, Role role, Password password) {
-        return new User(uid, email, encryptPassword(password), role);
+    public User createUser(UniqueIdentifier uid, IDUL idul, Email email, Role role, Password password) {
+        return new User(uid, idul, email, encryptPassword(password), role);
     }
 
     private Password encryptPassword(Password password) {

@@ -23,7 +23,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationEventHandler;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

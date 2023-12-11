@@ -29,7 +29,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinked
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemRepository;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

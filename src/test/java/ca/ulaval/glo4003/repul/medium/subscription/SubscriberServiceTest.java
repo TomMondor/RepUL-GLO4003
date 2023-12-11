@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
@@ -16,7 +17,6 @@ import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
-import ca.ulaval.glo4003.repul.subscription.domain.profile.IDUL;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriberRepository;
 

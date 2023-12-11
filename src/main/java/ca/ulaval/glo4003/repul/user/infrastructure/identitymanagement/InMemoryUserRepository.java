@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserRepository;
@@ -25,6 +26,11 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public boolean exists(Email email) {
         return users.containsKey(email);
+    }
+
+    @Override
+    public boolean exists(IDUL idul) {
+        return users.values().stream().anyMatch(user -> user.getIdul().equals(idul));
     }
 
     @Override

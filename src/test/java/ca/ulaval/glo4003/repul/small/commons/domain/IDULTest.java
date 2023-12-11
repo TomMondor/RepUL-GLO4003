@@ -1,9 +1,9 @@
-package ca.ulaval.glo4003.repul.small.subscription.domain.profile;
+package ca.ulaval.glo4003.repul.small.commons.domain;
 
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidIDULException;
-import ca.ulaval.glo4003.repul.subscription.domain.profile.IDUL;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
+import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidIDULException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

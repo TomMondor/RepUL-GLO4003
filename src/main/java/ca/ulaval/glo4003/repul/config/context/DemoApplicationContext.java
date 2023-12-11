@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper
 import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
@@ -60,7 +61,6 @@ import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
-import ca.ulaval.glo4003.repul.subscription.domain.profile.IDUL;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
@@ -160,10 +160,8 @@ public class DemoApplicationContext implements ApplicationContext {
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer().withOrders(
             List.of(Map.entry(CLIENT_ID, FIRST_MEAL_KIT_ORDER.getOrderId()), Map.entry(CLIENT_ID, SECOND_MEAL_KIT_ORDER.getOrderId()),
                 Map.entry(CLIENT_ID, THIRD_MEAL_KIT_ORDER.getOrderId())));
-        LockerAuthorizationService lockerAuthorizationService =
-            lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
-        LockerAuthorizationResource lockerAuthorizationResource =
-            new LockerAuthorizationResource(lockerAuthorizationService);
+        LockerAuthorizationService lockerAuthorizationService = lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
+        LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(lockerAuthorizationService);
         lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 

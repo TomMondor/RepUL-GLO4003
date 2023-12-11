@@ -2,18 +2,18 @@ package ca.ulaval.glo4003.repul.subscription.application;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.subscription.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.subscription.application.payload.ProfilePayload;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
-import ca.ulaval.glo4003.repul.subscription.domain.profile.IDUL;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
-import ca.ulaval.glo4003.repul.user.application.event.UserCardAddedEvent;
-import ca.ulaval.glo4003.repul.user.application.exception.CardNumberAlreadyInUseException;
 
 public class SubscriberService {
     private final SubscriberRepository subscriberRepository;

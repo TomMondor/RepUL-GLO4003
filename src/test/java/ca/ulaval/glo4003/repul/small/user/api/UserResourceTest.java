@@ -6,25 +6,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.fixture.user.AccountInformationPayloadFixture;
-import ca.ulaval.glo4003.repul.fixture.user.AddCardRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.RegistrationRequestFixture;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
-import ca.ulaval.glo4003.repul.user.api.request.AddCardRequest;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 import ca.ulaval.glo4003.repul.user.application.UserService;
-import ca.ulaval.glo4003.repul.user.application.payload.AccountInformationPayload;
-import ca.ulaval.glo4003.repul.user.application.query.AddCardQuery;
 import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.Token;
 
-import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,19 +28,13 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 public class UserResourceTest {
     private static final RegistrationRequest A_REGISTRATION_REQUEST = new RegistrationRequestFixture().build();
-    private static final AccountInformationPayload AN_ACCOUNT_INFORMATION_PAYLOAD = new AccountInformationPayloadFixture().build();
-    private static final SubscriberUniqueIdentifier A_UID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final LoginRequest A_LOGIN_REQUEST = new LoginRequestFixture().build();
-    private static final AddCardRequest AN_ADD_CARD_REQUEST = new AddCardRequestFixture().build();
     private static final Token A_TOKEN = new Token("aToken", 3600);
 
     private UserResource userResource;
 
     @Mock
     private UserService userService;
-
-    @Mock
-    private ContainerRequestContext containerRequestContext;
 
     @BeforeEach
     public void createUserResource() {
@@ -108,44 +94,5 @@ public class UserResourceTest {
 
         assertEquals(A_TOKEN.value(), loginResponse.token());
         assertEquals(A_TOKEN.expiresIn(), loginResponse.expiresIn());
-    }
-
-    @Test
-    public void whenGettingMyAccount_shouldGetMyAccount() {
-        given(containerRequestContext.getProperty("uid")).willReturn(A_UID.getUUID().toString());
-        given(userService.getAccount(A_UID)).willReturn(AN_ACCOUNT_INFORMATION_PAYLOAD);
-
-        userResource.getMyAccount(containerRequestContext);
-
-        verify(userService).getAccount(A_UID);
-    }
-
-    @Test
-    public void whenGettingMyAccount_shouldReturn200() {
-        given(containerRequestContext.getProperty("uid")).willReturn(A_UID.getUUID().toString());
-        given(userService.getAccount(A_UID)).willReturn(AN_ACCOUNT_INFORMATION_PAYLOAD);
-
-        Response response = userResource.getMyAccount(containerRequestContext);
-
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void whenAddingCard_shouldReturn204() {
-        given(containerRequestContext.getProperty("uid")).willReturn(A_UID.getUUID().toString());
-
-        Response response = userResource.addCard(containerRequestContext, AN_ADD_CARD_REQUEST);
-
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void whenAddingCard_shouldAddCardToAccount() {
-        given(containerRequestContext.getProperty("uid")).willReturn(A_UID.getUUID().toString());
-        AddCardQuery addCardQuery = AddCardQuery.from(AN_ADD_CARD_REQUEST.cardNumber);
-
-        userResource.addCard(containerRequestContext, AN_ADD_CARD_REQUEST);
-
-        verify(userService).addCard(A_UID, addCardQuery);
     }
 }

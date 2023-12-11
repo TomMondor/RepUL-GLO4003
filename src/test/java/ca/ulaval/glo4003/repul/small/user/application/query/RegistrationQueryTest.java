@@ -5,11 +5,11 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
-import ca.ulaval.glo4003.repul.user.domain.account.Birthdate;
-import ca.ulaval.glo4003.repul.user.domain.account.Gender;
-import ca.ulaval.glo4003.repul.user.domain.account.IDUL;
-import ca.ulaval.glo4003.repul.user.domain.account.Name;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

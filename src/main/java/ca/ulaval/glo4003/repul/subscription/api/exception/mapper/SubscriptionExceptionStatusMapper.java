@@ -3,11 +3,11 @@ package ca.ulaval.glo4003.repul.subscription.api.exception.mapper;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import ca.ulaval.glo4003.repul.subscription.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidBirthdateException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidGenderException;
-import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidIDULException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidNameException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSemesterCodeException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
@@ -39,6 +39,7 @@ public class SubscriptionExceptionStatusMapper {
         exceptionMapper.put(SubscriberNotFoundException.class, Response.Status.NOT_FOUND);
         exceptionMapper.put(SemesterNotFoundException.class, Response.Status.NOT_FOUND);
 
+        exceptionMapper.put(CardNumberAlreadyInUseException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidSemesterCodeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(NoNextOrderInSubscriptionException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(NoOrdersInDesiredPeriodException.class, Response.Status.BAD_REQUEST);
@@ -46,7 +47,6 @@ public class SubscriptionExceptionStatusMapper {
         exceptionMapper.put(OrderCannotBeConfirmedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidBirthdateException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidGenderException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(InvalidIDULException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidNameException.class, Response.Status.BAD_REQUEST);
     }
 }

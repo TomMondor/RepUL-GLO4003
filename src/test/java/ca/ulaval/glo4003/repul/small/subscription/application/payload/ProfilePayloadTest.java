@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriberFixture;
 import ca.ulaval.glo4003.repul.subscription.application.payload.ProfilePayload;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
-import ca.ulaval.glo4003.repul.subscription.domain.profile.IDUL;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

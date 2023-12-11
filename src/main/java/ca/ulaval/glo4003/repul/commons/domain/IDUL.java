@@ -1,8 +1,8 @@
-package ca.ulaval.glo4003.repul.subscription.domain.profile;
+package ca.ulaval.glo4003.repul.commons.domain;
 
 import java.util.regex.Pattern;
 
-import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidIDULException;
+import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidIDULException;
 
 public record IDUL(
     String value

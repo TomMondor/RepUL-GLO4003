@@ -8,6 +8,7 @@ import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidAmountException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidCardNumberException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidDayOfWeekException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidEmailException;
+import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidIDULException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationIdException;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidMealKitTypeException;
@@ -37,6 +38,7 @@ public class CommonExceptionStatusMapper {
         exceptionMapper.put(InvalidDayOfWeekException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidUniqueIdentifierException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidCardNumberException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidIDULException.class, Response.Status.BAD_REQUEST);
 
         exceptionMapper.put(EnvFileNotFoundException.class, Response.Status.INTERNAL_SERVER_ERROR);
     }

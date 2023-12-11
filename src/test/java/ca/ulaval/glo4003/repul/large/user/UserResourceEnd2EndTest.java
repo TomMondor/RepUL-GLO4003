@@ -10,14 +10,8 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
-import ca.ulaval.glo4003.repul.fixture.user.AddCardRequestFixture;
-import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.RegistrationRequestFixture;
-import ca.ulaval.glo4003.repul.user.api.request.AddCardRequest;
-import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
-import ca.ulaval.glo4003.repul.user.api.response.AccountResponse;
-import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 
 import jakarta.ws.rs.core.MediaType;
 
@@ -65,55 +59,5 @@ public class UserResourceEnd2EndTest {
         Response response = given().contentType(MediaType.APPLICATION_JSON).body(registrationRequest).post(CONTEXT.getURI() + "users:register");
 
         assertNotNull(response.getHeader("Location"));
-    }
-
-    @Test
-    public void givenExistingAccount_whenGettingMyAccount_shouldReturn200() {
-        String accountToken = registerAndLogin();
-
-        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "users");
-
-        assertEquals(200, response.getStatusCode());
-    }
-
-    @Test
-    public void givenExistingAccount_whenGettingMyAccount_shouldReturnAccountInformation() {
-        String accountToken = registerAndLogin();
-
-        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "users");
-        AccountResponse responseBody = response.getBody().as(AccountResponse.class);
-
-        assertEquals(ACCOUNT_NAME, responseBody.name());
-        assertEquals(ACCOUNT_BIRTHDATE, responseBody.birthdate());
-        assertEquals(ACCOUNT_EMAIL, responseBody.email());
-        assertEquals(ACCOUNT_GENDER, responseBody.gender());
-        assertEquals(ACCOUNT_IDUL.toUpperCase(), responseBody.idul());
-        assertNotNull(responseBody.age());
-    }
-
-    @Test
-    public void givenExistingAccount_whenAddingCard_shouldReturn204() {
-        String accountToken = registerAndLogin();
-        AddCardRequest addCardRequest = new AddCardRequestFixture().build();
-
-        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(addCardRequest)
-            .post(CONTEXT.getURI() + "users:addCard");
-
-        assertEquals(204, response.getStatusCode());
-    }
-
-    private String registerAndLogin() {
-        RegistrationRequest registrationRequest = createRegistrationRequest();
-        given().contentType(MediaType.APPLICATION_JSON).body(registrationRequest).post(CONTEXT.getURI() + "users:register");
-
-        LoginRequest loginRequest = new LoginRequestFixture().withEmail(ACCOUNT_EMAIL).withPassword(ACCOUNT_PASSWORD).build();
-        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
-
-        return loginResponse.getBody().as(LoginResponse.class).token();
-    }
-
-    private RegistrationRequest createRegistrationRequest() {
-        return new RegistrationRequestFixture().withEmail(ACCOUNT_EMAIL).withPassword(ACCOUNT_PASSWORD).withBirthdate(ACCOUNT_BIRTHDATE)
-            .withGender(ACCOUNT_GENDER).withName(ACCOUNT_NAME).withIdul(ACCOUNT_IDUL).build();
     }
 }
