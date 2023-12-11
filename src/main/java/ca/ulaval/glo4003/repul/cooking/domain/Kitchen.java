@@ -56,14 +56,20 @@ public class Kitchen {
         unselectSelectedMealKits(cookId);
     }
 
-    public void confirmCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
+    public MealKit confirmCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
         verifyMealKitsInCookSelection(cookId, List.of(mealKitId));
-        getMealKit(mealKitId).setCooked();
+        MealKit mealKit = getMealKit(mealKitId);
+        mealKit.setCooked();
+        return mealKit;
     }
 
-    public void confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
+    public List<MealKit> confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
         verifyMealKitsInCookSelection(cookId, mealKitIds);
-        mealKitIds.forEach(id -> getMealKit(id).setCooked());
+
+        List<MealKit> mealKits = mealKitIds.stream().map(this::getMealKit).toList();
+        mealKits.forEach(MealKit::setCooked);
+
+        return mealKits;
     }
 
     public void recallCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {

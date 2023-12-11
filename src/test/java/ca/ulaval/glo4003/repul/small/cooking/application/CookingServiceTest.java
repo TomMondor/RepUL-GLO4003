@@ -17,10 +17,12 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
-import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
+import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
+import ca.ulaval.glo4003.repul.fixture.cooking.MealKitFixture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -35,7 +37,9 @@ public class CookingServiceTest {
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     private static final List<MealKitUniqueIdentifier> MANY_MEAL_KIT_IDS = List.of(A_UNIQUE_MEAL_KIT_ID, ANOTHER_UNIQUE_MEAL_KIT_ID);
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
-    private static final PickedUpCargoEvent PICKED_UP_CARGO_EVENT = new PickedUpCargoEvent(List.of(A_UNIQUE_MEAL_KIT_ID));
+    private static final MealKit MATCHING_MEAL_KIT = new MealKitFixture().withMealKitId(A_UNIQUE_MEAL_KIT_ID).build();
+    private static final MealKit ANOTHER_MATCHING_MEAL_KIT = new MealKitFixture().withMealKitId(ANOTHER_UNIQUE_MEAL_KIT_ID).build();
+    private static final List<MealKit> MATCHING_MEAL_KITS = List.of(MATCHING_MEAL_KIT, ANOTHER_MATCHING_MEAL_KIT);
 
     private CookingService cookingService;
     @Mock
@@ -166,6 +170,7 @@ public class CookingServiceTest {
     @Test
     public void whenConfirmCooked_shouldGetKitchen() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
+        when(kitchen.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID)).thenReturn(MATCHING_MEAL_KIT);
 
         cookingService.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
 
@@ -175,6 +180,7 @@ public class CookingServiceTest {
     @Test
     public void whenConfirmCooked_shouldConfirmCooked() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
+        when(kitchen.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID)).thenReturn(MATCHING_MEAL_KIT);
 
         cookingService.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
 
@@ -184,6 +190,7 @@ public class CookingServiceTest {
     @Test
     public void whenConfirmCooked_shouldSaveKitchen() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
+        when(kitchen.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID)).thenReturn(MATCHING_MEAL_KIT);
 
         cookingService.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
 
@@ -193,6 +200,7 @@ public class CookingServiceTest {
     @Test
     public void whenConfirmCooked_shouldPublishMealKitsCookedEvent() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
+        when(kitchen.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID)).thenReturn(MATCHING_MEAL_KIT);
         ArgumentCaptor<MealKitsCookedEvent> eventCaptor = ArgumentCaptor.forClass(MealKitsCookedEvent.class);
 
         cookingService.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
@@ -200,7 +208,7 @@ public class CookingServiceTest {
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
         assertEquals(A_KITCHEN_LOCATION_ID.toString(), publishedEvent.kitchenLocationId);
-        assertEquals(List.of(A_UNIQUE_MEAL_KIT_ID), publishedEvent.mealKitIds);
+        assertEquals(List.of(A_UNIQUE_MEAL_KIT_ID), publishedEvent.mealKits.stream().map(MealKitDto::mealKitId).toList());
     }
 
     @Test
@@ -233,6 +241,7 @@ public class CookingServiceTest {
     @Test
     public void whenConfirmCookedWithMultipleIds_shouldPublishMealKitsCookedEvent() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
+        when(kitchen.confirmCooked(A_COOK_ID, MANY_MEAL_KIT_IDS)).thenReturn(MATCHING_MEAL_KITS);
         ArgumentCaptor<MealKitsCookedEvent> eventCaptor = ArgumentCaptor.forClass(MealKitsCookedEvent.class);
 
         cookingService.confirmCooked(A_COOK_ID, MANY_MEAL_KIT_IDS);
@@ -240,7 +249,7 @@ public class CookingServiceTest {
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
         assertEquals(A_KITCHEN_LOCATION_ID.toString(), publishedEvent.kitchenLocationId);
-        assertEquals(MANY_MEAL_KIT_IDS, publishedEvent.mealKitIds);
+        assertEquals(MANY_MEAL_KIT_IDS, publishedEvent.mealKits.stream().map(MealKitDto::mealKitId).toList());
     }
 
     @Test

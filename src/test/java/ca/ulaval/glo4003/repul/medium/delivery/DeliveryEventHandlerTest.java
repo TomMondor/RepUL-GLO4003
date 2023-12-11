@@ -18,6 +18,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
@@ -50,6 +51,8 @@ public class DeliveryEventHandlerTest {
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier ANOTHER_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_MEAL_KIT_ID, true);
+    private static final MealKitDto ANOTHER_MEALKIT_DTO = new MealKitDto(ANOTHER_MEAL_KIT_ID, true);
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID =
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final Email AN_EMAIL = new Email("courriel@ulaval.ca");
@@ -86,7 +89,7 @@ public class DeliveryEventHandlerTest {
     public void givenConfirmedMealKits_whenHandlingMealKitsCookedEvent_shouldCreateCargo() {
         givenConfirmedMealKit(A_MEAL_KIT_ID);
         givenConfirmedMealKit(ANOTHER_MEAL_KIT_ID);
-        MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEAL_KIT_ID, ANOTHER_MEAL_KIT_ID));
+        MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_DTO, ANOTHER_MEALKIT_DTO));
 
         eventBus.publish(mealKitsCookedEvent);
 

@@ -7,6 +7,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
@@ -61,8 +62,8 @@ public class SubscriptionService {
 
     @Subscribe
     public void handleMealKitsCookedEvent(MealKitsCookedEvent event) {
-        for (MealKitUniqueIdentifier orderId : event.mealKitIds) {
-            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
+        for (MealKitDto mealKit : event.mealKits) {
+            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(mealKit.mealKitId());
             subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.save(subscription);
         }

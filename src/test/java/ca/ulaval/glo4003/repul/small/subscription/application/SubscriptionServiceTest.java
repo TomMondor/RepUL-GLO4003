@@ -19,6 +19,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
@@ -56,12 +57,12 @@ public class SubscriptionServiceTest {
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, A_MEALKIT_TYPE);
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
-    private static final SubscriptionUniqueIdentifier AN_ID_NOT_MATCHING_ANY_SUBSCRIPTION =
-        new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier A_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier ANOTHER_MEALKIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_MEALKIT_ID, true);
+    private static final MealKitDto ANOTHER_MEALKIT_DTO = new MealKitDto(ANOTHER_MEALKIT_ID, true);
     private static final Optional<LockerId> OPTIONAL_OF_A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final LockerId A_LOCKER_ID = new LockerId("123", 4);
     private SubscriptionService subscriptionService;
@@ -150,7 +151,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldGetSubscriptionsByOrderIdInRepository() {
-        MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
+        MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_DTO, ANOTHER_MEALKIT_DTO));
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
@@ -162,7 +163,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldMarkSubscriptionsAsToDeliver() {
-        MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
+        MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_DTO, ANOTHER_MEALKIT_DTO));
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 
@@ -204,7 +205,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldSaveSubscriptionsInRepository() {
-        MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_ID, ANOTHER_MEALKIT_ID));
+        MealKitsCookedEvent event = new MealKitsCookedEvent("a location", List.of(A_MEALKIT_DTO, ANOTHER_MEALKIT_DTO));
         when(mockSubscriptionRepository.getSubscriptionByOrderId(A_MEALKIT_ID)).thenReturn(mockSubscription);
         when(mockSubscriptionRepository.getSubscriptionByOrderId(ANOTHER_MEALKIT_ID)).thenReturn(otherMockSubscription);
 

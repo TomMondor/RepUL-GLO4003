@@ -3,15 +3,14 @@ package ca.ulaval.glo4003.repul.cooking.application.event;
 import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEvent;
-import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 
 public class MealKitsCookedEvent extends RepULEvent {
     public final String kitchenLocationId;
-    public final List<MealKitUniqueIdentifier> mealKitIds;
+    public final List<MealKitDto> mealKits;
 
-    public MealKitsCookedEvent(String kitchenLocationId, List<MealKitUniqueIdentifier> mealKitIds) {
+    public MealKitsCookedEvent(String kitchenLocationId, List<MealKitDto> mealKits) {
         super();
         this.kitchenLocationId = kitchenLocationId;
-        this.mealKitIds = mealKitIds;
+        this.mealKits = mealKits;
     }
 }

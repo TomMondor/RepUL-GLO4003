@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
@@ -110,7 +111,8 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         List<MealKitUniqueIdentifier> orderIds = ordersPayload.orders().stream().map(OrderPayload::orderId).toList();
-        MealKitsCookedEvent event = new MealKitsCookedEvent(A_LOCATION_ID.toString(), orderIds);
+        List<MealKitDto> mealKitDtos = orderIds.stream().map(orderId -> new MealKitDto(orderId, true)).toList();
+        MealKitsCookedEvent event = new MealKitsCookedEvent(A_LOCATION_ID.toString(), mealKitDtos);
 
         eventBus.publish(event);
 

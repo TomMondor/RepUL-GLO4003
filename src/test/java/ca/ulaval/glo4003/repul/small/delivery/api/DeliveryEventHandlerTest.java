@@ -18,6 +18,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
@@ -46,8 +47,9 @@ public class DeliveryEventHandlerTest {
     private static final LocalDate A_DATE = LocalDate.now();
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, AN_EMAIL);
+    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_MEAL_KIT_ID, true);
     private static final MealKitsCookedEvent A_MEAL_KITS_COOKED_EVENT =
-        new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEAL_KIT_ID));
+        new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_DTO));
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID,
             A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE,
@@ -78,6 +80,17 @@ public class DeliveryEventHandlerTest {
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldCallCreateCargoInService() {
         deliveryEventHandler.handleMealKitsCookedEvent(A_MEAL_KITS_COOKED_EVENT);
+
+        verify(deliveryService, times(1))
+            .createCargo(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_ID));
+    }
+
+    @Test
+    public void givenMealKitNotForDelivery_whenHandlingMealKitsCookedEvent_shouldOnlyTransferToServiceThoseForDelivery() {
+        MealKitDto mealKitNotForDelivery = new MealKitDto(A_MEAL_KIT_ID, false);
+        MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_DTO, mealKitNotForDelivery));
+
+        deliveryEventHandler.handleMealKitsCookedEvent(mealKitsCookedEvent);
 
         verify(deliveryService, times(1))
             .createCargo(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_ID));

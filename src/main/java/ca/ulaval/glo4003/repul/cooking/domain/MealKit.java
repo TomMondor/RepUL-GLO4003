@@ -47,7 +47,7 @@ public class MealKit {
     }
 
     public boolean isUnselected() {
-        return !cookId.isPresent();
+        return cookId.isEmpty();
     }
 
     public boolean isDeliveryTomorrow() {
@@ -73,5 +73,9 @@ public class MealKit {
 
     public boolean isCooked() {
         return isCooked;
+    }
+
+    public boolean isToBeDelivered() {
+        return true; //TODO implement in following PR
     }
 }
