@@ -6,20 +6,26 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 
 public class MealKit {
     private final MealKitUniqueIdentifier mealKitId;
+    private final SubscriberUniqueIdentifier subscriberId;
+    private final LocalDate dateOfReceipt;
     private final List<Recipe> recipes;
-    private final LocalDate deliveryDate;
     private Optional<CookUniqueIdentifier> cookId = Optional.empty();
     private boolean isCooked;
+    private final boolean isToBeDelivered;
 
-    public MealKit(MealKitUniqueIdentifier mealKitId, LocalDate deliveryDate, List<Recipe> recipes) {
+    public MealKit(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId,
+                   LocalDate dateOfReceipt, List<Recipe> recipes, boolean isToBeDelivered) {
         this.mealKitId = mealKitId;
+        this.subscriberId = subscriberId;
+        this.dateOfReceipt = dateOfReceipt;
         this.recipes = recipes;
-        this.deliveryDate = deliveryDate;
         this.isCooked = false;
+        this.isToBeDelivered = isToBeDelivered;
     }
 
     public MealKitUniqueIdentifier getMealKitId() {
@@ -30,8 +36,8 @@ public class MealKit {
         return recipes;
     }
 
-    public LocalDate getDeliveryDate() {
-        return deliveryDate;
+    public LocalDate getDateOfReceipt() {
+        return dateOfReceipt;
     }
 
     public void selectBy(CookUniqueIdentifier cookId) {
@@ -46,13 +52,17 @@ public class MealKit {
         return this.cookId.equals(Optional.of(cookId)) && !isCooked;
     }
 
+    public boolean isForSubscriber(SubscriberUniqueIdentifier subscriberId) {
+        return this.subscriberId.equals(subscriberId);
+    }
+
     public boolean isUnselected() {
         return cookId.isEmpty();
     }
 
     public boolean isDeliveryTomorrow() {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        return deliveryDate.isEqual(tomorrow);
+        return dateOfReceipt.isEqual(tomorrow);
     }
 
     public boolean isToCookToday() {
@@ -76,6 +86,6 @@ public class MealKit {
     }
 
     public boolean isToBeDelivered() {
-        return true; //TODO implement in following PR
+        return isToBeDelivered;
     }
 }

@@ -30,7 +30,7 @@ public class MealKitResourceTest {
     private static final List<Ingredient> DEFAULT_INGREDIENT = List.of(new IngredientFixture().build());
     private static final MealKit MEAL_KIT = new MealKitFixture().withRecipes(List.of(new RecipeFixture().withIngredients(DEFAULT_INGREDIENT).build())).build();
     private static final MealKitsPayload MEAL_KITS_PAYLOAD =
-        new MealKitsPayload(List.of(new MealKitPayload(MEAL_KIT.getMealKitId(), MEAL_KIT.getDeliveryDate(), MEAL_KIT.getRecipes())));
+        new MealKitsPayload(List.of(new MealKitPayload(MEAL_KIT.getMealKitId(), MEAL_KIT.getDateOfReceipt(), MEAL_KIT.getRecipes())));
     private static final ToCookResponse A_TO_COOK_RESPONSE = new MealKitsResponseAssembler().toToCookResponse(MEAL_KITS_PAYLOAD);
     private MealKitResource mealKitResource;
     @Mock

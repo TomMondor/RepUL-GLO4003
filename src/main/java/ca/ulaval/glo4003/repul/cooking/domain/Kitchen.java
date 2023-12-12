@@ -4,11 +4,14 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
@@ -16,8 +19,10 @@ import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionExc
 public class Kitchen {
     private final KitchenLocationId kitchenLocationId;
     private final Map<MealKitUniqueIdentifier, MealKit> mealKits = new HashMap<>();
+    private final MealKitFactory mealKitFactory;
 
-    public Kitchen() {
+    public Kitchen(MealKitFactory mealKitFactory) {
+        this.mealKitFactory = mealKitFactory;
         kitchenLocationId = KitchenLocationId.DESJARDINS;
     }
 
@@ -25,8 +30,10 @@ public class Kitchen {
         return kitchenLocationId;
     }
 
-    public void addMealKit(MealKitUniqueIdentifier mealKitId, MealKitType type, LocalDate deliveryDate) {
-        MealKit mealKit = new MealKit(mealKitId, deliveryDate, RecipesCatalog.getInstance().getRecipes(type));
+    public void createMealKitInPreparation(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId,
+                                           MealKitType type, LocalDate deliveryDate, Optional<DeliveryLocationId> deliveryLocationId) {
+
+        MealKit mealKit = mealKitFactory.createMealKit(mealKitId, subscriberId, type, deliveryDate, deliveryLocationId);
         mealKits.put(mealKitId, mealKit);
     }
 

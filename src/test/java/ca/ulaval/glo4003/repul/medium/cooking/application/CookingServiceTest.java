@@ -2,19 +2,23 @@ package ca.ulaval.glo4003.repul.medium.cooking.application;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
+import ca.ulaval.glo4003.repul.cooking.domain.MealKitFactory;
 import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,8 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CookingServiceTest {
     private static final MealKitUniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(1);
+    private static final Optional<DeliveryLocationId> A_DELIVERY_LOCATION_ID = Optional.of(DeliveryLocationId.DESJARDINS);
     private KitchenPersister kitchenPersister;
     private RepULEventBus eventBus;
     private CookingService cookingService;
@@ -87,8 +93,8 @@ public class CookingServiceTest {
     }
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {
-        Kitchen kitchen = new Kitchen();
-        kitchen.addMealKit(DEFAULT_MEAL_KIT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE);
+        Kitchen kitchen = new Kitchen(new MealKitFactory());
+        kitchen.createMealKitInPreparation(DEFAULT_MEAL_KIT_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, A_DELIVERY_LOCATION_ID);
         return kitchen;
     }
 }

@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.config.context;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -150,9 +151,9 @@ public class TestApplicationContext implements ApplicationContext {
         UserResource userResource = new UserResource(userContextInitializer.createService());
         AuthGuard authGuard = userContextInitializer.createAuthGuard();
 
-        CookingContextInitializer cookingContextInitializer = new CookingContextInitializer().withMealKits(
+        CookingContextInitializer cookingContextInitializer = new CookingContextInitializer().withMealKitsForSubscriber(
             List.of(FIRST_MEAL_KIT_ORDER, SECOND_MEAL_KIT_ORDER, THIRD_MEAL_KIT_ORDER, FOURTH_MEAL_KIT_ORDER, FIFTH_MEAL_KIT_ORDER, SIXTH_MEAL_KIT_ORDER,
-                SEVENTH_MEAL_KIT_ORDER, EIGHTH_MEAL_KIT_ORDER, NINTH_MEAL_KIT_ORDER, TENTH_MEAL_KIT_ORDER));
+                SEVENTH_MEAL_KIT_ORDER, EIGHTH_MEAL_KIT_ORDER, NINTH_MEAL_KIT_ORDER, TENTH_MEAL_KIT_ORDER), CLIENT_ID, Optional.of(DeliveryLocationId.VACHON));
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);

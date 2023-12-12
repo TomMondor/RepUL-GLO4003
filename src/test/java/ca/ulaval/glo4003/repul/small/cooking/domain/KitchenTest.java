@@ -4,18 +4,22 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
+import ca.ulaval.glo4003.repul.cooking.domain.MealKitFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
@@ -31,6 +35,8 @@ public class KitchenTest {
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final Optional<DeliveryLocationId> A_DELIVERY_LOCATION_ID = Optional.of(DeliveryLocationId.DESJARDINS);
 
     private Kitchen kitchen;
 
@@ -39,12 +45,12 @@ public class KitchenTest {
         Map<MealKitType, List<Recipe>> recipes = new HashMap<>();
         recipes.put(MealKitType.STANDARD, List.of());
         RecipesCatalog.getInstance().setRecipes(recipes);
-        this.kitchen = new Kitchen();
+        this.kitchen = new Kitchen(new MealKitFactory());
     }
 
     @Test
-    public void whenAddMealKit_shouldAddMealKit() {
-        kitchen.addMealKit(A_MEALKIT_ID, A_MEALKIT_TYPE, TOMORROW);
+    public void whenAddingMealKit_shouldAddMealKit() {
+        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
 
         assertEquals(1, kitchen.getMealKitsToCook().size());
     }
@@ -186,7 +192,7 @@ public class KitchenTest {
     }
 
     private void addMealKit(MealKitUniqueIdentifier mealKitId, boolean selected) {
-        kitchen.addMealKit(mealKitId, A_MEALKIT_TYPE, TOMORROW);
+        kitchen.createMealKitInPreparation(mealKitId,A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
 
         if (selected) {
             kitchen.select(A_COOK_ID, List.of(mealKitId));

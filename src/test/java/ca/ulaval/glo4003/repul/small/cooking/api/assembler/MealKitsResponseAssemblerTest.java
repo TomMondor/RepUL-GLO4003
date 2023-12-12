@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MealKitsResponseAssemblerTest {
     private static final List<Ingredient> DEFAULT_INGREDIENT = List.of(new IngredientFixture().build());
     private static final MealKit A_MEALKIT = new MealKitFixture().withRecipes(List.of(new RecipeFixture().withIngredients(DEFAULT_INGREDIENT).build())).build();
-    private static final MealKitPayload A_MEAL_KIT_PAYLOAD = new MealKitPayload(A_MEALKIT.getMealKitId(), A_MEALKIT.getDeliveryDate(), A_MEALKIT.getRecipes());
+    private static final MealKitPayload A_MEAL_KIT_PAYLOAD = new MealKitPayload(A_MEALKIT.getMealKitId(), A_MEALKIT.getDateOfReceipt(), A_MEALKIT.getRecipes());
     private MealKitsResponseAssembler mealKitsResponseAssembler;
 
     @BeforeEach
@@ -40,7 +40,7 @@ public class MealKitsResponseAssemblerTest {
             new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().getValue(), mealKitRecipe.ingredients().get(0).quantity().getUnit()));
         MealKitResponse expectedMealKitsResponse = new MealKitResponse(A_MEALKIT.getMealKitId().getUUID().toString(),
             List.of(new RecipeResponse(mealKitRecipe.name(), mealKitRecipe.calories(), List.of(expectedIngredientResponse))),
-            A_MEALKIT.getDeliveryDate().toString());
+            A_MEALKIT.getDateOfReceipt().toString());
 
         ToCookResponse toCookResponse = mealKitsResponseAssembler.toToCookResponse(new MealKitsPayload(List.of(A_MEAL_KIT_PAYLOAD)));
 
@@ -56,7 +56,7 @@ public class MealKitsResponseAssemblerTest {
         MealKitResponse expectedMealKitsResponse = new MealKitResponse(A_MEALKIT.getMealKitId().getUUID().toString(), List.of(
             new RecipeResponse(mealKitRecipe.name(), mealKitRecipe.calories(), List.of(new IngredientResponse(mealKitRecipe.ingredients().get(0).ingredient(),
                 new QuantityResponse(mealKitRecipe.ingredients().get(0).quantity().getValue(), mealKitRecipe.ingredients().get(0).quantity().getUnit()))))),
-            A_MEALKIT.getDeliveryDate().toString());
+            A_MEALKIT.getDateOfReceipt().toString());
 
         ToCookResponse toCookResponse = mealKitsResponseAssembler.toToCookResponse(new MealKitsPayload(List.of(A_MEAL_KIT_PAYLOAD, A_MEAL_KIT_PAYLOAD)));
 

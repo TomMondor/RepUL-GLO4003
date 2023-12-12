@@ -15,8 +15,7 @@ public class MealKitEventHandler {
 
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent event) {
-        // TODO update this to pass subscriberId and isToBeDelivered to service (in following PR)
-        cookingService.receiveMealKitInKitchen(event.mealKitId, event.mealKitType, event.deliveryDate);
+        cookingService.createMealKitInPreparation(event.mealKitId, event.subscriberId, event.mealKitType, event.deliveryDate, event.deliveryLocationId);
     }
 
     @Subscribe

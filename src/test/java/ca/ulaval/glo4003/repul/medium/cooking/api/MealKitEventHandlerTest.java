@@ -20,6 +20,7 @@ import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
+import ca.ulaval.glo4003.repul.cooking.domain.MealKitFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
@@ -33,7 +34,7 @@ public class MealKitEventHandlerTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
-    private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(1);
@@ -56,7 +57,7 @@ public class MealKitEventHandlerTest {
     @Test
     public void whenHandlingMealKitConfirmedEvent_shouldAddMealKitToKitchen() {
         MealKitConfirmedEvent mealKitConfirmedEvent =
-            new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DELIVERY_DATE);
+            new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DELIVERY_DATE);
         assertThrows(MealKitNotFoundException.class, () -> cookingService.select(A_COOK_ID, List.of(A_MEAL_KIT_ID)));
 
         eventBus.publish(mealKitConfirmedEvent);
@@ -75,8 +76,8 @@ public class MealKitEventHandlerTest {
     }
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {
-        Kitchen kitchen = new Kitchen();
-        kitchen.addMealKit(DEFAULT_MEAL_KIT_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE);
+        Kitchen kitchen = new Kitchen(new MealKitFactory());
+        kitchen.createMealKitInPreparation(DEFAULT_MEAL_KIT_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, Optional.of(A_DELIVERY_LOCATION_ID));
         return kitchen;
     }
 }

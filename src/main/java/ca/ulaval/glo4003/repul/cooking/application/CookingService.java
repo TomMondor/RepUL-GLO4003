@@ -2,11 +2,14 @@ package ca.ulaval.glo4003.repul.cooking.application;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
@@ -26,10 +29,11 @@ public class CookingService {
         this.eventBus = eventBus;
     }
 
-    public void receiveMealKitInKitchen(MealKitUniqueIdentifier mealKitId, MealKitType mealKitType, LocalDate deliveryDate) {
+    public void createMealKitInPreparation(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId,
+                                           MealKitType mealKitType, LocalDate deliveryDate, Optional<DeliveryLocationId> deliveryLocationId) {
         Kitchen kitchen = kitchenPersister.get();
 
-        kitchen.addMealKit(mealKitId, mealKitType, deliveryDate);
+        kitchen.createMealKitInPreparation(mealKitId, subscriberId, mealKitType, deliveryDate, deliveryLocationId);
 
         kitchenPersister.save(kitchen);
     }
@@ -46,7 +50,7 @@ public class CookingService {
         Kitchen kitchen = kitchenPersister.get();
 
         List<MealKitPayload> mealKitPayloads = kitchen.getMealKitsToCook().stream().map(
-            mealKit -> new MealKitPayload(mealKit.getMealKitId(), mealKit.getDeliveryDate(), mealKit.getRecipes())
+            mealKit -> new MealKitPayload(mealKit.getMealKitId(), mealKit.getDateOfReceipt(), mealKit.getRecipes())
         ).toList();
         return new MealKitsPayload(mealKitPayloads);
     }
