@@ -13,6 +13,8 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
 
@@ -86,6 +88,21 @@ public class Kitchen {
 
     public void removeMealKitsFromKitchen(List<MealKitUniqueIdentifier> mealKitIds) {
         mealKitIds.forEach(mealKits::remove);
+    }
+
+    public MealKit pickupNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
+        MealKit mealKit = getMealKit(mealKitId);
+
+        if (!mealKit.isForSubscriber(subscriberId)) {
+            throw new MealKitNotFoundException(mealKitId);
+        } else if (!mealKit.isCooked()) {
+            throw new MealKitNotCookedException();
+        } else if (mealKit.isToBeDelivered()) {
+            throw new MealKitNotForKitchenPickUpException(mealKitId);
+        }
+
+        mealKits.remove(mealKitId);
+        return mealKit;
     }
 
     private void verifyMealKitsAreUnassigned(List<MealKitUniqueIdentifier> mealKitIds) {

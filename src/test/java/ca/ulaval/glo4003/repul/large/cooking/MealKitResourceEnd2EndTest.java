@@ -200,16 +200,42 @@ public class MealKitResourceEnd2EndTest {
     @Test
     public void whenRecallingOneCooked_shouldPutItBackInRequestingCookSelection() {
         String accountToken = loginAsACook();
-        selectAndConfirmMealKitsToCook(accountToken, List.of(TestApplicationContext.NINTH_MEAL_KIT_ID.getUUID().toString()));
+        selectAndConfirmMealKitsToCook(accountToken, List.of(TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID().toString()));
 
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.NINTH_MEAL_KIT_ID.getUUID() + ":recallCooked");
+            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID() + ":recallCooked");
 
         Response response =
             given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:getSelection");
         SelectionResponse responseBody = response.getBody().as(SelectionResponse.class);
         assertFalse(responseBody.mealKitSelectionIds().isEmpty());
-        assertEquals(TestApplicationContext.NINTH_MEAL_KIT_ID.getUUID().toString(), responseBody.mealKitSelectionIds().get(0));
+        assertEquals(TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID().toString(), responseBody.mealKitSelectionIds().get(0));
+    }
+
+    @Test
+    public void whenPickingUpMealKit_shouldReturn204() {
+        String accountToken = loginAsACook();
+        selectAndConfirmMealKitsToCook(accountToken, List.of(TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID().toString()));
+        String userAccountToken = loginAsUser();
+
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + userAccountToken)
+            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":pickUp");
+
+        assertEquals(204, response.getStatusCode());
+    }
+
+    @Test
+    public void whenPickingUpMealKit_shouldBeRemovedFromKitchenAndSoNotRecallableAnymore() {
+        String accountToken = loginAsACook();
+        selectAndConfirmMealKitsToCook(accountToken, List.of(TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID().toString()));
+        String userAccountToken = loginAsUser();
+
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + userAccountToken)
+            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":pickUp");
+
+        Response recallResponse = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":recallCooked");
+        assertEquals(404, recallResponse.getStatusCode());
     }
 
     private String loginAsACook() {
@@ -244,5 +270,13 @@ public class MealKitResourceEnd2EndTest {
 
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(confirmCookedRequest)
             .post(CONTEXT.getURI() + "mealKits:confirmCooked");
+    }
+
+    private String loginAsUser() {
+        LoginRequest loginRequest =
+            new LoginRequestFixture().withEmail(TestApplicationContext.CLIENT_EMAIL).withPassword(TestApplicationContext.CLIENT_PASSWORD).build();
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
+
+        return loginResponse.getBody().as(LoginResponse.class).token();
     }
 }

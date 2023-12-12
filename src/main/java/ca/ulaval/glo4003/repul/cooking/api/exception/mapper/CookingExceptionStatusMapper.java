@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidRecipeException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
 
@@ -36,6 +37,7 @@ public class CookingExceptionStatusMapper {
         exceptionMapper.put(MealKitAlreadySelectedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotInSelectionException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotCookedException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(MealKitNotForKitchenPickUpException.class, Response.Status.BAD_REQUEST);
 
         exceptionMapper.put(MealKitNotFoundException.class, Response.Status.NOT_FOUND);
     }

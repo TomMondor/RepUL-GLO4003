@@ -23,6 +23,8 @@ import ca.ulaval.glo4003.repul.cooking.domain.MealKitFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
 
@@ -37,6 +39,7 @@ public class KitchenTest {
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final Optional<DeliveryLocationId> A_DELIVERY_LOCATION_ID = Optional.of(DeliveryLocationId.DESJARDINS);
+    private static final SubscriberUniqueIdentifier ANOTHER_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
 
     private Kitchen kitchen;
 
@@ -191,11 +194,64 @@ public class KitchenTest {
         assertThrows(MealKitNotFoundException.class, () -> kitchen.recallCooked(A_COOK_ID, A_MEALKIT_ID));
     }
 
+    @Test
+    public void whenPickingUpNonDeliverableMealKit_shouldReturnIt() {
+        addAndCookNonDeliverableMealKit(A_MEALKIT_ID, A_SUBSCRIBER_ID);
+
+        MealKit actualMealKit = kitchen.pickupNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEALKIT_ID);
+
+        assertEquals(A_MEALKIT_ID, actualMealKit.getMealKitId());
+        assertTrue(actualMealKit.isCooked());
+    }
+
+    @Test
+    public void whenPickingUpNonDeliverableMealKit_shouldBeRemovedFromKitchenAndSoNotPossibleToRecallAnymore() {
+        addAndCookNonDeliverableMealKit(A_MEALKIT_ID, A_SUBSCRIBER_ID);
+
+        kitchen.pickupNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEALKIT_ID);
+
+        assertThrows(MealKitNotFoundException.class, () -> kitchen.recallCooked(A_COOK_ID, A_MEALKIT_ID));
+    }
+
+    @Test
+    public void givenMealKitNotInKitchen_whenPickingUpNonDeliverableMealKit_shouldThrowMealKitNotFoundException() {
+        assertThrows(MealKitNotFoundException.class, () -> kitchen.pickupNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEALKIT_ID));
+    }
+
+    @Test
+    public void givenMealKitForOtherSubscriber_whenPickingUpNonDeliverableMealKit_shouldThrowMealKitNotFoundException() {
+        addAndCookNonDeliverableMealKit(A_MEALKIT_ID, A_SUBSCRIBER_ID);
+
+        assertThrows(MealKitNotFoundException.class, () -> kitchen.pickupNonDeliverableMealKit(ANOTHER_SUBSCRIBER_ID, A_MEALKIT_ID));
+    }
+
+    @Test
+    public void givenMealKitNotCookedYet_whenPickingUpNonDeliverableMealKit_shouldThrowMealKitNotCookedException() {
+        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, Optional.empty());
+
+        assertThrows(MealKitNotCookedException.class, () -> kitchen.pickupNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEALKIT_ID));
+    }
+
+    @Test
+    public void givenMealKitForDelivery_whenPickingUpNonDeliverableMealKit_shouldThrowMealKitNotForKitchenPickUpException() {
+        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
+        kitchen.select(A_COOK_ID, List.of(A_MEALKIT_ID));
+        kitchen.confirmCooked(A_COOK_ID, List.of(A_MEALKIT_ID));
+
+        assertThrows(MealKitNotForKitchenPickUpException.class, () -> kitchen.pickupNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEALKIT_ID));
+    }
+
     private void addMealKit(MealKitUniqueIdentifier mealKitId, boolean selected) {
-        kitchen.createMealKitInPreparation(mealKitId,A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
+        kitchen.createMealKitInPreparation(mealKitId, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
 
         if (selected) {
             kitchen.select(A_COOK_ID, List.of(mealKitId));
         }
+    }
+
+    private void addAndCookNonDeliverableMealKit(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId) {
+        kitchen.createMealKitInPreparation(mealKitId, subscriberId, A_MEALKIT_TYPE, TOMORROW, Optional.empty());
+        kitchen.select(A_COOK_ID, List.of(mealKitId));
+        kitchen.confirmCooked(A_COOK_ID, List.of(mealKitId));
     }
 }

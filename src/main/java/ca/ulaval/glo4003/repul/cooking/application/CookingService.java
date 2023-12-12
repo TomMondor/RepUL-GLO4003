@@ -115,6 +115,14 @@ public class CookingService {
         eventBus.publish(new RecallCookedMealKitEvent(mealKitId));
     }
 
+    public void pickupNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
+        Kitchen kitchen = kitchenPersister.get();
+
+        kitchen.pickupNonDeliverableMealKit(subscriberId, mealKitId);
+
+        kitchenPersister.save(kitchen);
+    }
+
     private void sendMealKitsCookedEvent(List<MealKit> mealKits, Kitchen kitchen) {
         List<MealKitDto> mealKitDtos = mealKits.stream().map(
             mealKit -> new MealKitDto(mealKit.getMealKitId(), mealKit.isToBeDelivered())

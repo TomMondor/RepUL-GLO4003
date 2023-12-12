@@ -4,6 +4,7 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.api.assembler.MealKitsResponseAssembler;
 import ca.ulaval.glo4003.repul.cooking.api.request.ConfirmCookedRequest;
@@ -145,6 +146,19 @@ public class MealKitResource {
             new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
         cookingService.recallCooked(cookId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
+
+        return Response.noContent().build();
+    }
+
+    @POST
+    @Secure
+    @Roles(Role.CLIENT)
+    @Path("/mealKits/{mealKitId}:pickUp")
+    public Response pickupMealKit(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
+        SubscriberUniqueIdentifier subscriberId =
+            new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom((String) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY));
+
+        cookingService.pickupNonDeliverableMealKit(subscriberId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
 
         return Response.noContent().build();
     }
