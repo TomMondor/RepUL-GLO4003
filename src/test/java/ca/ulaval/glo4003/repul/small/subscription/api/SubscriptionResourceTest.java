@@ -20,7 +20,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionRequestFixture;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
-import ca.ulaval.glo4003.repul.subscription.api.response.OrderResponse;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
@@ -37,7 +36,8 @@ import jakarta.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SubscriptionResourceTest {
@@ -56,15 +56,24 @@ public class SubscriptionResourceTest {
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final MealKitUniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final OrdersPayload AN_ORDERS_PAYLOAD =
-        new OrdersPayload(List.of(new OrderPayload(AN_ORDER_ID, A_MEAL_KIT_TYPE, AN_ORDER_DELIVERY_DATE, AN_ORDER_STATUS)));
+        new OrdersPayload(
+            List.of(new OrderPayload(AN_ORDER_ID.toString(), A_MEAL_KIT_TYPE.toString(), AN_ORDER_DELIVERY_DATE.toString(), AN_ORDER_STATUS.toString())));
     private static final String PATH_TO_API = "/api/subscriptions/";
     private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("H24"), LocalDate.now().minusMonths(3), LocalDate.now().plusMonths(3));
     private static final SubscriptionPayload A_SUBSCRIPTION_PAYLOAD =
-        new SubscriptionPayload(A_SUBSCRIPTION_ID, A_FREQUENCY, A_DELIVERY_LOCATION_ID, LocalDate.now(), MealKitType.STANDARD, A_SEMESTER);
+        new SubscriptionPayload(
+            A_SUBSCRIPTION_ID.getUUID().toString(),
+            A_FREQUENCY.dayOfWeek().toString(),
+            A_DELIVERY_LOCATION_ID.toString(),
+            LocalDate.now().toString(),
+            MealKitType.STANDARD.toString(),
+            A_SEMESTER.toString()
+        );
 
     private SubscriptionResource subscriptionResource;
+
     @Mock
     private SubscriptionService subscriptionService;
     @Mock
@@ -137,13 +146,11 @@ public class SubscriptionResourceTest {
     }
 
     @Test
-    public void whenGettingMyOrders_shouldReturnOrdersResponse() {
+    public void whenGettingMyOrders_shouldReturnOrdersPayload() {
         when(subscriptionService.getCurrentOrders(any(SubscriberUniqueIdentifier.class))).thenReturn(AN_ORDERS_PAYLOAD);
-        List<OrderResponse> expectedOrderResponses =
-            List.of(new OrderResponse(A_MEAL_KIT_TYPE.toString(), AN_ORDER_DELIVERY_DATE.toString(), AN_ORDER_STATUS.toString()));
 
         Response response = subscriptionResource.getMyCurrentOrders(containerRequestContext);
 
-        assertEquals(expectedOrderResponses, response.getEntity());
+        assertEquals(AN_ORDERS_PAYLOAD, response.getEntity());
     }
 }

@@ -29,7 +29,6 @@ import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
@@ -85,20 +84,20 @@ public class SubscriptionServiceTest {
         UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
 
         SubscriptionsPayload persistedSubscriptions = subscriptionService.getSubscriptions(AN_ACCOUNT_ID);
-        assertEquals(subscriptionId, persistedSubscriptions.subscriptions().get(0).subscriptionId());
+        assertEquals(subscriptionId.getUUID().toString(), persistedSubscriptions.subscriptions().get(0).subscriptionId());
     }
 
     @Test
     public void givenCreatedSubscriptions_whenGettingSubscriptions_shouldReturnSubscriptionsInAccount() {
-        UniqueIdentifier firstSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
-        UniqueIdentifier secondSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier firstSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier secondSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_SUBSCRIPTION_QUERY);
         subscriptionService.createSubscription(ANOTHER_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
 
         SubscriptionsPayload subscriptions = subscriptionService.getSubscriptions(AN_ACCOUNT_ID);
 
         assertEquals(2, subscriptions.subscriptions().size());
 
-        List<UniqueIdentifier> expectedSubscriptionIds = List.of(firstSubscriptionId, secondSubscriptionId);
+        List<String> expectedSubscriptionIds = List.of(firstSubscriptionId.getUUID().toString(), secondSubscriptionId.getUUID().toString());
         assertTrue(expectedSubscriptionIds.contains(subscriptions.subscriptions().get(0).subscriptionId()));
         assertTrue(expectedSubscriptionIds.contains(subscriptions.subscriptions().get(1).subscriptionId()));
     }
@@ -110,15 +109,19 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        List<MealKitUniqueIdentifier> orderIds = ordersPayload.orders().stream().map(OrderPayload::orderId).toList();
+        List<MealKitUniqueIdentifier> orderIds =
+            ordersPayload.orders().stream()
+                .map(orderPayload ->
+                    new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
+                ).toList();
         List<MealKitDto> mealKitDtos = orderIds.stream().map(orderId -> new MealKitDto(orderId, true)).toList();
         MealKitsCookedEvent event = new MealKitsCookedEvent(A_LOCATION_ID.toString(), mealKitDtos);
 
         eventBus.publish(event);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.TO_DELIVER, updatedOrdersPayload.orders().get(0).orderStatus());
-        assertEquals(OrderStatus.TO_DELIVER, updatedOrdersPayload.orders().get(1).orderStatus());
+        assertEquals(OrderStatus.TO_DELIVER.toString(), updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.TO_DELIVER.toString(), updatedOrdersPayload.orders().get(1).orderStatus());
     }
 
     @Test
@@ -128,14 +131,18 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        List<MealKitUniqueIdentifier> orderIds = ordersPayload.orders().stream().map(OrderPayload::orderId).toList();
+        List<MealKitUniqueIdentifier> orderIds =
+            ordersPayload.orders().stream()
+                .map(orderPayload ->
+                    new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
+                ).toList();
         PickedUpCargoEvent event = new PickedUpCargoEvent(orderIds);
 
         eventBus.publish(event);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.IN_DELIVERY, updatedOrdersPayload.orders().get(0).orderStatus());
-        assertEquals(OrderStatus.IN_DELIVERY, updatedOrdersPayload.orders().get(1).orderStatus());
+        assertEquals(OrderStatus.IN_DELIVERY.toString(), updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.IN_DELIVERY.toString(), updatedOrdersPayload.orders().get(1).orderStatus());
     }
 
     @Test
@@ -145,14 +152,18 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        List<MealKitUniqueIdentifier> orderIds = ordersPayload.orders().stream().map(OrderPayload::orderId).toList();
+        List<MealKitUniqueIdentifier> orderIds =
+            ordersPayload.orders().stream()
+                .map(orderPayload ->
+                    new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
+                ).toList();
         CanceledCargoEvent event = new CanceledCargoEvent(orderIds);
 
         eventBus.publish(event);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.TO_DELIVER, updatedOrdersPayload.orders().get(0).orderStatus());
-        assertEquals(OrderStatus.TO_DELIVER, updatedOrdersPayload.orders().get(1).orderStatus());
+        assertEquals(OrderStatus.TO_DELIVER.toString(), updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.TO_DELIVER.toString(), updatedOrdersPayload.orders().get(1).orderStatus());
     }
 
     @Test
@@ -160,13 +171,17 @@ public class SubscriptionServiceTest {
         SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        MealKitUniqueIdentifier orderId = ordersPayload.orders().stream().map(OrderPayload::orderId).toList().get(0);
+        MealKitUniqueIdentifier orderId =
+            ordersPayload.orders().stream()
+                .map(orderPayload ->
+                    new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
+                ).toList().get(0);
         ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(orderId, A_LOCATION_ID, Optional.of(A_LOCKER_ID), LocalTime.now());
 
         eventBus.publish(event);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.TO_PICKUP, updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.TO_PICKUP.toString(), updatedOrdersPayload.orders().get(0).orderStatus());
     }
 
     @Test
@@ -174,13 +189,17 @@ public class SubscriptionServiceTest {
         SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        MealKitUniqueIdentifier orderId = ordersPayload.orders().stream().map(OrderPayload::orderId).toList().get(0);
+        MealKitUniqueIdentifier orderId =
+            ordersPayload.orders().stream()
+                .map(orderPayload ->
+                    new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
+                ).toList().get(0);
         RecalledDeliveryEvent event = new RecalledDeliveryEvent(orderId, A_LOCKER_ID, A_LOCATION_ID);
 
         eventBus.publish(event);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.IN_DELIVERY, updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.IN_DELIVERY.toString(), updatedOrdersPayload.orders().get(0).orderStatus());
     }
 
     @Test
@@ -190,7 +209,7 @@ public class SubscriptionServiceTest {
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.CONFIRMED, updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.CONFIRMED.toString(), updatedOrdersPayload.orders().get(0).orderStatus());
     }
 
     @Test
@@ -200,7 +219,7 @@ public class SubscriptionServiceTest {
         subscriptionService.declineNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.DECLINED, updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.DECLINED.toString(), updatedOrdersPayload.orders().get(0).orderStatus());
     }
 
     @Test
@@ -212,8 +231,8 @@ public class SubscriptionServiceTest {
         OrdersPayload currentOrders = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
 
         assertEquals(2, currentOrders.orders().size());
-        assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.CONFIRMED)));
-        assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.PENDING)));
+        assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.CONFIRMED.toString())));
+        assertTrue(currentOrders.orders().stream().anyMatch(order -> order.orderStatus().equals(OrderStatus.PENDING.toString())));
     }
 
     @Test
@@ -221,13 +240,17 @@ public class SubscriptionServiceTest {
         SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        MealKitUniqueIdentifier orderId = ordersPayload.orders().stream().map(OrderPayload::orderId).toList().get(0);
+        MealKitUniqueIdentifier orderId =
+            ordersPayload.orders().stream()
+                .map(orderPayload ->
+                new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
+                ).toList().get(0);
         MealKitPickedUpByUserEvent event = new MealKitPickedUpByUserEvent(orderId);
 
         eventBus.publish(event);
 
         OrdersPayload updatedOrdersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
-        assertEquals(OrderStatus.PICKED_UP, updatedOrdersPayload.orders().get(0).orderStatus());
+        assertEquals(OrderStatus.PICKED_UP.toString(), updatedOrdersPayload.orders().get(0).orderStatus());
     }
 
     @Test

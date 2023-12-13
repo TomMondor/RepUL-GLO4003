@@ -3,8 +3,6 @@ package ca.ulaval.glo4003.repul.large.subscription;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import io.restassured.RestAssured;
@@ -20,8 +18,10 @@ import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
-import ca.ulaval.glo4003.repul.subscription.api.response.OrderResponse;
-import ca.ulaval.glo4003.repul.subscription.api.response.SubscriptionResponse;
+import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
+import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
+import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
+import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
@@ -97,13 +97,13 @@ public class SubscriptionResourceEnd2EndTest {
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
             .get(CONTEXT.getURI() + "subscriptions");
-        List<SubscriptionResponse> responseBody = Arrays.asList(response.getBody().as(SubscriptionResponse[].class));
-        Optional<SubscriptionResponse> createdSubscriptionResponse =
-            responseBody.stream().filter(subscription -> subscription.subscriptionId().equals(subscriptionId)).findFirst();
+        SubscriptionsPayload responseBody = response.getBody().as(SubscriptionsPayload.class);
+        Optional<SubscriptionPayload> createdSubscriptionResponse =
+            responseBody.subscriptions().stream().filter(subscription -> subscription.subscriptionId().equals(subscriptionId)).findFirst();
 
         assertTrue(createdSubscriptionResponse.isPresent());
-        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, createdSubscriptionResponse.get().dayOfWeek());
-        assertEquals(A_SUBSCRIPTION_REQUEST.locationId, createdSubscriptionResponse.get().locationId());
+        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, createdSubscriptionResponse.get().frequency());
+        assertEquals(A_SUBSCRIPTION_REQUEST.locationId, createdSubscriptionResponse.get().deliveryLocationId());
         assertEquals(A_SUBSCRIPTION_REQUEST.mealKitType, createdSubscriptionResponse.get().mealKitType());
         assertEquals(LocalDate.now().toString(), createdSubscriptionResponse.get().startDate());
     }
@@ -126,11 +126,11 @@ public class SubscriptionResourceEnd2EndTest {
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST);
         String url = CONTEXT.getURI() + "subscriptions/" + subscriptionId;
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(url);
-        SubscriptionResponse responseBody = response.getBody().as(SubscriptionResponse.class);
+        SubscriptionPayload responseBody = response.getBody().as(SubscriptionPayload.class);
 
         assertEquals(subscriptionId, responseBody.subscriptionId());
-        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, responseBody.dayOfWeek());
-        assertEquals(A_SUBSCRIPTION_REQUEST.locationId, responseBody.locationId());
+        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, responseBody.frequency());
+        assertEquals(A_SUBSCRIPTION_REQUEST.locationId, responseBody.deliveryLocationId());
         assertEquals(A_SUBSCRIPTION_REQUEST.mealKitType, responseBody.mealKitType());
         assertEquals(LocalDate.now().toString(), responseBody.startDate());
     }
@@ -176,9 +176,9 @@ public class SubscriptionResourceEnd2EndTest {
         Response response =
             given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
                 .get(CONTEXT.getURI() + "subscriptions:currentOrders");
-        List<OrderResponse> responseBody = Arrays.asList(response.getBody().as(OrderResponse[].class));
-        Optional<OrderResponse> createdOrderResponse =
-            responseBody.stream().filter(order -> order.deliveryDate().equals(LocalDate.now().plusDays(5).toString())).findFirst();
+        OrdersPayload responseBody = response.getBody().as(OrdersPayload.class);
+        Optional<OrderPayload> createdOrderResponse =
+            responseBody.orders().stream().filter(order -> order.deliveryDate().equals(LocalDate.now().plusDays(5).toString())).findFirst();
 
         assertTrue(createdOrderResponse.isPresent());
         assertEquals(OrderStatus.PENDING.toString(), createdOrderResponse.get().orderStatus());

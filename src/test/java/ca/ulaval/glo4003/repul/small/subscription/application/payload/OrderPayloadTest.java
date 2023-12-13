@@ -22,7 +22,12 @@ public class OrderPayloadTest {
 
     @Test
     public void whenUsingFrom_shouldReturnCorrectOrderPayload() {
-        OrderPayload expectedOrderPayload = new OrderPayload(ORDER_ID, MEALKIT_TYPE, ORDER_DELIVERY_DATE, ORDER_STATUS);
+        OrderPayload expectedOrderPayload = new OrderPayload(
+            ORDER_ID.getUUID().toString(),
+            MEALKIT_TYPE.toString(),
+            ORDER_DELIVERY_DATE.toString(),
+            ORDER_STATUS.toString()
+        );
 
         Order order =
             new OrderFixture().withOrderId(ORDER_ID).withMealKitType(MEALKIT_TYPE).withDeliveryDate(ORDER_DELIVERY_DATE).withOrderStatus(ORDER_STATUS).build();

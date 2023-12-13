@@ -1,17 +1,12 @@
 package ca.ulaval.glo4003.repul.subscription.api;
 
 import java.net.URI;
-import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.api.UriFactory;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.subscription.api.assembler.OrdersResponseAssembler;
-import ca.ulaval.glo4003.repul.subscription.api.assembler.SubscriptionsResponseAssembler;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
-import ca.ulaval.glo4003.repul.subscription.api.response.OrderResponse;
-import ca.ulaval.glo4003.repul.subscription.api.response.SubscriptionResponse;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
@@ -39,8 +34,6 @@ import jakarta.ws.rs.core.Response;
 public class SubscriptionResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
     private final SubscriptionService subscriptionService;
-    private final SubscriptionsResponseAssembler subscriptionsResponseAssembler = new SubscriptionsResponseAssembler();
-    private final OrdersResponseAssembler ordersResponseAssembler = new OrdersResponseAssembler();
     private final UriFactory uriFactory = new UriFactory();
 
     public SubscriptionResource(SubscriptionService subscriptionService) {
@@ -75,11 +68,10 @@ public class SubscriptionResource {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        SubscriptionPayload subscription = subscriptionService.getSubscriptionById(subscriberId,
+        SubscriptionPayload subscriptionPayload = subscriptionService.getSubscriptionById(subscriberId,
             new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom(subscriptionIdAsString));
 
-        SubscriptionResponse subscriptionResponse = subscriptionsResponseAssembler.toSubscriptionResponse(subscription);
-        return Response.ok(subscriptionResponse).build();
+        return Response.ok(subscriptionPayload).build();
     }
 
     @GET
@@ -90,10 +82,9 @@ public class SubscriptionResource {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        SubscriptionsPayload subscriptions = subscriptionService.getSubscriptions(subscriberId);
+        SubscriptionsPayload subscriptionsPayload = subscriptionService.getSubscriptions(subscriberId);
 
-        List<SubscriptionResponse> subscriptionsResponse = subscriptionsResponseAssembler.toSubscriptionsResponse(subscriptions);
-        return Response.ok(subscriptionsResponse).build();
+        return Response.ok(subscriptionsPayload).build();
     }
 
     @POST
@@ -134,8 +125,6 @@ public class SubscriptionResource {
 
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(subscriberId);
 
-        List<OrderResponse> ordersResponse = ordersResponseAssembler.toOrdersResponse(ordersPayload);
-
-        return Response.ok(ordersResponse).build();
+        return Response.ok(ordersPayload).build();
     }
 }

@@ -38,7 +38,14 @@ public class SubscriptionPayloadTest {
     @Test
     public void whenUsingFrom_shouldReturnCorrectSubscriptionPayload() {
         SubscriptionPayload expectedSubscriptionPayload =
-            new SubscriptionPayload(SUBSCRIPTION_ID, SUBSCRIPTION_FREQUENCY, LOCATION_ID, SUBSCRIPTION_START_DATE, SUBSCRIPTION_MEALKIT_TYPE, SEMESTER);
+            new SubscriptionPayload(
+                SUBSCRIPTION_ID.getUUID().toString(),
+                SUBSCRIPTION_FREQUENCY.dayOfWeek().toString(),
+                LOCATION_ID.toString(),
+                SUBSCRIPTION_START_DATE.toString(),
+                SUBSCRIPTION_MEALKIT_TYPE.toString(),
+                SEMESTER.toString()
+            );
         Subscription subscription =
             new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER)).withFrequency(SUBSCRIPTION_FREQUENCY)
                 .withPickupLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE).withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER)
