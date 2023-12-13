@@ -18,8 +18,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
-import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
-import ca.ulaval.glo4003.repul.cooking.domain.MealKitFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
@@ -27,6 +25,8 @@ import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedExceptio
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
+import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
+import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKitFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 

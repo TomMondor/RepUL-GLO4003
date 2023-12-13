@@ -15,7 +15,7 @@ import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Ingredient;
-import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
+import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
 import ca.ulaval.glo4003.repul.fixture.cooking.IngredientFixture;
 import ca.ulaval.glo4003.repul.fixture.cooking.MealKitFixture;
 import ca.ulaval.glo4003.repul.fixture.cooking.RecipeFixture;

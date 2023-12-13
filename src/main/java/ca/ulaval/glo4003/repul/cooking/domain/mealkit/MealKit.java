@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.cooking.domain;
+package ca.ulaval.glo4003.repul.cooking.domain.mealkit;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,6 +7,7 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 
 public class MealKit {
@@ -14,9 +15,9 @@ public class MealKit {
     private final SubscriberUniqueIdentifier subscriberId;
     private final LocalDate dateOfReceipt;
     private final List<Recipe> recipes;
+    private final boolean isToBeDelivered;
     private Optional<CookUniqueIdentifier> cookId = Optional.empty();
     private boolean isCooked;
-    private final boolean isToBeDelivered;
 
     public MealKit(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId,
                    LocalDate dateOfReceipt, List<Recipe> recipes, boolean isToBeDelivered) {
@@ -73,7 +74,7 @@ public class MealKit {
         this.isCooked = true;
     }
 
-    public void recallMealKit(CookUniqueIdentifier cookId) {
+    public void recall(CookUniqueIdentifier cookId) {
         if (!isCooked()) {
             throw new MealKitNotCookedException();
         }

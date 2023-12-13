@@ -17,7 +17,7 @@ import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
-import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
+import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
 
 public class CookingService {
     private final KitchenPersister kitchenPersister;

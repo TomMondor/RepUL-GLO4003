@@ -19,7 +19,7 @@ import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
-import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
+import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
 import ca.ulaval.glo4003.repul.fixture.cooking.MealKitFixture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -6,8 +6,8 @@ import java.util.List;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.cooking.domain.MealKit;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
+import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
 
 public class MealKitFixture {
     private MealKitUniqueIdentifier mealKitId;
