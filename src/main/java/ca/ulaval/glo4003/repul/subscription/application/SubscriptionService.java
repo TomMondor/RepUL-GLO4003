@@ -11,13 +11,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
-import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
-import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
-import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
-import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
-import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
-import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
@@ -28,8 +21,6 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
-
-import com.google.common.eventbus.Subscribe;
 
 public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
@@ -54,57 +45,51 @@ public class SubscriptionService {
         return subscription.getSubscriptionId();
     }
 
-    @Subscribe
-    public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
-        subscription.markOrderAsPickedUp(event.mealKitId);
+    public void orderPickedUpByUser(MealKitUniqueIdentifier mealKitId) {
+        Subscription subscription =
+            subscriptionRepository.getSubscriptionByOrderId(mealKitId);
+        subscription.markOrderAsPickedUp(mealKitId);
         subscriptionRepository.save(subscription);
     }
 
-    @Subscribe
-    public void handleMealKitsCookedEvent(MealKitsCookedEvent event) {
-        for (MealKitDto mealKit : event.mealKits) {
+    public void markMealKitAsToDeliver(List<MealKitDto> mealKits) {
+        for (MealKitDto mealKit : mealKits) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(mealKit.mealKitId());
             subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.save(subscription);
         }
     }
 
-    @Subscribe
-    public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(recallCookedMealKitEvent.mealKitId);
+    public void recallMealKitToKitchen(MealKitUniqueIdentifier mealKitId) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(mealKitId);
         subscription.markCurrentOrderAsToCook();
         subscriptionRepository.save(subscription);
     }
 
-    @Subscribe
-    public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
-        for (MealKitUniqueIdentifier orderId : event.mealKitIds) {
+    public void markMealKitAsInDelivery(List<MealKitUniqueIdentifier> mealKitIds) {
+        for (MealKitUniqueIdentifier orderId : mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
             subscription.markCurrentOrderAsInDelivery();
             subscriptionRepository.save(subscription);
         }
     }
 
-    @Subscribe
-    public void handleCanceledCargoEvent(CanceledCargoEvent event) {
-        for (MealKitUniqueIdentifier orderId : event.mealKitIds) {
+    public void recallMealKitInDelivery(List<MealKitUniqueIdentifier> mealKitIds) {
+        for (MealKitUniqueIdentifier orderId : mealKitIds) {
             Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(orderId);
             subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.save(subscription);
         }
     }
 
-    @Subscribe
-    public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent event) {
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
+    public void confirmMealKitDelivery(MealKitUniqueIdentifier mealKitId) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(mealKitId);
         subscription.markCurrentOrderAsToPickUp();
         subscriptionRepository.save(subscription);
     }
 
-    @Subscribe
-    public void handleRecalledDeliveryEvent(RecalledDeliveryEvent event) {
-        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
+    public void recallMealKitDelivered(MealKitUniqueIdentifier mealKitId) {
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(mealKitId);
         subscription.markCurrentOrderAsInDelivery();
         subscriptionRepository.save(subscription);
     }

@@ -17,7 +17,7 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.subscription.api.UserEventHandler;
+import ca.ulaval.glo4003.repul.subscription.api.SubscriberEventHandler;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
@@ -89,10 +89,11 @@ public class SubscriptionContextInitializer {
         return service;
     }
 
-    public UserEventHandler createUserEventHandler(SubscriberService subscriberService, RepULEventBus eventBus) {
-        UserEventHandler userEventHandler = new UserEventHandler(subscriberService);
-        eventBus.register(userEventHandler);
-        return userEventHandler;
+    public SubscriberEventHandler createSubscriberEventHandler(SubscriberService subscriberService,
+                                                               SubscriptionService subscriptionService, RepULEventBus eventBus) {
+        SubscriberEventHandler subscriberEventHandler = new SubscriberEventHandler(subscriberService, subscriptionService);
+        eventBus.register(subscriberEventHandler);
+        return subscriberEventHandler;
     }
 
     private List<Semester> parseSemesters() {

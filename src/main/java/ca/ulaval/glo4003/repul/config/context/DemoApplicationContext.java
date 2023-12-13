@@ -150,7 +150,7 @@ public class DemoApplicationContext implements ApplicationContext {
         AccountResource accountResource = new AccountResource(subscriberService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);
         RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
-        subscriptionContextInitializer.createUserEventHandler(subscriberService, eventBus);
+        subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, subscriptionService, eventBus);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID))
             .withPendingMealKits(
