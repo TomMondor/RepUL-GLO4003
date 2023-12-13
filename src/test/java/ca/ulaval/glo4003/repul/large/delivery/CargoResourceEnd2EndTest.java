@@ -1,7 +1,5 @@
 package ca.ulaval.glo4003.repul.large.delivery;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import io.restassured.RestAssured;
@@ -13,7 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
-import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
+import ca.ulaval.glo4003.repul.delivery.application.payload.CargoPayload;
+import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
 import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
@@ -58,11 +57,11 @@ public class CargoResourceEnd2EndTest {
         String accountToken = loginAsADeliveryPerson();
 
         Response response = given().header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "cargos:toPickUp");
-        List<CargoResponse> actualResponse = Arrays.asList(response.getBody().as(CargoResponse[].class));
-        Optional<CargoResponse> actualCargo = actualResponse.stream().findFirst();
+        CargosPayload actualResponse = response.getBody().as(CargosPayload.class);
+        Optional<CargoPayload> actualCargo = actualResponse.cargoPayloads().stream().findFirst();
 
         assertTrue(actualCargo.isPresent());
-        assertFalse(actualCargo.get().mealKitsResponse().isEmpty());
+        assertFalse(actualCargo.get().mealKitsPayload().isEmpty());
     }
 
     @Test
@@ -142,9 +141,9 @@ public class CargoResourceEnd2EndTest {
 
     private String getCargoIdAvailableForPickup(String accountToken) {
         Response response = given().header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "cargos:toPickUp");
-        List<CargoResponse> actualResponse = Arrays.asList(response.getBody().as(CargoResponse[].class));
+        CargosPayload actualResponse = response.getBody().as(CargosPayload.class);
 
-        return actualResponse.stream().findFirst().get().cargoId();
+        return actualResponse.cargoPayloads().stream().findFirst().get().cargoId();
     }
 
     private void pickupCargo(String accountToken, String cargoId) {

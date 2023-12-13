@@ -1,7 +1,6 @@
 package ca.ulaval.glo4003.repul.small.delivery.api;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
-import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
@@ -131,10 +129,10 @@ public class CargoResourceTest {
     public void whenGettingCargosReadyToPickUp_shouldReturnListOfCargoResponse() {
         CargosPayload cargosPayload = new CargosPayload(Collections.emptyList());
         when(deliveryService.getCargosReadyToPickUp()).thenReturn(cargosPayload);
-        List<CargoResponse> expectedCargoResponses = Collections.emptyList();
+        CargosPayload expectedCargosPayload = new CargosPayload(Collections.emptyList());
 
         Response response = cargoResource.getCargosReadyToPickUp();
 
-        assertEquals(expectedCargoResponses, response.getEntity());
+        assertEquals(expectedCargosPayload, response.getEntity());
     }
 }

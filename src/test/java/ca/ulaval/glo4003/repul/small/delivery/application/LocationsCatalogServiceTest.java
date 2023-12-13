@@ -41,7 +41,7 @@ public class LocationsCatalogServiceTest {
     public void whenGettingPickupLocations_shouldReturnMatchingLocationsPayload() {
         when(mockDeliverySystem.getDeliveryLocations()).thenReturn(SOME_DELIVERY_LOCATIONS);
         DeliveryLocationsPayload expectedDeliveryLocationPayload = new DeliveryLocationsPayload(List.of(
-            new DeliveryLocationPayload(A_DELIVERY_LOCATION.getLocationId(), A_DELIVERY_LOCATION.getName(), A_DELIVERY_LOCATION.getTotalCapacity(),
+            new DeliveryLocationPayload(A_DELIVERY_LOCATION.getLocationId().toString(), A_DELIVERY_LOCATION.getName(), A_DELIVERY_LOCATION.getTotalCapacity(),
                 A_DELIVERY_LOCATION.getRemainingCapacity())));
 
         DeliveryLocationsPayload deliveryLocationsPayload = locationsCatalogService.getDeliveryLocations();

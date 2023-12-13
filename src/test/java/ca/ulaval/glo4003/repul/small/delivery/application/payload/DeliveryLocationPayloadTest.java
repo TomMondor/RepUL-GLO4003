@@ -17,7 +17,7 @@ public class DeliveryLocationPayloadTest {
     @Test
     public void givenDeliveryLocation_whenUsingFrom_shouldReturnCorrectDeliveryLocationPayload() {
         DeliveryLocationPayload expectedDeliveryLocationPayload =
-            new DeliveryLocationPayload(A_DELIVERY_LOCATION_ID, LOCATION_NAME, LOCATION_TOTAL_CAPACITY, LOCATION_REMAINING_CAPACITY);
+            new DeliveryLocationPayload(A_DELIVERY_LOCATION_ID.toString(), LOCATION_NAME, LOCATION_TOTAL_CAPACITY, LOCATION_REMAINING_CAPACITY);
         DeliveryLocation location = new DeliveryLocation(A_DELIVERY_LOCATION_ID, LOCATION_NAME, LOCATION_TOTAL_CAPACITY);
 
         DeliveryLocationPayload actualDeliveryLocationPayload = DeliveryLocationPayload.from(location);

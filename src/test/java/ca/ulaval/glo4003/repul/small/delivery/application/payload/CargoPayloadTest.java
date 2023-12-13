@@ -25,7 +25,8 @@ public class CargoPayloadTest {
 
     @Test
     public void whenUsingFrom_shouldReturnCorrectCargoPayload() {
-        CargoPayload expectedCargoPayload = new CargoPayload(CARGO_UNIQUE_IDENTIFIER, KITCHEN_LOCATION_ID.toString(), Collections.emptyList());
+        CargoPayload expectedCargoPayload =
+            new CargoPayload(CARGO_UNIQUE_IDENTIFIER.getUUID().toString(), KITCHEN_LOCATION_ID.toString(), Collections.emptyList());
 
         CargoPayload actualCargoPayload = CargoPayload.from(CARGO);
 

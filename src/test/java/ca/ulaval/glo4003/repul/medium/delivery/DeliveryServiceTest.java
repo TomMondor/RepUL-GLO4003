@@ -13,6 +13,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargoPayload;
@@ -24,7 +25,9 @@ import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeliveryServiceTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new MealKitUniqueIdentifier(UUID.randomUUID());
@@ -54,7 +57,8 @@ public class DeliveryServiceTest {
         givenDeliveryPerson(A_DELIVERY_PERSON_ACCOUNT_ID);
         givenConfirmedMealKit(A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
-        CargoUniqueIdentifier cargoId = deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId();
+        CargoUniqueIdentifier cargoId =
+            new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId());
 
         deliveryService.pickupCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
 
@@ -66,7 +70,8 @@ public class DeliveryServiceTest {
         givenDeliveryPerson(A_DELIVERY_PERSON_ACCOUNT_ID);
         givenConfirmedMealKit(A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
-        CargoUniqueIdentifier cargoId = deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId();
+        CargoUniqueIdentifier cargoId =
+            new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId());
         deliveryService.pickupCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId, A_MEAL_KIT_ID);
@@ -79,7 +84,8 @@ public class DeliveryServiceTest {
         givenDeliveryPerson(A_DELIVERY_PERSON_ACCOUNT_ID);
         givenConfirmedMealKit(A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
-        CargoUniqueIdentifier cargoId = deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId();
+        CargoUniqueIdentifier cargoId =
+            new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId());
         givenPickedUpCargo(cargoId);
 
         deliveryService.cancelCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
@@ -93,7 +99,8 @@ public class DeliveryServiceTest {
         givenDeliveryPerson(A_DELIVERY_PERSON_ACCOUNT_ID);
         givenConfirmedMealKit(A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
-        CargoUniqueIdentifier cargoId = deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId();
+        CargoUniqueIdentifier cargoId =
+            new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId());
         givenPickedUpCargo(cargoId);
         givenDeliveredMealKit(cargoId, A_MEAL_KIT_ID);
 

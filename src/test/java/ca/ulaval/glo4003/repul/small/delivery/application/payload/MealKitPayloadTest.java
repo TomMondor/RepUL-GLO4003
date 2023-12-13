@@ -33,7 +33,8 @@ public class MealKitPayloadTest {
     @Test
     public void givenMealKitWithNoLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
         MealKit mealKit = new MealKit(DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
-        MealKitPayload expectedMealKitPayload = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.toString(), NOT_ASSIGN_LOCKER_NUMBER);
+        MealKitPayload expectedMealKitPayload =
+            new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER.getUUID().toString(), DELIVERY_LOCATION_ID.toString(), NOT_ASSIGN_LOCKER_NUMBER);
 
         MealKitPayload actualMealKitPayload = MealKitPayload.from(mealKit);
 
@@ -44,7 +45,8 @@ public class MealKitPayloadTest {
     public void givenMealKitWithAssignedLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
         MealKit mealKit = new MealKit(DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
         lockerAssignator.assignLocker(mealKit);
-        MealKitPayload expectedMealKitPayload = new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID.toString(), LOCKER_NUMBER);
+        MealKitPayload expectedMealKitPayload =
+            new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER.getUUID().toString(), DELIVERY_LOCATION_ID.toString(), LOCKER_NUMBER);
 
         MealKitPayload actualMealKitPayload = MealKitPayload.from(mealKit);
 

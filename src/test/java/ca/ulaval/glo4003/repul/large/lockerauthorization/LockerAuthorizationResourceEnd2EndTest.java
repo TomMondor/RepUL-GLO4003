@@ -1,6 +1,5 @@
 package ca.ulaval.glo4003.repul.large.lockerauthorization;
 
-import java.util.Arrays;
 import java.util.List;
 
 import io.restassured.RestAssured;
@@ -14,8 +13,9 @@ import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.cooking.api.request.SelectionRequest;
-import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
-import ca.ulaval.glo4003.repul.delivery.api.response.MealKitResponse;
+import ca.ulaval.glo4003.repul.delivery.application.payload.CargoPayload;
+import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
+import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
 import ca.ulaval.glo4003.repul.fixture.lockerauthorization.OpenLockerRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.AddCardRequestFixture;
@@ -101,11 +101,11 @@ public class LockerAuthorizationResourceEnd2EndTest {
         String accountToken = loginResponse.getBody().as(LoginResponse.class).token();
 
         Response response = given().header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "cargos:toPickUp");
-        List<CargoResponse> cargoResponses = Arrays.asList(response.getBody().as(CargoResponse[].class));
-        CargoResponse cargoResponse = cargoResponses.stream()
-            .filter(cargo -> cargo.mealKitsResponse().stream().anyMatch(mealKitResponse -> mealKitResponse.mealKitId().equals(mealKitId))).findFirst().get();
+        CargosPayload cargoResponses = response.getBody().as(CargosPayload.class);
+        CargoPayload cargoResponse = cargoResponses.cargoPayloads().stream()
+            .filter(cargo -> cargo.mealKitsPayload().stream().anyMatch(mealKitPayload -> mealKitPayload.mealKitId().equals(mealKitId))).findFirst().get();
         String cargoId = cargoResponse.cargoId();
-        MealKitResponse mealKitResponse = cargoResponse.mealKitsResponse().stream().filter(mealKit -> mealKit.mealKitId().equals(mealKitId)).findFirst().get();
+        MealKitPayload mealKitResponse = cargoResponse.mealKitsPayload().stream().filter(mealKit -> mealKit.mealKitId().equals(mealKitId)).findFirst().get();
         String lockerId = TestApplicationContext.A_DELIVERY_LOCATION.getName() + " " + mealKitResponse.lockerNumber();
         pickupCargo(accountToken, cargoId);
 

@@ -1,13 +1,9 @@
 package ca.ulaval.glo4003.repul.delivery.api;
 
-import java.util.List;
-
 import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.delivery.api.assembler.CargosResponseAssembler;
-import ca.ulaval.glo4003.repul.delivery.api.response.CargoResponse;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.LockerPayload;
@@ -31,7 +27,6 @@ import jakarta.ws.rs.core.Response;
 public class CargoResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
     private final DeliveryService deliveryService;
-    private final CargosResponseAssembler cargosResponseAssembler = new CargosResponseAssembler();
 
     public CargoResource(DeliveryService deliveryService) {
         this.deliveryService = deliveryService;
@@ -44,8 +39,7 @@ public class CargoResource {
     public Response getCargosReadyToPickUp() {
         CargosPayload cargosPayload = deliveryService.getCargosReadyToPickUp();
 
-        List<CargoResponse> cargosResponse = cargosResponseAssembler.toCargosResponse(cargosPayload);
-        return Response.ok(cargosResponse).build();
+        return Response.ok(cargosPayload).build();
     }
 
     @POST

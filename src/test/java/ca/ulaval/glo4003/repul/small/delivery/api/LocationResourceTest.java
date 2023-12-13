@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class LocationResourceTest {
     private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(DeliveryLocationId.VACHON, "Vachon", 10);
     private static final DeliveryLocationPayload A_DELIVERY_LOCATION_PAYLOAD =
-        new DeliveryLocationPayload(A_DELIVERY_LOCATION.getLocationId(), A_DELIVERY_LOCATION.getName(), A_DELIVERY_LOCATION.getTotalCapacity(),
+        new DeliveryLocationPayload(A_DELIVERY_LOCATION.getLocationId().toString(), A_DELIVERY_LOCATION.getName(), A_DELIVERY_LOCATION.getTotalCapacity(),
             A_DELIVERY_LOCATION.getRemainingCapacity());
     private static final DeliveryLocationsPayload A_DELIVERY_LOCATIONS_PAYLOAD = new DeliveryLocationsPayload(List.of(A_DELIVERY_LOCATION_PAYLOAD));
     private LocationResource locationResource;
