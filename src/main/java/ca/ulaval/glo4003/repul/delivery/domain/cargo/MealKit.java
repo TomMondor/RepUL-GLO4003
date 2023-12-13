@@ -2,21 +2,21 @@ package ca.ulaval.glo4003.repul.delivery.domain.cargo;
 
 import java.util.Optional;
 
+import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 
 public class MealKit {
-    private final DeliveryLocation deliveryLocation;
+    private final DeliveryLocationId deliveryLocationId;
     private final MealKitUniqueIdentifier mealKitId;
     private Optional<LockerId> lockerId;
     private DeliveryStatus status;
 
-    public MealKit(DeliveryLocation deliveryLocation, MealKitUniqueIdentifier mealKitId, DeliveryStatus status) {
-        this.deliveryLocation = deliveryLocation;
+    public MealKit(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId, DeliveryStatus status) {
+        this.deliveryLocationId = deliveryLocationId;
         this.mealKitId = mealKitId;
         this.status = status;
         this.lockerId = Optional.empty();
@@ -34,8 +34,8 @@ public class MealKit {
         return lockerId;
     }
 
-    public DeliveryLocation getDeliveryLocation() {
-        return deliveryLocation;
+    public DeliveryLocationId deliveryLocationId() {
+        return deliveryLocationId;
     }
 
     public void assignLocker(Optional<LockerId> lockerId) {

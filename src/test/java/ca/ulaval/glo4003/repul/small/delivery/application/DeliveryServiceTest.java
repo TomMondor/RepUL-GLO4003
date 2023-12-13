@@ -51,10 +51,10 @@ public class DeliveryServiceTest {
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final KitchenLocation A_KITCHEN_LOCATION = new KitchenLocation(A_KITCHEN_LOCATION_ID, "Vachon");
     private static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Pouliot", 10);
-    private static final MealKit A_MEAL_KIT = new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.PENDING);
+    private static final MealKit A_MEAL_KIT = new MealKit(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.PENDING);
     private static final Cargo A_CARGO = new Cargo(A_CARGO_UNIQUE_IDENTIFIER, A_KITCHEN_LOCATION, new ArrayList<>(List.of(A_MEAL_KIT)));
     private static final MealKit
-        A_DELIVERED_MEAL_KIT = new MealKit(A_DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.DELIVERED);
+        A_DELIVERED_MEAL_KIT = new MealKit(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DeliveryStatus.DELIVERED);
     private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final MealKit A_MEAL_KIT_WITH_LOCKER = new MealKitFixture().withLockerId(A_LOCKER_ID).build();
     private static final DeliveryPersonUniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER =

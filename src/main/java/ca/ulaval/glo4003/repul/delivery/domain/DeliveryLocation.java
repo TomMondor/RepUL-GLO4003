@@ -6,17 +6,22 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotFoundException;
 
 public class DeliveryLocation {
     private final DeliveryLocationId deliveryLocationId;
     private final String name;
     private final int totalCapacity;
-    private final List<Locker> lockers = new ArrayList<>();
+    private final List<Locker> lockers;
+    private final List<MealKit> waitingMealKits;
 
     public DeliveryLocation(DeliveryLocationId deliveryLocationId, String name, int totalCapacity) {
         this.deliveryLocationId = deliveryLocationId;
         this.name = name;
         this.totalCapacity = totalCapacity;
+        waitingMealKits = new ArrayList<>();
+        this.lockers = new ArrayList<>();
         generateLockers();
     }
 
@@ -47,13 +52,33 @@ public class DeliveryLocation {
         return new LockerId(this.name + " " + lockerNumber, lockerNumber);
     }
 
-    public Optional<Locker> findNextAvailableLocker() {
+    public void assignLocker(MealKit mealKit) {
+        Optional<Locker> availableLocker = this.findNextAvailableLocker();
+
+        if (availableLocker.isPresent()) {
+            availableLocker.get().assign(mealKit);
+            LockerId lockerId = availableLocker.get().getLockerId();
+            mealKit.assignLocker(Optional.of(lockerId));
+        } else {
+            waitingMealKits.add(mealKit);
+        }
+    }
+
+    private Optional<Locker> findNextAvailableLocker() {
         return lockers.stream().filter(Locker::isUnassigned).sorted(
             Comparator.comparingInt(c -> c.getLockerId().lockerNumber())
         ).findFirst();
     }
 
+    public void unassignLocker(MealKit mealKit) {
+        this.findLockerById(mealKit.getLockerId().get()).unassign();
+        if (!waitingMealKits.isEmpty()) {
+            assignLocker(waitingMealKits.remove(0));
+        }
+    }
+
     public Locker findLockerById(LockerId lockerId) {
-        return lockers.stream().filter(locker -> locker.getLockerId().equals(lockerId)).findFirst().get();
+        return lockers.stream().filter(locker -> locker.getLockerId().equals(lockerId)).findFirst().orElseThrow(
+            LockerNotFoundException::new);
     }
 }

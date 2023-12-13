@@ -8,7 +8,7 @@ public record MealKitPayload(String mealKitId, String deliveryLocationId, String
 
         return new MealKitPayload(
             mealKit.getMealKitId().getUUID().toString(),
-            mealKit.getDeliveryLocation().getLocationId().toString(),
+            mealKit.deliveryLocationId().toString(),
             lockerNumber
         );
     }

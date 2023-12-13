@@ -2,30 +2,30 @@ package ca.ulaval.glo4003.repul.delivery.domain;
 
 import java.util.Optional;
 
-import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 
 public class Locker {
     private final LockerId lockerId;
-    private Optional<MealKitUniqueIdentifier> mealKitId = Optional.empty();
+    private Optional<MealKit> mealKit = Optional.empty();
 
     public Locker(LockerId lockerId) {
         this.lockerId = lockerId;
     }
 
     public boolean isAssigned() {
-        return this.mealKitId.isPresent();
+        return this.mealKit.isPresent();
     }
 
     public boolean isUnassigned() {
-        return this.mealKitId.isEmpty();
+        return this.mealKit.isEmpty();
     }
 
-    public void assign(MealKitUniqueIdentifier mealKitId) {
-        this.mealKitId = Optional.of(mealKitId);
+    public void assign(MealKit mealKit) {
+        this.mealKit = Optional.of(mealKit);
     }
 
     public void unassign() {
-        this.mealKitId = Optional.empty();
+        this.mealKit = Optional.empty();
     }
 
     public LockerId getLockerId() {

@@ -10,7 +10,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
-import ca.ulaval.glo4003.repul.delivery.domain.LockerAssignator;
+import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocations;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 
@@ -28,11 +28,11 @@ public class MealKitPayloadTest {
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(MEAL_KIT_ID);
     private static final String NOT_ASSIGN_LOCKER_NUMBER = "Not assigned at this moment";
     private static final String LOCKER_NUMBER = "1";
-    private final LockerAssignator lockerAssignator = new LockerAssignator(List.of(DELIVERY_LOCATION));
+    private final DeliveryLocations deliveryLocations = new DeliveryLocations(List.of(DELIVERY_LOCATION));
 
     @Test
     public void givenMealKitWithNoLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
-        MealKit mealKit = new MealKit(DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
+        MealKit mealKit = new MealKit(DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
         MealKitPayload expectedMealKitPayload =
             new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER.getUUID().toString(), DELIVERY_LOCATION_ID.toString(), NOT_ASSIGN_LOCKER_NUMBER);
 
@@ -43,8 +43,8 @@ public class MealKitPayloadTest {
 
     @Test
     public void givenMealKitWithAssignedLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
-        MealKit mealKit = new MealKit(DELIVERY_LOCATION, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
-        lockerAssignator.assignLocker(mealKit);
+        MealKit mealKit = new MealKit(DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
+        deliveryLocations.assignLocker(DELIVERY_LOCATION_ID, mealKit);
         MealKitPayload expectedMealKitPayload =
             new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER.getUUID().toString(), DELIVERY_LOCATION_ID.toString(), LOCKER_NUMBER);
 

@@ -76,7 +76,7 @@ public class DeliveryService {
 
     private void sendMealKitReceivedForDeliveryEvent(Cargo cargo, DeliverySystem deliverySystem) {
         List<MealKitDto> mealKits = cargo.getMealKits().stream().map(
-            mealKit -> new MealKitDto(mealKit.getDeliveryLocation().getLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())
+            mealKit -> new MealKitDto(mealKit.deliveryLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())
         ).toList();
 
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent = new MealKitReceivedForDeliveryEvent(
@@ -126,7 +126,7 @@ public class DeliveryService {
 
         deliverySystemPersister.save(deliverySystem);
 
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(mealKit.getMealKitId(), mealKit.getDeliveryLocation().getLocationId(),
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(mealKit.getMealKitId(), mealKit.deliveryLocationId(),
             mealKit.getLockerId(), LocalTime.now());
         eventBus.publish(event);
     }
@@ -139,7 +139,7 @@ public class DeliveryService {
 
         deliverySystemPersister.save(deliverySystem);
 
-        DeliveryLocationId deliveryLocationId = mealKit.getDeliveryLocation().getLocationId();
+        DeliveryLocationId deliveryLocationId = mealKit.deliveryLocationId();
         eventBus.publish(new RecalledDeliveryEvent(mealKitId, lockerId, deliveryLocationId));
 
         return lockerId;

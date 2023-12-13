@@ -26,17 +26,17 @@ public class DeliverySystem {
     private final CargoFactory cargoFactory;
     private final MealKitFactory mealKitFactory;
     private final List<DeliveryPersonUniqueIdentifier> deliveryPersonIds = new ArrayList<>();
-    private final LockerAssignator lockerAssignator;
+    private final DeliveryLocations deliveryLocations;
 
     public DeliverySystem(LocationsCatalog locationsCatalog) {
         this.locationsCatalog = locationsCatalog;
         this.cargoFactory = new CargoFactory();
         this.mealKitFactory = new MealKitFactory();
-        this.lockerAssignator = new LockerAssignator(locationsCatalog.getDeliveryLocations());
+        this.deliveryLocations = new DeliveryLocations(locationsCatalog.getDeliveryLocations());
     }
 
     public void createMealKitInPreparation(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId) {
-        MealKit createdMealKit = mealKitFactory.createMealKit(locationsCatalog.getDeliveryLocation(deliveryLocationId), mealKitId);
+        MealKit createdMealKit = mealKitFactory.createMealKit(deliveryLocationId, mealKitId);
         pendingMealKits.put(mealKitId, createdMealKit);
     }
 
@@ -57,7 +57,7 @@ public class DeliverySystem {
 
         List<MealKit> mealKits = mealKitIds.stream().map(this.pendingMealKits::remove).collect(Collectors.toCollection(ArrayList::new));
 
-        mealKits.forEach(lockerAssignator::assignLocker);
+        mealKits.forEach(mealKit -> deliveryLocations.assignLocker(mealKit.deliveryLocationId(), mealKit));
 
         mealKits.forEach(MealKit::markAsReadyToBeDelivered);
 
@@ -69,7 +69,7 @@ public class DeliverySystem {
     }
 
     public List<DeliveryLocation> getDeliveryLocations() {
-        return locationsCatalog.getDeliveryLocations();
+        return deliveryLocations.getDeliveryLocations();
     }
 
     public List<MealKit> pickupCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
@@ -108,7 +108,7 @@ public class DeliverySystem {
 
     public void moveMealKitFromCargosToPending(MealKitUniqueIdentifier mealKitId) {
         MealKit mealKitRemovedFromCargo = removeMealKitFromCargos(mealKitId);
-        lockerAssignator.unassignLocker(mealKitRemovedFromCargo);
+        deliveryLocations.unassignLocker(mealKitRemovedFromCargo);
         pendingMealKits.put(mealKitId, mealKitRemovedFromCargo);
     }
 
@@ -131,7 +131,7 @@ public class DeliverySystem {
 
     public void removeMealKitFromLocker(MealKitUniqueIdentifier mealKitId) {
         MealKit mealKitRemovedFromCargo = removeMealKitFromCargos(mealKitId);
-        lockerAssignator.unassignLocker(mealKitRemovedFromCargo);
+        deliveryLocations.unassignLocker(mealKitRemovedFromCargo);
     }
 
     private Cargo getCargo(CargoUniqueIdentifier cargoId) {
