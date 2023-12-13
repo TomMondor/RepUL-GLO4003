@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.repul.small.user.application;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,12 +11,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
-import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.application.UserService;
 import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
-import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.PasswordEncoder;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserFactory;
@@ -32,14 +35,12 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-    private static final String AN_IDUL = "ALMAT69";
-    private static final String AN_EMAIL = "john@ulaval.ca";
-    private static final String A_PASSWORD = "a@*nfF8KA1";
-    private static final String A_NAME = "aName";
-    private static final String A_BIRTHDATE = "2000-01-01";
-    private static final String A_GENDER = "MAN";
-    private static final String A_CARD_NUMBER = "123456789";
-    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final IDUL AN_IDUL = new IDUL("ALMAT69");
+    private static final Email AN_EMAIL = new Email("john@ulaval.ca");
+    private static final Password A_PASSWORD = new Password("a@*nfF8KA1");
+    private static final Name A_NAME = new Name("aName");
+    private static final Birthdate A_BIRTHDATE = new Birthdate(LocalDate.parse("2000-01-01"));
+    private static final Gender A_GENDER = Gender.MAN;
 
     private UserService userService;
 
@@ -70,8 +71,7 @@ public class UserServiceTest {
     public void givenRegistrationQueryWithExistingEmail_whenRegistering_shouldThrowEmailAlreadyInUseException() {
         given(userRepository.exists(any(Email.class))).willReturn(true);
 
-        assertThrows(EmailAlreadyInUseException.class,
-            () -> userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER)));
+        assertThrows(EmailAlreadyInUseException.class, () -> userService.register(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
     }
 
     @Test
@@ -79,15 +79,14 @@ public class UserServiceTest {
         given(userRepository.exists(any(Email.class))).willReturn(false);
         given(userRepository.exists(any(IDUL.class))).willReturn(true);
 
-        assertThrows(IDULAlreadyInUseException.class,
-            () -> userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER)));
+        assertThrows(IDULAlreadyInUseException.class, () -> userService.register(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
     }
 
     @Test
     public void givenUserNotFound_whenLogin_shouldThrowInvalidCredentialsException() {
-        given(userRepository.findByEmail(new Email(AN_EMAIL))).willReturn(null);
+        given(userRepository.findByEmail(AN_EMAIL)).willReturn(null);
 
-        assertThrows(InvalidCredentialsException.class, () -> userService.login(LoginQuery.from(AN_EMAIL, A_PASSWORD)));
+        assertThrows(InvalidCredentialsException.class, () -> userService.login(AN_EMAIL, A_PASSWORD));
     }
 
     @Test
@@ -96,7 +95,7 @@ public class UserServiceTest {
         given(userRepository.exists(any(IDUL.class))).willReturn(false);
         given(userFactory.createUser(any(), any(), any(), any(), any())).willReturn(mock(User.class));
 
-        userService.register(RegistrationQuery.from(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER));
+        userService.register(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER);
 
         verify(repULEventBus).publish(any(UserCreatedEvent.class));
     }

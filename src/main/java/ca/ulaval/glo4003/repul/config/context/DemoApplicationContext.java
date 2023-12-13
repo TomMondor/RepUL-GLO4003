@@ -17,7 +17,9 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMap
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.DateParser;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
@@ -65,7 +67,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 
 public class DemoApplicationContext implements ApplicationContext {
@@ -73,17 +75,17 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
-    private static final RegistrationQuery COOK_REGISTRATION_QUERY =
-        RegistrationQuery.from("paul@ulaval.ca", "paul123", "PAUL123", "Paul", "1990-01-01", "MAN");
+    private static final RegistrationRequest COOK_REGISTRATION_REQUEST =
+        new RegistrationRequest("PAUL123", "paul@ulaval.ca", "paul123", "Paul", "1990-01-01", "MAN");
     private static final String CLIENT_EMAIL =
         ENV_PARSER.readVariable("CLIENT_EMAIL").isBlank() ? "alexandra@ulaval.ca" : ENV_PARSER.readVariable("CLIENT_EMAIL");
-    private static final RegistrationQuery CLIENT_REGISTRATION_QUERY =
-        RegistrationQuery.from(CLIENT_EMAIL, "alexandra123", "alexa228", "Alexandra", "1999-06-08", "WOMAN");
+    private static final RegistrationRequest CLIENT_REGISTRATION_REQUEST =
+        new RegistrationRequest("alexa228", CLIENT_EMAIL, "alexandra123", "Alexandra", "1999-06-08", "WOMAN");
     private static final SubscriberUniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final Subscriber SUBSCRIBER =
-        new Subscriber(CLIENT_ID, new IDUL(CLIENT_REGISTRATION_QUERY.idul().value()), new Name(CLIENT_REGISTRATION_QUERY.name().value()),
-            new Birthdate(CLIENT_REGISTRATION_QUERY.birthdate().value()), Gender.from(CLIENT_REGISTRATION_QUERY.gender().name()),
-            CLIENT_REGISTRATION_QUERY.email());
+        new Subscriber(CLIENT_ID, new IDUL(CLIENT_REGISTRATION_REQUEST.idul), new Name(CLIENT_REGISTRATION_REQUEST.name),
+            new Birthdate(DateParser.localDateFrom(CLIENT_REGISTRATION_REQUEST.birthdate)), Gender.from(CLIENT_REGISTRATION_REQUEST.gender),
+            new Email(CLIENT_REGISTRATION_REQUEST.email));
     private static final Order FIRST_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1),
             OrderStatus.TO_COOK);
@@ -108,8 +110,8 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final int PORT = 8080;
     private static final String DELIVERY_PERSON_EMAIL =
         ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL").isBlank() ? "roger@ulaval.ca" : ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL");
-    private static final RegistrationQuery DELIVERY_PERSON_REGISTRATION_EMAIL =
-        RegistrationQuery.from(DELIVERY_PERSON_EMAIL, "roger123", "ROGER456", "Roger", "1973-04-24", "MAN");
+    private static final RegistrationRequest DELIVERY_PERSON_REGISTRATION_EMAIL =
+        new RegistrationRequest(DELIVERY_PERSON_EMAIL, "roger123", "ROGER456", "Roger", "1973-04-24", "MAN");
 
     @Override
     public ResourceConfig initializeResourceConfig() {
@@ -126,9 +128,9 @@ public class DemoApplicationContext implements ApplicationContext {
                 .withConfirmedSubscriptions(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION));
         notificationContextInitializer.createNotificationService(eventBus);
 
-        UserContextInitializer userContextInitializer = new UserContextInitializer(eventBus).withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_QUERY)))
+        UserContextInitializer userContextInitializer = new UserContextInitializer(eventBus).withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_REQUEST)))
             .withShippers(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_REGISTRATION_EMAIL)))
-            .withClients(List.of(Map.of(CLIENT_ID, CLIENT_REGISTRATION_QUERY)));
+            .withClients(List.of(Map.of(CLIENT_ID, CLIENT_REGISTRATION_REQUEST)));
 
         UserResource userResource = new UserResource(userContextInitializer.createService());
         AuthGuard authGuard = userContextInitializer.createAuthGuard();

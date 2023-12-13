@@ -1,12 +1,16 @@
 package ca.ulaval.glo4003.repul.user.application;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
-import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.PasswordEncoder;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
@@ -37,25 +41,25 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void register(RegistrationQuery registrationQuery) {
-        if (userRepository.exists(registrationQuery.email())) {
+    public void register(Email email, Password password, IDUL idul, Name name, Birthdate birthdate, Gender gender) {
+        if (userRepository.exists(email)) {
             throw new EmailAlreadyInUseException();
         }
-        if (userRepository.exists(registrationQuery.idul())) {
+        if (userRepository.exists(idul)) {
             throw new IDULAlreadyInUseException();
         }
         UniqueIdentifier uniqueIdentifier = subscriberUniqueIdentifierFactory.generate();
-        User newUser = userFactory.createUser(uniqueIdentifier, registrationQuery.idul(), registrationQuery.email(), Role.CLIENT, registrationQuery.password());
+        User newUser = userFactory.createUser(uniqueIdentifier, idul, email, Role.CLIENT, password);
         userRepository.save(newUser);
 
-        sendUserCreatedEvent(registrationQuery, (SubscriberUniqueIdentifier) uniqueIdentifier);
+        sendUserCreatedEvent(newUser, name, birthdate, gender, email);
     }
 
-    public Token login(LoginQuery loginQuery) {
+    public Token login(Email email, Password password) {
         try {
-            User user = userRepository.findByEmail(loginQuery.email());
+            User user = userRepository.findByEmail(email);
 
-            user.checkPasswordMatches(passwordEncoder, loginQuery.password());
+            user.checkPasswordMatches(passwordEncoder, password);
 
             Token token = tokenGenerator.generate(user.getUid(), user.getRole());
 
@@ -65,10 +69,8 @@ public class UserService {
         }
     }
 
-    private void sendUserCreatedEvent(RegistrationQuery registrationQuery, SubscriberUniqueIdentifier createdUserId) {
-        UserCreatedEvent event =
-            new UserCreatedEvent(createdUserId, registrationQuery.idul(), registrationQuery.name(), registrationQuery.birthdate(), registrationQuery.gender(),
-                registrationQuery.email());
+    private void sendUserCreatedEvent(User userCreated, Name name, Birthdate birthdate, Gender gender, Email email) {
+        UserCreatedEvent event = new UserCreatedEvent(userCreated.getUid(), userCreated.getIdul(), name, birthdate, gender, email);
         eventBus.publish(event);
     }
 }

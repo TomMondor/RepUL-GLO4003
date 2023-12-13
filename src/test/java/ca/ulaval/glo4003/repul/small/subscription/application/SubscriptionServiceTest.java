@@ -24,7 +24,6 @@ import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
-import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
@@ -41,7 +40,6 @@ public class SubscriptionServiceTest {
     private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
     private static final String A_MEALKIT_TYPE = "STANDARD";
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
-    private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, A_MEALKIT_TYPE);
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
@@ -68,7 +66,8 @@ public class SubscriptionServiceTest {
             any(MealKitType.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriptionId()).thenReturn(A_SUBSCRIPTION_ID);
 
-        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        UniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEALKIT_TYPE));
 
         assertEquals(A_SUBSCRIPTION_ID, subscriptionId);
     }
@@ -100,7 +99,8 @@ public class SubscriptionServiceTest {
         when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEALKIT_TYPE));
         when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(mockSubscription);
 
         assertThrows(SubscriptionNotFoundException.class, () -> subscriptionService.confirmNextMealKitForSubscription(ANOTHER_ACCOUNT_ID, subscriptionId));
@@ -111,7 +111,8 @@ public class SubscriptionServiceTest {
         when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
             any(MealKitType.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEALKIT_TYPE));
         when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(mockSubscription);
 
         assertThrows(SubscriptionNotFoundException.class, () -> subscriptionService.confirmNextMealKitForSubscription(ANOTHER_ACCOUNT_ID, subscriptionId));

@@ -3,7 +3,6 @@ package ca.ulaval.glo4003.repul.user.api.exception.mapper;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import ca.ulaval.glo4003.repul.user.application.exception.InvalidDateException;
 import ca.ulaval.glo4003.repul.user.domain.exception.UserException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.EmailAlreadyInUseException;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.IDULAlreadyInUseException;
@@ -32,7 +31,6 @@ public class UserExceptionStatusMapper {
 
         exceptionMapper.put(UserNotFoundException.class, Response.Status.NOT_FOUND);
 
-        exceptionMapper.put(InvalidDateException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidTokenException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(IDULAlreadyInUseException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(EmailAlreadyInUseException.class, Response.Status.BAD_REQUEST);

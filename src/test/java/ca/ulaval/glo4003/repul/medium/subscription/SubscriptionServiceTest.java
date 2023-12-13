@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
@@ -31,7 +32,6 @@ import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
-import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
@@ -55,8 +55,6 @@ public class SubscriptionServiceTest {
     private static final DeliveryLocationId ANOTHER_LOCATION_ID = DeliveryLocationId.PEPS;
     private static final DayOfWeek A_DAY_STRING = DayOfWeek.from(LocalDate.now().plusDays(3));
     private static final String A_MEALKIT_TYPE = "STANDARD";
-    private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_LOCATION_ID, A_DAY_STRING, A_MEALKIT_TYPE);
-    private static final SubscriptionQuery ANOTHER_SUBSCRIPTION_QUERY = new SubscriptionQuery(ANOTHER_LOCATION_ID, A_DAY_STRING, A_MEALKIT_TYPE);
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(2));
@@ -70,8 +68,7 @@ public class SubscriptionServiceTest {
         eventBus = new GuavaEventBus();
         paymentService = new LogPaymentService();
         SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
-        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
-            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
         SubscriptionFactory subscriptionFactory =
             new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
                 new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
@@ -81,7 +78,8 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenCreatingSubscription_shouldPersistSubscription() {
-        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        UniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
 
         SubscriptionsPayload persistedSubscriptions = subscriptionService.getSubscriptions(AN_ACCOUNT_ID);
         assertEquals(subscriptionId.getUUID().toString(), persistedSubscriptions.subscriptions().get(0).subscriptionId());
@@ -89,9 +87,11 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenCreatedSubscriptions_whenGettingSubscriptions_shouldReturnSubscriptionsInAccount() {
-        SubscriptionUniqueIdentifier firstSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
-        SubscriptionUniqueIdentifier secondSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_SUBSCRIPTION_QUERY);
-        subscriptionService.createSubscription(ANOTHER_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier firstSubscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+        SubscriptionUniqueIdentifier secondSubscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+        subscriptionService.createSubscription(ANOTHER_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
 
         SubscriptionsPayload subscriptions = subscriptionService.getSubscriptions(AN_ACCOUNT_ID);
 
@@ -104,8 +104,10 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingMealKitsCookedEvent_shouldMarkMatchingOrdersAsToDeliver() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
-        SubscriptionUniqueIdentifier otherSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+        SubscriptionUniqueIdentifier otherSubscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
@@ -126,8 +128,10 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingPickedUpCargoEvent_shouldMarkMatchingOrdersAsInDelivery() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
-        SubscriptionUniqueIdentifier otherSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+        SubscriptionUniqueIdentifier otherSubscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
@@ -147,8 +151,10 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingCanceledCargoEvent_shouldMarkMatchingOrdersAsToDeliver() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
-        SubscriptionUniqueIdentifier otherSubscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+        SubscriptionUniqueIdentifier otherSubscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
@@ -168,7 +174,8 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingConfirmedDeliveryEvent_shouldMarkMatchingOrdersAsToPickup() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         MealKitUniqueIdentifier orderId =
@@ -186,7 +193,8 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingRecalledDeliveryEvent_shouldMarkMatchingOrdersAsInDelivery() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         MealKitUniqueIdentifier orderId =
@@ -204,7 +212,8 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenConfirmingNextMealKitForSubscription_shouldUpdateMatchingOrderInSubscription() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
 
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
@@ -214,7 +223,8 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenDecliningNextMealKitForSubscription_shouldUpdateMatchingOrderInSubscription() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
 
         subscriptionService.declineNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
@@ -224,8 +234,9 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenGettingCurrentOrders_shouldReturnCurrentOrdersForSubscriptionsInAccount() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
-        subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+        subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
         OrdersPayload currentOrders = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
@@ -237,7 +248,8 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenHandlingMealKitPickedUpByUserEvent_shouldMarkMatchingOrderAsPickedUp() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier subscriptionId =
+            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);
         MealKitUniqueIdentifier orderId =
@@ -269,8 +281,7 @@ public class SubscriptionServiceTest {
         Order order = orderFixture.withOrderStatus(OrderStatus.CONFIRMED).withDeliveryDate(LocalDate.now().plusDays(1)).build();
         Subscription subscription = subscriptionFixture.withOrders(List.of(order)).build();
         subscriptionRepository.save(subscription);
-        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
-            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
         SubscriptionFactory subscriptionFactory =
             new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
                 new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
@@ -305,8 +316,7 @@ public class SubscriptionServiceTest {
         Order order = orderFixture.withOrderStatus(OrderStatus.PENDING).withDeliveryDate(LocalDate.now().plusDays(1)).build();
         Subscription subscription = subscriptionFixture.withOrders(List.of(order)).build();
         subscriptionRepository.save(subscription);
-        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
-            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
         SubscriptionFactory subscriptionFactory =
             new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
                 new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
@@ -323,8 +333,7 @@ public class SubscriptionServiceTest {
         Order order = orderFixture.withOrderStatus(OrderStatus.CONFIRMED).withDeliveryDate(LocalDate.now().plusDays(1)).build();
         Subscription subscription = subscriptionFixture.withOrders(List.of(order)).build();
         subscriptionRepository.save(subscription);
-        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
-            new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
         SubscriptionFactory subscriptionFactory =
             new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
                 new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));

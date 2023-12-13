@@ -25,7 +25,6 @@ import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
-import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
@@ -102,7 +101,7 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldReturn201() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK, A_MEAL_KIT_TYPE_STRING))).willReturn(
+        given(subscriptionService.createSubscription(ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEAL_KIT_TYPE_STRING))).willReturn(
             A_SUBSCRIPTION_ID);
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 
@@ -112,7 +111,7 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldReturnSubscriptionId() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(ACCOUNT_ID, new SubscriptionQuery(A_LOCATION_ID, A_DAY_OF_WEEK, A_MEAL_KIT_TYPE_STRING))).willReturn(
+        given(subscriptionService.createSubscription(ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEAL_KIT_TYPE_STRING))).willReturn(
             A_SUBSCRIPTION_ID);
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 

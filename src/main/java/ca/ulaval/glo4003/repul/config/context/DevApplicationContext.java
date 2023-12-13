@@ -46,7 +46,7 @@ import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 
 public class DevApplicationContext implements ApplicationContext {
@@ -54,13 +54,13 @@ public class DevApplicationContext implements ApplicationContext {
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final int PORT = 8080;
     private static final CookUniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
-    private static final RegistrationQuery COOK_REGISTRATION_QUERY =
-        RegistrationQuery.from("paul@ulaval.ca", "paul123", "PAUL123", "Paul", "1990-01-01", "MAN");
+    private static final RegistrationRequest COOK_REGISTRATION_REQUEST =
+        new RegistrationRequest("PAUL123", "paul@ulaval.ca", "paul123", "Paul", "1990-01-01", "MAN");
     private static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final String DELIVERY_PERSON_EMAIL =
         ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL").isBlank() ? "roger@ulaval.ca" : ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL");
-    private static final RegistrationQuery DELIVERY_PERSON_REGISTRATION_EMAIL =
-        RegistrationQuery.from(DELIVERY_PERSON_EMAIL, "roger123", "ROGER456", "Roger", "1973-04-24", "MAN");
+    private static final RegistrationRequest DELIVERY_PERSON_REGISTRATION_EMAIL =
+        new RegistrationRequest("ROGER456", DELIVERY_PERSON_EMAIL, "roger123", "Roger", "1973-04-24", "MAN");
 
     @Override
     public ResourceConfig initializeResourceConfig() {
@@ -76,7 +76,7 @@ public class DevApplicationContext implements ApplicationContext {
 
         PaymentService paymentService = new LogPaymentService();
 
-        UserContextInitializer userContextInitializer = new UserContextInitializer(eventBus).withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_QUERY)))
+        UserContextInitializer userContextInitializer = new UserContextInitializer(eventBus).withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_REQUEST)))
             .withShippers(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_REGISTRATION_EMAIL)));
 
         UserResource userResource = new UserResource(userContextInitializer.createService());
@@ -102,10 +102,8 @@ public class DevApplicationContext implements ApplicationContext {
         deliveryContextInitializer.createDeliveryEventHandler(deliveryService, eventBus);
 
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
-        LockerAuthorizationService lockerAuthorizationService =
-            lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
-        LockerAuthorizationResource lockerAuthorizationResource =
-            new LockerAuthorizationResource(lockerAuthorizationService);
+        LockerAuthorizationService lockerAuthorizationService = lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
+        LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(lockerAuthorizationService);
         lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 

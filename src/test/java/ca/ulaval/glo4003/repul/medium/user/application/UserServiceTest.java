@@ -14,8 +14,6 @@ import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.application.UserService;
-import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.UserFactory;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.exception.EmailAlreadyInUseException;
@@ -56,14 +54,14 @@ public class UserServiceTest {
     public void givenRegisteredUser_whenLoggingIn_shouldLogIn() {
         registerUser();
 
-        assertDoesNotThrow(() -> userService.login(new LoginQuery(AN_EMAIL, A_PASSWORD)));
+        assertDoesNotThrow(() -> userService.login(AN_EMAIL, A_PASSWORD));
     }
 
     @Test
     public void givenRegisteredUser_whenLoggingIn_shouldCreateValidToken() {
         registerUser();
 
-        Token token = userService.login(new LoginQuery(AN_EMAIL, A_PASSWORD));
+        Token token = userService.login(AN_EMAIL, A_PASSWORD);
 
         assertDoesNotThrow(() -> tokenDecoder.decode(token.value()).userId());
     }
@@ -71,42 +69,39 @@ public class UserServiceTest {
     @Test
     public void givenRegistrationQueryWithExistingEmail_whenRegistering_shouldNotSaveNewUser() {
         registerUser();
-        RegistrationQuery alreadyRegisteredUserRegistrationQuery = new RegistrationQuery(AN_EMAIL, A_NEW_PASSWORD, A_NEW_IDUL, A_NAME, A_BIRTHDATE, A_GENDER);
 
         try {
-            userService.register(alreadyRegisteredUserRegistrationQuery);
+            userService.register(AN_EMAIL, A_NEW_PASSWORD, A_NEW_IDUL, A_NAME, A_BIRTHDATE, A_GENDER);
         } catch (EmailAlreadyInUseException ignored) {
             // Ignoring the exception because we want to check the repositories
         }
 
-        assertThrows(InvalidCredentialsException.class, () -> userService.login(new LoginQuery(AN_EMAIL, A_NEW_PASSWORD)));
-        assertDoesNotThrow(() -> userService.login(new LoginQuery(AN_EMAIL, A_PASSWORD)));
+        assertThrows(InvalidCredentialsException.class, () -> userService.login(AN_EMAIL, A_NEW_PASSWORD));
+        assertDoesNotThrow(() -> userService.login(AN_EMAIL, A_PASSWORD));
     }
 
     @Test
     public void givenRegistrationQueryWithExistingIDUL_whenRegistering_shouldNotSaveNewUser() {
         registerUser();
-        RegistrationQuery alreadyRegisteredUserRegistrationQuery = new RegistrationQuery(A_NEW_EMAIL, A_NEW_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER);
 
         try {
-            userService.register(alreadyRegisteredUserRegistrationQuery);
+            userService.register(A_NEW_EMAIL, A_NEW_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER);
         } catch (IDULAlreadyInUseException ignored) {
             // Ignoring the exception because we want to check the repositories
         }
 
-        assertThrows(InvalidCredentialsException.class, () -> userService.login(new LoginQuery(AN_EMAIL, A_NEW_PASSWORD)));
-        assertDoesNotThrow(() -> userService.login(new LoginQuery(AN_EMAIL, A_PASSWORD)));
+        assertThrows(InvalidCredentialsException.class, () -> userService.login(AN_EMAIL, A_NEW_PASSWORD));
+        assertDoesNotThrow(() -> userService.login(AN_EMAIL, A_PASSWORD));
     }
 
     @Test
     public void whenLogin_shouldCheckPassword() {
         registerUser();
 
-        assertThrows(InvalidCredentialsException.class, () -> userService.login(new LoginQuery(AN_EMAIL, A_WRONG_PASSWORD)));
+        assertThrows(InvalidCredentialsException.class, () -> userService.login(AN_EMAIL, A_WRONG_PASSWORD));
     }
 
     private void registerUser() {
-        RegistrationQuery registrationQuery = new RegistrationQuery(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER);
-        userService.register(registrationQuery);
+        userService.register(AN_EMAIL, A_PASSWORD, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER);
     }
 }

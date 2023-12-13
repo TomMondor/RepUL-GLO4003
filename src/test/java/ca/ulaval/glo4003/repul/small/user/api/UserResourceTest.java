@@ -54,7 +54,7 @@ public class UserResourceTest {
 
     @Test
     public void whenLogin_shouldReturn200() {
-        given(userService.login(any())).willReturn(A_TOKEN);
+        given(userService.login(any(), any())).willReturn(A_TOKEN);
 
         Response response = userResource.login(A_LOGIN_REQUEST);
 
@@ -63,7 +63,7 @@ public class UserResourceTest {
 
     @Test
     public void whenLogin_shouldReturnTokenAndExpiresIn() {
-        given(userService.login(any())).willReturn(A_TOKEN);
+        given(userService.login(any(), any())).willReturn(A_TOKEN);
 
         Response response = userResource.login(A_LOGIN_REQUEST);
         LoginResponse loginResponse = (LoginResponse) response.getEntity();

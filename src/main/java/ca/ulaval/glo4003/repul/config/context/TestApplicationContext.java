@@ -17,7 +17,9 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMap
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.DateParser;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
@@ -63,7 +65,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 
 public class TestApplicationContext implements ApplicationContext {
@@ -114,17 +116,18 @@ public class TestApplicationContext implements ApplicationContext {
     private static final Order TENTH_MEAL_KIT_ORDER = new Order(TENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_DELIVER);
     private static final Frequency A_WEEKLY_FREQUENCY = new Frequency(LocalDate.now().getDayOfWeek());
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusWeeks(10));
-    private static final RegistrationQuery CLIENT_REGISTRATION_QUERY =
-        RegistrationQuery.from(CLIENT_EMAIL, CLIENT_PASSWORD, "ALEXA123", "Alexandra", "1999-01-01", "WOMAN");
+    private static final RegistrationRequest CLIENT_REGISTRATION_REQUEST =
+        new RegistrationRequest("ALEXA123", CLIENT_EMAIL, CLIENT_PASSWORD, "Alexandra", "1999-01-01", "WOMAN");
     private static final Subscriber SUBSCRIBER =
-        new Subscriber(CLIENT_ID, new IDUL(CLIENT_REGISTRATION_QUERY.idul().value()), new Name(CLIENT_REGISTRATION_QUERY.name().value()),
-            new Birthdate(CLIENT_REGISTRATION_QUERY.birthdate().value()), Gender.from(CLIENT_REGISTRATION_QUERY.gender().name()),
-            CLIENT_REGISTRATION_QUERY.email());
-    private static final RegistrationQuery COOK_REGISTRATION_QUERY = RegistrationQuery.from(COOK_EMAIL, COOK_PASSWORD, "PAUL123", "Paul", "1990-01-01", "MAN");
-    private static final RegistrationQuery DELIVERY_PERSON_REGISTRATION_QUERY =
-        RegistrationQuery.from(DELIVERY_PERSON_EMAIL, DELIVERY_PERSON_PASSWORD, "ROGER456", "Roger", "1973-04-24", "MAN");
-    private static final RegistrationQuery SECOND_DELIVERY_PERSON_REGISTRATION_QUERY =
-        RegistrationQuery.from(SECOND_DELIVERY_PERSON_EMAIL, SECOND_DELIVERY_PERSON_PASSWORD, "JOHN456", "John", "1973-05-24", "MAN");
+        new Subscriber(CLIENT_ID, new IDUL(CLIENT_REGISTRATION_REQUEST.idul), new Name(CLIENT_REGISTRATION_REQUEST.name),
+            new Birthdate(DateParser.localDateFrom(CLIENT_REGISTRATION_REQUEST.birthdate)), Gender.from(CLIENT_REGISTRATION_REQUEST.gender),
+            new Email(CLIENT_REGISTRATION_REQUEST.email));
+    private static final RegistrationRequest COOK_REGISTRATION_REQUEST =
+        new RegistrationRequest("PAUL123", COOK_EMAIL, COOK_PASSWORD, "Paul", "1990-01-01", "MAN");
+    private static final RegistrationRequest DELIVERY_PERSON_REGISTRATION_REQUEST =
+        new RegistrationRequest("ROGER456", DELIVERY_PERSON_EMAIL, DELIVERY_PERSON_PASSWORD, "Roger", "1973-04-24", "MAN");
+    private static final RegistrationRequest SECOND_DELIVERY_PERSON_REGISTRATION_REQUEST =
+        new RegistrationRequest("JOHN456", SECOND_DELIVERY_PERSON_EMAIL, SECOND_DELIVERY_PERSON_PASSWORD, "John", "1973-05-24", "MAN");
     private static final Logger LOGGER = LoggerFactory.getLogger(TestApplicationContext.class);
     private static final int PORT = 8081;
 
@@ -144,9 +147,11 @@ public class TestApplicationContext implements ApplicationContext {
                 .withMealKitIdForUser(TENTH_MEAL_KIT_ID, CLIENT_ID);
         notificationContextInitializer.createNotificationService(eventBus);
 
-        UserContextInitializer userContextInitializer = new UserContextInitializer(eventBus).withClients(List.of(Map.of(CLIENT_ID, CLIENT_REGISTRATION_QUERY)))
-            .withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_QUERY))).withShippers(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_REGISTRATION_QUERY),
-                Map.of(SECOND_DELIVERY_PERSON_ID, SECOND_DELIVERY_PERSON_REGISTRATION_QUERY)));
+        UserContextInitializer userContextInitializer =
+            new UserContextInitializer(eventBus).withClients(List.of(Map.of(CLIENT_ID, CLIENT_REGISTRATION_REQUEST)))
+                .withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_REQUEST))).withShippers(
+                    List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_REGISTRATION_REQUEST),
+                        Map.of(SECOND_DELIVERY_PERSON_ID, SECOND_DELIVERY_PERSON_REGISTRATION_REQUEST)));
 
         UserResource userResource = new UserResource(userContextInitializer.createService());
         AuthGuard authGuard = userContextInitializer.createAuthGuard();

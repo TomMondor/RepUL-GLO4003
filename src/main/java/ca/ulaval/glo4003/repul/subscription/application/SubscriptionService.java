@@ -1,9 +1,12 @@
 package ca.ulaval.glo4003.repul.subscription.application;
 
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
@@ -20,7 +23,6 @@ import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNo
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
-import ca.ulaval.glo4003.repul.subscription.application.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
@@ -35,17 +37,17 @@ public class SubscriptionService {
     private final RepULEventBus eventBus;
     private final PaymentService paymentService;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionFactory subscriptionFactory,
-                               PaymentService paymentService, RepULEventBus eventBus) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionFactory subscriptionFactory, PaymentService paymentService,
+                               RepULEventBus eventBus) {
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionFactory = subscriptionFactory;
         this.eventBus = eventBus;
         this.paymentService = paymentService;
     }
 
-    public SubscriptionUniqueIdentifier createSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionQuery subscriptionQuery) {
-        Subscription subscription = subscriptionFactory.createSubscription(subscriberId, subscriptionQuery.deliveryLocationId(), subscriptionQuery.dayOfWeek(),
-            subscriptionQuery.mealKitType());
+    public SubscriptionUniqueIdentifier createSubscription(SubscriberUniqueIdentifier subscriberId, DeliveryLocationId deliveryLocationId, DayOfWeek dayOfWeek,
+                                                           MealKitType mealKitType) {
+        Subscription subscription = subscriptionFactory.createSubscription(subscriberId, deliveryLocationId, dayOfWeek, mealKitType);
 
         subscriptionRepository.save(subscription);
 
@@ -54,8 +56,7 @@ public class SubscriptionService {
 
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
-        Subscription subscription =
-            subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
+        Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(event.mealKitId);
         subscription.markOrderAsPickedUp(event.mealKitId);
         subscriptionRepository.save(subscription);
     }

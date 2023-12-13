@@ -27,4 +27,16 @@ public class RegistrationRequest {
 
     @NotNull(message = "The gender may not be null.")
     public String gender;
+
+    public RegistrationRequest() {
+    }
+
+    public RegistrationRequest(String idul, String email, String password, String name, String birthdate, String gender) {
+        this.idul = idul;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.birthdate = birthdate;
+        this.gender = gender;
+    }
 }

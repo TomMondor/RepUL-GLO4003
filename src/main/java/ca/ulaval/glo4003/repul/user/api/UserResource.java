@@ -3,13 +3,18 @@ package ca.ulaval.glo4003.repul.user.api;
 import java.net.URI;
 
 import ca.ulaval.glo4003.repul.commons.api.UriFactory;
+import ca.ulaval.glo4003.repul.commons.domain.DateParser;
+import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
+import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.user.api.assembler.UserResponseAssembler;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 import ca.ulaval.glo4003.repul.user.application.UserService;
-import ca.ulaval.glo4003.repul.user.application.query.LoginQuery;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.token.Token;
 
 import jakarta.validation.Valid;
@@ -36,11 +41,12 @@ public class UserResource {
     @POST
     @Path("/users:register")
     public Response register(@NotNull(message = "The body must not be null.") @Valid RegistrationRequest registrationRequest) {
-        RegistrationQuery registrationQuery =
-            RegistrationQuery.from(registrationRequest.email, registrationRequest.password, registrationRequest.idul, registrationRequest.name,
-                registrationRequest.birthdate, registrationRequest.gender);
-
-        userService.register(registrationQuery);
+        userService.register(new Email(registrationRequest.email),
+            new Password(registrationRequest.password),
+            new IDUL(registrationRequest.idul.toUpperCase()),
+            new Name(registrationRequest.name),
+            new Birthdate(DateParser.localDateFrom(registrationRequest.birthdate)),
+            Gender.from(registrationRequest.gender));
 
         URI location = uriFactory.createURI("/api/users");
         return Response.created(location).build();
@@ -49,9 +55,8 @@ public class UserResource {
     @POST
     @Path("/users:login")
     public Response login(@NotNull(message = "The body must not be null.") @Valid LoginRequest loginRequest) {
-        LoginQuery loginQuery = LoginQuery.from(loginRequest.email, loginRequest.password);
-
-        Token token = userService.login(loginQuery);
+        Token token = userService.login(new Email(loginRequest.email),
+            new Password(loginRequest.password));
         LoginResponse loginResponse = userResponseAssembler.toLoginResponse(token);
 
         return Response.ok(loginResponse).build();

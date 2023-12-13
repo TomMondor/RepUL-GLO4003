@@ -7,11 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
+import ca.ulaval.glo4003.repul.commons.domain.Email;
+import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.application.UserService;
-import ca.ulaval.glo4003.repul.user.application.query.RegistrationQuery;
+import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.PasswordEncoder;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.User;
@@ -57,18 +60,18 @@ public class UserContextInitializer {
         return this;
     }
 
-    public UserContextInitializer withClients(List<Map<UniqueIdentifier, RegistrationQuery>> queries) {
-        queries.forEach(query -> createAndSaveUser(query, Role.CLIENT));
+    public UserContextInitializer withClients(List<Map<UniqueIdentifier, RegistrationRequest>> requests) {
+        requests.forEach(request -> createAndSaveUser(request, Role.CLIENT));
         return this;
     }
 
-    public UserContextInitializer withCooks(List<Map<UniqueIdentifier, RegistrationQuery>> queries) {
-        queries.forEach(query -> createAndSaveUser(query, Role.COOK));
+    public UserContextInitializer withCooks(List<Map<UniqueIdentifier, RegistrationRequest>> requests) {
+        requests.forEach(request -> createAndSaveUser(request, Role.COOK));
         return this;
     }
 
-    public UserContextInitializer withShippers(List<Map<UniqueIdentifier, RegistrationQuery>> queries) {
-        queries.forEach(query -> createAndSaveUser(query, Role.DELIVERY_PERSON));
+    public UserContextInitializer withShippers(List<Map<UniqueIdentifier, RegistrationRequest>> requests) {
+        requests.forEach(request -> createAndSaveUser(request, Role.DELIVERY_PERSON));
         return this;
     }
 
@@ -84,10 +87,10 @@ public class UserContextInitializer {
         return new AuthGuard(userRepository, tokenDecoder);
     }
 
-    private void createAndSaveUser(Map<UniqueIdentifier, RegistrationQuery> query, Role role) {
+    private void createAndSaveUser(Map<UniqueIdentifier, RegistrationRequest> query, Role role) {
         UniqueIdentifier userId = query.keySet().iterator().next();
-        RegistrationQuery registrationQuery = query.get(userId);
-        User user = userFactory.createUser(userId, registrationQuery.idul(), registrationQuery.email(), role, registrationQuery.password());
+        RegistrationRequest request = query.get(userId);
+        User user = userFactory.createUser(userId, new IDUL(request.idul), new Email(request.email), role, new Password(request.password));
         userRepository.save(user);
     }
 }
