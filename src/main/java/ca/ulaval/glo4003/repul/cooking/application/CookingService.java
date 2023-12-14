@@ -13,8 +13,8 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
-import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
+import ca.ulaval.glo4003.repul.cooking.application.payload.SelectionPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
@@ -48,11 +48,9 @@ public class CookingService {
 
     public MealKitsPayload getMealKitsToCook() {
         Kitchen kitchen = kitchenPersister.get();
+        List<MealKit> mealKitsToCook = kitchen.getMealKitsToCook();
 
-        List<MealKitPayload> mealKitPayloads = kitchen.getMealKitsToCook().stream().map(
-            mealKit -> new MealKitPayload(mealKit.getMealKitId(), mealKit.getDateOfReceipt(), mealKit.getRecipes())
-        ).toList();
-        return new MealKitsPayload(mealKitPayloads);
+        return MealKitsPayload.from(mealKitsToCook);
     }
 
     public void select(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> selectedMealKitIds) {
@@ -63,10 +61,10 @@ public class CookingService {
         kitchenPersister.save(kitchen);
     }
 
-    public List<MealKitUniqueIdentifier> getSelection(CookUniqueIdentifier cookId) {
+    public SelectionPayload getSelection(CookUniqueIdentifier cookId) {
         Kitchen kitchen = kitchenPersister.get();
 
-        return kitchen.getSelection(cookId);
+        return SelectionPayload.from(kitchen.getSelection(cookId));
     }
 
     public void cancelOneSelected(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {

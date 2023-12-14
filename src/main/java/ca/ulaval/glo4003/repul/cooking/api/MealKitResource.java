@@ -1,18 +1,14 @@
 package ca.ulaval.glo4003.repul.cooking.api;
 
-import java.util.List;
-
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.cooking.api.assembler.MealKitsResponseAssembler;
 import ca.ulaval.glo4003.repul.cooking.api.request.ConfirmCookedRequest;
 import ca.ulaval.glo4003.repul.cooking.api.request.SelectionRequest;
-import ca.ulaval.glo4003.repul.cooking.api.response.SelectionResponse;
-import ca.ulaval.glo4003.repul.cooking.api.response.ToCookResponse;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
+import ca.ulaval.glo4003.repul.cooking.application.payload.SelectionPayload;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.middleware.Roles;
 import ca.ulaval.glo4003.repul.user.middleware.Secure;
@@ -37,7 +33,6 @@ public class MealKitResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
 
     private final CookingService cookingService;
-    private final MealKitsResponseAssembler mealKitsResponseAssembler = new MealKitsResponseAssembler();
 
     public MealKitResource(CookingService cookingService) {
         this.cookingService = cookingService;
@@ -50,9 +45,7 @@ public class MealKitResource {
     public Response getMealKitsToCook() {
         MealKitsPayload mealKitsPayload = cookingService.getMealKitsToCook();
 
-        ToCookResponse toCookResponse = mealKitsResponseAssembler.toToCookResponse(mealKitsPayload);
-
-        return Response.ok(toCookResponse).build();
+        return Response.ok(mealKitsPayload).build();
     }
 
     @POST
@@ -78,10 +71,9 @@ public class MealKitResource {
         CookUniqueIdentifier cookId =
             new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        List<MealKitUniqueIdentifier> mealKitIds = cookingService.getSelection(cookId);
+        SelectionPayload selectionPayload = cookingService.getSelection(cookId);
 
-        SelectionResponse selectionResponse = mealKitsResponseAssembler.toSelectionResponse(mealKitIds);
-        return Response.ok(selectionResponse).build();
+        return Response.ok(selectionPayload).build();
     }
 
     @POST

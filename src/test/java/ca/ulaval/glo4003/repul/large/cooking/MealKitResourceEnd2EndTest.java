@@ -15,8 +15,8 @@ import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.cooking.api.request.ConfirmCookedRequest;
 import ca.ulaval.glo4003.repul.cooking.api.request.SelectionRequest;
-import ca.ulaval.glo4003.repul.cooking.api.response.SelectionResponse;
-import ca.ulaval.glo4003.repul.cooking.api.response.ToCookResponse;
+import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
+import ca.ulaval.glo4003.repul.cooking.application.payload.SelectionPayload;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
 import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
@@ -66,7 +66,7 @@ public class MealKitResourceEnd2EndTest {
 
         Response response = given().contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:toCook");
-        ToCookResponse responseBody = response.getBody().as(ToCookResponse.class);
+        MealKitsPayload responseBody = response.getBody().as(MealKitsPayload.class);
 
         assertFalse(responseBody.mealKits().isEmpty());
         assertFalse(responseBody.totalIngredients().isEmpty());
@@ -103,7 +103,7 @@ public class MealKitResourceEnd2EndTest {
 
         Response response =
             given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:getSelection");
-        SelectionResponse responseBody = response.getBody().as(SelectionResponse.class);
+        SelectionPayload responseBody = response.getBody().as(SelectionPayload.class);
 
         assertFalse(responseBody.mealKitSelectionIds().isEmpty());
         assertEquals(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString(), responseBody.mealKitSelectionIds().get(0));
@@ -127,7 +127,7 @@ public class MealKitResourceEnd2EndTest {
             List.of(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString(), TestApplicationContext.SECOND_MEAL_KIT_ID.getUUID().toString()));
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-                .post(CONTEXT.getURI() + "mealKits:cancelSelection");
+            .post(CONTEXT.getURI() + "mealKits:cancelSelection");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -207,7 +207,7 @@ public class MealKitResourceEnd2EndTest {
 
         Response response =
             given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:getSelection");
-        SelectionResponse responseBody = response.getBody().as(SelectionResponse.class);
+        SelectionPayload responseBody = response.getBody().as(SelectionPayload.class);
         assertFalse(responseBody.mealKitSelectionIds().isEmpty());
         assertEquals(TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID().toString(), responseBody.mealKitSelectionIds().get(0));
     }
@@ -249,7 +249,7 @@ public class MealKitResourceEnd2EndTest {
     private void loginAndCancelAllSelection() {
         String accountToken = loginAsACook();
         Response response = given().contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "mealKits:cancelSelection");
+            .header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "mealKits:cancelSelection");
 
         assertEquals(204, response.getStatusCode());
     }

@@ -52,52 +52,52 @@ public class CookingServiceTest {
 
     @Test
     public void whenSelectingMealKitsToCook_shouldPersistSelection() {
-        assertEquals(0, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
 
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
 
-        assertEquals(1, cookingService.getSelection(A_COOK_ID).size());
-        assertEquals(List.of(DEFAULT_MEAL_KIT_ID), cookingService.getSelection(A_COOK_ID));
+        assertEquals(1, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
+        assertEquals(List.of(DEFAULT_MEAL_KIT_ID.getUUID().toString()), cookingService.getSelection(A_COOK_ID).mealKitSelectionIds());
     }
 
     @Test
     public void givenASelectedMealKit_whenUnselectingMealKit_ShouldPersistDeselection() {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
-        assertEquals(1, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(1, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
 
         cookingService.cancelOneSelected(A_COOK_ID, DEFAULT_MEAL_KIT_ID);
 
-        assertEquals(0, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
     }
 
     @Test
     public void givenASelectedMealKit_whenUnselectingAllMealKits_ShouldPersistDeselection() {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
-        assertEquals(1, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(1, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
 
         cookingService.cancelAllSelected(A_COOK_ID);
 
-        assertEquals(0, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
     }
 
     @Test
     public void whenConfirmingCooked_shouldRemoveMealKitFromSelection() {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
-        assertEquals(1, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(1, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
 
         cookingService.confirmCooked(A_COOK_ID, DEFAULT_MEAL_KIT_ID);
 
-        assertEquals(0, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
     }
 
     @Test
     public void givenSelectedMealKit_whenGivingMealKitToDelivery_shouldRemoveMealKitFromSelection() {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
-        assertEquals(1, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(1, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
 
         cookingService.giveMealKitToDelivery(List.of(DEFAULT_MEAL_KIT_ID));
 
-        assertEquals(0, cookingService.getSelection(A_COOK_ID).size());
+        assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
     }
 
     @Test
