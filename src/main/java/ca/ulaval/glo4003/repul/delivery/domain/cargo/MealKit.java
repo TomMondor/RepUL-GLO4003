@@ -34,7 +34,7 @@ public class MealKit {
         return lockerId;
     }
 
-    public DeliveryLocationId deliveryLocationId() {
+    public DeliveryLocationId getDeliveryLocationId() {
         return deliveryLocationId;
     }
 

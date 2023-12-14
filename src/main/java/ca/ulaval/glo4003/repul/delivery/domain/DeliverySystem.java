@@ -57,7 +57,7 @@ public class DeliverySystem {
 
         List<MealKit> mealKits = mealKitIds.stream().map(this.pendingMealKits::remove).collect(Collectors.toCollection(ArrayList::new));
 
-        mealKits.forEach(mealKit -> deliveryLocations.assignLocker(mealKit.deliveryLocationId(), mealKit));
+        mealKits.forEach(mealKit -> deliveryLocations.assignLocker(mealKit.getDeliveryLocationId(), mealKit));
 
         mealKits.forEach(MealKit::markAsReadyToBeDelivered);
 

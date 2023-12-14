@@ -24,6 +24,6 @@ public class DeliveryLocations {
     }
 
     public void unassignLocker(MealKit mealKit) {
-        deliveryLocations.get(mealKit.deliveryLocationId()).unassignLocker(mealKit);
+        deliveryLocations.get(mealKit.getDeliveryLocationId()).unassignLocker(mealKit);
     }
 }

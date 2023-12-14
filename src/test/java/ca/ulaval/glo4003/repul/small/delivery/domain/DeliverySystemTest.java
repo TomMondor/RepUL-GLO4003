@@ -520,7 +520,7 @@ public class DeliverySystemTest {
         deliverySystem.confirmDelivery(A_DELIVERY_PERSON_ID, cargoId, A_MEAL_KIT_ID);
         MealKit mealKit = deliverySystem.getCargoMealKit(cargoId, A_MEAL_KIT_ID);
         DeliveryLocation deliveryLocationOfMealKit = deliverySystem.getDeliveryLocations().stream()
-            .filter(deliveryLocation -> deliveryLocation.getLocationId().equals(mealKit.deliveryLocationId())).findFirst().get();
+            .filter(deliveryLocation -> deliveryLocation.getLocationId().equals(mealKit.getDeliveryLocationId())).findFirst().get();
         Locker locker = deliveryLocationOfMealKit.findLockerById(mealKit.getLockerId().get());
 
         assertTrue(locker.isAssigned());
@@ -543,7 +543,7 @@ public class DeliverySystemTest {
         MealKit mealKit = deliverySystem.getCargoMealKit(cargoId, A_MEAL_KIT_ID);
         MealKit anotherMealKit = deliverySystem.getCargoMealKit(cargoId, ANOTHER_MEAL_KIT_ID);
         DeliveryLocation deliveryLocationOfMealKit = deliverySystem.getDeliveryLocations().stream()
-            .filter(deliveryLocation -> deliveryLocation.getLocationId().equals(mealKit.deliveryLocationId())).findFirst().get();
+            .filter(deliveryLocation -> deliveryLocation.getLocationId().equals(mealKit.getDeliveryLocationId())).findFirst().get();
         Locker locker = deliveryLocationOfMealKit.findLockerById(mealKit.getLockerId().get());
 
         assertTrue(locker.isAssigned());
