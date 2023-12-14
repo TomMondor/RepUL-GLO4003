@@ -12,6 +12,7 @@ import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
 import ca.ulaval.glo4003.repul.user.application.UserService;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Password;
@@ -28,6 +29,8 @@ import ca.ulaval.glo4003.repul.user.infrastructure.identitymanagement.JWTTokenDe
 import ca.ulaval.glo4003.repul.user.infrastructure.identitymanagement.JWTTokenGenerator;
 import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 
+import com.auth0.jwt.algorithms.Algorithm;
+
 public class UserContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserContextInitializer.class);
     private final UniqueIdentifierFactory<SubscriberUniqueIdentifier> subscriberUniqueIdentifierFactory =
@@ -35,8 +38,10 @@ public class UserContextInitializer {
     private final RepULEventBus eventBus;
     private final PasswordEncoder passwordEncoder;
     private final UserFactory userFactory;
-    private TokenGenerator tokenGenerator = new JWTTokenGenerator();
-    private TokenDecoder tokenDecoder = new JWTTokenDecoder();
+    private final EnvParser envParser = EnvParser.getInstance();
+    private Algorithm encryptionAlgorithm = Algorithm.HMAC256(envParser.readVariable("JWT_SECRET"));
+    private TokenDecoder tokenDecoder = new JWTTokenDecoder(encryptionAlgorithm);
+    private TokenGenerator tokenGenerator = new JWTTokenGenerator(encryptionAlgorithm);
     private UserRepository userRepository = new InMemoryUserRepository();
 
     public UserContextInitializer(RepULEventBus eventBus) {

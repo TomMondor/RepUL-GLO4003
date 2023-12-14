@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
+import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
@@ -26,6 +27,8 @@ import ca.ulaval.glo4003.repul.user.infrastructure.identitymanagement.InMemoryUs
 import ca.ulaval.glo4003.repul.user.infrastructure.identitymanagement.JWTTokenDecoder;
 import ca.ulaval.glo4003.repul.user.infrastructure.identitymanagement.JWTTokenGenerator;
 
+import com.auth0.jwt.algorithms.Algorithm;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,14 +43,17 @@ public class UserServiceTest {
     private static final Name A_NAME = new Name("John Doe");
     private static final Birthdate A_BIRTHDATE = new Birthdate(LocalDate.now().minusYears(22));
     private static final Gender A_GENDER = Gender.MAN;
+    private final EnvParser envParser = EnvParser.getInstance();
+    private Algorithm encryptionAlgorithm = Algorithm.HMAC256(envParser.readVariable("JWT_SECRET"));
     private TokenDecoder tokenDecoder;
     private UserService userService;
 
     @BeforeEach
     public void createUserService() {
-        tokenDecoder = new JWTTokenDecoder();
+        tokenDecoder = new JWTTokenDecoder(encryptionAlgorithm);
         userService = new UserService(new InMemoryUserRepository(), new UserFactory(new CryptPasswordEncoder()),
-            new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class), new JWTTokenGenerator(), new CryptPasswordEncoder(), new GuavaEventBus());
+            new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class),
+            new JWTTokenGenerator(encryptionAlgorithm), new CryptPasswordEncoder(), new GuavaEventBus());
     }
 
     @Test
