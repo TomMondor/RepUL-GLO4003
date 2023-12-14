@@ -82,10 +82,11 @@ public class SubscriberEventHandlerTest {
         SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
         UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory =
             new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
+        OrdersFactory ordersFactory = new OrdersFactory(mealKitUniqueIdentifierFactory);
         SubscriptionFactory subscriptionFactory =
-            new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
-                new OrdersFactory(mealKitUniqueIdentifierFactory), List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
-        subscriptionService = new SubscriptionService(subscriptionRepository, subscriptionFactory, new LogPaymentService(), eventBus);
+            new SubscriptionFactory(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
+                ordersFactory, List.of(CURRENT_SEMESTER), List.of(A_LOCATION_ID, ANOTHER_LOCATION_ID));
+        subscriptionService = new SubscriptionService(subscriptionRepository, subscriptionFactory, new LogPaymentService(), eventBus, ordersFactory);
         subscriberEventHandler = new SubscriberEventHandler(subscriberService, subscriptionService);
         eventBus.register(subscriberEventHandler);
     }

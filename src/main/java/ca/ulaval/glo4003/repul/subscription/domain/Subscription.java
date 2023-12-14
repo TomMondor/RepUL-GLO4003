@@ -11,19 +11,20 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.order.OrderFactory;
 
 public class Subscription {
     private final SubscriberUniqueIdentifier subscriberId;
     private final SubscriptionUniqueIdentifier subscriptionId;
     private final List<Order> orders;
-    private final Frequency frequency;
-    private final DeliveryLocationId deliveryLocationId;
+    private final Optional<Frequency> frequency;
+    private final Optional<DeliveryLocationId> deliveryLocationId;
     private final LocalDate startDate;
     private final Semester semester;
     private final MealKitType mealKitType;
 
-    public Subscription(SubscriptionUniqueIdentifier subscriptionId, SubscriberUniqueIdentifier subscriberId, List<Order> orders, Frequency frequency,
-                        DeliveryLocationId deliveryLocationId, LocalDate startDate, Semester semester, MealKitType mealKitType) {
+    public Subscription(SubscriptionUniqueIdentifier subscriptionId, SubscriberUniqueIdentifier subscriberId, List<Order> orders, Optional<Frequency> frequency,
+                        Optional<DeliveryLocationId> deliveryLocationId, LocalDate startDate, Semester semester, MealKitType mealKitType) {
         this.subscriptionId = subscriptionId;
         this.subscriberId = subscriberId;
         this.orders = orders;
@@ -34,7 +35,7 @@ public class Subscription {
         this.mealKitType = mealKitType;
     }
 
-    public Frequency getFrequency() {
+    public Optional<Frequency> getFrequency() {
         return frequency;
     }
 
@@ -46,7 +47,7 @@ public class Subscription {
         return subscriberId;
     }
 
-    public DeliveryLocationId getDeliveryLocationId() {
+    public Optional<DeliveryLocationId> getDeliveryLocationId() {
         return deliveryLocationId;
     }
 
@@ -66,9 +67,24 @@ public class Subscription {
         return mealKitType;
     }
 
-    public Order confirmNextMealKit() {
+    public Order confirmNextMealKit(OrderFactory orderFactory) {
+        if (isSporadic()) {
+            return confirmSporadicMealKit(orderFactory);
+        } else {
+            return confirmNextRegularMealKit();
+        }
+    }
+
+    private Order confirmNextRegularMealKit() {
         Order order = this.findNextOrder();
         order.confirm();
+        return order;
+    }
+
+    private Order confirmSporadicMealKit(OrderFactory orderFactory) {
+        Order order = orderFactory.createSporadicOrder(semester, mealKitType);
+
+        orders.add(order);
         return order;
     }
 
@@ -112,5 +128,9 @@ public class Subscription {
 
     public List<Order> getOverdueOrders() {
         return orders.stream().filter(Order::isOverdue).toList();
+    }
+
+    private boolean isSporadic() {
+        return frequency.isEmpty();
     }
 }

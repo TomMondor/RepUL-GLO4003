@@ -2,11 +2,15 @@ package ca.ulaval.glo4003.repul.small.subscription.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
@@ -21,20 +25,29 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.order.OrderFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class SubscriptionTest {
     private static final SubscriptionUniqueIdentifier AN_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
-    private static final Frequency A_FREQUENCY = new Frequency(DayOfWeek.FRIDAY);
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
+    private static final Optional<Frequency> A_FREQUENCY = Optional.of(new Frequency(DayOfWeek.FRIDAY));
+    private static final Optional<DeliveryLocationId> A_DELIVERY_LOCATION_ID = Optional.of(DeliveryLocationId.VACHON);
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("123"), LocalDate.now().minusMonths(2), LocalDate.now().plusMonths(2));
     private static final LocalDate TODAY = LocalDate.now();
+
+    @Mock
+    private OrderFactory orderFactory;
+    @Mock
+    private Order mockOrder;
 
     @Test
     public void givenSubscriptionWithPendingOrderInTheFuture_whenConfirming_shouldConfirmNextOrderAndMarkItAsConfirmed() {
@@ -43,7 +56,7 @@ public class SubscriptionTest {
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(aPendingOrderInTheFuture), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER,
                 A_MEALKIT_TYPE);
 
-        Order confirmedOrder = subscription.confirmNextMealKit();
+        Order confirmedOrder = subscription.confirmNextMealKit(orderFactory);
 
         Assertions.assertEquals(OrderStatus.CONFIRMED, confirmedOrder.getOrderStatus());
     }
@@ -55,7 +68,7 @@ public class SubscriptionTest {
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(aPendingOrderForTomorrow), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER,
                 A_MEALKIT_TYPE);
 
-        assertThrows(OrderCannotBeConfirmedException.class, () -> subscription.confirmNextMealKit());
+        assertThrows(OrderCannotBeConfirmedException.class, () -> subscription.confirmNextMealKit(orderFactory));
     }
 
     @Test
@@ -63,7 +76,20 @@ public class SubscriptionTest {
         Subscription subscription =
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
 
-        assertThrows(NoNextOrderInSubscriptionException.class, () -> subscription.confirmNextMealKit());
+        assertThrows(NoNextOrderInSubscriptionException.class, () -> subscription.confirmNextMealKit(orderFactory));
+    }
+
+    @Test
+    public void givenSubscriptionIsSporadic_whenConfirming_shouldUseInjectedFactoryToCreateOrder() {
+        when(orderFactory.createSporadicOrder(any(Semester.class), any(MealKitType.class))).thenReturn(mockOrder);
+        Subscription subscription = new Subscription(AN_ID, A_SUBSCRIBER_ID, new ArrayList<>(),
+            Optional.empty(), Optional.empty(), TODAY, CURRENT_SEMESTER, MealKitType.STANDARD);
+        int previousOrderCount = subscription.getOrders().size();
+
+        Order confirmedOrder = subscription.confirmNextMealKit(orderFactory);
+
+        assertEquals(previousOrderCount + 1, subscription.getOrders().size());
+        assertEquals(confirmedOrder, mockOrder);
     }
 
     @Test
@@ -73,7 +99,7 @@ public class SubscriptionTest {
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrderInTheFuture), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
         subscription.declineNextMealKit();
 
-        Order confirmedOrder = subscription.confirmNextMealKit();
+        Order confirmedOrder = subscription.confirmNextMealKit(orderFactory);
 
         Assertions.assertEquals(OrderStatus.CONFIRMED, confirmedOrder.getOrderStatus());
     }
@@ -103,11 +129,19 @@ public class SubscriptionTest {
         Order anOrderInTheFuture = new OrderFixture().withDeliveryDateIn(3).build();
         Subscription subscription =
             new Subscription(AN_ID, A_SUBSCRIBER_ID, List.of(anOrderInTheFuture), A_FREQUENCY, A_DELIVERY_LOCATION_ID, TODAY, CURRENT_SEMESTER, A_MEALKIT_TYPE);
-        subscription.confirmNextMealKit();
+        subscription.confirmNextMealKit(orderFactory);
 
         Order declinedOrder = subscription.declineNextMealKit();
 
         Assertions.assertEquals(OrderStatus.DECLINED, declinedOrder.getOrderStatus());
+    }
+
+    @Test
+    public void givenNoConfirmedMealKit_whenDecliningNextMealKitForSporadicSubscription_shouldThrowNoNextOrderInSubscriptionException() {
+        Subscription subscription = new Subscription(AN_ID, A_SUBSCRIBER_ID, new ArrayList<>(),
+            Optional.empty(), Optional.empty(), TODAY, CURRENT_SEMESTER, MealKitType.STANDARD);
+
+        assertThrows(NoNextOrderInSubscriptionException.class, () -> subscription.declineNextMealKit());
     }
 
     @Test

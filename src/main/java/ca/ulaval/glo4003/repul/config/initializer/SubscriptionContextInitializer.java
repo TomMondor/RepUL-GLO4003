@@ -44,6 +44,7 @@ public class SubscriptionContextInitializer {
     private static final String END_DATE_FIELD_NAME_IN_JSON = "end_date";
     private final SubscriptionFactory subscriptionFactory;
     private final SubscriberFactory subscriberFactory = new SubscriberFactory();
+    private final OrdersFactory ordersFactory;
     private SubscriberRepository subscriberRepository = new InMemorySubscriberRepository();
     private SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
 
@@ -52,8 +53,11 @@ public class SubscriptionContextInitializer {
         List<DeliveryLocationId> deliveryLocationIds = new ArrayList<>(EnumSet.allOf(DeliveryLocationId.class));
 
         UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class);
-        this.subscriptionFactory = new SubscriptionFactory(mealKitUniqueIdentifierFactory, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class),
-            new OrdersFactory(mealKitUniqueIdentifierFactory), semesters, deliveryLocationIds);
+        ordersFactory = new OrdersFactory(mealKitUniqueIdentifierFactory);
+        UniqueIdentifierFactory<SubscriptionUniqueIdentifier> subscriptionUniqueIdentifierFactory =
+            new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class);
+
+        this.subscriptionFactory = new SubscriptionFactory(subscriptionUniqueIdentifierFactory, ordersFactory, semesters, deliveryLocationIds);
     }
 
     public SubscriptionContextInitializer withSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
@@ -78,7 +82,7 @@ public class SubscriptionContextInitializer {
 
     public SubscriptionService createSubscriptionService(RepULEventBus eventBus, PaymentService paymentService) {
         LOGGER.info("Creating Subscription service");
-        SubscriptionService service = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus);
+        SubscriptionService service = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus, ordersFactory);
         eventBus.register(service);
         return service;
     }

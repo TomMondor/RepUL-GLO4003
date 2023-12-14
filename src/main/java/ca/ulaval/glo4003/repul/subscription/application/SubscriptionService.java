@@ -21,24 +21,36 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.order.OrderFactory;
 
 public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionFactory subscriptionFactory;
     private final RepULEventBus eventBus;
     private final PaymentService paymentService;
+    private OrderFactory orderFactory;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionFactory subscriptionFactory, PaymentService paymentService,
-                               RepULEventBus eventBus) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, SubscriptionFactory subscriptionFactory,
+                               PaymentService paymentService, RepULEventBus eventBus,
+                               OrderFactory orderFactory) {
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionFactory = subscriptionFactory;
         this.eventBus = eventBus;
         this.paymentService = paymentService;
+        this.orderFactory = orderFactory;
     }
 
-    public SubscriptionUniqueIdentifier createSubscription(SubscriberUniqueIdentifier subscriberId, DeliveryLocationId deliveryLocationId, DayOfWeek dayOfWeek,
-                                                           MealKitType mealKitType) {
+    public SubscriptionUniqueIdentifier createSubscription(SubscriberUniqueIdentifier subscriberId, DeliveryLocationId
+        deliveryLocationId, DayOfWeek dayOfWeek, MealKitType mealKitType) {
         Subscription subscription = subscriptionFactory.createSubscription(subscriberId, deliveryLocationId, dayOfWeek, mealKitType);
+
+        subscriptionRepository.save(subscription);
+
+        return subscription.getSubscriptionId();
+    }
+
+    public SubscriptionUniqueIdentifier createSporadicSubscription(SubscriberUniqueIdentifier subscriberId) {
+        Subscription subscription = subscriptionFactory.createSubscription(subscriberId);
 
         subscriptionRepository.save(subscription);
 
@@ -110,7 +122,7 @@ public class SubscriptionService {
     public void confirmNextMealKitForSubscription(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId) {
         Subscription subscription = getSubscription(subscriberId, subscriptionId);
 
-        subscription.confirmNextMealKit();
+        subscription.confirmNextMealKit(orderFactory);
 
         subscriptionRepository.save(subscription);
     }
@@ -170,7 +182,7 @@ public class SubscriptionService {
             subscription.getSubscriptionId(),
             subscription.getSubscriberId(),
             subscription.getMealKitType(),
-            Optional.of(subscription.getDeliveryLocationId()),
+            subscription.getDeliveryLocationId(),
             confirmedOrder.getDeliveryDate()
         );
 

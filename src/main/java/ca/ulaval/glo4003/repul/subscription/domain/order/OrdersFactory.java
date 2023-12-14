@@ -8,9 +8,11 @@ import java.util.List;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
 
-public class OrdersFactory {
+public class OrdersFactory implements OrderFactory {
     UniqueIdentifierFactory<MealKitUniqueIdentifier> uniqueIdentifierFactory;
 
     public OrdersFactory(UniqueIdentifierFactory<MealKitUniqueIdentifier> uniqueIdentifierFactory) {
@@ -40,5 +42,14 @@ public class OrdersFactory {
             }
         }
         return firstOrderDateCandidate;
+    }
+
+    public Order createSporadicOrder(Semester semester, MealKitType mealKitType) {
+        LocalDate dateOfReceipt = LocalDate.now().plusDays(2);
+        if (!semester.includes(dateOfReceipt)) {
+            throw new OrderCannotBeConfirmedException();
+        }
+
+        return new Order(uniqueIdentifierFactory.generate(), mealKitType, dateOfReceipt, OrderStatus.TO_COOK);
     }
 }

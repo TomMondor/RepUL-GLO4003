@@ -46,7 +46,7 @@ public class SubscriptionFactoryTest {
         OrdersFactory ordersFactory = new OrdersFactory(mealKitUniqueIdentifierFactory);
         Semester semester = new Semester(new SemesterCode("Automne"), TOMORROW.minusDays(2), TOMORROW.plusDays(5));
         List<Semester> semesters = List.of(semester);
-        return new SubscriptionFactory(mealKitUniqueIdentifierFactory, subscriptionUniqueIdentifierFactory, ordersFactory, semesters,
+        return new SubscriptionFactory(subscriptionUniqueIdentifierFactory, ordersFactory, semesters,
             List.of(DeliveryLocationId.VACHON));
     }
 }

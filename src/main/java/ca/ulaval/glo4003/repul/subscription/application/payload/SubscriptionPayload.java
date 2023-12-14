@@ -12,10 +12,15 @@ public record SubscriptionPayload(
 ) {
 
     public static SubscriptionPayload from(Subscription subscription) {
+        String frequency = (subscription.getFrequency().isPresent()) ?
+            (subscription.getFrequency().get().dayOfWeek().toString()) : "Sporadic";
+        String deliveryLocationId = (subscription.getDeliveryLocationId().isPresent()) ?
+            (subscription.getDeliveryLocationId().get().toString()) : "In kitchen pick up";
+
         return new SubscriptionPayload(
             subscription.getSubscriptionId().getUUID().toString(),
-            subscription.getFrequency().dayOfWeek().toString(),
-            subscription.getDeliveryLocationId().toString(),
+            frequency,
+            deliveryLocationId,
             subscription.getStartDate().toString(),
             subscription.getMealKitType().toString(),
             subscription.getSemester().toString()

@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
@@ -20,8 +21,8 @@ public class SubscriptionFixture {
     private SubscriberUniqueIdentifier subscriberId;
     private SubscriptionUniqueIdentifier subscriptionId;
     private List<Order> orders;
-    private Frequency frequency;
-    private DeliveryLocationId deliveryLocationId;
+    private Optional<Frequency> frequency;
+    private Optional<DeliveryLocationId> deliveryLocationId;
     private LocalDate startDate;
     private Semester semester;
     private MealKitType mealKitType;
@@ -30,8 +31,8 @@ public class SubscriptionFixture {
         subscriptionId = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
         subscriberId = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
         orders = new ArrayList<>();
-        frequency = new Frequency(DayOfWeek.FRIDAY);
-        deliveryLocationId = DeliveryLocationId.VACHON;
+        frequency = Optional.of(new Frequency(DayOfWeek.FRIDAY));
+        deliveryLocationId = Optional.of(DeliveryLocationId.VACHON);
         startDate = LocalDate.now();
         semester = new Semester(new SemesterCode("A23"), startDate.minusMonths(1), startDate.plusMonths(2));
         mealKitType = MealKitType.STANDARD;
@@ -58,11 +59,21 @@ public class SubscriptionFixture {
     }
 
     public SubscriptionFixture withFrequency(Frequency frequency) {
+        this.frequency = Optional.of(frequency);
+        return this;
+    }
+
+    public SubscriptionFixture withFrequency(Optional<Frequency> frequency) {
         this.frequency = frequency;
         return this;
     }
 
     public SubscriptionFixture withPickupLocationId(DeliveryLocationId deliveryLocationId) {
+        this.deliveryLocationId = Optional.of(deliveryLocationId);
+        return this;
+    }
+
+    public SubscriptionFixture withPickupLocationId(Optional<DeliveryLocationId> deliveryLocationId) {
         this.deliveryLocationId = deliveryLocationId;
         return this;
     }

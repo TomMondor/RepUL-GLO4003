@@ -29,6 +29,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.order.OrderFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,7 +48,11 @@ public class SubscriptionServiceTest {
     @Mock
     private Subscription mockSubscription;
     @Mock
+    private Subscription mockSporadicSubscription;
+    @Mock
     private SubscriptionRepository mockSubscriptionRepository;
+    @Mock
+    private OrderFactory mockOrderFactory;
     @Mock
     private SubscriptionFactory mockSubscriptionFactory;
     @Mock
@@ -57,7 +62,7 @@ public class SubscriptionServiceTest {
 
     @BeforeEach
     public void createSubscriptionService() {
-        subscriptionService = new SubscriptionService(mockSubscriptionRepository, mockSubscriptionFactory, mockPaymentService, mockEventBus);
+        subscriptionService = new SubscriptionService(mockSubscriptionRepository, mockSubscriptionFactory, mockPaymentService, mockEventBus, mockOrderFactory);
     }
 
     @Test
@@ -68,6 +73,16 @@ public class SubscriptionServiceTest {
 
         UniqueIdentifier subscriptionId =
             subscriptionService.createSubscription(AN_ACCOUNT_ID, A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEALKIT_TYPE));
+
+        assertEquals(A_SUBSCRIPTION_ID, subscriptionId);
+    }
+
+    @Test
+    public void whenCreatingSporadicSubscription_shouldReturnSubscriptionId() {
+        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class))).thenReturn(mockSporadicSubscription);
+        when(mockSporadicSubscription.getSubscriptionId()).thenReturn(A_SUBSCRIPTION_ID);
+
+        UniqueIdentifier subscriptionId = subscriptionService.createSporadicSubscription(AN_ACCOUNT_ID);
 
         assertEquals(A_SUBSCRIPTION_ID, subscriptionId);
     }

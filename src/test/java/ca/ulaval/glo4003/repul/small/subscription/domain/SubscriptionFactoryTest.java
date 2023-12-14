@@ -45,8 +45,6 @@ public class SubscriptionFactoryTest {
     @Mock
     private OrdersFactory ordersFactory;
     @Mock
-    private UniqueIdentifierFactory<MealKitUniqueIdentifier> mealKitUniqueIdentifierFactory;
-    @Mock
     private UniqueIdentifierFactory<SubscriptionUniqueIdentifier> subscriptionUniqueIdentifierFactory;
 
     private SubscriptionFactory subscriptionFactory;
@@ -54,7 +52,7 @@ public class SubscriptionFactoryTest {
     @BeforeEach
     public void createSubscriptionFactory() {
         subscriptionFactory =
-            new SubscriptionFactory(mealKitUniqueIdentifierFactory, subscriptionUniqueIdentifierFactory, ordersFactory, List.of(CURRENT_SEMESTER),
+            new SubscriptionFactory(subscriptionUniqueIdentifierFactory, ordersFactory, List.of(CURRENT_SEMESTER),
                 List.of(A_VALID_DELIVERY_LOCATION_ID, ANOTHER_VALID_DELIVERY_LOCATION_ID));
     }
 
@@ -68,8 +66,8 @@ public class SubscriptionFactoryTest {
 
         assertEquals(A_UNIQUE_SUBSCRIPTION_IDENTIFIER, subscription.getSubscriptionId());
         assertEquals(A_SUBSCRIBER_ID, subscription.getSubscriberId());
-        assertEquals(DayOfWeek.from(chosenDayOfWeek), subscription.getFrequency().dayOfWeek());
-        assertEquals(A_VALID_DELIVERY_LOCATION_ID, subscription.getDeliveryLocationId());
+        assertEquals(DayOfWeek.from(chosenDayOfWeek), subscription.getFrequency().get().dayOfWeek());
+        assertEquals(A_VALID_DELIVERY_LOCATION_ID, subscription.getDeliveryLocationId().get());
         assertEquals(LocalDate.now(), subscription.getStartDate());
         assertEquals(CURRENT_SEMESTER, subscription.getSemester());
         Assertions.assertEquals(A_MEALKIT_TYPE, subscription.getMealKitType());
@@ -80,7 +78,7 @@ public class SubscriptionFactoryTest {
     public void givenUnsupportedLocationId_whenCreatingSubscription_shouldThrowInvalidLocationException() {
         DeliveryLocationId unsupportedDeliveryLocationId = DeliveryLocationId.VACHON;
         subscriptionFactory =
-            new SubscriptionFactory(mealKitUniqueIdentifierFactory, subscriptionUniqueIdentifierFactory, ordersFactory, List.of(CURRENT_SEMESTER), List.of());
+            new SubscriptionFactory(subscriptionUniqueIdentifierFactory, ordersFactory, List.of(CURRENT_SEMESTER), List.of());
 
         assertThrows(InvalidLocationIdException.class,
             () -> subscriptionFactory.createSubscription(A_SUBSCRIBER_ID, unsupportedDeliveryLocationId, A_WEEKDAY, A_MEALKIT_TYPE));
@@ -90,10 +88,42 @@ public class SubscriptionFactoryTest {
     public void givenCurrentDateNotInSupportedSemesters_whenCreatingSubscription_shouldThrowSemesterNotFoundException() {
         Semester alreadyEndedSemester = new Semester(new SemesterCode("A23"), LocalDate.now().minusDays(90), LocalDate.now().minusDays(3));
         subscriptionFactory =
-            new SubscriptionFactory(mealKitUniqueIdentifierFactory, subscriptionUniqueIdentifierFactory, ordersFactory, List.of(alreadyEndedSemester),
+            new SubscriptionFactory(subscriptionUniqueIdentifierFactory, ordersFactory, List.of(alreadyEndedSemester),
                 List.of(A_VALID_DELIVERY_LOCATION_ID));
 
         assertThrows(SemesterNotFoundException.class,
             () -> subscriptionFactory.createSubscription(A_SUBSCRIBER_ID, A_VALID_DELIVERY_LOCATION_ID, A_WEEKDAY, A_MEALKIT_TYPE));
+    }
+
+    @Test
+    public void whenCreatingSporadicSubscription_shouldCreateSubscriptionWithSpecifiedParameters() {
+        when(subscriptionUniqueIdentifierFactory.generate()).thenReturn(A_UNIQUE_SUBSCRIPTION_IDENTIFIER);
+
+        Subscription subscription = subscriptionFactory.createSubscription(A_SUBSCRIBER_ID);
+
+        assertEquals(A_UNIQUE_SUBSCRIPTION_IDENTIFIER, subscription.getSubscriptionId());
+        assertEquals(A_SUBSCRIBER_ID, subscription.getSubscriberId());
+        assertEquals(LocalDate.now(), subscription.getStartDate());
+        assertEquals(CURRENT_SEMESTER, subscription.getSemester());
+        Assertions.assertEquals(MealKitType.STANDARD, subscription.getMealKitType());
+    }
+
+    @Test
+    public void whenCreatingSporadicSubscription_shouldCreateSubscriptionWithoutDeliveryLocationAndFrequency() {
+        when(subscriptionUniqueIdentifierFactory.generate()).thenReturn(A_UNIQUE_SUBSCRIPTION_IDENTIFIER);
+
+        Subscription subscription = subscriptionFactory.createSubscription(A_SUBSCRIBER_ID);
+
+        assertFalse(subscription.getFrequency().isPresent());
+        assertFalse(subscription.getDeliveryLocationId().isPresent());
+    }
+
+    @Test
+    public void whenCreatingSporadicSubscription_shouldCreateSubscriptionWithoutOrders() {
+        when(subscriptionUniqueIdentifierFactory.generate()).thenReturn(A_UNIQUE_SUBSCRIPTION_IDENTIFIER);
+
+        Subscription subscription = subscriptionFactory.createSubscription(A_SUBSCRIBER_ID);
+
+        assertTrue(subscription.getOrders().isEmpty());
     }
 }
