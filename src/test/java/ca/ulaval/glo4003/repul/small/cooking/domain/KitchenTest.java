@@ -23,7 +23,6 @@ import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitCannotBeSelectedException;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
@@ -231,10 +230,10 @@ public class KitchenTest {
     }
 
     @Test
-    public void givenMealKitNotCookedYet_whenPickingUpNonDeliverableMealKit_shouldThrowMealKitNotCookedException() {
+    public void givenMealKitNotCookedYet_whenPickingUpNonDeliverableMealKit_shouldThrowMealKitNotFoundException() {
         kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, Optional.empty());
 
-        assertThrows(MealKitNotCookedException.class, () -> kitchen.pickUpNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEALKIT_ID));
+        assertThrows(MealKitNotFoundException.class, () -> kitchen.pickUpNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEALKIT_ID));
     }
 
     @Test
