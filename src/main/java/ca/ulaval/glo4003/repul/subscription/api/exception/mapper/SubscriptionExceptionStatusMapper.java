@@ -4,12 +4,14 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.subscription.application.exception.CardNumberAlreadyInUseException;
+import ca.ulaval.glo4003.repul.subscription.application.exception.InvalidSubscriptionTypeException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidBirthdateException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidGenderException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidNameException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSemesterCodeException;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSubscriptionQueryException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
@@ -48,5 +50,7 @@ public class SubscriptionExceptionStatusMapper {
         exceptionMapper.put(InvalidBirthdateException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidGenderException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidNameException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidSubscriptionQueryException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidSubscriptionTypeException.class, Response.Status.BAD_REQUEST);
     }
 }
