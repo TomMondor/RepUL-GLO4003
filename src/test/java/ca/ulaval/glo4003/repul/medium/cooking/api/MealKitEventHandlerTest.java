@@ -20,6 +20,7 @@ import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
+import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitCannotBeSelectedException;
@@ -80,7 +81,7 @@ public class MealKitEventHandlerTest {
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {
         Kitchen kitchen = new Kitchen(new MealKitFactory());
-        kitchen.hireCook(TestApplicationContext.cook);
+        kitchen.hireCook(new Cook(TestApplicationContext.COOK_ID));
         kitchen.createMealKitInPreparation(
             DEFAULT_MEAL_KIT_ID,
             A_SUBSCRIPTION_ID,

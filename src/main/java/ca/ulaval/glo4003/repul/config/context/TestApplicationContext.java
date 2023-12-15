@@ -75,7 +75,6 @@ public class TestApplicationContext implements ApplicationContext {
     public static final String CLIENT_EMAIL = "alexandra@ulaval.ca";
     public static final String CLIENT_PASSWORD = "alexandra123";
     public static final CookUniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
-    public static Cook cook = new Cook(COOK_ID);
     public static final String COOK_EMAIL = "paul@ulaval.ca";
     public static final String COOK_PASSWORD = "paul123";
     public static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
@@ -110,6 +109,7 @@ public class TestApplicationContext implements ApplicationContext {
     public static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     public static final Optional<DeliveryLocationId> OPTIONAL_OF_A_DELIVERY_LOCATION_ID = Optional.of(A_DELIVERY_LOCATION_ID);
     public static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Entrée Vachon #1", 30);
+    private static Cook cook = new Cook(COOK_ID);
     private static final Order FIRST_MEAL_KIT_ORDER =
         new Order(FIRST_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
     private static final Order SECOND_MEAL_KIT_ORDER =
