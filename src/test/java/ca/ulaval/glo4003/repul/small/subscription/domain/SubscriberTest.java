@@ -271,14 +271,14 @@ public class SubscriberTest {
     }
 
     @Test
-    public void givenNonSporadicSubscriptionWithActiveReadyForPickupOrder_whenConfirmingSubscription_shouldThrowOrderCannotBeConfirmedException() {
-        Subscription aSubscriptionWithActiveReadyForPickupOrder =
+    public void givenNonSporadicSubscriptionWithActiveReadyForPickUpOrder_whenConfirmingSubscription_shouldThrowOrderCannotBeConfirmedException() {
+        Subscription aSubscriptionWithActiveReadyForPickUpOrder =
             new SubscriptionFixture().withOrders(List.of(A_READY_FOR_PICKUP_ORDER)).build();
-        subscriber.addSubscription(aSubscriptionWithActiveReadyForPickupOrder);
+        subscriber.addSubscription(aSubscriptionWithActiveReadyForPickUpOrder);
 
         assertThrows(
             OrderCannotBeConfirmedException.class,
-            () -> subscriber.confirm(aSubscriptionWithActiveReadyForPickupOrder.getSubscriptionId(), orderFactory, paymentService));
+            () -> subscriber.confirm(aSubscriptionWithActiveReadyForPickUpOrder.getSubscriptionId(), orderFactory, paymentService));
     }
 
     @Test
@@ -404,14 +404,14 @@ public class SubscriberTest {
     }
 
     @Test
-    public void givenSubscriptionWithReadyForPickupOrder_whenDeclining_shouldThrowOrderCannotBeDeclinedException() {
-        Subscription aSubscriptionWithReadyForPickupOrder =
+    public void givenSubscriptionWithReadyForPickUpOrder_whenDeclining_shouldThrowOrderCannotBeDeclinedException() {
+        Subscription aSubscriptionWithReadyForPickUpOrder =
             new SubscriptionFixture().withOrders(List.of(A_READY_FOR_PICKUP_ORDER)).build();
-        subscriber.addSubscription(aSubscriptionWithReadyForPickupOrder);
+        subscriber.addSubscription(aSubscriptionWithReadyForPickUpOrder);
 
         assertThrows(
             OrderCannotBeDeclinedException.class,
-            () -> subscriber.decline(aSubscriptionWithReadyForPickupOrder.getSubscriptionId()));
+            () -> subscriber.decline(aSubscriptionWithReadyForPickUpOrder.getSubscriptionId()));
     }
 
     @Test
@@ -519,10 +519,10 @@ public class SubscriberTest {
     }
 
     @Test
-    public void givenSubscriptionWithReadyForPickupOrder_whenProcessingOrders_shouldNotProcessOrder() {
-        Subscription aSubscriptionWithReadyForPickupOrder =
+    public void givenSubscriptionWithReadyForPickUpOrder_whenProcessingOrders_shouldNotProcessOrder() {
+        Subscription aSubscriptionWithReadyForPickUpOrder =
             new SubscriptionFixture().withOrders(List.of(A_READY_FOR_PICKUP_ORDER)).build();
-        subscriber.addSubscription(aSubscriptionWithReadyForPickupOrder);
+        subscriber.addSubscription(aSubscriptionWithReadyForPickUpOrder);
 
         subscriber.processOrders(paymentService);
 

@@ -15,7 +15,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.InP
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.PendingStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.PickedUpStatus;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.ReadyForPickupStatus;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.ReadyForPickUpStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.Status;
 
 public class Order {
@@ -51,7 +51,7 @@ public class Order {
             case IN_DELIVERY:
                 return new InDeliveryStatus(this);
             case READY_FOR_PICK_UP:
-                return new ReadyForPickupStatus(this);
+                return new ReadyForPickUpStatus(this);
             case PICKED_UP:
                 return new PickedUpStatus(this);
             default:

@@ -5,7 +5,6 @@ import java.util.List;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
@@ -36,13 +35,8 @@ public class SubscriberEventHandler {
     }
 
     @Subscribe
-    public void handleCanceledCargoEvent(CanceledCargoEvent event) {
-        subscriberService.updateOrdersToInPreparation(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
-    }
-
-    @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent event) {
-        subscriberService.updateOrderToReadyToPickup(event.mealKitDto.mealKitId());
+        subscriberService.updateOrderToReadyToPickUp(event.mealKitDto.mealKitId());
     }
 
     @Subscribe

@@ -86,7 +86,7 @@ public class DeliveryEventHandlerTest {
 
         eventBus.publish(event);
 
-        assertEquals(1, deliverySystemPersister.get().getDeliveryPeople().size());
+        assertEquals(1, deliverySystemPersister.get().getDeliveryPeopleIds().size());
     }
 
     @Test
@@ -162,7 +162,7 @@ public class DeliveryEventHandlerTest {
     }
 
     private void givenPickUpCargo(DeliveryPersonUniqueIdentifier accountId, CargoUniqueIdentifier cargoId) {
-        deliveryService.pickupCargo(accountId, cargoId);
+        deliveryService.pickUpCargo(accountId, cargoId);
     }
 
     private void givenDeliveredMealKit(DeliveryPersonUniqueIdentifier accountId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {

@@ -16,7 +16,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
-import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
@@ -51,37 +51,19 @@ public class CargoResourceTest {
     }
 
     @Test
-    public void whenCancellingCargo_shouldCancelCargo() {
+    public void whenPickingUpCargo_shouldPickUpCargo() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
-        cargoResource.cancelCargo(requestContext, A_CARGO_ID);
+        cargoResource.pickUpCargo(requestContext, A_CARGO_ID);
 
-        verify(deliveryService).cancelCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
-    }
-
-    @Test
-    public void whenCancellingCargo_shouldReturnNoContent() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
-
-        Response response = cargoResource.cancelCargo(requestContext, A_CARGO_ID);
-
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void whenPickingUpCargo_shouldPickupCargo() {
-        given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
-
-        cargoResource.pickupCargo(requestContext, A_CARGO_ID);
-
-        verify(deliveryService).pickupCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
+        verify(deliveryService).pickUpCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER);
     }
 
     @Test
     public void whenPickingUpCargo_shouldReturnNoContent() {
         given(requestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER.getUUID().toString());
 
-        Response response = cargoResource.pickupCargo(requestContext, A_CARGO_ID);
+        Response response = cargoResource.pickUpCargo(requestContext, A_CARGO_ID);
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }

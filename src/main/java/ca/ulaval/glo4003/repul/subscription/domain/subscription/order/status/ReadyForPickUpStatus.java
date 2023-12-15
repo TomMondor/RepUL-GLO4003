@@ -6,8 +6,8 @@ import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfir
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeDeclinedException;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 
-public class ReadyForPickupStatus extends Status {
-    public ReadyForPickupStatus(Order order) {
+public class ReadyForPickUpStatus extends Status {
+    public ReadyForPickUpStatus(Order order) {
         super(order);
     }
 

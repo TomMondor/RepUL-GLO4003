@@ -53,7 +53,7 @@ public class CargoResourceEnd2EndTest {
     }
 
     @Test
-    public void whenGettingCargosReadyToPickUp_shouldReturnCargosAvailableForPickup() {
+    public void whenGettingCargosReadyToPickUp_shouldReturnCargosAvailableForPickUp() {
         String accountToken = loginAsADeliveryPerson();
 
         Response response = given().header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "cargos:toPickUp");
@@ -67,7 +67,7 @@ public class CargoResourceEnd2EndTest {
     @Test
     public void whenPickingUpCargo_shouldReturn204() {
         String accountToken = loginAsADeliveryPerson();
-        String cargoId = getCargoIdAvailableForPickup(accountToken);
+        String cargoId = getCargoIdAvailableForPickUp(accountToken);
 
         Response response = given().header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "cargos/" + cargoId + ":pickUp");
 
@@ -75,33 +75,10 @@ public class CargoResourceEnd2EndTest {
     }
 
     @Test
-    public void whenCancelPickUp_shouldReturn204() {
-        String accountToken = loginAsADeliveryPerson();
-        String cargoId = getCargoIdAvailableForPickup(accountToken);
-        pickupCargo(accountToken, cargoId);
-
-        Response response = given().header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "cargos/" + cargoId + ":cancel");
-
-        assertEquals(204, response.getStatusCode());
-    }
-
-    @Test
-    public void givenDifferentDeliveryPerson_whenCancelPickUp_shouldReturn400() {
-        String accountToken = loginAsADeliveryPerson();
-        String cargoId = getCargoIdAvailableForPickup(accountToken);
-        pickupCargo(accountToken, cargoId);
-        String anotherAccountToken = loginAsADifferentDeliveryPerson();
-
-        Response response = given().header("Authorization", "Bearer " + anotherAccountToken).post(CONTEXT.getURI() + "cargos/" + cargoId + ":cancel");
-
-        assertEquals(400, response.getStatusCode());
-    }
-
-    @Test
     public void whenConfirmingDelivery_shouldReturn204() {
         String accountToken = loginAsADeliveryPerson();
-        String cargoId = getCargoIdAvailableForPickup(accountToken);
-        pickupCargo(accountToken, cargoId);
+        String cargoId = getCargoIdAvailableForPickUp(accountToken);
+        pickUpCargo(accountToken, cargoId);
 
         Response response = given().header("Authorization", "Bearer " + accountToken)
             .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.getUUID().toString() + ":confirm");
@@ -112,8 +89,8 @@ public class CargoResourceEnd2EndTest {
     @Test
     public void whenRecallingMealKitInCargo_shouldReturn200() {
         String accountToken = loginAsADeliveryPerson();
-        String cargoId = getCargoIdAvailableForPickup(accountToken);
-        pickupCargo(accountToken, cargoId);
+        String cargoId = getCargoIdAvailableForPickUp(accountToken);
+        pickUpCargo(accountToken, cargoId);
         confirmDelivery(accountToken, cargoId);
 
         Response response = given().header("Authorization", "Bearer " + accountToken)
@@ -139,14 +116,14 @@ public class CargoResourceEnd2EndTest {
         return loginResponse.getBody().as(LoginResponse.class).token();
     }
 
-    private String getCargoIdAvailableForPickup(String accountToken) {
+    private String getCargoIdAvailableForPickUp(String accountToken) {
         Response response = given().header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "cargos:toPickUp");
         CargosPayload actualResponse = response.getBody().as(CargosPayload.class);
 
         return actualResponse.cargoPayloads().stream().findFirst().get().cargoId();
     }
 
-    private void pickupCargo(String accountToken, String cargoId) {
+    private void pickUpCargo(String accountToken, String cargoId) {
         given().header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "cargos/" + cargoId + ":pickUp");
     }
 

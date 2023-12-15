@@ -114,7 +114,7 @@ public class Kitchen {
         kitchenMealKits.removeMealKits(mealKitIds);
     }
 
-    public MealKit pickupNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
+    public MealKit pickUpNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
         return kitchenMealKits.pickUpNonDeliverableMealKit(subscriberId, mealKitId);
     }
 }

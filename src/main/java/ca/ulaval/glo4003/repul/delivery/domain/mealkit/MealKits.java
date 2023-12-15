@@ -62,10 +62,6 @@ public class MealKits {
         mealKits.values().forEach(MealKit::markAsPickedUp);
     }
 
-    public List<MealKit> getMealKitsNotDelivered() {
-        return mealKits.values().stream().filter(MealKit::isNotAlreadyDelivered).toList();
-    }
-
     public boolean isEmpty() {
         return mealKits.isEmpty();
     }

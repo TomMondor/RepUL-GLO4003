@@ -44,7 +44,7 @@ public class SubscriptionsPayloadTest {
                 SUBSCRIPTION_START_DATE.toString(), SUBSCRIPTION_MEALKIT_TYPE.toString(), SEMESTER.toString())));
         Subscription subscription =
             new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER)).withFrequency(Optional.of(SUBSCRIPTION_FREQUENCY))
-                .withPickupLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE).withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER)
+                .withPickUpLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE).withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER)
                 .build();
 
         SubscriptionsPayload actualSubscriptionsPayload = SubscriptionsPayload.from(List.of(subscription));

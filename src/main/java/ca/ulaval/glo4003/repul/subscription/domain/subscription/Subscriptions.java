@@ -75,10 +75,10 @@ public class Subscriptions {
         }
     }
 
-    public void updateToReadyForPickup(MealKitUniqueIdentifier orderId) {
+    public void updateToReadyForPickUp(MealKitUniqueIdentifier orderId) {
         for (Subscription subscription : subscriptions.values()) {
             if (subscription.hasOrder(orderId)) {
-                subscription.updateToReadyForPickup(orderId);
+                subscription.updateToReadyForPickUp(orderId);
                 break;
             }
         }

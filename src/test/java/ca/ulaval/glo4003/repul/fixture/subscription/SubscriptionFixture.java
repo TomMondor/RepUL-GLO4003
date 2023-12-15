@@ -56,12 +56,12 @@ public class SubscriptionFixture {
         return this;
     }
 
-    public SubscriptionFixture withPickupLocationId(DeliveryLocationId deliveryLocationId) {
+    public SubscriptionFixture withPickUpLocationId(DeliveryLocationId deliveryLocationId) {
         this.deliveryLocationId = Optional.of(deliveryLocationId);
         return this;
     }
 
-    public SubscriptionFixture withPickupLocationId(Optional<DeliveryLocationId> deliveryLocationId) {
+    public SubscriptionFixture withPickUpLocationId(Optional<DeliveryLocationId> deliveryLocationId) {
         this.deliveryLocationId = deliveryLocationId;
         return this;
     }

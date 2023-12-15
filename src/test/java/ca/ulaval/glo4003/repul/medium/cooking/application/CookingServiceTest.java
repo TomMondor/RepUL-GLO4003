@@ -111,7 +111,7 @@ public class CookingServiceTest {
 
         cookingService.confirmCooked(A_COOK_ID, A_MEAL_KIT_ID);
 
-        assertDoesNotThrow(() -> cookingService.pickupNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEAL_KIT_ID));
+        assertDoesNotThrow(() -> cookingService.pickUpNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEAL_KIT_ID));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class CookingServiceTest {
 
         cookingService.confirmCooked(A_COOK_ID, A_MEAL_KIT_ID);
 
-        assertThrows(MealKitNotForKitchenPickUpException.class, () -> cookingService.pickupNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEAL_KIT_ID));
+        assertThrows(MealKitNotForKitchenPickUpException.class, () -> cookingService.pickUpNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEAL_KIT_ID));
     }
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {

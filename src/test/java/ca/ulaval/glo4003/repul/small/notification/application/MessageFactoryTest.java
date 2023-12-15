@@ -13,7 +13,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitToDeliverDto;
-import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
 import ca.ulaval.glo4003.repul.notification.application.MessageFactory;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 

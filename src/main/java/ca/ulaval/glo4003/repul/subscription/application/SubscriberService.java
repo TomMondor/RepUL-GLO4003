@@ -152,10 +152,10 @@ public class SubscriberService {
         }
     }
 
-    public void updateOrderToReadyToPickup(MealKitUniqueIdentifier orderId) {
+    public void updateOrderToReadyToPickUp(MealKitUniqueIdentifier orderId) {
         Subscriber subscriber = subscriberRepository.findByOrderId(orderId);
 
-        subscriber.updateOrderToReadyToPickup(orderId);
+        subscriber.updateOrderToReadyToPickUp(orderId);
 
         subscriberRepository.save(subscriber);
     }

@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.delivery.domain.Locker;
-import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.Locker;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 

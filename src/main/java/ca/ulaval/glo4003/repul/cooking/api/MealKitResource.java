@@ -146,11 +146,11 @@ public class MealKitResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/mealKits/{mealKitId}:pickUp")
-    public Response pickupMealKit(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
+    public Response pickUpMealKit(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom((String) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY));
 
-        cookingService.pickupNonDeliverableMealKit(subscriberId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
+        cookingService.pickUpNonDeliverableMealKit(subscriberId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
 
         return Response.noContent().build();
     }

@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.delivery.domain;
+package ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker;
 
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidLockerIdException;
 

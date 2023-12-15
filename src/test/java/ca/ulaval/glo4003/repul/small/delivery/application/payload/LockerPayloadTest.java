@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.small.delivery.application.payload;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.delivery.application.payload.LockerPayload;
-import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

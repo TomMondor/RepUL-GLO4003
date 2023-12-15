@@ -107,13 +107,13 @@ public class LockerAuthorizationResourceEnd2EndTest {
         String cargoId = cargoResponse.cargoId();
         MealKitPayload mealKitResponse = cargoResponse.mealKitsPayload().stream().filter(mealKit -> mealKit.mealKitId().equals(mealKitId)).findFirst().get();
         String lockerId = TestApplicationContext.A_DELIVERY_LOCATION.getName() + " " + mealKitResponse.lockerNumber();
-        pickupCargo(accountToken, cargoId);
+        pickUpCargo(accountToken, cargoId);
 
         given().header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + mealKitId + ":confirm");
         return lockerId;
     }
 
-    private void pickupCargo(String accountToken, String cargoId) {
+    private void pickUpCargo(String accountToken, String cargoId) {
         given().header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "cargos/" + cargoId + ":pickUp");
     }
 }

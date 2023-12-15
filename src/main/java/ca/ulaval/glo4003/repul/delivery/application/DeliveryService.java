@@ -12,7 +12,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
-import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitToDeliverDto;
@@ -21,8 +20,8 @@ import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
-import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 
@@ -83,7 +82,7 @@ public class DeliveryService {
             mealKit -> new MealKitToDeliverDto(mealKit.getDeliveryLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())).toList();
 
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent = new MealKitReceivedForDeliveryEvent(
-            cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeople(),
+            cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeopleIds(),
             mealKitToDeliverDtos);
         eventBus.publish(mealKitReceivedForDeliveryEvent);
     }
@@ -94,10 +93,10 @@ public class DeliveryService {
         return CargosPayload.from(deliverySystem.getCargosReadyToPickUp());
     }
 
-    public void pickupCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
+    public void pickUpCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
         DeliverySystem deliverySystem = deliverySystemPersister.get();
 
-        List<MealKit> mealKits = deliverySystem.pickupCargo(deliveryPersonId, cargoId);
+        List<MealKit> mealKits = deliverySystem.pickUpCargo(deliveryPersonId, cargoId);
 
         deliverySystemPersister.save(deliverySystem);
 
@@ -110,17 +109,6 @@ public class DeliveryService {
         eventBus.publish(new PickedUpCargoEvent(mealKitDtos));
     }
 
-    public void cancelCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
-        DeliverySystem deliverySystem = deliverySystemPersister.get();
-
-        List<MealKit> mealKits = deliverySystem.cancelCargo(deliveryPersonId, cargoId);
-
-        deliverySystemPersister.save(deliverySystem);
-
-        List<MealKitDto> mealKitDtos = mealKits.stream().map(MealKit::toDto).toList();
-        eventBus.publish(new CanceledCargoEvent(mealKitDtos));
-    }
-
     public void confirmDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemPersister.get();
 
@@ -131,7 +119,7 @@ public class DeliveryService {
         deliverySystemPersister.save(deliverySystem);
 
         ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(
-            mealKit.toDto(), mealKit.getDeliveryLocationId(),  mealKit.getLockerId(), LocalTime.now());
+            mealKit.toDto(), mealKit.getDeliveryLocationId(), mealKit.getLockerId(), LocalTime.now());
         eventBus.publish(event);
     }
 

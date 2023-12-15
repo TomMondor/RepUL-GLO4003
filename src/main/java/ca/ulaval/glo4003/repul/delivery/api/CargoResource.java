@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.LockerPayload;
-import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
 import ca.ulaval.glo4003.repul.identitymanagement.domain.Role;
 import ca.ulaval.glo4003.repul.identitymanagement.middleware.Roles;
 import ca.ulaval.glo4003.repul.identitymanagement.middleware.Secure;
@@ -46,24 +46,11 @@ public class CargoResource {
     @Secure
     @Roles(Role.DELIVERY_PERSON)
     @Path("/cargos/{cargoId}:pickUp")
-    public Response pickupCargo(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId) {
+    public Response pickUpCargo(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId) {
         DeliveryPersonUniqueIdentifier deliveryPersonId =
             new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom((String) context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY));
 
-        deliveryService.pickupCargo(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId));
-
-        return Response.noContent().build();
-    }
-
-    @POST
-    @Secure
-    @Roles(Role.DELIVERY_PERSON)
-    @Path("/cargos/{cargoId}:cancel")
-    public Response cancelCargo(@Context ContainerRequestContext context, @PathParam("cargoId") String cargoId) {
-        DeliveryPersonUniqueIdentifier deliveryPersonId = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom(
-            context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
-
-        deliveryService.cancelCargo(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId));
+        deliveryService.pickUpCargo(deliveryPersonId, new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(cargoId));
 
         return Response.noContent().build();
     }

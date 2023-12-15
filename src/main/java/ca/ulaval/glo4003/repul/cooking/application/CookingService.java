@@ -120,10 +120,10 @@ public class CookingService {
         eventBus.publish(new RecallCookedMealKitEvent(mealKitId));
     }
 
-    public void pickupNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
+    public void pickUpNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
         Kitchen kitchen = kitchenPersister.get();
 
-        kitchen.pickupNonDeliverableMealKit(subscriberId, mealKitId);
+        kitchen.pickUpNonDeliverableMealKit(subscriberId, mealKitId);
 
         kitchenPersister.save(kitchen);
     }

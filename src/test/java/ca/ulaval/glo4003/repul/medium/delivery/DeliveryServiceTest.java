@@ -17,7 +17,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
-import ca.ulaval.glo4003.repul.delivery.application.payload.CargoPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
@@ -26,7 +25,9 @@ import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeliveryServiceTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new MealKitUniqueIdentifier(UUID.randomUUID());
@@ -51,14 +52,14 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void givenPendingCargo_whenPickupCargo_shouldRemoveCargoFromAvailableCargos() {
+    public void givenPendingCargo_whenPickUpCargo_shouldRemoveCargoFromAvailableCargos() {
         givenDeliveryPerson(A_DELIVERY_PERSON_ACCOUNT_ID);
         givenConfirmedMealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
         CargoUniqueIdentifier cargoId =
             new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId());
 
-        deliveryService.pickupCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
+        deliveryService.pickUpCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
 
         assertEquals(0, deliveryService.getCargosReadyToPickUp().cargoPayloads().size());
     }
@@ -70,26 +71,11 @@ public class DeliveryServiceTest {
         givenCookedMealKit(A_MEAL_KIT_ID);
         CargoUniqueIdentifier cargoId =
             new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId());
-        deliveryService.pickupCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
+        deliveryService.pickUpCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId, A_MEAL_KIT_ID);
 
         assertThrows(MealKitNotInDeliveryException.class, () -> deliveryService.confirmDelivery(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId, A_MEAL_KIT_ID));
-    }
-
-    @Test
-    public void givenPickedUpCargo_whenCancelCargo_shouldMakeCargoAvailableForDelivery() {
-        givenDeliveryPerson(A_DELIVERY_PERSON_ACCOUNT_ID);
-        givenConfirmedMealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
-        givenCookedMealKit(A_MEAL_KIT_ID);
-        CargoUniqueIdentifier cargoId =
-            new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(deliveryService.getCargosReadyToPickUp().cargoPayloads().get(0).cargoId());
-        givenPickedUpCargo(cargoId);
-
-        deliveryService.cancelCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
-        List<CargoPayload> cargosPayloads = deliveryService.getCargosReadyToPickUp().cargoPayloads();
-
-        assertEquals(1, cargosPayloads.size());
     }
 
     @Test
@@ -121,7 +107,7 @@ public class DeliveryServiceTest {
     }
 
     private void givenPickedUpCargo(CargoUniqueIdentifier cargoId) {
-        deliveryService.pickupCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
+        deliveryService.pickUpCargo(A_DELIVERY_PERSON_ACCOUNT_ID, cargoId);
     }
 
     private void givenDeliveredMealKit(CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {

@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.delivery.application.payload;
 
-import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
 
 public record LockerPayload(
     String lockerId

@@ -12,7 +12,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderNotFoundExcept
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.InDeliveryStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.InPreparationStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.PickedUpStatus;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.ReadyForPickupStatus;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.ReadyForPickUpStatus;
 
 public class Orders {
     private final List<Order> orders = new LinkedList<>();
@@ -76,10 +76,10 @@ public class Orders {
         order.changeStatus(new InPreparationStatus(order));
     }
 
-    public void updateToReadyForPickup(MealKitUniqueIdentifier orderId) {
+    public void updateToReadyForPickUp(MealKitUniqueIdentifier orderId) {
         Order order = get(orderId);
 
-        order.changeStatus(new ReadyForPickupStatus(order));
+        order.changeStatus(new ReadyForPickUpStatus(order));
     }
 
     public void updateToPickedUp(MealKitUniqueIdentifier orderId) {

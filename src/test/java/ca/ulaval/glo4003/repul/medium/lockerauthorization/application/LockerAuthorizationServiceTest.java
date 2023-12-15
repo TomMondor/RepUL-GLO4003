@@ -38,8 +38,8 @@ public class LockerAuthorizationServiceTest {
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
-    private static final ca.ulaval.glo4003.repul.delivery.domain.LockerId A_DELIVERY_LOCKER_ID =
-        new ca.ulaval.glo4003.repul.delivery.domain.LockerId("locker", 55);
+    private static final ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId A_DELIVERY_LOCKER_ID =
+        new ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId("locker", 55);
     private static final LockerId A_LOCKER_AUTHORIZATION_LOCKER_ID = new LockerId("locker");
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;

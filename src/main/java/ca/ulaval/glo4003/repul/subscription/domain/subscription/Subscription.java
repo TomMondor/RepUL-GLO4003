@@ -114,8 +114,8 @@ public class Subscription {
         orders.updateToInPreparation(orderId);
     }
 
-    public void updateToReadyForPickup(MealKitUniqueIdentifier orderId) {
-        orders.updateToReadyForPickup(orderId);
+    public void updateToReadyForPickUp(MealKitUniqueIdentifier orderId) {
+        orders.updateToReadyForPickUp(orderId);
     }
 
     public void updateToPickedUp(MealKitUniqueIdentifier orderId) {

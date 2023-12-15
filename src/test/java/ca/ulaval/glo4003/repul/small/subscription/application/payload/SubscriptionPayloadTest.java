@@ -47,7 +47,7 @@ public class SubscriptionPayloadTest {
             SEMESTER.toString()
         );
         Subscription subscription = new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
-            .withFrequency(SUBSCRIPTION_FREQUENCY).withPickupLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE)
+            .withFrequency(SUBSCRIPTION_FREQUENCY).withPickUpLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE)
             .withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER).build();
 
         SubscriptionPayload actualSubscriptionPayload = SubscriptionPayload.from(subscription);
@@ -66,7 +66,7 @@ public class SubscriptionPayloadTest {
             SEMESTER.toString()
         );
         Subscription subscription = new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
-            .withFrequency(Optional.empty()).withPickupLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE)
+            .withFrequency(Optional.empty()).withPickUpLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE)
             .withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER).build();
 
         SubscriptionPayload actualSubscriptionPayload = SubscriptionPayload.from(subscription);
@@ -85,7 +85,7 @@ public class SubscriptionPayloadTest {
             SEMESTER.toString()
         );
         Subscription subscription = new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
-            .withFrequency(SUBSCRIPTION_FREQUENCY).withPickupLocationId(Optional.empty()).withStartDate(SUBSCRIPTION_START_DATE)
+            .withFrequency(SUBSCRIPTION_FREQUENCY).withPickUpLocationId(Optional.empty()).withStartDate(SUBSCRIPTION_START_DATE)
             .withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER).build();
 
         SubscriptionPayload actualSubscriptionPayload = SubscriptionPayload.from(subscription);
