@@ -9,56 +9,56 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
-import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemPersister;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
 
 public class LockerAuthorizationService {
-    private final LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository;
+    private final LockerAuthorizationSystemPersister lockerAuthorizationSystemPersister;
     private final RepULEventBus eventBus;
 
-    public LockerAuthorizationService(RepULEventBus eventBus, LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository) {
-        this.lockerAuthorizationSystemRepository = lockerAuthorizationSystemRepository;
+    public LockerAuthorizationService(RepULEventBus eventBus, LockerAuthorizationSystemPersister lockerAuthorizationSystemPersister) {
+        this.lockerAuthorizationSystemPersister = lockerAuthorizationSystemPersister;
         this.eventBus = eventBus;
     }
 
     public void createOrder(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId) {
-        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemPersister.get();
 
         lockerAuthorizationSystem.createOrder(subscriberId, subscriptionId, mealKitId);
 
-        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
+        lockerAuthorizationSystemPersister.save(lockerAuthorizationSystem);
     }
 
     public void assignLockerToMealKit(MealKitUniqueIdentifier mealKitId, LockerId lockerId) {
-        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemPersister.get();
 
         lockerAuthorizationSystem.assignLocker(mealKitId, lockerId);
 
-        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
+        lockerAuthorizationSystemPersister.save(lockerAuthorizationSystem);
     }
 
     public void unassignLocker(MealKitUniqueIdentifier mealKitId) {
-        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemPersister.get();
 
         lockerAuthorizationSystem.unassignLocker(mealKitId);
 
-        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
+        lockerAuthorizationSystemPersister.save(lockerAuthorizationSystem);
     }
 
     public void registerSubscriberCardNumber(SubscriberUniqueIdentifier subscriberId, SubscriberCardNumber subscriberCardNumber) {
-        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemPersister.get();
 
         lockerAuthorizationSystem.registerSubscriberCardNumber(subscriberId, subscriberCardNumber);
 
-        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
+        lockerAuthorizationSystemPersister.save(lockerAuthorizationSystem);
     }
 
     public void openLocker(OpenLockerQuery openLockerQuery) {
-        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
+        LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemPersister.get();
 
         MealKitDto mealKitDto = lockerAuthorizationSystem.authorize(openLockerQuery.lockerId(), openLockerQuery.subscriberCardNumber());
 
-        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
+        lockerAuthorizationSystemPersister.save(lockerAuthorizationSystem);
 
         eventBus.publish(new MealKitPickedUpByUserEvent(mealKitDto));
     }

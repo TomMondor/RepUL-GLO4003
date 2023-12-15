@@ -4,9 +4,10 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.lockerauthorization.application.exception.LockerAuthorizationSystemNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
-import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemPersister;
 
-public class InMemoryLockerAuthorizationSystemRepository implements LockerAuthorizationSystemRepository {
+public class InMemoryLockerAuthorizationSystemPersister
+    implements LockerAuthorizationSystemPersister {
     private Optional<LockerAuthorizationSystem> lockerAuthorizationSystem = Optional.empty();
 
     @Override

@@ -8,32 +8,32 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.lockerauthorization.application.exception.LockerAuthorizationSystemNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
-import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemRepository;
+import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemPersister;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class InMemoryLockerAuthorizationSystemRepositoryTest {
+public class InMemoryLockerAuthorizationSystemPersisterTest {
     @Mock
     private LockerAuthorizationSystem lockerAuthorizationSystem;
-    private InMemoryLockerAuthorizationSystemRepository inMemoryLockerAuthorizationSystemRepository;
+    private InMemoryLockerAuthorizationSystemPersister inMemoryLockerAuthorizationSystemPersister;
 
     @BeforeEach
     public void createRepo() {
-        inMemoryLockerAuthorizationSystemRepository = new InMemoryLockerAuthorizationSystemRepository();
+        inMemoryLockerAuthorizationSystemPersister = new InMemoryLockerAuthorizationSystemPersister();
     }
 
     @Test
     public void whenSavingAndGettingLockerAuthorizationSystem_shouldReturnTheLockerAuthorizationSystem() {
-        inMemoryLockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
-        LockerAuthorizationSystem lockerAuthorizationSystemFound = inMemoryLockerAuthorizationSystemRepository.get();
+        inMemoryLockerAuthorizationSystemPersister.save(lockerAuthorizationSystem);
+        LockerAuthorizationSystem lockerAuthorizationSystemFound = inMemoryLockerAuthorizationSystemPersister.get();
 
         assertEquals(lockerAuthorizationSystem, lockerAuthorizationSystemFound);
     }
 
     @Test
     public void givenNoLockerAuthorizationSystem_whenGettingLockerAuthorizationSystem_shouldThrowLockerAuthorizationSystemNotFoundException() {
-        assertThrows(LockerAuthorizationSystemNotFoundException.class, () -> inMemoryLockerAuthorizationSystemRepository.get());
+        assertThrows(LockerAuthorizationSystemNotFoundException.class, () -> inMemoryLockerAuthorizationSystemPersister.get());
     }
 }

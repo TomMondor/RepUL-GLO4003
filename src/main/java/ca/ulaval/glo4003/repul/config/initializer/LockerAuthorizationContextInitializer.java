@@ -16,18 +16,20 @@ import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationEventHandler;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
-import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
-import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemRepository;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemPersister;
+import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemPersister;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 
 public class LockerAuthorizationContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestApplicationContext.class);
 
-    private LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository = new InMemoryLockerAuthorizationSystemRepository();
+    private LockerAuthorizationSystemPersister
+        lockerAuthorizationSystemPersister = new InMemoryLockerAuthorizationSystemPersister();
     private final List<Map.Entry<SubscriberUniqueIdentifier, MealKitDto>> orders = new ArrayList<>();
 
-    public LockerAuthorizationContextInitializer withEmptyLockerAuthorizationSystemRepository(LockerAuthorizationSystemRepository repository) {
-        lockerAuthorizationSystemRepository = repository;
+    public LockerAuthorizationContextInitializer withEmptyLockerAuthorizationSystemPersister(
+        LockerAuthorizationSystemPersister repository) {
+        lockerAuthorizationSystemPersister = repository;
         return this;
     }
 
@@ -38,8 +40,8 @@ public class LockerAuthorizationContextInitializer {
 
     public LockerAuthorizationService createLockerAuthorizationService(RepULEventBus eventBus) {
         LOGGER.info("Creating locker authorization service");
-        initializeLockerAuthorization(lockerAuthorizationSystemRepository);
-        return new LockerAuthorizationService(eventBus, lockerAuthorizationSystemRepository);
+        initializeLockerAuthorization(lockerAuthorizationSystemPersister);
+        return new LockerAuthorizationService(eventBus, lockerAuthorizationSystemPersister);
     }
 
     public void createLockerAuthorizationEventHandler(LockerAuthorizationService lockerAuthorizationService, RepULEventBus eventBus) {
@@ -47,7 +49,8 @@ public class LockerAuthorizationContextInitializer {
         eventBus.register(lockerAuthorizationEventHandler);
     }
 
-    private void initializeLockerAuthorization(LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository) {
+    private void initializeLockerAuthorization(
+        LockerAuthorizationSystemPersister lockerAuthorizationSystemPersister) {
         LockerAuthorizationSystem lockerAuthorizationSystem = new LockerAuthorizationSystem();
         orders.forEach(order -> {
             SubscriberUniqueIdentifier accountId = order.getKey();
@@ -55,7 +58,7 @@ public class LockerAuthorizationContextInitializer {
             MealKitUniqueIdentifier mealKitId = order.getValue().mealKitId();
             lockerAuthorizationSystem.createOrder(accountId, subscriptionId, mealKitId);
         });
-        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
+        lockerAuthorizationSystemPersister.save(lockerAuthorizationSystem);
     }
 
     public ApiKeyGuard createApiKeyGuard() {

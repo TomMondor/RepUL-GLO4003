@@ -22,12 +22,12 @@ import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationEventH
 import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
-import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemPersister;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinkedToUserException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.OrderNotFoundException;
-import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemRepository;
+import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemPersister;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.SubscriberCardAddedEvent;
 
@@ -57,17 +57,18 @@ public class LockerAuthorizationServiceTest {
 
     private RepULEventBus eventBus;
     private LockerAuthorizationSystem lockerAuthorizationSystem;
-    private LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository;
+    private LockerAuthorizationSystemPersister lockerAuthorizationSystemPersister;
     private LockerAuthorizationService lockerAuthorizationService;
     private LockerAuthorizationEventHandler lockerAuthorizationEventHandler;
 
     @BeforeEach
     public void setUpLockerAuthorizationEventHandler() {
         eventBus = new GuavaEventBus();
-        lockerAuthorizationSystemRepository = new InMemoryLockerAuthorizationSystemRepository();
+        lockerAuthorizationSystemPersister = new InMemoryLockerAuthorizationSystemPersister();
         lockerAuthorizationSystem = new LockerAuthorizationSystem();
-        lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
-        lockerAuthorizationService = new LockerAuthorizationService(eventBus, lockerAuthorizationSystemRepository);
+        lockerAuthorizationSystemPersister.save(lockerAuthorizationSystem);
+        lockerAuthorizationService = new LockerAuthorizationService(eventBus,
+            lockerAuthorizationSystemPersister);
         lockerAuthorizationEventHandler = new LockerAuthorizationEventHandler(lockerAuthorizationService);
         eventBus.register(lockerAuthorizationEventHandler);
     }

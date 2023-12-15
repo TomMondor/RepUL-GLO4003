@@ -12,7 +12,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
-import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemRepository;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystemPersister;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +29,7 @@ public class LockerAuthorizationServiceTest {
     @Mock
     private LockerAuthorizationSystem lockerAuthorizationSystem;
     @Mock
-    private LockerAuthorizationSystemRepository lockerAuthorizationSystemRepository;
+    private LockerAuthorizationSystemPersister lockerAuthorizationSystemPersister;
     @Mock
     private RepULEventBus eventBus;
 
@@ -37,9 +37,10 @@ public class LockerAuthorizationServiceTest {
 
     @BeforeEach
     public void createLockerAuthorizationService() {
-        lockerAuthorizationService = new LockerAuthorizationService(eventBus, lockerAuthorizationSystemRepository);
+        lockerAuthorizationService = new LockerAuthorizationService(eventBus,
+            lockerAuthorizationSystemPersister);
 
-        when(lockerAuthorizationSystemRepository.get()).thenReturn(lockerAuthorizationSystem);
+        when(lockerAuthorizationSystemPersister.get()).thenReturn(lockerAuthorizationSystem);
     }
 
     @Test
