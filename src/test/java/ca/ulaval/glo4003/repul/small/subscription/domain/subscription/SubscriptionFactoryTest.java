@@ -21,6 +21,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSubscriptionQueryException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SemesterNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
@@ -31,7 +32,10 @@ import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFact
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -108,6 +112,33 @@ public class SubscriptionFactoryTest {
 
         assertThrows(SemesterNotFoundException.class,
             () -> subscriptionFactory.createSubscription(A_WEEKLY_SUBSCRIPTION_QUERY));
+    }
+
+    @Test
+    public void givenMissingLocationId_whenCreatingWeeklySubscription_shouldThrowInvalidSubscriptionQueryException() {
+        SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_WEEKLY_TYPE, A_SUBSCRIBER_ID,
+            Optional.empty(), Optional.of(A_WEEKDAY), Optional.of(A_MEALKIT_TYPE));
+
+        assertThrows(InvalidSubscriptionQueryException.class,
+            () -> subscriptionFactory.createSubscription(subscriptionQuery));
+    }
+
+    @Test
+    public void givenMissingDayOfWeek_whenCreatingWeeklySubscription_shouldThrowInvalidSubscriptionQueryException() {
+        SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_WEEKLY_TYPE, A_SUBSCRIBER_ID,
+            Optional.of(A_VALID_DELIVERY_LOCATION_ID), Optional.empty(), Optional.of(A_MEALKIT_TYPE));
+
+        assertThrows(InvalidSubscriptionQueryException.class,
+            () -> subscriptionFactory.createSubscription(subscriptionQuery));
+    }
+
+    @Test
+    public void givenMissingMealKitType_whenCreatingWeeklySubscription_shouldThrowInvalidSubscriptionQueryException() {
+        SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_WEEKLY_TYPE, A_SUBSCRIBER_ID,
+            Optional.of(A_VALID_DELIVERY_LOCATION_ID), Optional.of(A_WEEKDAY), Optional.empty());
+
+        assertThrows(InvalidSubscriptionQueryException.class,
+            () -> subscriptionFactory.createSubscription(subscriptionQuery));
     }
 
     @Test

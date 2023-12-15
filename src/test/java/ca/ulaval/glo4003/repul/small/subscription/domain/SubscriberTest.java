@@ -22,6 +22,7 @@ import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
+import ca.ulaval.glo4003.repul.subscription.domain.exception.NoUpcomingOrderInSubscriptionException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeDeclinedException;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
@@ -162,6 +163,17 @@ public class SubscriberTest {
         List<Order> currentOrders = subscriber.getCurrentOrders();
 
         assertEquals(2, currentOrders.size());
+    }
+
+    @Test
+    public void givenCompletedSubscription_whenConfirmingSubscription_shouldThrowNoUpcomingOrderException() {
+        Subscription aCompleteSubscription =
+            new SubscriptionFixture().withOrders(List.of(A_PASSED_ORDER)).build();
+        subscriber.addSubscription(aCompleteSubscription);
+
+        assertThrows(
+            NoUpcomingOrderInSubscriptionException.class,
+            () -> subscriber.confirm(aCompleteSubscription.getSubscriptionId(), orderFactory, paymentService));
     }
 
     @Test
@@ -313,9 +325,22 @@ public class SubscriberTest {
     }
 
     @Test
+    public void givenCompletedSubscription_whenDeclining_shouldThrowNoUpcomingOrderException() {
+        Subscription aCompleteSubscription =
+            new SubscriptionFixture().withOrders(List.of(A_PASSED_ORDER)).build();
+        subscriber.addSubscription(aCompleteSubscription);
+
+        assertThrows(
+            NoUpcomingOrderInSubscriptionException.class,
+            () -> subscriber.decline(aCompleteSubscription.getSubscriptionId()));
+    }
+
+    @Test
     public void givenSubscriptionWithPendingOrder_whenDeclining_shouldUpdateStatusToDeclined() {
+        Order aChangeablePendingOrder =
+            new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(Config.DAYS_TO_CONFIRM + 1)).withOrderStatus(OrderStatus.PENDING).build();
         Subscription aSubscriptionWithPendingOrder =
-            new SubscriptionFixture().withOrders(List.of(A_CHANGEABLE_PENDING_ORDER)).build();
+            new SubscriptionFixture().withOrders(List.of(aChangeablePendingOrder)).build();
         subscriber.addSubscription(aSubscriptionWithPendingOrder);
 
         subscriber.decline(aSubscriptionWithPendingOrder.getSubscriptionId());

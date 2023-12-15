@@ -10,7 +10,6 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationIdException;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.subscription.application.exception.InvalidSubscriptionTypeException;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSubscriptionQueryException;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
@@ -36,7 +35,7 @@ public class SubscriptionFactory {
     public Subscription createSubscription(SubscriptionQuery subscriptionQuery) {
         if (subscriptionQuery.subscriptionType().equals(SubscriptionType.SPORADIC)) {
             return createSporadicSubscription();
-        } else if (subscriptionQuery.subscriptionType().equals(SubscriptionType.WEEKLY)) {
+        } else {
             if (subscriptionQuery.locationId().isEmpty() || subscriptionQuery.dayOfWeek().isEmpty() || subscriptionQuery.mealKitType().isEmpty()) {
                 throw new InvalidSubscriptionQueryException();
             }
@@ -45,7 +44,6 @@ public class SubscriptionFactory {
             MealKitType mealKitType = subscriptionQuery.mealKitType().get();
             return createWeeklySubscription(deliveryLocationId, dayOfWeek, mealKitType);
         }
-        throw new InvalidSubscriptionTypeException();
     }
 
     private Subscription createWeeklySubscription(DeliveryLocationId deliveryLocationId, DayOfWeek dayOfWeek,

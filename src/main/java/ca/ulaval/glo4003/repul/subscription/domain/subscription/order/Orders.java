@@ -36,10 +36,6 @@ public class Orders {
         return List.copyOf(orders);
     }
 
-    public Order get(MealKitUniqueIdentifier orderId) {
-        return orders.stream().filter(order -> order.getOrderId().equals(orderId)).findFirst().orElseThrow(OrderNotFoundException::new);
-    }
-
     public void confirmCurrent() {
         Order currentOrder = getCurrent().orElseThrow(() -> new NoUpcomingOrderInSubscriptionException());
 
@@ -90,5 +86,9 @@ public class Orders {
         Order order = get(orderId);
 
         order.changeStatus(new PickedUpStatus(order));
+    }
+
+    private Order get(MealKitUniqueIdentifier orderId) {
+        return orders.stream().filter(order -> order.getOrderId().equals(orderId)).findFirst().orElseThrow(OrderNotFoundException::new);
     }
 }

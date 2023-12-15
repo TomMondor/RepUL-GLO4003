@@ -17,11 +17,14 @@ import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.fixture.subscription.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriberFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
+import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.SubscriberCardAddedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.CardNumberAlreadyInUseException;
+import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.ProfilePayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
@@ -31,14 +34,17 @@ import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmation;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.SubscriptionFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrderFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +55,9 @@ public class SubscriberServiceTest {
     private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
+    private static final SubscriptionType A_WEEKLY_SUBSCRIPTION_TYPE = SubscriptionType.WEEKLY;
     private static final Subscription A_SUBSCRIPTION = new SubscriptionFixture().build();
+    private static final Order AN_ORDER = new OrderFixture().build();
 
     private SubscriberService subscriberService;
     @Mock
@@ -92,7 +100,7 @@ public class SubscriberServiceTest {
 
         SubscriptionUniqueIdentifier subscriptionId =
             subscriberService.createSubscription(
-                new SubscriptionQuery(SubscriptionType.WEEKLY, A_SUBSCRIBER_ID, Optional.of(A_DELIVERY_LOCATION_ID), Optional.of(A_DAY_OF_WEEK),
+                new SubscriptionQuery(A_WEEKLY_SUBSCRIPTION_TYPE, A_SUBSCRIBER_ID, Optional.of(A_DELIVERY_LOCATION_ID), Optional.of(A_DAY_OF_WEEK),
                     Optional.of(A_MEALKIT_TYPE)));
 
         assertEquals(A_SUBSCRIPTION.getSubscriptionId(), subscriptionId);
@@ -118,6 +126,41 @@ public class SubscriberServiceTest {
         SubscriptionPayload retrievedSubscription = subscriberService.getSubscription(A_SUBSCRIBER_ID, A_SUBSCRIPTION.getSubscriptionId());
 
         assertEquals(expectedSubscriptionPayload, retrievedSubscription);
+    }
+
+    @Test
+    public void whenGettingCurrentOrders_shouldReturnMatchingOrdersPayload() {
+        given(subscriberRepository.getById(A_SUBSCRIBER_ID)).willReturn(mockSubscriber);
+        given(mockSubscriber.getCurrentOrders()).willReturn(List.of(AN_ORDER));
+        OrdersPayload expectedOrdersPayload = OrdersPayload.from(List.of(AN_ORDER));
+
+        OrdersPayload retrievedCurrentOrders = subscriberService.getCurrentOrders(A_SUBSCRIBER_ID);
+
+        assertEquals(expectedOrdersPayload, retrievedCurrentOrders);
+    }
+
+    @Test
+    public void givenSporadicSubscription_whenConfirming_shouldSendMealKitConfirmedEvent() {
+        ProcessConfirmation processConfirmation = mock(ProcessConfirmation.class);
+        given(processConfirmation.confirmedOrders()).willReturn(List.of(AN_ORDER));
+        given(subscriberRepository.getById(A_SUBSCRIBER_ID)).willReturn(mockSubscriber);
+        given(mockSubscriber.confirm(A_SUBSCRIPTION.getSubscriptionId(), orderFactory, paymentService)).willReturn(Optional.of(processConfirmation));
+
+        subscriberService.confirm(A_SUBSCRIBER_ID, A_SUBSCRIPTION.getSubscriptionId());
+
+        verify(eventBus).publish(any(MealKitConfirmedEvent.class));
+    }
+
+    @Test
+    public void whenProcessingOrders_shouldSendMealKitConfirmedEvent() {
+        ProcessConfirmation processConfirmation = mock(ProcessConfirmation.class);
+        given(processConfirmation.confirmedOrders()).willReturn(List.of(AN_ORDER));
+        given(subscriberRepository.getAll()).willReturn(List.of(mockSubscriber));
+        given(mockSubscriber.processOrders(paymentService)).willReturn(List.of(processConfirmation));
+
+        subscriberService.processOrders();
+
+        verify(eventBus).publish(any(MealKitConfirmedEvent.class));
     }
 
     @Test
