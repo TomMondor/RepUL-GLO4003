@@ -6,12 +6,11 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SubscriptionRequest {
-    @NotNull(message = "The location Id may not be null.")
+
+    @NotNull(message = "The subscriptionType must be specified")
+    public String subscriptionType;
+
     public String locationId;
-
-    @NotNull(message = "The day of week may not be null.")
     public String dayOfWeek;
-
-    @NotNull(message = "The meal kit type may not be null.")
     public String mealKitType;
 }

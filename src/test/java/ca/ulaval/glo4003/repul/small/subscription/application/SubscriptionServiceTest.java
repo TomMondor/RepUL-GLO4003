@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.small.subscription.application;
 
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,8 +29,10 @@ import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
+import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,6 +47,13 @@ public class SubscriptionServiceTest {
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final SubscriptionType A_WEEKLY_SUBSCRIPTION_TYPE = SubscriptionType.WEEKLY;
+    private static final SubscriptionType A_SPORADIC_TYPE = SubscriptionType.SPORADIC;
+    private static final SubscriptionQuery A_WEEKLY_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_WEEKLY_SUBSCRIPTION_TYPE,
+        AN_ACCOUNT_ID, Optional.of(A_DELIVERY_LOCATION_ID),
+        Optional.of(A_DAY_OF_WEEK), Optional.of(MealKitType.from(A_MEALKIT_TYPE)));
+    private static final SubscriptionQuery A_SPORADIC_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_SPORADIC_TYPE, AN_ACCOUNT_ID,
+        Optional.empty(), Optional.empty(), Optional.empty());
     private SubscriptionService subscriptionService;
     @Mock
     private Subscription mockSubscription;
@@ -67,22 +77,21 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenCreatingSubscription_shouldReturnSubscriptionId() {
-        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
-            any(MealKitType.class))).thenReturn(mockSubscription);
+        when(mockSubscriptionFactory.createSubscription(any(SubscriptionQuery.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriptionId()).thenReturn(A_SUBSCRIPTION_ID);
 
         UniqueIdentifier subscriptionId =
-            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEALKIT_TYPE));
+            subscriptionService.createSubscription(A_WEEKLY_SUBSCRIPTION_QUERY);
 
         assertEquals(A_SUBSCRIPTION_ID, subscriptionId);
     }
 
     @Test
     public void whenCreatingSporadicSubscription_shouldReturnSubscriptionId() {
-        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class))).thenReturn(mockSporadicSubscription);
+        when(mockSubscriptionFactory.createSubscription(any(SubscriptionQuery.class))).thenReturn(mockSporadicSubscription);
         when(mockSporadicSubscription.getSubscriptionId()).thenReturn(A_SUBSCRIPTION_ID);
 
-        UniqueIdentifier subscriptionId = subscriptionService.createSporadicSubscription(AN_ACCOUNT_ID);
+        UniqueIdentifier subscriptionId = subscriptionService.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
 
         assertEquals(A_SUBSCRIPTION_ID, subscriptionId);
     }
@@ -111,11 +120,10 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenSubscriptionNotForThisSubscriber_whenConfirmingNextMealKitForSubscription_shouldThrow() {
-        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
-            any(MealKitType.class))).thenReturn(mockSubscription);
+        when(mockSubscriptionFactory.createSubscription(any(SubscriptionQuery.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         SubscriptionUniqueIdentifier subscriptionId =
-            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEALKIT_TYPE));
+            subscriptionService.createSubscription(A_WEEKLY_SUBSCRIPTION_QUERY);
         when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(mockSubscription);
 
         assertThrows(SubscriptionNotFoundException.class, () -> subscriptionService.confirmNextMealKitForSubscription(ANOTHER_ACCOUNT_ID, subscriptionId));
@@ -123,11 +131,10 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenSubscriptionNotForThisSubscriber_whenDecliningNextMealKitForSubscription_shouldThrow() {
-        when(mockSubscriptionFactory.createSubscription(any(SubscriberUniqueIdentifier.class), any(DeliveryLocationId.class), any(DayOfWeek.class),
-            any(MealKitType.class))).thenReturn(mockSubscription);
+        when(mockSubscriptionFactory.createSubscription(any(SubscriptionQuery.class))).thenReturn(mockSubscription);
         when(mockSubscription.getSubscriberId()).thenReturn(AN_ACCOUNT_ID);
         SubscriptionUniqueIdentifier subscriptionId =
-            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_DELIVERY_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEALKIT_TYPE));
+            subscriptionService.createSubscription(A_WEEKLY_SUBSCRIPTION_QUERY);
         when(mockSubscriptionRepository.getById(subscriptionId)).thenReturn(mockSubscription);
 
         assertThrows(SubscriptionNotFoundException.class, () -> subscriptionService.confirmNextMealKitForSubscription(ANOTHER_ACCOUNT_ID, subscriptionId));

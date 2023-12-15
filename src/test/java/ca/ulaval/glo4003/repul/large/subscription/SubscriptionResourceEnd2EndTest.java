@@ -36,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SubscriptionResourceEnd2EndTest {
     private static final int SUBSCRIPTION_ID_LENGTH = 14;
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST = new SubscriptionRequestFixture().build();
+    private static final SubscriptionRequest A_SPORADIC_SUBSCRIPTION_REQUEST = new SubscriptionRequestFixture()
+        .withSubscriptionType("SPORADIC").build();
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS =
         new SubscriptionRequestFixture().withDayOfWeek(LocalDate.now().plusDays(3).getDayOfWeek().toString()).build();
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST_STARTING_IN_FIVE_DAYS =
@@ -75,6 +77,27 @@ public class SubscriptionResourceEnd2EndTest {
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(A_SUBSCRIPTION_REQUEST)
             .post(CONTEXT.getURI() + "subscriptions");
+        String locationHeader = response.getHeader("Location");
+
+        assertFalse(locationHeader.isEmpty());
+    }
+
+    @Test
+    public void whenSubscribingToSporadicSubscription_shouldReturn201() {
+        String accountToken = login();
+
+        Response response = given().contentType(MediaType.APPLICATION_JSON).body(A_SPORADIC_SUBSCRIPTION_REQUEST)
+            .header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "subscriptions");
+
+        assertEquals(201, response.getStatusCode());
+    }
+
+    @Test
+    public void whenSubscribingToSporadicSubscription_shouldReturnSubscriptionIdInLocationHeader() {
+        String accountToken = login();
+
+        Response response = given().contentType(MediaType.APPLICATION_JSON).body(A_SPORADIC_SUBSCRIPTION_REQUEST)
+            .header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "subscriptions");
         String locationHeader = response.getHeader("Location");
 
         assertFalse(locationHeader.isEmpty());
@@ -147,6 +170,17 @@ public class SubscriptionResourceEnd2EndTest {
     }
 
     @Test
+    public void givenSporadicSubscription_whenConfirmingCurrentOrder_shouldReturn204() {
+        String accountToken = login();
+        String subscriptionId = createSporadicSubscription(accountToken);
+
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+            .post(CONTEXT.getURI() + "subscriptions/" + subscriptionId + ":confirm");
+
+        assertEquals(204, response.getStatusCode());
+    }
+
+    @Test
     public void whenDecliningCurrentOrder_shouldReturn204() {
         String accountToken = login();
         String subscriptionId = createSubscription(accountToken, A_SUBSCRIPTION_REQUEST_STARTING_IN_THREE_DAYS);
@@ -197,6 +231,13 @@ public class SubscriptionResourceEnd2EndTest {
     private String createSubscription(String accountToken, SubscriptionRequest subscriptionRequest) {
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(subscriptionRequest)
             .post(CONTEXT.getURI() + "subscriptions");
+        String location = response.getHeader("Location");
+        return location.substring(location.indexOf("subscriptions/") + SUBSCRIPTION_ID_LENGTH);
+    }
+
+    private String createSporadicSubscription(String accountToken) {
+        Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
+            .body(A_SPORADIC_SUBSCRIPTION_REQUEST).post(CONTEXT.getURI() + "subscriptions");
         String location = response.getHeader("Location");
         return location.substring(location.indexOf("subscriptions/") + SUBSCRIPTION_ID_LENGTH);
     }

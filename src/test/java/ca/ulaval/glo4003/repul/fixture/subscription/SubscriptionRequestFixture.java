@@ -9,6 +9,7 @@ public class SubscriptionRequestFixture {
     private String locationId = "VACHON";
     private String dayOfWeek = DayOfWeek.MONDAY.toString();
     private String mealKitType = MealKitType.STANDARD.toString();
+    private String subscriptionType = "WEEKLY";
 
     public SubscriptionRequestFixture withLocationId(String locationId) {
         this.locationId = locationId;
@@ -25,11 +26,17 @@ public class SubscriptionRequestFixture {
         return this;
     }
 
+    public SubscriptionRequestFixture withSubscriptionType(String subscriptionType) {
+        this.subscriptionType = subscriptionType;
+        return this;
+    }
+
     public SubscriptionRequest build() {
         SubscriptionRequest subscriptionRequest = new SubscriptionRequest();
         subscriptionRequest.locationId = locationId;
         subscriptionRequest.dayOfWeek = dayOfWeek;
         subscriptionRequest.mealKitType = mealKitType;
+        subscriptionRequest.subscriptionType = subscriptionType;
         return subscriptionRequest;
     }
 }

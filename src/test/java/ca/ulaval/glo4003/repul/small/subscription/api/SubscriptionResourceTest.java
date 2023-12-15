@@ -28,6 +28,7 @@ import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPay
 import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
+import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
@@ -44,7 +45,6 @@ public class SubscriptionResourceTest {
     private static final SubscriptionsPayload A_SUBSCRIPTIONS_PAYLOAD = new SubscriptionsPayload(List.of());
     private static final DeliveryLocationId A_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
-    private static final String A_MEAL_KIT_TYPE_STRING = "STANDARD";
     private static final SubscriptionRequest A_SUBSCRIPTION_REQUEST =
         new SubscriptionRequestFixture().withLocationId(A_LOCATION_ID.toString()).withDayOfWeek(A_DAY_OF_WEEK.toString()).build();
     private static final SubscriberUniqueIdentifier ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
@@ -97,8 +97,9 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldReturn201() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEAL_KIT_TYPE_STRING))).willReturn(
+        given(subscriptionService.createSubscription(any(SubscriptionQuery.class))).willReturn(
             A_SUBSCRIPTION_ID);
+
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -107,9 +108,31 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldReturnSubscriptionId() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(ACCOUNT_ID, A_LOCATION_ID, A_DAY_OF_WEEK, MealKitType.valueOf(A_MEAL_KIT_TYPE_STRING))).willReturn(
-            A_SUBSCRIPTION_ID);
+        given(subscriptionService.createSubscription(any(SubscriptionQuery.class))).willReturn(A_SUBSCRIPTION_ID);
+
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
+
+        assertEquals(PATH_TO_API + A_SUBSCRIPTION_ID.getUUID().toString(), response.getHeaderString("Location"));
+    }
+
+    @Test
+    public void givenSporadicSubscription_whenCreatingSubscription_shouldReturn201() {
+        given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
+        given(subscriptionService.createSubscription(any(SubscriptionQuery.class))).willReturn(A_SUBSCRIPTION_ID);
+        SubscriptionRequest subscriptionRequest = new SubscriptionRequestFixture().withSubscriptionType("SPORADIC").build();
+
+        Response response = subscriptionResource.createSubscription(containerRequestContext, subscriptionRequest);
+
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void givenSporadicSubscription_whenCreatingSubscription_shouldReturnSubscriptionId() {
+        given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
+        given(subscriptionService.createSubscription(any(SubscriptionQuery.class))).willReturn(A_SUBSCRIPTION_ID);
+        SubscriptionRequest subscriptionRequest = new SubscriptionRequestFixture().withSubscriptionType("SPORADIC").build();
+
+        Response response = subscriptionResource.createSubscription(containerRequestContext, subscriptionRequest);
 
         assertEquals(PATH_TO_API + A_SUBSCRIPTION_ID.getUUID().toString(), response.getHeaderString("Location"));
     }

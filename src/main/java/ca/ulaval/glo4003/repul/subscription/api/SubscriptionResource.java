@@ -3,9 +3,6 @@ package ca.ulaval.glo4003.repul.subscription.api;
 import java.net.URI;
 
 import ca.ulaval.glo4003.repul.commons.api.UriFactory;
-import ca.ulaval.glo4003.repul.commons.domain.DateParser;
-import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
@@ -14,6 +11,7 @@ import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
+import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
 import ca.ulaval.glo4003.repul.user.middleware.Roles;
 import ca.ulaval.glo4003.repul.user.middleware.Secure;
@@ -49,12 +47,10 @@ public class SubscriptionResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createSubscription(@Context ContainerRequestContext context,
                                        @NotNull(message = "The body must not be null.") @Valid SubscriptionRequest subscriptionRequest) {
-        SubscriberUniqueIdentifier subscriberId =
-            new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
+        String subscriberId = context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString();
 
         SubscriptionUniqueIdentifier subscriptionId =
-            subscriptionService.createSubscription(subscriberId, DeliveryLocationId.from(subscriptionRequest.locationId),
-                DateParser.dayOfWeekFrom(subscriptionRequest.dayOfWeek), MealKitType.from(subscriptionRequest.mealKitType));
+            subscriptionService.createSubscription(SubscriptionQuery.from(subscriptionRequest, subscriberId));
 
         URI location = uriFactory.createURI("/api/subscriptions/" + subscriptionId.getUUID().toString());
 

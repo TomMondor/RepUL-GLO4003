@@ -1,12 +1,9 @@
 package ca.ulaval.glo4003.repul.subscription.application;
 
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
-import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
@@ -22,6 +19,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
 
 public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
@@ -40,17 +38,8 @@ public class SubscriptionService {
         this.orderFactory = orderFactory;
     }
 
-    public SubscriptionUniqueIdentifier createSubscription(SubscriberUniqueIdentifier subscriberId, DeliveryLocationId
-        deliveryLocationId, DayOfWeek dayOfWeek, MealKitType mealKitType) {
-        Subscription subscription = subscriptionFactory.createSubscription(subscriberId, deliveryLocationId, dayOfWeek, mealKitType);
-
-        subscriptionRepository.save(subscription);
-
-        return subscription.getSubscriptionId();
-    }
-
-    public SubscriptionUniqueIdentifier createSporadicSubscription(SubscriberUniqueIdentifier subscriberId) {
-        Subscription subscription = subscriptionFactory.createSubscription(subscriberId);
+    public SubscriptionUniqueIdentifier createSubscription(SubscriptionQuery subscriptionQuery) {
+        Subscription subscription = subscriptionFactory.createSubscription(subscriptionQuery);
 
         subscriptionRepository.save(subscription);
 

@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.medium.subscription;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +28,13 @@ import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
+import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoNextOrderInSubscriptionException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeDeclinedException;
 import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 
@@ -48,6 +51,16 @@ public class SubscriptionServiceTest {
     private static final SubscriberUniqueIdentifier AN_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier ANOTHER_ACCOUNT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final Semester CURRENT_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now().minusMonths(1), LocalDate.now().plusMonths(2));
+    private static final SubscriptionType A_WEEKLY_TYPE = SubscriptionType.WEEKLY;
+    private static final SubscriptionType A_SPORADIC_TYPE = SubscriptionType.SPORADIC;
+    private static final SubscriptionQuery A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_WEEKLY_TYPE, AN_ACCOUNT_ID,
+        Optional.of(A_LOCATION_ID), Optional.of(A_DAY_STRING), Optional.of(MealKitType.from(A_MEALKIT_TYPE)));
+    private static final SubscriptionQuery ANOTHER_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_WEEKLY_TYPE, AN_ACCOUNT_ID,
+        Optional.of(ANOTHER_LOCATION_ID), Optional.of(A_DAY_STRING), Optional.of(MealKitType.from(A_MEALKIT_TYPE)));
+    private static final SubscriptionQuery A_SPORADIC_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_SPORADIC_TYPE, AN_ACCOUNT_ID,
+        Optional.empty(), Optional.empty(), Optional.empty());
+    private static final SubscriptionQuery A_SUBSCRIPTION_QUERY_FOR_OTHER_ACCOUNT = new SubscriptionQuery(A_WEEKLY_TYPE, ANOTHER_ACCOUNT_ID,
+        Optional.of(A_LOCATION_ID), Optional.of(A_DAY_STRING), Optional.of(MealKitType.from(A_MEALKIT_TYPE)));
     private RepULEventBus eventBus;
     private PaymentService paymentService;
     private SubscriptionService subscriptionService;
@@ -70,8 +83,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenCreatingSubscription_shouldPersistSubscription() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID,
-            A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(A_SUBSCRIPTION_QUERY);
 
         SubscriptionsPayload persistedSubscriptions = subscriptionService.getSubscriptions(AN_ACCOUNT_ID);
         assertEquals(subscriptionId.getUUID().toString(), persistedSubscriptions.subscriptions().get(0).subscriptionId());
@@ -79,7 +91,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenCreatingSporadicSubscription_shouldPersistSubscription() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSporadicSubscription(AN_ACCOUNT_ID);
+        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
 
         SubscriptionsPayload persistedSubscriptions = subscriptionService.getSubscriptions(AN_ACCOUNT_ID);
         assertEquals(subscriptionId.getUUID().toString(), persistedSubscriptions.subscriptions().get(0).subscriptionId());
@@ -87,10 +99,9 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenCreatedSubscriptions_whenGettingSubscriptions_shouldReturnSubscriptionsInAccount() {
-        SubscriptionUniqueIdentifier firstSubscriptionId = subscriptionService.createSubscription(
-            AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
-        SubscriptionUniqueIdentifier secondSubscriptionId = subscriptionService.createSporadicSubscription(AN_ACCOUNT_ID);
-        subscriptionService.createSubscription(ANOTHER_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+        SubscriptionUniqueIdentifier firstSubscriptionId = subscriptionService.createSubscription(A_SUBSCRIPTION_QUERY);
+        SubscriptionUniqueIdentifier secondSubscriptionId = subscriptionService.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
+        subscriptionService.createSubscription(A_SUBSCRIPTION_QUERY_FOR_OTHER_ACCOUNT);
 
         SubscriptionsPayload subscriptions = subscriptionService.getSubscriptions(AN_ACCOUNT_ID);
 
@@ -104,7 +115,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenConfirmingNextMealKitForSubscription_shouldUpdateMatchingOrderInSubscription() {
         SubscriptionUniqueIdentifier subscriptionId =
-            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+            subscriptionService.createSubscription(A_SUBSCRIPTION_QUERY);
 
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
@@ -114,7 +125,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenConfirmingNextMealKitForSporadicSubscription_shouldCreateOneOrderInSubscription() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSporadicSubscription(AN_ACCOUNT_ID);
+        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
         int previousOrdersCount = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID).orders().size();
 
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
@@ -125,7 +136,7 @@ public class SubscriptionServiceTest {
 
     @Test
     public void whenConfirmingNextMealKitForSporadicSubscription_shouldCreateOrderDirectlyAsToCook() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSporadicSubscription(AN_ACCOUNT_ID);
+        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
 
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
@@ -136,7 +147,7 @@ public class SubscriptionServiceTest {
     @Test
     public void whenDecliningNextMealKitForSubscription_shouldUpdateMatchingOrderInSubscription() {
         SubscriptionUniqueIdentifier subscriptionId =
-            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+            subscriptionService.createSubscription(A_SUBSCRIPTION_QUERY);
 
         subscriptionService.declineNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
@@ -146,14 +157,14 @@ public class SubscriptionServiceTest {
 
     @Test
     public void givenNoConfirmedMealKit_whenDecliningNextMealKitForSporadicSubscription_shouldThrowNoNextOrderInSubscriptionException() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSporadicSubscription(AN_ACCOUNT_ID);
+        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
 
         assertThrows(NoNextOrderInSubscriptionException.class, () -> subscriptionService.declineNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId));
     }
 
     @Test
     public void givenAConfirmedMealKit_whenDecliningNextMealKitForSporadicSubscription_shouldThrowOrderCannotBeDeclinedException() {
-        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSporadicSubscription(AN_ACCOUNT_ID);
+        SubscriptionUniqueIdentifier subscriptionId = subscriptionService.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
         assertThrows(OrderCannotBeDeclinedException.class, () -> subscriptionService.declineNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId));
@@ -162,8 +173,8 @@ public class SubscriptionServiceTest {
     @Test
     public void whenGettingCurrentOrders_shouldReturnCurrentOrdersForSubscriptionsInAccount() {
         SubscriptionUniqueIdentifier subscriptionId =
-            subscriptionService.createSubscription(AN_ACCOUNT_ID, A_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
-        subscriptionService.createSubscription(AN_ACCOUNT_ID, ANOTHER_LOCATION_ID, A_DAY_STRING, MealKitType.valueOf(A_MEALKIT_TYPE));
+            subscriptionService.createSubscription(A_SUBSCRIPTION_QUERY);
+        subscriptionService.createSubscription(ANOTHER_SUBSCRIPTION_QUERY);
         subscriptionService.confirmNextMealKitForSubscription(AN_ACCOUNT_ID, subscriptionId);
 
         OrdersPayload currentOrders = subscriptionService.getCurrentOrders(AN_ACCOUNT_ID);

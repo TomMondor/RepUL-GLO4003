@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.medium.subscription.domain;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +17,9 @@ import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,14 +28,17 @@ public class SubscriptionFactoryTest {
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
     private static final DayOfWeek TOMORROW_DAY_OF_WEEK = TOMORROW.getDayOfWeek();
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
+    private static final SubscriptionType A_WEEKLY_TYPE = SubscriptionType.WEEKLY;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
+    private static final SubscriptionQuery
+        A_SUBSCRIPTION_QUERY = new SubscriptionQuery(A_WEEKLY_TYPE, A_SUBSCRIBER_UNIQUE_IDENTIFIER,
+        Optional.of(A_DELIVERY_LOCATION_ID), Optional.of(TOMORROW_DAY_OF_WEEK), Optional.of(A_MEALKIT_TYPE));
 
     @Test
     public void givenFactoryWithSemesterWithOnlyThisWeek_whenCreatingSubscription_shouldCreateSubscriptionOrdersForTheSemester() {
         SubscriptionFactory subscriptionFactory = createFactoryWithSemesterThisWeekOnly();
 
-        Subscription subscription = subscriptionFactory.createSubscription(A_SUBSCRIBER_UNIQUE_IDENTIFIER, A_DELIVERY_LOCATION_ID, TOMORROW_DAY_OF_WEEK,
-            A_MEALKIT_TYPE);
+        Subscription subscription = subscriptionFactory.createSubscription(A_SUBSCRIPTION_QUERY);
 
         assertEquals(1, subscription.getOrders().size());
         assertEquals(TOMORROW, subscription.getOrders().get(0).getDeliveryDate());
