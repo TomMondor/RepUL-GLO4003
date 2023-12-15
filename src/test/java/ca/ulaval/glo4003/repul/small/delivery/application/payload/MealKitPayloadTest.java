@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
@@ -24,6 +26,8 @@ public class MealKitPayloadTest {
     private static final DeliveryLocation DELIVERY_LOCATION = new DeliveryLocation(DELIVERY_LOCATION_ID, LOCATION_NAME, LOCATION_TOTAL_CAPACITY);
     private static final String MEAL_KIT_ID = UUID.randomUUID().toString();
     private static final DeliveryStatus DELIVERY_STATUS = DeliveryStatus.READY_TO_BE_DELIVERED;
+    private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(MEAL_KIT_ID);
     private static final String NOT_ASSIGN_LOCKER_NUMBER = "Not assigned at this moment";
@@ -32,7 +36,7 @@ public class MealKitPayloadTest {
 
     @Test
     public void givenMealKitWithNoLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
-        MealKit mealKit = new MealKit(DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
+        MealKit mealKit = new MealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID, DELIVERY_STATUS);
         MealKitPayload expectedMealKitPayload =
             new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER.getUUID().toString(), DELIVERY_LOCATION_ID.toString(), NOT_ASSIGN_LOCKER_NUMBER);
 
@@ -43,7 +47,7 @@ public class MealKitPayloadTest {
 
     @Test
     public void givenMealKitWithAssignedLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
-        MealKit mealKit = new MealKit(DELIVERY_LOCATION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_STATUS);
+        MealKit mealKit = new MealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID, DELIVERY_STATUS);
         deliveryLocations.assignLocker(DELIVERY_LOCATION_ID, mealKit);
         MealKitPayload expectedMealKitPayload =
             new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER.getUUID().toString(), DELIVERY_LOCATION_ID.toString(), LOCKER_NUMBER);

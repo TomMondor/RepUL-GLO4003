@@ -38,14 +38,14 @@ public class SubscriberService {
         return ProfilePayload.from(subscriber.getProfile());
     }
 
-    public void addCard(SubscriberUniqueIdentifier subscriberUniqueIdentifier, UserCardNumber cardNumber) {
-        Subscriber subscriber = subscriberRepository.getById(subscriberUniqueIdentifier);
+    public void addCard(SubscriberUniqueIdentifier subscriberId, UserCardNumber cardNumber) {
+        Subscriber subscriber = subscriberRepository.getById(subscriberId);
 
         validateCardNumber(cardNumber);
         subscriber.setCardNumber(cardNumber);
 
         subscriberRepository.save(subscriber);
-        eventBus.publish(new UserCardAddedEvent(subscriberUniqueIdentifier, cardNumber));
+        eventBus.publish(new UserCardAddedEvent(subscriberId, cardNumber));
     }
 
     private void validateCardNumber(UserCardNumber cardNumber) {

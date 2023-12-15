@@ -9,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
@@ -34,7 +35,7 @@ public class DeliveryContextInitializer {
     private static final String NAME_FIELD_NAME_IN_JSON = "name";
     private static final String CAPACITY_FIELD_NAME_IN_JSON = "capacity";
     private final List<DeliveryPersonUniqueIdentifier> deliveryPeopleToAdd = new ArrayList<>();
-    private final List<Map<MealKitUniqueIdentifier, DeliveryLocationId>> pendingMealKitsToAdd = new ArrayList<>();
+    private final List<Map<MealKitDto, DeliveryLocationId>> pendingMealKitsToAdd = new ArrayList<>();
     private final List<List<MealKitUniqueIdentifier>> cargosToAdd = new ArrayList<>();
     private DeliverySystemPersister deliverySystemPersister = new InMemoryDeliverySystemPersister();
 
@@ -48,7 +49,7 @@ public class DeliveryContextInitializer {
         return this;
     }
 
-    public DeliveryContextInitializer withPendingMealKits(List<Map<MealKitUniqueIdentifier, DeliveryLocationId>> mealKits) {
+    public DeliveryContextInitializer withPendingMealKits(List<Map<MealKitDto, DeliveryLocationId>> mealKits) {
         pendingMealKitsToAdd.addAll(mealKits);
         return this;
     }
@@ -84,9 +85,9 @@ public class DeliveryContextInitializer {
         DeliverySystem deliverySystem = new DeliverySystem(locationsCatalog);
         deliveryPeopleToAdd.forEach(deliverySystem::addDeliveryPerson);
         pendingMealKitsToAdd.forEach(mealKit -> {
-            MealKitUniqueIdentifier mealKitId = mealKit.keySet().iterator().next();
-            DeliveryLocationId deliveryLocationId = mealKit.get(mealKitId);
-            deliverySystem.createMealKitInPreparation(deliveryLocationId, mealKitId);
+            MealKitDto mealKitDto = mealKit.keySet().iterator().next();
+            DeliveryLocationId deliveryLocationId = mealKit.get(mealKitDto);
+            deliverySystem.createMealKitInPreparation(mealKitDto.subscriberId(), mealKitDto.subscriptionId(), mealKitDto.mealKitId(), deliveryLocationId);
         });
         cargosToAdd.forEach(cargo ->
             deliverySystem.receiveReadyToBeDeliveredMealKits(KitchenLocationId.DESJARDINS, cargo)

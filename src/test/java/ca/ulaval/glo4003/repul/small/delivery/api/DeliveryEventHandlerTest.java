@@ -105,7 +105,7 @@ public class DeliveryEventHandlerTest {
         deliveryEventHandler.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
         verify(deliveryService, times(1))
-            .createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_ID);
+            .createMealKitInPreparation(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class DeliveryEventHandlerTest {
         deliveryEventHandler.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION);
 
         verify(deliveryService, times(0))
-            .createMealKitInPreparation(A_DELIVERY_LOCATION_ID, A_MEAL_KIT_ID);
+            .createMealKitInPreparation(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID);
     }
 
     @Test

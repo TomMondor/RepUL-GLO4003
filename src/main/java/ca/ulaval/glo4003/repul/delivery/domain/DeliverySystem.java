@@ -11,6 +11,8 @@ import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
@@ -35,8 +37,10 @@ public class DeliverySystem {
         this.deliveryLocations = new DeliveryLocations(locationsCatalog.getDeliveryLocations());
     }
 
-    public void createMealKitInPreparation(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId) {
-        MealKit createdMealKit = mealKitFactory.createMealKit(deliveryLocationId, mealKitId);
+    public void createMealKitInPreparation(SubscriberUniqueIdentifier subscriberId,
+                                           SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId,
+                                           DeliveryLocationId deliveryLocationId) {
+        MealKit createdMealKit = mealKitFactory.createMealKit(subscriberId, subscriptionId, mealKitId, deliveryLocationId);
         pendingMealKits.put(mealKitId, createdMealKit);
     }
 

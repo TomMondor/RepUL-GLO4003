@@ -9,6 +9,8 @@ import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
@@ -40,10 +42,11 @@ public class DeliveryService {
         deliverySystemPersister.save(deliverySystem);
     }
 
-    public void createMealKitInPreparation(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId) {
+    public void createMealKitInPreparation(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId,
+                                           MealKitUniqueIdentifier mealKitId, DeliveryLocationId deliveryLocationId) {
         DeliverySystem deliverySystem = deliverySystemPersister.get();
 
-        deliverySystem.createMealKitInPreparation(deliveryLocationId, mealKitId);
+        deliverySystem.createMealKitInPreparation(subscriberId, subscriptionId, mealKitId, deliveryLocationId);
 
         deliverySystemPersister.save(deliverySystem);
     }
@@ -75,12 +78,12 @@ public class DeliveryService {
     }
 
     private void sendMealKitReceivedForDeliveryEvent(Cargo cargo, DeliverySystem deliverySystem) {
-        List<MealKitToDeliverDto> mealKits = cargo.getMealKits().stream().map(
+        List<MealKitToDeliverDto> mealKitToDeliverDtos = cargo.getMealKits().stream().map(
             mealKit -> new MealKitToDeliverDto(mealKit.getDeliveryLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())
         ).toList();
 
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent = new MealKitReceivedForDeliveryEvent(
-            cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeople(), mealKits);
+            cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeople(), mealKitToDeliverDtos);
         eventBus.publish(mealKitReceivedForDeliveryEvent);
     }
 

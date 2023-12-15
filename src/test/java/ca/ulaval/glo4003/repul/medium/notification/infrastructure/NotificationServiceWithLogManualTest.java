@@ -44,11 +44,11 @@ public class NotificationServiceWithLogManualTest {
     private static final CargoUniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generate();
 
     private static final List<DeliveryPersonUniqueIdentifier> AVAILABLE_SHIPPERS_IDS = List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
-    private static final List<MealKitToDeliverDto> MEAL_KIT_DTOS =
+    private static final List<MealKitToDeliverDto> MEAL_KIT_TO_DELIVER_DTOS =
         List.of(new MealKitToDeliverDto(A_DELIVERY_LOCATION_ID, AN_OPTIONAL_LOCKER_ID, A_MEAL_KIT_ID),
             new MealKitToDeliverDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
-        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_DTOS);
+        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_TO_DELIVER_DTOS);
 
     public static void main(String[] args) {
         NotificationSender notificationSender = new LogNotificationSender();

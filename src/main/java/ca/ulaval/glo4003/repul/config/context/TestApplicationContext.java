@@ -16,6 +16,7 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationE
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DateParser;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
@@ -209,11 +210,17 @@ public class TestApplicationContext implements ApplicationContext {
         subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, subscriptionService, eventBus);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID))
-            .withPendingMealKits(List.of(Map.of(FIRST_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(SECOND_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
-                Map.of(THIRD_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(FOURTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
-                Map.of(FIFTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(SIXTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
-                Map.of(SEVENTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(EIGHTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
-                Map.of(NINTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(TENTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID)))
+            .withPendingMealKits(List.of(
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), FIRST_SUBSCRIPTION_ID, FIRST_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), SECOND_SUBSCRIPTION_ID, SECOND_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), THIRD_SUBSCRIPTION_ID, THIRD_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), FOURTH_SUBSCRIPTION_ID, FOURTH_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), FIFTH_SUBSCRIPTION_ID, FIFTH_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), SIXTH_SUBSCRIPTION_ID, SIXTH_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), SEVENTH_SUBSCRIPTION_ID, SEVENTH_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), EIGHTH_SUBSCRIPTION_ID, EIGHTH_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), NINTH_SUBSCRIPTION_ID, NINTH_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
+                Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), TENTH_SUBSCRIPTION_ID, TENTH_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID)))
             .withCargo(List.of(TENTH_MEAL_KIT_ID));
         DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
         CargoResource cargoResource = new CargoResource(deliveryService);

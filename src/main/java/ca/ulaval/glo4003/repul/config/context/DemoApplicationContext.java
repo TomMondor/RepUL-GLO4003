@@ -16,6 +16,7 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationE
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DateParser;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
@@ -156,8 +157,12 @@ public class DemoApplicationContext implements ApplicationContext {
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID))
             .withPendingMealKits(
-                List.of(Map.of(FIRST_MEAL_KIT_ORDER.getOrderId(), A_DELIVERY_LOCATION_ID), Map.of(SECOND_MEAL_KIT_ORDER.getOrderId(), A_DELIVERY_LOCATION_ID),
-                    Map.of(THIRD_MEAL_KIT_ORDER.getOrderId(), A_DELIVERY_LOCATION_ID)));
+                List.of(Map.of(new MealKitDto(FIRST_SUBSCRIPTION.getSubscriberId(), FIRST_SUBSCRIPTION.getSubscriptionId(), FIRST_MEAL_KIT_ORDER.getOrderId()),
+                        A_DELIVERY_LOCATION_ID),
+                    Map.of(new MealKitDto(SECOND_SUBSCRIPTION.getSubscriberId(), SECOND_SUBSCRIPTION.getSubscriptionId(), SECOND_MEAL_KIT_ORDER.getOrderId()),
+                        A_DELIVERY_LOCATION_ID),
+                    Map.of(new MealKitDto(THIRD_SUBSCRIPTION.getSubscriberId(), THIRD_SUBSCRIPTION.getSubscriptionId(), THIRD_MEAL_KIT_ORDER.getOrderId()),
+                        A_DELIVERY_LOCATION_ID)));
         DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
         CargoResource cargoResource = new CargoResource(deliveryService);
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());

@@ -39,10 +39,10 @@ public class AccountResource {
     @Roles(Role.CLIENT)
     @Path("/accounts")
     public Response getAccount(@Context ContainerRequestContext context) {
-        SubscriberUniqueIdentifier subscriberUniqueIdentifier =
+        SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(USER_ID_CONTEXT_PROPERTY).toString());
 
-        ProfilePayload profilePayload = subscriberService.getSubscriberProfile(subscriberUniqueIdentifier);
+        ProfilePayload profilePayload = subscriberService.getSubscriberProfile(subscriberId);
 
         return Response.ok(profilePayload).build();
     }
@@ -52,10 +52,10 @@ public class AccountResource {
     @Roles(Role.CLIENT)
     @Path("/accounts:addCard")
     public Response addCard(@Context ContainerRequestContext context, @NotNull(message = "The body must not be null.") @Valid AddCardRequest addCardRequest) {
-        SubscriberUniqueIdentifier subscriberUniqueIdentifier =
+        SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(USER_ID_CONTEXT_PROPERTY).toString());
 
-        subscriberService.addCard(subscriberUniqueIdentifier, new UserCardNumber(addCardRequest.cardNumber));
+        subscriberService.addCard(subscriberId, new UserCardNumber(addCardRequest.cardNumber));
 
         return Response.noContent().build();
     }

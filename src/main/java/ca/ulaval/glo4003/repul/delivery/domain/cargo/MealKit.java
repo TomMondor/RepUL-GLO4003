@@ -4,20 +4,28 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 
 public class MealKit {
-    private final DeliveryLocationId deliveryLocationId;
+    private final SubscriberUniqueIdentifier subscriberId;
+    private final SubscriptionUniqueIdentifier subscriptionId;
     private final MealKitUniqueIdentifier mealKitId;
-    private Optional<LockerId> lockerId;
-    private DeliveryStatus status;
+    private final DeliveryLocationId deliveryLocationId;
 
-    public MealKit(DeliveryLocationId deliveryLocationId, MealKitUniqueIdentifier mealKitId, DeliveryStatus status) {
-        this.deliveryLocationId = deliveryLocationId;
+    private DeliveryStatus status;
+    private Optional<LockerId> lockerId;
+
+    public MealKit(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId,
+                   DeliveryLocationId deliveryLocationId, DeliveryStatus status) {
+        this.subscriberId = subscriberId;
+        this.subscriptionId = subscriptionId;
         this.mealKitId = mealKitId;
+        this.deliveryLocationId = deliveryLocationId;
         this.status = status;
         this.lockerId = Optional.empty();
     }

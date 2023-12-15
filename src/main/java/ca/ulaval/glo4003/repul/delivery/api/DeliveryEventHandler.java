@@ -29,7 +29,9 @@ public class DeliveryEventHandler {
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
         mealKitConfirmedEvent.deliveryLocationId.ifPresent(deliveryLocationId ->
-            deliveryService.createMealKitInPreparation(deliveryLocationId, mealKitConfirmedEvent.mealKitId));
+            deliveryService.createMealKitInPreparation(mealKitConfirmedEvent.subscriberId, mealKitConfirmedEvent.subscriptionId,
+                mealKitConfirmedEvent.mealKitId, deliveryLocationId
+            ));
     }
 
     @Subscribe

@@ -92,8 +92,8 @@ public class DeliveryEventHandlerTest {
 
     @Test
     public void givenConfirmedMealKits_whenHandlingMealKitsCookedEvent_shouldCreateCargo() {
-        givenConfirmedMealKit(A_MEAL_KIT_ID);
-        givenConfirmedMealKit(ANOTHER_MEAL_KIT_ID);
+        givenConfirmedMealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
+        givenConfirmedMealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, ANOTHER_MEAL_KIT_ID);
         MealKitsCookedEvent mealKitsCookedEvent =
             new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_COOKED_DTO, ANOTHER_MEALKIT_COOKED_DTO));
 
@@ -117,7 +117,7 @@ public class DeliveryEventHandlerTest {
     @Test
     public void givenMealKitInCargo_whenHandlingRecallCookedMealKitEvent_shouldRemoveMealKitFromCargo() {
         givenDeliveryPerson(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
-        givenConfirmedMealKit(A_MEAL_KIT_ID);
+        givenConfirmedMealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
         RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEAL_KIT_ID);
 
@@ -130,7 +130,7 @@ public class DeliveryEventHandlerTest {
     public void givenMealKitInCargo_whenHandlingMealKitPickedUpByUserEvent_shouldRemoveMealKitFromCargo() {
         MealKitReceivedForDeliveryEventListener listener = createMealKitReceivedForDeliveryEventListener();
         givenDeliveryPerson(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
-        givenConfirmedMealKit(A_MEAL_KIT_ID);
+        givenConfirmedMealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
         givenPickUpCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, listener.cargoId);
         assertNotNull(listener.cargoId);
@@ -150,8 +150,9 @@ public class DeliveryEventHandlerTest {
         return new DeliverySystem(locationsCatalog);
     }
 
-    private void givenConfirmedMealKit(MealKitUniqueIdentifier mealKitId) {
-        deliveryService.createMealKitInPreparation(A_DELIVERY_LOCATION_ID, mealKitId);
+    private void givenConfirmedMealKit(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId,
+                                       MealKitUniqueIdentifier mealKitId) {
+        deliveryService.createMealKitInPreparation(subscriberId, subscriptionId, mealKitId, A_DELIVERY_LOCATION_ID);
     }
 
     private void givenCookedMealKit(MealKitUniqueIdentifier mealKitId) {

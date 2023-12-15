@@ -26,9 +26,9 @@ public class SubscriberEventHandler {
 
     @Subscribe
     public void handleUserCreatedEvent(UserCreatedEvent userCreatedEvent) {
-        SubscriberUniqueIdentifier subscriberUniqueIdentifier =
+        SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(userCreatedEvent.userId);
-        subscriberService.createSubscriber(subscriberUniqueIdentifier, userCreatedEvent.idul, userCreatedEvent.name, userCreatedEvent.birthdate,
+        subscriberService.createSubscriber(subscriberId, userCreatedEvent.idul, userCreatedEvent.name, userCreatedEvent.birthdate,
             userCreatedEvent.gender, userCreatedEvent.email);
     }
 
