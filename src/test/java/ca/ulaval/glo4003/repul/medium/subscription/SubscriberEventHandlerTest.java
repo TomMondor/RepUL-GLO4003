@@ -16,6 +16,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
+import ca.ulaval.glo4003.repul.identitymanagement.application.event.UserCreatedEvent;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriberEventHandler;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
@@ -29,7 +30,6 @@ import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semeste
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
-import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 

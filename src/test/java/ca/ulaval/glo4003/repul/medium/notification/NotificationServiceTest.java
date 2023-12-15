@@ -31,6 +31,8 @@ import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitToDeliverDto;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
+import ca.ulaval.glo4003.repul.identitymanagement.application.event.DeliveryPersonAccountCreatedEvent;
+import ca.ulaval.glo4003.repul.identitymanagement.application.event.UserCreatedEvent;
 import ca.ulaval.glo4003.repul.notification.application.NotificationService;
 import ca.ulaval.glo4003.repul.notification.application.exception.DeliveryPersonAccountNotFoundException;
 import ca.ulaval.glo4003.repul.notification.application.exception.UserAccountNotFoundException;
@@ -45,8 +47,6 @@ import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEv
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
-import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

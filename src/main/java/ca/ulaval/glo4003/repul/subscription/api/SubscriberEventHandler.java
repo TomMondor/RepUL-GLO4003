@@ -9,9 +9,9 @@ import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
+import ca.ulaval.glo4003.repul.identitymanagement.application.event.UserCreatedEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
-import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 
 import com.google.common.eventbus.Subscribe;
 

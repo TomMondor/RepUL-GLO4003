@@ -35,17 +35,20 @@ import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.env.EnvParserFactory;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
+import ca.ulaval.glo4003.repul.config.initializer.IdentityManagementContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.JobInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
-import ca.ulaval.glo4003.repul.config.initializer.UserContextInitializer;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
+import ca.ulaval.glo4003.repul.identitymanagement.api.UserResource;
+import ca.ulaval.glo4003.repul.identitymanagement.api.request.RegistrationRequest;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.AuthGuard;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
@@ -67,9 +70,6 @@ import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.Ord
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
-import ca.ulaval.glo4003.repul.user.api.UserResource;
-import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
-import ca.ulaval.glo4003.repul.user.middleware.AuthGuard;
 
 public class DemoApplicationContext implements ApplicationContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(DemoApplicationContext.class);
@@ -132,12 +132,13 @@ public class DemoApplicationContext implements ApplicationContext {
                 ));
         notificationContextInitializer.createNotificationService(eventBus);
 
-        UserContextInitializer userContextInitializer = new UserContextInitializer(eventBus).withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_REQUEST)))
-            .withShippers(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_REGISTRATION_EMAIL)))
-            .withClients(List.of(Map.of(CLIENT_ID, CLIENT_REGISTRATION_REQUEST)));
+        IdentityManagementContextInitializer identityManagementContextInitializer =
+            new IdentityManagementContextInitializer(eventBus).withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_REQUEST)))
+                .withShippers(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_REGISTRATION_EMAIL)))
+                .withClients(List.of(Map.of(CLIENT_ID, CLIENT_REGISTRATION_REQUEST)));
 
-        UserResource userResource = new UserResource(userContextInitializer.createService());
-        AuthGuard authGuard = userContextInitializer.createAuthGuard();
+        UserResource userResource = new UserResource(identityManagementContextInitializer.createService());
+        AuthGuard authGuard = identityManagementContextInitializer.createAuthGuard();
 
         CookingContextInitializer cookingContextInitializer =
             new CookingContextInitializer().withMealKitsForSubscription(List.of(FIRST_MEAL_KIT_ORDER, SECOND_MEAL_KIT_ORDER, THIRD_MEAL_KIT_ORDER),

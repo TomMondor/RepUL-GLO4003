@@ -3,12 +3,12 @@ package ca.ulaval.glo4003.repul.subscription.api;
 import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.Roles;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.Secure;
 import ca.ulaval.glo4003.repul.subscription.api.request.AddCardRequest;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.ProfilePayload;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
-import ca.ulaval.glo4003.repul.user.middleware.Roles;
-import ca.ulaval.glo4003.repul.user.middleware.Secure;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

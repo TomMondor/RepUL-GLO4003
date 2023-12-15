@@ -8,9 +8,9 @@ import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.LockerPayload;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
-import ca.ulaval.glo4003.repul.user.middleware.Roles;
-import ca.ulaval.glo4003.repul.user.middleware.Secure;
+import ca.ulaval.glo4003.repul.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.Roles;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.Secure;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;

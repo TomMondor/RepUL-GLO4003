@@ -18,9 +18,9 @@ import ca.ulaval.glo4003.repul.cooking.api.request.SelectionRequest;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.SelectionPayload;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
-import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
-import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
-import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
+import ca.ulaval.glo4003.repul.fixture.identitymanagement.LoginRequestFixture;
+import ca.ulaval.glo4003.repul.identitymanagement.api.request.LoginRequest;
+import ca.ulaval.glo4003.repul.identitymanagement.api.response.LoginResponse;
 
 import jakarta.ws.rs.core.MediaType;
 

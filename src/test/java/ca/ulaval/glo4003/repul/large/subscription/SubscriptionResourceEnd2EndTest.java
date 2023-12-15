@@ -15,16 +15,16 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
+import ca.ulaval.glo4003.repul.fixture.identitymanagement.LoginRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionRequestFixture;
-import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
+import ca.ulaval.glo4003.repul.identitymanagement.api.request.LoginRequest;
+import ca.ulaval.glo4003.repul.identitymanagement.api.response.LoginResponse;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
-import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
-import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 
 import jakarta.ws.rs.core.MediaType;
 

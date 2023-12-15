@@ -33,13 +33,16 @@ import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
+import ca.ulaval.glo4003.repul.identitymanagement.application.event.DeliveryPersonAccountCreatedEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreatedEvent;
 
 import com.google.common.eventbus.Subscribe;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeliveryEventHandlerTest {
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID =

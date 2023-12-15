@@ -9,9 +9,9 @@ import ca.ulaval.glo4003.repul.cooking.api.request.SelectionRequest;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.SelectionPayload;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
-import ca.ulaval.glo4003.repul.user.middleware.Roles;
-import ca.ulaval.glo4003.repul.user.middleware.Secure;
+import ca.ulaval.glo4003.repul.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.Roles;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.Secure;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

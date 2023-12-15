@@ -10,19 +10,20 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
+import ca.ulaval.glo4003.repul.fixture.identitymanagement.LoginRequestFixture;
+import ca.ulaval.glo4003.repul.fixture.identitymanagement.RegistrationRequestFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.AddCardRequestFixture;
-import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
-import ca.ulaval.glo4003.repul.fixture.user.RegistrationRequestFixture;
+import ca.ulaval.glo4003.repul.identitymanagement.api.request.LoginRequest;
+import ca.ulaval.glo4003.repul.identitymanagement.api.request.RegistrationRequest;
+import ca.ulaval.glo4003.repul.identitymanagement.api.response.LoginResponse;
 import ca.ulaval.glo4003.repul.subscription.api.request.AddCardRequest;
 import ca.ulaval.glo4003.repul.subscription.application.payload.ProfilePayload;
-import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
-import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
-import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
 
 import jakarta.ws.rs.core.MediaType;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AccountResourceEnd2EndTest {
     private static final String ACCOUNT_EMAIL = "myAccountEmail@ulaval.ca";

@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.lockerauthorization.middleware;
 import java.util.Map;
 
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
-import ca.ulaval.glo4003.repul.user.middleware.exception.MissingAuthorizationHeaderException;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.exception.MissingAuthorizationHeaderException;
 
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;

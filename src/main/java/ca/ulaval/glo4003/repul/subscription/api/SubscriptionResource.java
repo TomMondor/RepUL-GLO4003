@@ -6,15 +6,15 @@ import ca.ulaval.glo4003.repul.commons.api.UriFactory;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.identitymanagement.domain.Role;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.Roles;
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.Secure;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
-import ca.ulaval.glo4003.repul.user.domain.identitymanagment.Role;
-import ca.ulaval.glo4003.repul.user.middleware.Roles;
-import ca.ulaval.glo4003.repul.user.middleware.Secure;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

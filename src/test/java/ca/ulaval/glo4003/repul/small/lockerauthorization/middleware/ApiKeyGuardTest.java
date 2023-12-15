@@ -6,8 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import ca.ulaval.glo4003.repul.identitymanagement.middleware.exception.MissingAuthorizationHeaderException;
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
-import ca.ulaval.glo4003.repul.user.middleware.exception.MissingAuthorizationHeaderException;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.HttpHeaders;

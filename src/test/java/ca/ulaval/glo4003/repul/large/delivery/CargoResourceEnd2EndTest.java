@@ -14,9 +14,9 @@ import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargoPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
-import ca.ulaval.glo4003.repul.fixture.user.LoginRequestFixture;
-import ca.ulaval.glo4003.repul.user.api.request.LoginRequest;
-import ca.ulaval.glo4003.repul.user.api.response.LoginResponse;
+import ca.ulaval.glo4003.repul.fixture.identitymanagement.LoginRequestFixture;
+import ca.ulaval.glo4003.repul.identitymanagement.api.request.LoginRequest;
+import ca.ulaval.glo4003.repul.identitymanagement.api.response.LoginResponse;
 
 import jakarta.ws.rs.core.MediaType;
 
