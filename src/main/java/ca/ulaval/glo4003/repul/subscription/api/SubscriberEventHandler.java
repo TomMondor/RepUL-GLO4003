@@ -1,8 +1,5 @@
 package ca.ulaval.glo4003.repul.subscription.api;
 
-import java.util.List;
-
-import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
@@ -31,21 +28,21 @@ public class SubscriberEventHandler {
 
     @Subscribe
     public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
-        subscriberService.updateOrdersToInDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
+        subscriberService.updateOrdersToInDelivery(event.mealKitDtos);
     }
 
     @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent event) {
-        subscriberService.updateOrderToReadyToPickUp(event.mealKitDto.mealKitId());
+        subscriberService.updateOrderToReadyToPickUp(event.mealKitDto);
     }
 
     @Subscribe
     public void handleRecalledDeliveryEvent(RecalledDeliveryEvent event) {
-        subscriberService.updateOrdersToInPreparation(List.of(event.mealKitDto.mealKitId()));
+        subscriberService.updateOrderToInPreparation(event.mealKitDto);
     }
 
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
-        subscriberService.updateOrderToPickedUp(event.mealKitDto.mealKitId());
+        subscriberService.updateOrderToPickedUp(event.mealKitDto);
     }
 }

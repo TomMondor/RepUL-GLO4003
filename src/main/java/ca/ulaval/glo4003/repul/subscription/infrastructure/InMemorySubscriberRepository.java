@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
-import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
@@ -39,10 +38,5 @@ public class InMemorySubscriberRepository implements SubscriberRepository {
     public boolean cardNumberExists(SubscriberCardNumber cardNumber) {
         return subscribers.values().stream()
             .anyMatch(subscriber -> subscriber.getCardNumber().isPresent() && subscriber.getCardNumber().get().equals(cardNumber));
-    }
-
-    @Override
-    public Subscriber findByOrderId(MealKitUniqueIdentifier orderId) {
-        return subscribers.values().stream().filter(subscriber -> subscriber.hasOrder(orderId)).findFirst().orElseThrow(SubscriberNotFoundException::new);
     }
 }

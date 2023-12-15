@@ -6,8 +6,8 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
-import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
@@ -132,38 +132,36 @@ public class SubscriberService {
         }
     }
 
-    public void updateOrdersToInDelivery(List<MealKitUniqueIdentifier> orderIds) {
-        for (MealKitUniqueIdentifier orderId : orderIds) {
-            Subscriber subscriber = subscriberRepository.findByOrderId(orderId);
+    public void updateOrdersToInDelivery(List<MealKitDto> mealKitDtos) {
+        for (MealKitDto mealKitDto : mealKitDtos) {
+            Subscriber subscriber = subscriberRepository.getById(mealKitDto.subscriberId());
 
-            subscriber.updateOrderToInDelivery(orderId);
-
-            subscriberRepository.save(subscriber);
-        }
-    }
-
-    public void updateOrdersToInPreparation(List<MealKitUniqueIdentifier> orderIds) {
-        for (MealKitUniqueIdentifier orderId : orderIds) {
-            Subscriber subscriber = subscriberRepository.findByOrderId(orderId);
-
-            subscriber.updateOrderToInPreparation(orderId);
+            subscriber.updateOrderToInDelivery(mealKitDto.mealKitId());
 
             subscriberRepository.save(subscriber);
         }
     }
 
-    public void updateOrderToReadyToPickUp(MealKitUniqueIdentifier orderId) {
-        Subscriber subscriber = subscriberRepository.findByOrderId(orderId);
+    public void updateOrderToInPreparation(MealKitDto mealKitDto) {
+        Subscriber subscriber = subscriberRepository.getById(mealKitDto.subscriberId());
 
-        subscriber.updateOrderToReadyToPickUp(orderId);
+        subscriber.updateOrderToInPreparation(mealKitDto.mealKitId());
 
         subscriberRepository.save(subscriber);
     }
 
-    public void updateOrderToPickedUp(MealKitUniqueIdentifier orderId) {
-        Subscriber subscriber = subscriberRepository.findByOrderId(orderId);
+    public void updateOrderToReadyToPickUp(MealKitDto mealKitDto) {
+        Subscriber subscriber = subscriberRepository.getById(mealKitDto.subscriberId());
 
-        subscriber.updateOrderToPickedUp(orderId);
+        subscriber.updateOrderToReadyToPickUp(mealKitDto.mealKitId());
+
+        subscriberRepository.save(subscriber);
+    }
+
+    public void updateOrderToPickedUp(MealKitDto mealKitDto) {
+        Subscriber subscriber = subscriberRepository.getById(mealKitDto.subscriberId());
+
+        subscriber.updateOrderToPickedUp(mealKitDto.mealKitId());
 
         subscriberRepository.save(subscriber);
     }
