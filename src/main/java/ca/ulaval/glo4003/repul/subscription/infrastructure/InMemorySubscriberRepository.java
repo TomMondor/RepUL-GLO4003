@@ -1,9 +1,11 @@
 package ca.ulaval.glo4003.repul.subscription.infrastructure;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
@@ -15,6 +17,11 @@ public class InMemorySubscriberRepository implements SubscriberRepository {
     @Override
     public void save(Subscriber subscriber) {
         subscribers.put(subscriber.getSubscriberId(), subscriber);
+    }
+
+    @Override
+    public List<Subscriber> getAll() {
+        return List.copyOf(subscribers.values());
     }
 
     @Override
@@ -32,5 +39,10 @@ public class InMemorySubscriberRepository implements SubscriberRepository {
     public boolean cardNumberExists(UserCardNumber cardNumber) {
         return subscribers.values().stream()
             .anyMatch(subscriber -> subscriber.getCardNumber().isPresent() && subscriber.getCardNumber().get().equals(cardNumber));
+    }
+
+    @Override
+    public Subscriber findByOrderId(MealKitUniqueIdentifier orderId) {
+        return subscribers.values().stream().filter(subscriber -> subscriber.hasOrder(orderId)).findFirst().orElseThrow(SubscriberNotFoundException::new);
     }
 }

@@ -20,15 +20,15 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionRequestFixture;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
-import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
+import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrderPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
-import ca.ulaval.glo4003.repul.subscription.domain.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Response;
@@ -53,43 +53,37 @@ public class SubscriptionResourceTest {
     private static final OrderStatus AN_ORDER_STATUS = OrderStatus.PENDING;
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final MealKitUniqueIdentifier AN_ORDER_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
-    private static final OrdersPayload AN_ORDERS_PAYLOAD =
-        new OrdersPayload(
-            List.of(new OrderPayload(AN_ORDER_ID.toString(), A_MEAL_KIT_TYPE.toString(), AN_ORDER_DELIVERY_DATE.toString(), AN_ORDER_STATUS.toString())));
+    private static final OrdersPayload AN_ORDERS_PAYLOAD = new OrdersPayload(
+        List.of(new OrderPayload(AN_ORDER_ID.toString(), A_MEAL_KIT_TYPE.toString(), AN_ORDER_DELIVERY_DATE.toString(), AN_ORDER_STATUS.toString())));
     private static final String PATH_TO_API = "/api/subscriptions/";
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("H24"), LocalDate.now().minusMonths(3), LocalDate.now().plusMonths(3));
-    private static final SubscriptionPayload A_SUBSCRIPTION_PAYLOAD = new SubscriptionPayload(
-        A_SUBSCRIPTION_ID.getUUID().toString(),
-        DayOfWeek.MONDAY.toString(),
-        DeliveryLocationId.VACHON.toString(),
-        LocalDate.now().toString(),
-        MealKitType.STANDARD.toString(),
-        A_SEMESTER.toString()
-    );
+    private static final SubscriptionPayload A_SUBSCRIPTION_PAYLOAD =
+        new SubscriptionPayload(A_SUBSCRIPTION_ID.getUUID().toString(), DayOfWeek.MONDAY.toString(), DeliveryLocationId.VACHON.toString(),
+            LocalDate.now().toString(), MealKitType.STANDARD.toString(), A_SEMESTER.toString());
 
     private SubscriptionResource subscriptionResource;
 
     @Mock
-    private SubscriptionService subscriptionService;
+    private SubscriberService subscriberService;
     @Mock
     private ContainerRequestContext containerRequestContext;
 
     @BeforeEach
     public void createSubscriptionResource() {
         given(containerRequestContext.getProperty(any())).willReturn(ACCOUNT_ID.getUUID().toString());
-        subscriptionResource = new SubscriptionResource(subscriptionService);
+        subscriptionResource = new SubscriptionResource(subscriberService);
     }
 
     @Test
     public void whenConfirmingMealKit_shouldReturnNoContent() {
-        Response response = subscriptionResource.confirmMealKit(containerRequestContext, SUBSCRIPTION_ID_STRING);
+        Response response = subscriptionResource.confirm(containerRequestContext, SUBSCRIPTION_ID_STRING);
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void whenDecliningMealKit_shouldReturnNoContent() {
-        Response response = subscriptionResource.declineMealKit(containerRequestContext, SUBSCRIPTION_ID_STRING);
+        Response response = subscriptionResource.decline(containerRequestContext, SUBSCRIPTION_ID_STRING);
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
@@ -97,7 +91,7 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldReturn201() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(any(SubscriptionQuery.class))).willReturn(
+        given(subscriberService.createSubscription(any(SubscriptionQuery.class))).willReturn(
             A_SUBSCRIPTION_ID);
 
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
@@ -108,8 +102,8 @@ public class SubscriptionResourceTest {
     @Test
     public void givenValidRequest_whenCreatingSubscription_shouldReturnSubscriptionId() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(any(SubscriptionQuery.class))).willReturn(A_SUBSCRIPTION_ID);
-
+        given(subscriberService.createSubscription(any(SubscriptionQuery.class))).willReturn(
+            A_SUBSCRIPTION_ID);
         Response response = subscriptionResource.createSubscription(containerRequestContext, A_SUBSCRIPTION_REQUEST);
 
         assertEquals(PATH_TO_API + A_SUBSCRIPTION_ID.getUUID().toString(), response.getHeaderString("Location"));
@@ -118,7 +112,7 @@ public class SubscriptionResourceTest {
     @Test
     public void givenSporadicSubscription_whenCreatingSubscription_shouldReturn201() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(any(SubscriptionQuery.class))).willReturn(A_SUBSCRIPTION_ID);
+        given(subscriberService.createSubscription(any(SubscriptionQuery.class))).willReturn(A_SUBSCRIPTION_ID);
         SubscriptionRequest subscriptionRequest = new SubscriptionRequestFixture().withSubscriptionType("SPORADIC").build();
 
         Response response = subscriptionResource.createSubscription(containerRequestContext, subscriptionRequest);
@@ -129,7 +123,7 @@ public class SubscriptionResourceTest {
     @Test
     public void givenSporadicSubscription_whenCreatingSubscription_shouldReturnSubscriptionId() {
         given(containerRequestContext.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY)).willReturn(ACCOUNT_ID.getUUID().toString());
-        given(subscriptionService.createSubscription(any(SubscriptionQuery.class))).willReturn(A_SUBSCRIPTION_ID);
+        given(subscriberService.createSubscription(any(SubscriptionQuery.class))).willReturn(A_SUBSCRIPTION_ID);
         SubscriptionRequest subscriptionRequest = new SubscriptionRequestFixture().withSubscriptionType("SPORADIC").build();
 
         Response response = subscriptionResource.createSubscription(containerRequestContext, subscriptionRequest);
@@ -138,17 +132,17 @@ public class SubscriptionResourceTest {
     }
 
     @Test
-    public void whenGettingSubscriptions_shouldReturn200() {
-        when(subscriptionService.getSubscriptions(ACCOUNT_ID)).thenReturn(A_SUBSCRIPTIONS_PAYLOAD);
+    public void whenGettingAllSubscriptions_shouldReturn200() {
+        given(subscriberService.getAllSubscriptions(ACCOUNT_ID)).willReturn(A_SUBSCRIPTIONS_PAYLOAD);
 
-        Response response = subscriptionResource.getSubscriptions(containerRequestContext);
+        Response response = subscriptionResource.getAllSubscriptions(containerRequestContext);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void whenGettingSubscription_shouldReturn200() {
-        when(subscriptionService.getSubscriptionById(ACCOUNT_ID, A_SUBSCRIPTION_ID)).thenReturn(A_SUBSCRIPTION_PAYLOAD);
+        given(subscriberService.getSubscription(ACCOUNT_ID, A_SUBSCRIPTION_ID)).willReturn(A_SUBSCRIPTION_PAYLOAD);
 
         Response response = subscriptionResource.getSubscription(containerRequestContext, A_SUBSCRIPTION_ID.getUUID().toString());
 
@@ -157,17 +151,17 @@ public class SubscriptionResourceTest {
 
     @Test
     public void whenGettingMyOrders_shouldReturn200() {
-        when(subscriptionService.getCurrentOrders(any(SubscriberUniqueIdentifier.class))).thenReturn(AN_ORDERS_PAYLOAD);
-        Response response = subscriptionResource.getMyCurrentOrders(containerRequestContext);
+        when(subscriberService.getCurrentOrders(any(SubscriberUniqueIdentifier.class))).thenReturn(AN_ORDERS_PAYLOAD);
+        Response response = subscriptionResource.getCurrentOrders(containerRequestContext);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void whenGettingMyOrders_shouldReturnOrdersPayload() {
-        when(subscriptionService.getCurrentOrders(any(SubscriberUniqueIdentifier.class))).thenReturn(AN_ORDERS_PAYLOAD);
+        when(subscriberService.getCurrentOrders(any(SubscriberUniqueIdentifier.class))).thenReturn(AN_ORDERS_PAYLOAD);
 
-        Response response = subscriptionResource.getMyCurrentOrders(containerRequestContext);
+        Response response = subscriptionResource.getCurrentOrders(containerRequestContext);
 
         assertEquals(AN_ORDERS_PAYLOAD, response.getEntity());
     }

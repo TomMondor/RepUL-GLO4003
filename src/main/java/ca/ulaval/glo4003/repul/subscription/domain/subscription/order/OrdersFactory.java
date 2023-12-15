@@ -1,16 +1,14 @@
-package ca.ulaval.glo4003.repul.subscription.domain.order;
+package ca.ulaval.glo4003.repul.subscription.domain.subscription.order;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.subscription.domain.Semester;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
 
 public class OrdersFactory implements OrderFactory {
     UniqueIdentifierFactory<MealKitUniqueIdentifier> uniqueIdentifierFactory;
@@ -19,9 +17,9 @@ public class OrdersFactory implements OrderFactory {
         this.uniqueIdentifierFactory = uniqueIdentifierFactory;
     }
 
-    public List<Order> createOrdersInSemester(LocalDate today, LocalDate semesterEndDate, DayOfWeek desiredDayOfWeek, MealKitType mealKitType) {
+    public Orders createOrdersInSemester(LocalDate today, LocalDate semesterEndDate, DayOfWeek desiredDayOfWeek, MealKitType mealKitType) {
         LocalDate nextOrderDate = getFirstOrderDate(today, semesterEndDate, desiredDayOfWeek);
-        List<Order> orders = new ArrayList<>();
+        Orders orders = new Orders();
 
         while (nextOrderDate.isBefore(semesterEndDate.plusDays(1))) {
             Order order = new Order(uniqueIdentifierFactory.generate(), mealKitType, nextOrderDate);
@@ -44,12 +42,15 @@ public class OrdersFactory implements OrderFactory {
         return firstOrderDateCandidate;
     }
 
+    @Override
     public Order createSporadicOrder(Semester semester, MealKitType mealKitType) {
         LocalDate dateOfReceipt = LocalDate.now().plusDays(2);
         if (!semester.includes(dateOfReceipt)) {
             throw new OrderCannotBeConfirmedException();
         }
 
-        return new Order(uniqueIdentifierFactory.generate(), mealKitType, dateOfReceipt, OrderStatus.TO_COOK);
+        Order createdOrder = new Order(uniqueIdentifierFactory.generate(), mealKitType, dateOfReceipt);
+
+        return createdOrder;
     }
 }

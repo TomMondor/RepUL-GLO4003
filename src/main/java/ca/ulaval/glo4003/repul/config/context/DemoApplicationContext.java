@@ -54,18 +54,18 @@ import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
-import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
-import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
-import ca.ulaval.glo4003.repul.subscription.domain.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
-import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
-import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Frequency;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
@@ -83,37 +83,37 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final String CLIENT_EMAIL =
         ENV_PARSER.readVariable("CLIENT_EMAIL").isBlank() ? "alexandra@ulaval.ca" : ENV_PARSER.readVariable("CLIENT_EMAIL");
     private static final RegistrationRequest CLIENT_REGISTRATION_REQUEST =
-        new RegistrationRequest("alexa228", CLIENT_EMAIL, "alexandra123", "Alexandra", "1999-06-08", "WOMAN");
+        new RegistrationRequest("ALEXA228", CLIENT_EMAIL, "alexandra123", "Alexandra", "1999-06-08", "WOMAN");
     private static final Subscriber SUBSCRIBER =
         new Subscriber(CLIENT_ID, new IDUL(CLIENT_REGISTRATION_REQUEST.idul), new Name(CLIENT_REGISTRATION_REQUEST.name),
             new Birthdate(DateParser.localDateFrom(CLIENT_REGISTRATION_REQUEST.birthdate)), Gender.from(CLIENT_REGISTRATION_REQUEST.gender),
             new Email(CLIENT_REGISTRATION_REQUEST.email));
     private static final Order FIRST_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1),
-            OrderStatus.TO_COOK);
+            OrderStatus.IN_PREPARATION);
     private static final Order SECOND_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1),
-            OrderStatus.TO_COOK);
+            OrderStatus.IN_PREPARATION);
     private static final Order THIRD_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1),
-            OrderStatus.TO_COOK);
+            OrderStatus.IN_PREPARATION);
     private static final Optional<Frequency> OPTIONAL_OF_A_WEEKLY_FREQUENCY = Optional.of(new Frequency(LocalDate.now().getDayOfWeek().plus(1)));
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final Optional<DeliveryLocationId> OPTIONAL_OF_A_DELIVERY_LOCATION_ID = Optional.of(A_DELIVERY_LOCATION_ID);
     private static final Subscription FIRST_SUBSCRIPTION =
-        new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER),
+        new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), new Orders(List.of(FIRST_MEAL_KIT_ORDER)),
             OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final Subscription SECOND_SUBSCRIPTION =
-        new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), CLIENT_ID, List.of(SECOND_MEAL_KIT_ORDER),
+        new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), new Orders(List.of(SECOND_MEAL_KIT_ORDER)),
             OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final Subscription THIRD_SUBSCRIPTION =
-        new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), CLIENT_ID, List.of(THIRD_MEAL_KIT_ORDER),
+        new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), new Orders(List.of(THIRD_MEAL_KIT_ORDER)),
             OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final int PORT = 8080;
     private static final String DELIVERY_PERSON_EMAIL =
         ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL").isBlank() ? "roger@ulaval.ca" : ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL");
     private static final RegistrationRequest DELIVERY_PERSON_REGISTRATION_EMAIL =
-        new RegistrationRequest(DELIVERY_PERSON_EMAIL, "roger123", "ROGER456", "Roger", "1973-04-24", "MAN");
+        new RegistrationRequest("ROGER456", DELIVERY_PERSON_EMAIL, "roger123", "Roger", "1973-04-24", "MAN");
 
     @Override
     public ResourceConfig initializeResourceConfig() {
@@ -127,7 +127,9 @@ public class DemoApplicationContext implements ApplicationContext {
         NotificationContextInitializer notificationContextInitializer =
             new NotificationContextInitializer().withNotificationSender(new EmailNotificationSender())
                 .withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL))).withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL)))
-                .withConfirmedSubscriptions(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION));
+                .withConfirmedSubscriptions(List.of(
+                    Map.of(CLIENT_ID, FIRST_SUBSCRIPTION), Map.of(CLIENT_ID, SECOND_SUBSCRIPTION), Map.of(CLIENT_ID, THIRD_SUBSCRIPTION)
+                ));
         notificationContextInitializer.createNotificationService(eventBus);
 
         UserContextInitializer userContextInitializer = new UserContextInitializer(eventBus).withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_REQUEST)))
@@ -146,22 +148,21 @@ public class DemoApplicationContext implements ApplicationContext {
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer =
-            new SubscriptionContextInitializer().withSubscriptions(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION))
+            new SubscriptionContextInitializer().withSubscriptionsForSubscriber(List.of(FIRST_SUBSCRIPTION, SECOND_SUBSCRIPTION, THIRD_SUBSCRIPTION), CLIENT_ID)
                 .withSubscribers(List.of(SUBSCRIBER));
-        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus);
-        SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
+        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);
-        SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);
-        RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
-        subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, subscriptionService, eventBus);
+        SubscriptionResource subscriptionResource = new SubscriptionResource(subscriberService);
+        RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriberService);
+        subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, eventBus);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID))
             .withPendingMealKits(
-                List.of(Map.of(new MealKitDto(FIRST_SUBSCRIPTION.getSubscriberId(), FIRST_SUBSCRIPTION.getSubscriptionId(), FIRST_MEAL_KIT_ORDER.getOrderId()),
+                List.of(Map.of(new MealKitDto(CLIENT_ID, FIRST_SUBSCRIPTION.getSubscriptionId(), FIRST_MEAL_KIT_ORDER.getOrderId()),
                         A_DELIVERY_LOCATION_ID),
-                    Map.of(new MealKitDto(SECOND_SUBSCRIPTION.getSubscriberId(), SECOND_SUBSCRIPTION.getSubscriptionId(), SECOND_MEAL_KIT_ORDER.getOrderId()),
+                    Map.of(new MealKitDto(CLIENT_ID, SECOND_SUBSCRIPTION.getSubscriptionId(), SECOND_MEAL_KIT_ORDER.getOrderId()),
                         A_DELIVERY_LOCATION_ID),
-                    Map.of(new MealKitDto(THIRD_SUBSCRIPTION.getSubscriberId(), THIRD_SUBSCRIPTION.getSubscriptionId(), THIRD_MEAL_KIT_ORDER.getOrderId()),
+                    Map.of(new MealKitDto(CLIENT_ID, THIRD_SUBSCRIPTION.getSubscriptionId(), THIRD_MEAL_KIT_ORDER.getOrderId()),
                         A_DELIVERY_LOCATION_ID)));
         DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
         CargoResource cargoResource = new CargoResource(deliveryService);

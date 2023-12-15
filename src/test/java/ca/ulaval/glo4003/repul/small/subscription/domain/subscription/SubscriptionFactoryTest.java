@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.small.subscription.domain;
+package ca.ulaval.glo4003.repul.small.subscription.domain.subscription;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -20,17 +20,21 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.subscription.domain.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
-import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
-import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SemesterNotFoundException;
-import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SubscriptionFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -70,7 +74,7 @@ public class SubscriptionFactoryTest {
     @Test
     public void givenValidParameters_whenCreatingSubscription_shouldCreateSubscription() {
         when(subscriptionUniqueIdentifierFactory.generate()).thenReturn(A_UNIQUE_SUBSCRIPTION_IDENTIFIER);
-        when(ordersFactory.createOrdersInSemester(any(), any(), any(), any())).thenReturn(List.of(AN_ORDER));
+        when(ordersFactory.createOrdersInSemester(any(), any(), any(), any())).thenReturn(new Orders(List.of(AN_ORDER)));
         DayOfWeek chosenDayOfWeek = DayOfWeek.from(LocalDate.now().plusDays(3));
         SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_WEEKLY_TYPE, A_SUBSCRIBER_ID,
             Optional.of(A_VALID_DELIVERY_LOCATION_ID), Optional.of(chosenDayOfWeek),Optional.of(A_MEALKIT_TYPE));
@@ -78,13 +82,12 @@ public class SubscriptionFactoryTest {
         Subscription subscription = subscriptionFactory.createSubscription(subscriptionQuery);
 
         assertEquals(A_UNIQUE_SUBSCRIPTION_IDENTIFIER, subscription.getSubscriptionId());
-        assertEquals(A_SUBSCRIBER_ID, subscription.getSubscriberId());
         assertEquals(DayOfWeek.from(chosenDayOfWeek), subscription.getFrequency().get().dayOfWeek());
         assertEquals(A_VALID_DELIVERY_LOCATION_ID, subscription.getDeliveryLocationId().get());
         assertEquals(LocalDate.now(), subscription.getStartDate());
         assertEquals(CURRENT_SEMESTER, subscription.getSemester());
         Assertions.assertEquals(A_MEALKIT_TYPE, subscription.getMealKitType());
-        assertFalse(subscription.getOrders().isEmpty());
+        assertFalse(subscription.getCurrentOrder().isEmpty());
     }
 
     @Test
@@ -117,7 +120,6 @@ public class SubscriptionFactoryTest {
         Subscription subscription = subscriptionFactory.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
 
         assertEquals(A_UNIQUE_SUBSCRIPTION_IDENTIFIER, subscription.getSubscriptionId());
-        assertEquals(A_SUBSCRIBER_ID, subscription.getSubscriberId());
         assertEquals(LocalDate.now(), subscription.getStartDate());
         assertEquals(CURRENT_SEMESTER, subscription.getSemester());
         Assertions.assertEquals(MealKitType.STANDARD, subscription.getMealKitType());
@@ -139,6 +141,6 @@ public class SubscriptionFactoryTest {
 
         Subscription subscription = subscriptionFactory.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
 
-        assertTrue(subscription.getOrders().isEmpty());
+        assertTrue(subscription.getCurrentOrder().isEmpty());
     }
 }

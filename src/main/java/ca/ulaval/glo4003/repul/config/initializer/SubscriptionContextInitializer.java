@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,23 +16,21 @@ import org.slf4j.LoggerFactory;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriberEventHandler;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
-import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
-import ca.ulaval.glo4003.repul.subscription.domain.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
-import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
-import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionFactory;
-import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionRepository;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SubscriptionFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriberRepository;
-import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriptionRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,8 +44,8 @@ public class SubscriptionContextInitializer {
     private final SubscriptionFactory subscriptionFactory;
     private final SubscriberFactory subscriberFactory = new SubscriberFactory();
     private final OrdersFactory ordersFactory;
+    private final Map<SubscriberUniqueIdentifier, List<Subscription>> subscriptions = new HashMap<>();
     private SubscriberRepository subscriberRepository = new InMemorySubscriberRepository();
-    private SubscriptionRepository subscriptionRepository = new InMemorySubscriptionRepository();
 
     public SubscriptionContextInitializer() {
         List<Semester> semesters = parseSemesters();
@@ -60,18 +59,13 @@ public class SubscriptionContextInitializer {
         this.subscriptionFactory = new SubscriptionFactory(subscriptionUniqueIdentifierFactory, ordersFactory, semesters, deliveryLocationIds);
     }
 
-    public SubscriptionContextInitializer withSubscriptionRepository(SubscriptionRepository subscriptionRepository) {
-        this.subscriptionRepository = subscriptionRepository;
-        return this;
-    }
-
     public SubscriptionContextInitializer withSubscriberRepository(SubscriberRepository subscriberRepository) {
         this.subscriberRepository = subscriberRepository;
         return this;
     }
 
-    public SubscriptionContextInitializer withSubscriptions(List<Subscription> subscriptions) {
-        subscriptions.forEach(subscriptionRepository::save);
+    public SubscriptionContextInitializer withSubscriptionsForSubscriber(List<Subscription> subscriptions, SubscriberUniqueIdentifier subscriberId) {
+        this.subscriptions.put(subscriberId, subscriptions);
         return this;
     }
 
@@ -80,22 +74,24 @@ public class SubscriptionContextInitializer {
         return this;
     }
 
-    public SubscriptionService createSubscriptionService(RepULEventBus eventBus, PaymentService paymentService) {
-        LOGGER.info("Creating Subscription service");
-        SubscriptionService service = new SubscriptionService(subscriptionRepository, subscriptionFactory, paymentService, eventBus, ordersFactory);
-        eventBus.register(service);
-        return service;
-    }
-
-    public SubscriberService createSubscriberService(RepULEventBus eventBus) {
+    public SubscriberService createSubscriberService(RepULEventBus eventBus, PaymentService paymentService) {
         LOGGER.info("Creating Subscriber service");
-        SubscriberService service = new SubscriberService(subscriberRepository, subscriberFactory, eventBus);
+        initializeSubscriptions();
+        SubscriberService service =
+            new SubscriberService(subscriberRepository, subscriberFactory, subscriptionFactory, eventBus, paymentService, ordersFactory);
         return service;
     }
 
-    public SubscriberEventHandler createSubscriberEventHandler(SubscriberService subscriberService,
-                                                               SubscriptionService subscriptionService, RepULEventBus eventBus) {
-        SubscriberEventHandler subscriberEventHandler = new SubscriberEventHandler(subscriberService, subscriptionService);
+    private void initializeSubscriptions() {
+        subscriptions.forEach((subscriberId, subscriptions) -> {
+            Subscriber subscriber = subscriberRepository.getById(subscriberId);
+            subscriptions.forEach(subscription -> subscriber.addSubscription(subscription));
+            subscriberRepository.save(subscriber);
+        });
+    }
+
+    public SubscriberEventHandler createSubscriberEventHandler(SubscriberService subscriberService, RepULEventBus eventBus) {
+        SubscriberEventHandler subscriberEventHandler = new SubscriberEventHandler(subscriberService);
         eventBus.register(subscriberEventHandler);
         return subscriberEventHandler;
     }

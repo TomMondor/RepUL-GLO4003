@@ -5,8 +5,8 @@ import java.time.LocalDate;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
 
 public class OrderFixture {
     private MealKitUniqueIdentifier orderId;

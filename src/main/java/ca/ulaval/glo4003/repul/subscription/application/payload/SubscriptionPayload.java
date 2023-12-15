@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.subscription.application.payload;
 
-import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 
 public record SubscriptionPayload(
     String subscriptionId,

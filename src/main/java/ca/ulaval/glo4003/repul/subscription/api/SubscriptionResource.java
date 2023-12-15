@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.api.request.SubscriptionRequest;
-import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
+import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
@@ -33,11 +33,11 @@ import jakarta.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class SubscriptionResource {
     private static final String ACCOUNT_ID_CONTEXT_PROPERTY = "uid";
-    private final SubscriptionService subscriptionService;
+    private final SubscriberService subscriberService;
     private final UriFactory uriFactory = new UriFactory();
 
-    public SubscriptionResource(SubscriptionService subscriptionService) {
-        this.subscriptionService = subscriptionService;
+    public SubscriptionResource(SubscriberService subscriberService) {
+        this.subscriberService = subscriberService;
     }
 
     @POST
@@ -50,7 +50,7 @@ public class SubscriptionResource {
         String subscriberId = context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString();
 
         SubscriptionUniqueIdentifier subscriptionId =
-            subscriptionService.createSubscription(SubscriptionQuery.from(subscriptionRequest, subscriberId));
+            subscriberService.createSubscription(SubscriptionQuery.from(subscriptionRequest, subscriberId));
 
         URI location = uriFactory.createURI("/api/subscriptions/" + subscriptionId.getUUID().toString());
 
@@ -65,7 +65,7 @@ public class SubscriptionResource {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        SubscriptionPayload subscriptionPayload = subscriptionService.getSubscriptionById(subscriberId,
+        SubscriptionPayload subscriptionPayload = subscriberService.getSubscription(subscriberId,
             new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom(subscriptionIdAsString));
 
         return Response.ok(subscriptionPayload).build();
@@ -75,11 +75,11 @@ public class SubscriptionResource {
     @Secure
     @Path("/subscriptions")
     @Roles(Role.CLIENT)
-    public Response getSubscriptions(@Context ContainerRequestContext context) {
+    public Response getAllSubscriptions(@Context ContainerRequestContext context) {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        SubscriptionsPayload subscriptionsPayload = subscriptionService.getSubscriptions(subscriberId);
+        SubscriptionsPayload subscriptionsPayload = subscriberService.getAllSubscriptions(subscriberId);
 
         return Response.ok(subscriptionsPayload).build();
     }
@@ -88,12 +88,11 @@ public class SubscriptionResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/subscriptions/{subscriptionId}:confirm")
-    public Response confirmMealKit(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
+    public Response confirm(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        subscriptionService.confirmNextMealKitForSubscription(subscriberId,
-            new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom(subscriptionId));
+        subscriberService.confirm(subscriberId, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom(subscriptionId));
 
         return Response.noContent().build();
     }
@@ -102,12 +101,11 @@ public class SubscriptionResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/subscriptions/{subscriptionId}:decline")
-    public Response declineMealKit(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
+    public Response decline(@Context ContainerRequestContext context, @PathParam("subscriptionId") String subscriptionId) {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        subscriptionService.declineNextMealKitForSubscription(subscriberId,
-            new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom(subscriptionId));
+        subscriberService.decline(subscriberId, new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom(subscriptionId));
 
         return Response.noContent().build();
     }
@@ -116,11 +114,11 @@ public class SubscriptionResource {
     @Secure
     @Roles(Role.CLIENT)
     @Path("/subscriptions:currentOrders")
-    public Response getMyCurrentOrders(@Context ContainerRequestContext context) {
+    public Response getCurrentOrders(@Context ContainerRequestContext context) {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(subscriberId);
+        OrdersPayload ordersPayload = subscriberService.getCurrentOrders(subscriberId);
 
         return Response.ok(ordersPayload).build();
     }

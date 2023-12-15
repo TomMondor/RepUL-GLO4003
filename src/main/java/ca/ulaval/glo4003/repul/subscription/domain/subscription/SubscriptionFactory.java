@@ -1,23 +1,22 @@
-package ca.ulaval.glo4003.repul.subscription.domain;
+package ca.ulaval.glo4003.repul.subscription.domain.subscription;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationIdException;
-import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.application.exception.InvalidSubscriptionTypeException;
+import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSubscriptionQueryException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SemesterNotFoundException;
-import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
 
 public class SubscriptionFactory {
     private final UniqueIdentifierFactory<SubscriptionUniqueIdentifier> subscriptionUniqueIdentifierFactory;
@@ -34,10 +33,8 @@ public class SubscriptionFactory {
     }
 
     public Subscription createSubscription(SubscriptionQuery subscriptionQuery) {
-        SubscriberUniqueIdentifier subscriberId = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class)
-            .generateFrom(subscriptionQuery.subscriberId());
         if (subscriptionQuery.subscriptionType().equals(SubscriptionType.SPORADIC)) {
-            return createSporadicSubscription(subscriberId);
+            return createSporadicSubscription();
         } else if (subscriptionQuery.subscriptionType().equals(SubscriptionType.WEEKLY)) {
             if (subscriptionQuery.locationId().isEmpty() || subscriptionQuery.dayOfWeek().isEmpty() || subscriptionQuery.mealKitType().isEmpty()) {
                 throw new InvalidSubscriptionQueryException();
@@ -45,31 +42,30 @@ public class SubscriptionFactory {
             DeliveryLocationId deliveryLocationId = subscriptionQuery.locationId().get();
             DayOfWeek dayOfWeek = subscriptionQuery.dayOfWeek().get();
             MealKitType mealKitType = subscriptionQuery.mealKitType().get();
-            return createWeeklySubscription(subscriberId, deliveryLocationId, dayOfWeek, mealKitType);
+            return createWeeklySubscription(deliveryLocationId, dayOfWeek, mealKitType);
         }
         throw new InvalidSubscriptionTypeException();
     }
 
-    private Subscription createWeeklySubscription(SubscriberUniqueIdentifier subscriberId, DeliveryLocationId deliveryLocationId, DayOfWeek dayOfWeek,
-                                           MealKitType mealKitType) {
+    private Subscription createWeeklySubscription(DeliveryLocationId deliveryLocationId, DayOfWeek dayOfWeek,
+                                                  MealKitType mealKitType) {
         validateLocationId(deliveryLocationId);
         LocalDate today = LocalDate.now();
         Semester semester = getCurrentSemester(today);
         LocalDate semesterEndDate = semester.endDate();
-        List<Order> orders = ordersFactory.createOrdersInSemester(today, semesterEndDate, dayOfWeek, mealKitType);
+        Orders orders = ordersFactory.createOrdersInSemester(today, semesterEndDate, dayOfWeek, mealKitType);
         Optional<Frequency> frequency = Optional.of(new Frequency(dayOfWeek));
 
-        return new Subscription(subscriptionUniqueIdentifierFactory.generate(), subscriberId, orders, frequency,
-            Optional.of(deliveryLocationId), today, semester, mealKitType);
+        return new Subscription(subscriptionUniqueIdentifierFactory.generate(), orders, frequency, Optional.of(deliveryLocationId), today, semester,
+            mealKitType);
     }
 
-    private Subscription createSporadicSubscription(SubscriberUniqueIdentifier subscriberId) {
+    private Subscription createSporadicSubscription() {
         LocalDate today = LocalDate.now();
         Semester semester = getCurrentSemester(today);
-        List<Order> orders = new ArrayList<>();
 
-        return new Subscription(subscriptionUniqueIdentifierFactory.generate(), subscriberId, orders,
-            Optional.empty(), Optional.empty(), today, semester, MealKitType.STANDARD);
+        return new Subscription(subscriptionUniqueIdentifierFactory.generate(), new Orders(), Optional.empty(), Optional.empty(), today, semester,
+            MealKitType.STANDARD);
     }
 
     private void validateLocationId(DeliveryLocationId deliveryLocationId) {
@@ -79,7 +75,6 @@ public class SubscriptionFactory {
     }
 
     private Semester getCurrentSemester(LocalDate currentDate) {
-        return availableSemesters.stream().filter(semester -> semester.includes(currentDate)).findFirst()
-            .orElseThrow(SemesterNotFoundException::new);
+        return availableSemesters.stream().filter(semester -> semester.includes(currentDate)).findFirst().orElseThrow(SemesterNotFoundException::new);
     }
 }

@@ -11,6 +11,7 @@ import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.notification.application.NotificationService;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccountRepository;
@@ -20,8 +21,8 @@ import ca.ulaval.glo4003.repul.notification.domain.UserAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryDeliveryPersonAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.InMemoryUserAccountRepository;
 import ca.ulaval.glo4003.repul.notification.infrastructure.LogNotificationSender;
-import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
-import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 
 public class NotificationContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationContextInitializer.class);
@@ -58,12 +59,14 @@ public class NotificationContextInitializer {
         return this;
     }
 
-    public NotificationContextInitializer withConfirmedSubscriptions(List<Subscription> subscriptions) {
-        subscriptions.forEach(subscription -> {
-            UserAccount userAccount = userAccountRepository.getAccountById(subscription.getSubscriberId());
-            Order order = subscription.findCurrentOrder().orElseThrow(() -> new RuntimeException("Subscription must have a current order."));
-            userAccount.addMealKit(order.getOrderId());
-            userAccountRepository.save(userAccount);
+    public NotificationContextInitializer withConfirmedSubscriptions(List<Map<UniqueIdentifier, Subscription>> subscriptions) {
+        subscriptions.forEach(subscriberIdToSubscription -> {
+            subscriberIdToSubscription.forEach((subscriberId, subscription) -> {
+                UserAccount userAccount = userAccountRepository.getAccountById(subscriberId);
+                Order order = subscription.getCurrentOrder().orElseThrow(() -> new RuntimeException("Subscription must have a current order."));
+                userAccount.addMealKit(order.getOrderId());
+                userAccountRepository.save(userAccount);
+            });
         });
         return this;
     }

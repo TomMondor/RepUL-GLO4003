@@ -15,7 +15,7 @@ import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreat
 import com.google.common.eventbus.Subscribe;
 
 public class DeliveryEventHandler {
-    private DeliveryService deliveryService;
+    private final DeliveryService deliveryService;
 
     public DeliveryEventHandler(DeliveryService deliveryService) {
         this.deliveryService = deliveryService;

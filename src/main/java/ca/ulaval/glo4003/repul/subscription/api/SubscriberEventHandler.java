@@ -1,28 +1,25 @@
 package ca.ulaval.glo4003.repul.subscription.api;
 
+import java.util.List;
+
 import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
-import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
-import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
 import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 
 import com.google.common.eventbus.Subscribe;
 
 public class SubscriberEventHandler {
     private final SubscriberService subscriberService;
-    private final SubscriptionService subscriptionService;
 
-    public SubscriberEventHandler(SubscriberService subscriberService, SubscriptionService subscriptionService) {
+    public SubscriberEventHandler(SubscriberService subscriberService) {
         this.subscriberService = subscriberService;
-        this.subscriptionService = subscriptionService;
     }
 
     @Subscribe
@@ -34,37 +31,27 @@ public class SubscriberEventHandler {
     }
 
     @Subscribe
-    public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
-        subscriptionService.orderPickedUpByUser(event.mealKitId);
-    }
-
-    @Subscribe
-    public void handleMealKitsCookedEvent(MealKitsCookedEvent event) {
-        subscriptionService.markMealKitAsToDeliver(event.mealKits);
-    }
-
-    @Subscribe
-    public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
-        subscriptionService.recallMealKitToKitchen(recallCookedMealKitEvent.mealKitId);
-    }
-
-    @Subscribe
     public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
-        subscriptionService.markMealKitAsInDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
+        subscriberService.updateOrdersToInDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
     }
 
     @Subscribe
     public void handleCanceledCargoEvent(CanceledCargoEvent event) {
-        subscriptionService.recallMealKitInDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
+        subscriberService.updateOrdersToInPreparation(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
     }
 
     @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent event) {
-        subscriptionService.confirmMealKitDelivery(event.mealKitDto.mealKitId());
+        subscriberService.updateOrderToReadyToPickup(event.mealKitDto.mealKitId());
     }
 
     @Subscribe
     public void handleRecalledDeliveryEvent(RecalledDeliveryEvent event) {
-        subscriptionService.recallMealKitDelivered(event.mealKitDto.mealKitId());
+        subscriberService.updateOrdersToInPreparation(List.of(event.mealKitDto.mealKitId()));
+    }
+
+    @Subscribe
+    public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
+        subscriberService.updateOrderToPickedUp(event.mealKitId);
     }
 }

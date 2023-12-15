@@ -52,18 +52,18 @@ import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
 import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
-import ca.ulaval.glo4003.repul.subscription.application.SubscriptionService;
-import ca.ulaval.glo4003.repul.subscription.domain.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
-import ca.ulaval.glo4003.repul.subscription.domain.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
-import ca.ulaval.glo4003.repul.subscription.domain.Subscription;
-import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Frequency;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 import ca.ulaval.glo4003.repul.user.api.UserResource;
 import ca.ulaval.glo4003.repul.user.api.request.RegistrationRequest;
@@ -108,17 +108,27 @@ public class TestApplicationContext implements ApplicationContext {
     public static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     public static final Optional<DeliveryLocationId> OPTIONAL_OF_A_DELIVERY_LOCATION_ID = Optional.of(A_DELIVERY_LOCATION_ID);
     public static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Entrée Vachon #1", 30);
-    private static final Order FIRST_MEAL_KIT_ORDER = new Order(FIRST_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order SECOND_MEAL_KIT_ORDER = new Order(SECOND_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order THIRD_MEAL_KIT_ORDER = new Order(THIRD_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order FOURTH_MEAL_KIT_ORDER = new Order(FOURTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order FIFTH_MEAL_KIT_ORDER = new Order(FIFTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order SIXTH_MEAL_KIT_ORDER = new Order(SIXTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order SEVENTH_MEAL_KIT_ORDER = new Order(SEVENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order EIGHTH_MEAL_KIT_ORDER = new Order(EIGHTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order NINTH_MEAL_KIT_ORDER = new Order(NINTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_DELIVER);
-    private static final Order TENTH_MEAL_KIT_ORDER = new Order(TENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_DELIVER);
-    private static final Order SPORADIC_ORDER = new Order(SPORADIC_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
+    private static final Order FIRST_MEAL_KIT_ORDER =
+        new Order(FIRST_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order SECOND_MEAL_KIT_ORDER =
+        new Order(SECOND_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order THIRD_MEAL_KIT_ORDER =
+        new Order(THIRD_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order FOURTH_MEAL_KIT_ORDER =
+        new Order(FOURTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order FIFTH_MEAL_KIT_ORDER =
+        new Order(FIFTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order SIXTH_MEAL_KIT_ORDER =
+        new Order(SIXTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order SEVENTH_MEAL_KIT_ORDER =
+        new Order(SEVENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order EIGHTH_MEAL_KIT_ORDER =
+        new Order(EIGHTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order NINTH_MEAL_KIT_ORDER =
+        new Order(NINTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order TENTH_MEAL_KIT_ORDER =
+        new Order(TENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order SPORADIC_ORDER = new Order(SPORADIC_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
     private static final Optional<Frequency> OPTIONAL_OF_A_WEEKLY_FREQUENCY = Optional.of(new Frequency(LocalDate.now().getDayOfWeek()));
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusWeeks(10));
     private static final RegistrationRequest CLIENT_REGISTRATION_REQUEST =
@@ -178,34 +188,36 @@ public class TestApplicationContext implements ApplicationContext {
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer().withSubscribers(List.of(SUBSCRIBER))
-            .withSubscriptions(List.of(new Subscription(FIRST_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+            .withSubscriptionsForSubscriber(List.of(
+                new Subscription(FIRST_SUBSCRIPTION_ID, new Orders(List.of(FIRST_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(SECOND_SUBSCRIPTION_ID, CLIENT_ID, List.of(SECOND_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SECOND_SUBSCRIPTION_ID, new Orders(List.of(SECOND_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(THIRD_SUBSCRIPTION_ID, CLIENT_ID, List.of(THIRD_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(THIRD_SUBSCRIPTION_ID, new Orders(List.of(THIRD_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(FOURTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(FOURTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(FOURTH_SUBSCRIPTION_ID, new Orders(List.of(FOURTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(FIFTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIFTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(FIFTH_SUBSCRIPTION_ID, new Orders(List.of(FIFTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(SIXTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(SIXTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SIXTH_SUBSCRIPTION_ID, new Orders(List.of(SIXTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(SEVENTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(SEVENTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SEVENTH_SUBSCRIPTION_ID, new Orders(List.of(SEVENTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(EIGHTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(EIGHTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(EIGHTH_SUBSCRIPTION_ID, new Orders(List.of(EIGHTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(EIGHTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(EIGHTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(EIGHTH_SUBSCRIPTION_ID, new Orders(List.of(EIGHTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(SPORADIC_SUBSCRIPTION_ID, CLIENT_ID, List.of(SPORADIC_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SPORADIC_SUBSCRIPTION_ID, new Orders(List.of(SPORADIC_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(TENTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(TENTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
-                    OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD)));
-        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus);
-        SubscriptionService subscriptionService = subscriptionContextInitializer.createSubscriptionService(eventBus, paymentService);
+                new Subscription(NINTH_SUBSCRIPTION_ID, new Orders(List.of(SPORADIC_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID,
+                    LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
+                new Subscription(TENTH_SUBSCRIPTION_ID, new Orders(List.of(TENTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                    OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD)), CLIENT_ID);
+        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);
-        SubscriptionResource subscriptionResource = new SubscriptionResource(subscriptionService);
-        RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
-        subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, subscriptionService, eventBus);
+        SubscriptionResource subscriptionResource = new SubscriptionResource(subscriberService);
+        RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriberService);
+        subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, eventBus);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer()
             .withDeliveryPeople(List.of(DELIVERY_PERSON_ID, SECOND_DELIVERY_PERSON_ID))

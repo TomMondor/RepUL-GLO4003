@@ -14,13 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.subscription.domain.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
-import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrderStatus;
-import ca.ulaval.glo4003.repul.subscription.domain.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,11 +53,11 @@ public class OrdersFactoryTest {
         List<Order> expectedOrders =
             List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate), new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)));
 
-        List<Order> orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
+        Orders orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
 
-        assertEquals(expectedOrdersCount, orders.size());
-        assertOrders(expectedOrders.get(0), orders.get(0));
-        assertOrders(expectedOrders.get(1), orders.get(1));
+        assertEquals(expectedOrdersCount, orders.getAll().size());
+        assertOrders(expectedOrders.get(0), orders.getAll().get(0));
+        assertOrders(expectedOrders.get(1), orders.getAll().get(1));
     }
 
     @Test
@@ -71,12 +71,12 @@ public class OrdersFactoryTest {
             List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate), new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)),
                 new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(14)));
 
-        List<Order> orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
+        Orders orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
 
-        assertEquals(expectedOrdersCount, orders.size());
-        assertOrders(expectedOrders.get(0), orders.get(0));
-        assertOrders(expectedOrders.get(1), orders.get(1));
-        assertOrders(expectedOrders.get(2), orders.get(2));
+        assertEquals(expectedOrdersCount, orders.getAll().size());
+        assertOrders(expectedOrders.get(0), orders.getAll().get(0));
+        assertOrders(expectedOrders.get(1), orders.getAll().get(1));
+        assertOrders(expectedOrders.get(2), orders.getAll().get(2));
     }
 
     @Test
@@ -90,12 +90,12 @@ public class OrdersFactoryTest {
             List.of(new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate), new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(7)),
                 new Order(A_UNIQUE_IDENTIFIER, A_MEALKIT_TYPE, firstOrderDate.plusDays(14)));
 
-        List<Order> orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
+        Orders orders = ordersFactory.createOrdersInSemester(firstOrderDate, endOfSemester, chosenDayOfWeek, A_MEALKIT_TYPE);
 
-        assertEquals(expectedOrdersCount, orders.size());
-        assertOrders(expectedOrders.get(0), orders.get(0));
-        assertOrders(expectedOrders.get(1), orders.get(1));
-        assertOrders(expectedOrders.get(2), orders.get(2));
+        assertEquals(expectedOrdersCount, orders.getAll().size());
+        assertOrders(expectedOrders.get(0), orders.getAll().get(0));
+        assertOrders(expectedOrders.get(1), orders.getAll().get(1));
+        assertOrders(expectedOrders.get(2), orders.getAll().get(2));
     }
 
     @Test
@@ -119,15 +119,6 @@ public class OrdersFactoryTest {
     }
 
     @Test
-    public void whenCreatingSporadicOrder_shouldAlreadyBeToCook() {
-        when(uniqueIdentifierFactory.generate()).thenReturn(A_UNIQUE_IDENTIFIER);
-
-        Order order = ordersFactory.createSporadicOrder(CURRENT_SEMESTER, A_MEALKIT_TYPE);
-
-        assertEquals(OrderStatus.TO_COOK, order.getOrderStatus());
-    }
-
-    @Test
     public void whenCreatingSporadicOrder_shouldHaveDateOfReceiptInTwoDays() {
         when(uniqueIdentifierFactory.generate()).thenReturn(A_UNIQUE_IDENTIFIER);
         LocalDate expectedDateOfReceipt = LocalDate.now().plusDays(2);
@@ -141,8 +132,7 @@ public class OrdersFactoryTest {
     public void givenSemesterEndsTomorrow_whenCreatingSporadicOrder_shouldThrowOrderCannotBeConfirmedException() {
         Semester semesterEndingTomorrow = new Semester(A_SEMESTER_CODE, A_START_DATE, LocalDate.now().plusDays(1));
 
-        assertThrows(OrderCannotBeConfirmedException.class,
-            () -> ordersFactory.createSporadicOrder(semesterEndingTomorrow, A_MEALKIT_TYPE));
+        assertThrows(OrderCannotBeConfirmedException.class, () -> ordersFactory.createSporadicOrder(semesterEndingTomorrow, A_MEALKIT_TYPE));
     }
 
     private void assertOrders(Order expectedOrder, Order actualOrder) {

@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.repul.subscription.application.payload;
 
 import java.util.List;
 
-import ca.ulaval.glo4003.repul.subscription.domain.order.Order;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 
 public record OrdersPayload(
     List<OrderPayload> orders

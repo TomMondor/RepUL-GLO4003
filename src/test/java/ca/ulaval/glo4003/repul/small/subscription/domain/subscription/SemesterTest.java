@@ -1,11 +1,11 @@
-package ca.ulaval.glo4003.repul.small.subscription.domain;
+package ca.ulaval.glo4003.repul.small.subscription.domain.subscription;
 
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.subscription.domain.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
