@@ -77,7 +77,14 @@ public class MealKitEventHandlerTest {
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {
         Kitchen kitchen = new Kitchen(new MealKitFactory());
-        kitchen.createMealKitInPreparation(DEFAULT_MEAL_KIT_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, Optional.of(A_DELIVERY_LOCATION_ID));
+        kitchen.createMealKitInPreparation(
+            DEFAULT_MEAL_KIT_ID,
+            A_SUBSCRIPTION_ID,
+            A_SUBSCRIBER_ID,
+            A_MEAL_KIT_TYPE,
+            A_DELIVERY_DATE,
+            Optional.of(A_DELIVERY_LOCATION_ID)
+        );
         return kitchen;
     }
 }

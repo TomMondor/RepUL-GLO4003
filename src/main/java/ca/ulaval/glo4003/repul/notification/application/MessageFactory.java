@@ -7,24 +7,29 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
-import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitToDeliverDto;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.notification.domain.NotificationMessage;
 
 public class MessageFactory {
 
-    public NotificationMessage createReadyToBeDeliveredMessage(CargoUniqueIdentifier cargoId, KitchenLocationId locationId, List<MealKitDto> mealKitDtos) {
+    public NotificationMessage createReadyToBeDeliveredMessage(
+        CargoUniqueIdentifier cargoId,
+        KitchenLocationId locationId,
+        List<MealKitToDeliverDto> mealKitToDeliverDtos
+    ) {
         String messageBody = "Your meal kits (cargo id: " + cargoId.getUUID().toString() + ") are ready to be fetched from " + locationId.toString() + ".\n";
         messageBody += "Here is the list of meal kits to be delivered:\n";
-        for (MealKitDto mealKitDto : mealKitDtos) {
+        for (MealKitToDeliverDto mealKitToDeliverDto : mealKitToDeliverDtos) {
             String lockerId;
-            if (mealKitDto.lockerId().isPresent()) {
-                lockerId = Integer.toString(mealKitDto.lockerId().get().lockerNumber());
+            if (mealKitToDeliverDto.lockerId().isPresent()) {
+                lockerId = Integer.toString(mealKitToDeliverDto.lockerId().get().lockerNumber());
             } else {
                 lockerId = "To Be Determined";
             }
             messageBody +=
-                "MealKit ID " + mealKitDto.mealKitId().getUUID() + " to " + mealKitDto.deliveryLocationId().toString() + " in box " + lockerId + "\n";
+                "MealKit ID " + mealKitToDeliverDto.mealKitId().getUUID() + " to " +
+                    mealKitToDeliverDto.deliveryLocationId().toString() + " in box " + lockerId + "\n";
         }
         String messageTitle = "RepUL - Meal kits ready to be delivered";
         return new NotificationMessage(messageTitle, messageBody);

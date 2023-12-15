@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
@@ -29,11 +30,17 @@ public class CookingService {
         this.eventBus = eventBus;
     }
 
-    public void createMealKitInPreparation(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId,
-                                           MealKitType mealKitType, LocalDate deliveryDate, Optional<DeliveryLocationId> deliveryLocationId) {
+    public void createMealKitInPreparation(
+        MealKitUniqueIdentifier mealKitId,
+        SubscriptionUniqueIdentifier subscriptionId,
+        SubscriberUniqueIdentifier subscriberId,
+        MealKitType mealKitType,
+        LocalDate deliveryDate,
+        Optional<DeliveryLocationId> deliveryLocationId
+    ) {
         Kitchen kitchen = kitchenPersister.get();
 
-        kitchen.createMealKitInPreparation(mealKitId, subscriberId, mealKitType, deliveryDate, deliveryLocationId);
+        kitchen.createMealKitInPreparation(mealKitId, subscriptionId, subscriberId, mealKitType, deliveryDate, deliveryLocationId);
 
         kitchenPersister.save(kitchen);
     }

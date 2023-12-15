@@ -11,14 +11,14 @@ public class MealKitReceivedForDeliveryEvent extends RepULEvent {
     public final KitchenLocationId kitchenLocationId;
     public final CargoUniqueIdentifier cargoId;
     public final List<DeliveryPersonUniqueIdentifier> availableDeliveryPeople;
-    public final List<MealKitDto> mealKitDtos;
+    public final List<MealKitToDeliverDto> mealKitToDeliverDtos;
 
     public MealKitReceivedForDeliveryEvent(CargoUniqueIdentifier cargoId, KitchenLocationId kitchenLocationId,
-                                           List<DeliveryPersonUniqueIdentifier> availableDeliveryPeople, List<MealKitDto> mealKitDtos) {
+                                           List<DeliveryPersonUniqueIdentifier> availableDeliveryPeople, List<MealKitToDeliverDto> mealKitToDeliverDtos) {
         super();
         this.cargoId = cargoId;
         this.availableDeliveryPeople = availableDeliveryPeople;
         this.kitchenLocationId = kitchenLocationId;
-        this.mealKitDtos = mealKitDtos;
+        this.mealKitToDeliverDtos = mealKitToDeliverDtos;
     }
 }

@@ -49,7 +49,7 @@ public class NotificationService {
     public void handleMealKitReceivedForDeliveryEvent(MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent) {
         NotificationMessage message =
             messageFactory.createReadyToBeDeliveredMessage(mealKitReceivedForDeliveryEvent.cargoId, mealKitReceivedForDeliveryEvent.kitchenLocationId,
-                mealKitReceivedForDeliveryEvent.mealKitDtos);
+                mealKitReceivedForDeliveryEvent.mealKitToDeliverDtos);
         for (DeliveryPersonUniqueIdentifier availableShipperId : mealKitReceivedForDeliveryEvent.availableDeliveryPeople) {
             Account account = deliveryPersonAccountRepository.getByAccountId(availableShipperId);
             notificationSender.send(account, message);

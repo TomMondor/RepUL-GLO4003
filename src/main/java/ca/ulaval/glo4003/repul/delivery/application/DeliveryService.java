@@ -11,8 +11,8 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.application.event.CanceledCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
-import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitToDeliverDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
@@ -75,8 +75,8 @@ public class DeliveryService {
     }
 
     private void sendMealKitReceivedForDeliveryEvent(Cargo cargo, DeliverySystem deliverySystem) {
-        List<MealKitDto> mealKits = cargo.getMealKits().stream().map(
-            mealKit -> new MealKitDto(mealKit.getDeliveryLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())
+        List<MealKitToDeliverDto> mealKits = cargo.getMealKits().stream().map(
+            mealKit -> new MealKitToDeliverDto(mealKit.getDeliveryLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())
         ).toList();
 
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent = new MealKitReceivedForDeliveryEvent(

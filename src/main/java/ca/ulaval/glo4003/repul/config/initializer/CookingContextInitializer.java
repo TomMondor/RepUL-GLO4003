@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
@@ -44,10 +45,12 @@ public class CookingContextInitializer {
         return this;
     }
 
-    public CookingContextInitializer withMealKitsForSubscriber(List<Order> orders, SubscriberUniqueIdentifier subscriberId,
-                                                               Optional<DeliveryLocationId> deliveryLocationId) {
+    public CookingContextInitializer withMealKitsForSubscription(List<Order> orders, SubscriptionUniqueIdentifier subscriptionId,
+                                                                 SubscriberUniqueIdentifier subscriberId,
+                                                                 Optional<DeliveryLocationId> deliveryLocationId) {
         orders.forEach(order ->
-            kitchen.createMealKitInPreparation(order.getOrderId(), subscriberId, order.getMealKitType(), order.getDeliveryDate(), deliveryLocationId)
+            kitchen.createMealKitInPreparation(order.getOrderId(), subscriptionId, subscriberId, order.getMealKitType(), order.getDeliveryDate(),
+                deliveryLocationId)
         );
         return this;
     }

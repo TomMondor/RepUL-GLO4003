@@ -16,6 +16,7 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
@@ -38,6 +39,7 @@ public class KitchenTest {
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final Optional<DeliveryLocationId> A_DELIVERY_LOCATION_ID = Optional.of(DeliveryLocationId.DESJARDINS);
     private static final SubscriberUniqueIdentifier ANOTHER_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
 
@@ -53,7 +55,7 @@ public class KitchenTest {
 
     @Test
     public void whenAddingMealKit_shouldAddMealKit() {
-        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
+        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
 
         assertEquals(1, kitchen.getMealKitsToCook().size());
     }
@@ -227,14 +229,14 @@ public class KitchenTest {
 
     @Test
     public void givenMealKitNotCookedYet_whenPickingUpNonDeliverableMealKit_shouldThrowMealKitNotCookedException() {
-        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, Optional.empty());
+        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, Optional.empty());
 
         assertThrows(MealKitNotCookedException.class, () -> kitchen.pickupNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEALKIT_ID));
     }
 
     @Test
     public void givenMealKitForDelivery_whenPickingUpNonDeliverableMealKit_shouldThrowMealKitNotForKitchenPickUpException() {
-        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
+        kitchen.createMealKitInPreparation(A_MEALKIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
         kitchen.select(A_COOK_ID, List.of(A_MEALKIT_ID));
         kitchen.confirmCooked(A_COOK_ID, List.of(A_MEALKIT_ID));
 
@@ -242,7 +244,7 @@ public class KitchenTest {
     }
 
     private void addMealKit(MealKitUniqueIdentifier mealKitId, boolean selected) {
-        kitchen.createMealKitInPreparation(mealKitId, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
+        kitchen.createMealKitInPreparation(mealKitId, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEALKIT_TYPE, TOMORROW, A_DELIVERY_LOCATION_ID);
 
         if (selected) {
             kitchen.select(A_COOK_ID, List.of(mealKitId));
@@ -250,7 +252,7 @@ public class KitchenTest {
     }
 
     private void addAndCookNonDeliverableMealKit(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId) {
-        kitchen.createMealKitInPreparation(mealKitId, subscriberId, A_MEALKIT_TYPE, TOMORROW, Optional.empty());
+        kitchen.createMealKitInPreparation(mealKitId, A_SUBSCRIPTION_ID, subscriberId, A_MEALKIT_TYPE, TOMORROW, Optional.empty());
         kitchen.select(A_COOK_ID, List.of(mealKitId));
         kitchen.confirmCooked(A_COOK_ID, List.of(mealKitId));
     }

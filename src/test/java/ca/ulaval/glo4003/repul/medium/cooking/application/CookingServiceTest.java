@@ -15,6 +15,7 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
@@ -32,6 +33,7 @@ public class CookingServiceTest {
     private static final MealKitUniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(1);
@@ -102,7 +104,7 @@ public class CookingServiceTest {
 
     @Test
     public void givenMealKitForInKitchenPickUp_whenConfirmingCooked_shouldBeAbleToPickItUp() {
-        cookingService.createMealKitInPreparation(A_MEAL_KIT_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, Optional.empty());
+        cookingService.createMealKitInPreparation(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, Optional.empty());
         cookingService.select(A_COOK_ID, List.of(A_MEAL_KIT_ID));
 
         cookingService.confirmCooked(A_COOK_ID, A_MEAL_KIT_ID);
@@ -112,7 +114,7 @@ public class CookingServiceTest {
 
     @Test
     public void givenMealKitForDelivery_whenConfirmingCooked_shouldNotBeAbleToPickItUpInKitchen() {
-        cookingService.createMealKitInPreparation(A_MEAL_KIT_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, A_DELIVERY_LOCATION_ID);
+        cookingService.createMealKitInPreparation(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, A_DELIVERY_LOCATION_ID);
         cookingService.select(A_COOK_ID, List.of(A_MEAL_KIT_ID));
 
         cookingService.confirmCooked(A_COOK_ID, A_MEAL_KIT_ID);
@@ -122,7 +124,7 @@ public class CookingServiceTest {
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {
         Kitchen kitchen = new Kitchen(new MealKitFactory());
-        kitchen.createMealKitInPreparation(DEFAULT_MEAL_KIT_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, A_DELIVERY_LOCATION_ID);
+        kitchen.createMealKitInPreparation(DEFAULT_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, A_DELIVERY_LOCATION_ID);
         return kitchen;
     }
 

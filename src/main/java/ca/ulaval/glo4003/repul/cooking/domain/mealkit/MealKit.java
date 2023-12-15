@@ -7,11 +7,13 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 
 public class MealKit {
     private final MealKitUniqueIdentifier mealKitId;
+    private final SubscriptionUniqueIdentifier subscriptionId;
     private final SubscriberUniqueIdentifier subscriberId;
     private final LocalDate dateOfReceipt;
     private final List<Recipe> recipes;
@@ -19,9 +21,10 @@ public class MealKit {
     private Optional<CookUniqueIdentifier> cookId = Optional.empty();
     private boolean isCooked;
 
-    public MealKit(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId,
+    public MealKit(MealKitUniqueIdentifier mealKitId, SubscriptionUniqueIdentifier subscriptionId, SubscriberUniqueIdentifier subscriberId,
                    LocalDate dateOfReceipt, List<Recipe> recipes, boolean isToBeDelivered) {
         this.mealKitId = mealKitId;
+        this.subscriptionId = subscriptionId;
         this.subscriberId = subscriberId;
         this.dateOfReceipt = dateOfReceipt;
         this.recipes = recipes;

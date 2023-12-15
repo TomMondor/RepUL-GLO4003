@@ -5,12 +5,14 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
 
 public class MealKitFixture {
     private MealKitUniqueIdentifier mealKitId;
+    private SubscriptionUniqueIdentifier subscriptionId;
     private SubscriberUniqueIdentifier subscriberId;
     private List<Recipe> recipes;
     private LocalDate deliveryDate;
@@ -39,6 +41,11 @@ public class MealKitFixture {
         return this;
     }
 
+    public MealKitFixture withSubscriptionId(SubscriptionUniqueIdentifier subscriptionId) {
+        this.subscriptionId = subscriptionId;
+        return this;
+    }
+
     public MealKitFixture withDeliveryDate(LocalDate deliveryDate) {
         this.deliveryDate = deliveryDate;
         return this;
@@ -50,6 +57,6 @@ public class MealKitFixture {
     }
 
     public MealKit build() {
-        return new MealKit(mealKitId, subscriberId, deliveryDate, recipes, isToBeDelivered);
+        return new MealKit(mealKitId, subscriptionId, subscriberId, deliveryDate, recipes, isToBeDelivered);
     }
 }

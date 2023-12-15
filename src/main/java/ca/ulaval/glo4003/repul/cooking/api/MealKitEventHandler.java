@@ -15,7 +15,14 @@ public class MealKitEventHandler {
 
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent event) {
-        cookingService.createMealKitInPreparation(event.mealKitId, event.subscriberId, event.mealKitType, event.deliveryDate, event.deliveryLocationId);
+        cookingService.createMealKitInPreparation(
+            event.mealKitId,
+            event.subscriptionId,
+            event.subscriberId,
+            event.mealKitType,
+            event.deliveryDate,
+            event.deliveryLocationId
+        );
     }
 
     @Subscribe

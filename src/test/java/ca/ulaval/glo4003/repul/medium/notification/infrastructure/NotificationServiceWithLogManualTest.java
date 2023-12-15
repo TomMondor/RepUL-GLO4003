@@ -13,8 +13,8 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitToDeliverDto;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.notification.application.NotificationService;
 import ca.ulaval.glo4003.repul.notification.domain.DeliveryPersonAccount;
@@ -44,8 +44,9 @@ public class NotificationServiceWithLogManualTest {
     private static final CargoUniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generate();
 
     private static final List<DeliveryPersonUniqueIdentifier> AVAILABLE_SHIPPERS_IDS = List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
-    private static final List<MealKitDto> MEAL_KIT_DTOS = List.of(new MealKitDto(A_DELIVERY_LOCATION_ID, AN_OPTIONAL_LOCKER_ID, A_MEAL_KIT_ID),
-        new MealKitDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
+    private static final List<MealKitToDeliverDto> MEAL_KIT_DTOS =
+        List.of(new MealKitToDeliverDto(A_DELIVERY_LOCATION_ID, AN_OPTIONAL_LOCKER_ID, A_MEAL_KIT_ID),
+            new MealKitToDeliverDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
         new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_SHIPPERS_IDS, MEAL_KIT_DTOS);
 

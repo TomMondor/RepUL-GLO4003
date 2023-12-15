@@ -26,8 +26,8 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
-import ca.ulaval.glo4003.repul.delivery.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
+import ca.ulaval.glo4003.repul.delivery.application.event.MealKitToDeliverDto;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.notification.application.NotificationService;
 import ca.ulaval.glo4003.repul.notification.application.exception.DeliveryPersonAccountNotFoundException;
@@ -48,7 +48,8 @@ import ca.ulaval.glo4003.repul.user.application.event.UserCreatedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 
@@ -75,7 +76,8 @@ public class NotificationServiceTest {
     private static final ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto A_KITCHEN_PICKUP_MEAL_KIT_DTO =
         new ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto(A_MEAL_KIT_ID, true);
     private static final ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto A_DELIVERY_PICKUP_MEAL_KIT_DTO =
-        new ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto(A_MEAL_KIT_ID, false);    private RepULEventBus eventBus;
+        new ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto(A_MEAL_KIT_ID, false);
+    private RepULEventBus eventBus;
     @Mock
     private NotificationSender notificationSender;
 
@@ -118,19 +120,20 @@ public class NotificationServiceTest {
         eventBus.publish(new DeliveryPersonAccountCreatedEvent(A_DELIVERY_PERSON_ID, AN_EMAIL));
         eventBus.publish(new DeliveryPersonAccountCreatedEvent(ANOTHER_DELIVERY_PERSON_ID, ANOTHER_EMAIL));
 
-        MealKitDto mealKitDto = new MealKitDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID);
+        MealKitToDeliverDto mealKitToDeliverDto = new MealKitToDeliverDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID);
         eventBus.publish(
-            new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_ID, List.of(A_DELIVERY_PERSON_ID, ANOTHER_DELIVERY_PERSON_ID), List.of(mealKitDto)));
+            new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_ID, List.of(A_DELIVERY_PERSON_ID, ANOTHER_DELIVERY_PERSON_ID), List.of(
+                mealKitToDeliverDto)));
 
         verify(notificationSender, times(2)).send(any(Account.class), any(NotificationMessage.class));
     }
 
     @Test
     public void givenNoMatchingDeliveryPersonAccountCreated_whenHandlingMealKitReceivedForDeliveryEvent_shouldThrowDeliveryPersonAccountNotFoundException() {
-        MealKitDto mealKitDto = new MealKitDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID);
+        MealKitToDeliverDto mealKitToDeliverDto = new MealKitToDeliverDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID);
 
         assertThrows(DeliveryPersonAccountNotFoundException.class,
-            () -> eventBus.publish(new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_ID, List.of(A_DELIVERY_PERSON_ID), List.of(mealKitDto))));
+            () -> eventBus.publish(new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_ID, List.of(A_DELIVERY_PERSON_ID), List.of(mealKitToDeliverDto))));
     }
 
     @Test

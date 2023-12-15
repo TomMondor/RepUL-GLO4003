@@ -82,6 +82,7 @@ public class TestApplicationContext implements ApplicationContext {
     public static final String DELIVERY_PERSON_PASSWORD = "roger123";
     public static final String SECOND_DELIVERY_PERSON_EMAIL = "john@ulaval.ca";
     public static final String SECOND_DELIVERY_PERSON_PASSWORD = "john123";
+    public static final SubscriptionUniqueIdentifier SPORADIC_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     public static final SubscriptionUniqueIdentifier FIRST_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     public static final SubscriptionUniqueIdentifier SECOND_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     public static final SubscriptionUniqueIdentifier THIRD_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
@@ -100,8 +101,9 @@ public class TestApplicationContext implements ApplicationContext {
     public static final MealKitUniqueIdentifier SIXTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     public static final MealKitUniqueIdentifier SEVENTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     public static final MealKitUniqueIdentifier EIGHTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
-    public static final MealKitUniqueIdentifier SPORADIC_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier NINTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     public static final MealKitUniqueIdentifier TENTH_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
+    public static final MealKitUniqueIdentifier SPORADIC_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     public static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     public static final Optional<DeliveryLocationId> OPTIONAL_OF_A_DELIVERY_LOCATION_ID = Optional.of(A_DELIVERY_LOCATION_ID);
     public static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Entrée Vachon #1", 30);
@@ -113,8 +115,9 @@ public class TestApplicationContext implements ApplicationContext {
     private static final Order SIXTH_MEAL_KIT_ORDER = new Order(SIXTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order SEVENTH_MEAL_KIT_ORDER = new Order(SEVENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Order EIGHTH_MEAL_KIT_ORDER = new Order(EIGHTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
-    private static final Order SPORADIC_ORDER = new Order(SPORADIC_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
+    private static final Order NINTH_MEAL_KIT_ORDER = new Order(NINTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_DELIVER);
     private static final Order TENTH_MEAL_KIT_ORDER = new Order(TENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_DELIVER);
+    private static final Order SPORADIC_ORDER = new Order(SPORADIC_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.TO_COOK);
     private static final Optional<Frequency> OPTIONAL_OF_A_WEEKLY_FREQUENCY = Optional.of(new Frequency(LocalDate.now().getDayOfWeek()));
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusWeeks(10));
     private static final RegistrationRequest CLIENT_REGISTRATION_REQUEST =
@@ -157,10 +160,19 @@ public class TestApplicationContext implements ApplicationContext {
         UserResource userResource = new UserResource(userContextInitializer.createService());
         AuthGuard authGuard = userContextInitializer.createAuthGuard();
 
-        CookingContextInitializer cookingContextInitializer = new CookingContextInitializer().withMealKitsForSubscriber(List.of(SPORADIC_ORDER),
-            CLIENT_ID, Optional.empty()).withMealKitsForSubscriber(List.of(FIRST_MEAL_KIT_ORDER, SECOND_MEAL_KIT_ORDER, THIRD_MEAL_KIT_ORDER,
-            FOURTH_MEAL_KIT_ORDER, FIFTH_MEAL_KIT_ORDER, SIXTH_MEAL_KIT_ORDER, SEVENTH_MEAL_KIT_ORDER, EIGHTH_MEAL_KIT_ORDER, TENTH_MEAL_KIT_ORDER),
-            CLIENT_ID, Optional.of(DeliveryLocationId.VACHON));
+        CookingContextInitializer cookingContextInitializer =
+            new CookingContextInitializer()
+                .withMealKitsForSubscription(List.of(SPORADIC_ORDER), SPORADIC_SUBSCRIPTION_ID, CLIENT_ID, Optional.empty())
+                .withMealKitsForSubscription(List.of(FIRST_MEAL_KIT_ORDER), FIRST_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(SECOND_MEAL_KIT_ORDER), SECOND_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(THIRD_MEAL_KIT_ORDER), THIRD_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(FOURTH_MEAL_KIT_ORDER), FOURTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(FIFTH_MEAL_KIT_ORDER), FIFTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(SIXTH_MEAL_KIT_ORDER), SIXTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(SEVENTH_MEAL_KIT_ORDER), SEVENTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(EIGHTH_MEAL_KIT_ORDER), EIGHTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(NINTH_MEAL_KIT_ORDER), NINTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+                .withMealKitsForSubscription(List.of(TENTH_MEAL_KIT_ORDER), TENTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON));
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
@@ -185,7 +197,7 @@ public class TestApplicationContext implements ApplicationContext {
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
                 new Subscription(EIGHTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(EIGHTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(NINTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(SPORADIC_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SPORADIC_SUBSCRIPTION_ID, CLIENT_ID, List.of(SPORADIC_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
                 new Subscription(TENTH_SUBSCRIPTION_ID, CLIENT_ID, List.of(TENTH_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD)));
@@ -201,7 +213,8 @@ public class TestApplicationContext implements ApplicationContext {
                 Map.of(THIRD_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(FOURTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
                 Map.of(FIFTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(SIXTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
                 Map.of(SEVENTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(EIGHTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID),
-                Map.of(TENTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID))).withCargo(List.of(TENTH_MEAL_KIT_ID));
+                Map.of(NINTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID), Map.of(TENTH_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID)))
+            .withCargo(List.of(TENTH_MEAL_KIT_ID));
         DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
         CargoResource cargoResource = new CargoResource(deliveryService);
         LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());

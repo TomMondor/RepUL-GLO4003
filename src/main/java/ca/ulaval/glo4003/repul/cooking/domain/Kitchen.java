@@ -10,6 +10,7 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
@@ -34,10 +35,15 @@ public class Kitchen {
         return kitchenLocationId;
     }
 
-    public void createMealKitInPreparation(MealKitUniqueIdentifier mealKitId, SubscriberUniqueIdentifier subscriberId,
-                                           MealKitType type, LocalDate deliveryDate, Optional<DeliveryLocationId> deliveryLocationId) {
-
-        MealKit mealKit = mealKitFactory.createMealKit(mealKitId, subscriberId, type, deliveryDate, deliveryLocationId);
+    public void createMealKitInPreparation(
+        MealKitUniqueIdentifier mealKitId,
+        SubscriptionUniqueIdentifier subscriptionId,
+        SubscriberUniqueIdentifier subscriberId,
+        MealKitType type,
+        LocalDate deliveryDate,
+        Optional<DeliveryLocationId> deliveryLocationId
+    ) {
+        MealKit mealKit = mealKitFactory.createMealKit(mealKitId, subscriptionId, subscriberId, type, deliveryDate, deliveryLocationId);
         mealKits.add(mealKit);
     }
 

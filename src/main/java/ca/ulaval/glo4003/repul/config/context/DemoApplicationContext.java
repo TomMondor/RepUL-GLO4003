@@ -75,13 +75,14 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
+    private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.parse("2023-09-04"), LocalDate.parse("2023-12-15"));
+    private static final SubscriberUniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final RegistrationRequest COOK_REGISTRATION_REQUEST =
         new RegistrationRequest("PAUL123", "paul@ulaval.ca", "paul123", "Paul", "1990-01-01", "MAN");
     private static final String CLIENT_EMAIL =
         ENV_PARSER.readVariable("CLIENT_EMAIL").isBlank() ? "alexandra@ulaval.ca" : ENV_PARSER.readVariable("CLIENT_EMAIL");
     private static final RegistrationRequest CLIENT_REGISTRATION_REQUEST =
         new RegistrationRequest("alexa228", CLIENT_EMAIL, "alexandra123", "Alexandra", "1999-06-08", "WOMAN");
-    private static final SubscriberUniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final Subscriber SUBSCRIBER =
         new Subscriber(CLIENT_ID, new IDUL(CLIENT_REGISTRATION_REQUEST.idul), new Name(CLIENT_REGISTRATION_REQUEST.name),
             new Birthdate(DateParser.localDateFrom(CLIENT_REGISTRATION_REQUEST.birthdate)), Gender.from(CLIENT_REGISTRATION_REQUEST.gender),
@@ -98,7 +99,6 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final Optional<Frequency> OPTIONAL_OF_A_WEEKLY_FREQUENCY = Optional.of(new Frequency(LocalDate.now().getDayOfWeek().plus(1)));
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final Optional<DeliveryLocationId> OPTIONAL_OF_A_DELIVERY_LOCATION_ID = Optional.of(A_DELIVERY_LOCATION_ID);
-    private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.parse("2023-09-04"), LocalDate.parse("2023-12-15"));
     private static final Subscription FIRST_SUBSCRIPTION =
         new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER),
             OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
@@ -137,7 +137,8 @@ public class DemoApplicationContext implements ApplicationContext {
         AuthGuard authGuard = userContextInitializer.createAuthGuard();
 
         CookingContextInitializer cookingContextInitializer =
-            new CookingContextInitializer().withMealKitsForSubscriber(List.of(FIRST_MEAL_KIT_ORDER, SECOND_MEAL_KIT_ORDER, THIRD_MEAL_KIT_ORDER), CLIENT_ID,
+            new CookingContextInitializer().withMealKitsForSubscription(List.of(FIRST_MEAL_KIT_ORDER, SECOND_MEAL_KIT_ORDER, THIRD_MEAL_KIT_ORDER),
+                FIRST_SUBSCRIPTION.getSubscriptionId(), CLIENT_ID,
                 Optional.of(DeliveryLocationId.DESJARDINS));
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
