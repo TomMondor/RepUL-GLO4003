@@ -32,7 +32,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 import ca.ulaval.glo4003.repul.fixture.delivery.MealKitFixture;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,8 +44,7 @@ public class DeliveryServiceTest {
     private static final String A_DELIVERY_PERSON_ID = UUID.randomUUID().toString();
     private static final String A_CARGO_ID = UUID.randomUUID().toString();
     private static final String A_MEAL_KIT_ID = UUID.randomUUID().toString();
-    private static final CargoUniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER =
-        new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(A_CARGO_ID);
+    private static final CargoUniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(A_CARGO_ID);
     private static final MealKitUniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(A_MEAL_KIT_ID);
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID =

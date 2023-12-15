@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationException;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.fixture.delivery.LocationsCatalogFixture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

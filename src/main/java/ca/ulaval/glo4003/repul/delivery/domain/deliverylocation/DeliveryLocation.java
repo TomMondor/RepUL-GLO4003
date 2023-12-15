@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.delivery.domain;
+package ca.ulaval.glo4003.repul.delivery.domain.deliverylocation;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.Locker;
+import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotFoundException;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 
 public class DeliveryLocation {
     private final DeliveryLocationId deliveryLocationId;
@@ -65,9 +67,7 @@ public class DeliveryLocation {
     }
 
     private Optional<Locker> findNextAvailableLocker() {
-        return lockers.stream().filter(Locker::isUnassigned).sorted(
-            Comparator.comparingInt(c -> c.getLockerId().lockerNumber())
-        ).findFirst();
+        return lockers.stream().filter(Locker::isUnassigned).sorted(Comparator.comparingInt(c -> c.getLockerId().lockerNumber())).findFirst();
     }
 
     public void unassignLocker(MealKit mealKit) {
@@ -78,7 +78,6 @@ public class DeliveryLocation {
     }
 
     public Locker findLockerById(LockerId lockerId) {
-        return lockers.stream().filter(locker -> locker.getLockerId().equals(lockerId)).findFirst().orElseThrow(
-            LockerNotFoundException::new);
+        return lockers.stream().filter(locker -> locker.getLockerId().equals(lockerId)).findFirst().orElseThrow(LockerNotFoundException::new);
     }
 }

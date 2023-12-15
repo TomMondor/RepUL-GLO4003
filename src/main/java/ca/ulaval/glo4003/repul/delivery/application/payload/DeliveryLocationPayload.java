@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.delivery.application.payload;
 
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 
 public record DeliveryLocationPayload(
     String deliveryLocationId,

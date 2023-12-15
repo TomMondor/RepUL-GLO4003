@@ -1,11 +1,11 @@
-package ca.ulaval.glo4003.repul.delivery.domain;
+package ca.ulaval.glo4003.repul.delivery.domain.deliverylocation;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 
 public class DeliveryLocations {
     private final Map<DeliveryLocationId, DeliveryLocation> deliveryLocations;
@@ -19,8 +19,10 @@ public class DeliveryLocations {
         return deliveryLocations.values().stream().toList();
     }
 
-    public void assignLocker(DeliveryLocationId deliveryLocationId, MealKit mealKit) {
-        deliveryLocations.get(deliveryLocationId).assignLocker(mealKit);
+    public void assignLockers(List<MealKit> mealKits) {
+        for (MealKit mealKit : mealKits) {
+            deliveryLocations.get(mealKit.getDeliveryLocationId()).assignLocker(mealKit);
+        }
     }
 
     public void unassignLocker(MealKit mealKit) {

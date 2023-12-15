@@ -11,10 +11,10 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitPayload;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocations;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocations;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -48,7 +48,7 @@ public class MealKitPayloadTest {
     @Test
     public void givenMealKitWithAssignedLocker_whenUsingFrom_shouldReturnCorrectMealKitPayload() {
         MealKit mealKit = new MealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, DELIVERY_LOCATION_ID, DELIVERY_STATUS);
-        deliveryLocations.assignLocker(DELIVERY_LOCATION_ID, mealKit);
+        deliveryLocations.assignLockers(List.of(mealKit));
         MealKitPayload expectedMealKitPayload =
             new MealKitPayload(A_MEAL_KIT_UNIQUE_IDENTIFIER.getUUID().toString(), DELIVERY_LOCATION_ID.toString(), LOCKER_NUMBER);
 

@@ -5,9 +5,9 @@ import java.util.Map;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 
 public class LocationsCatalogFixture {
     private final Map<DeliveryLocationId, DeliveryLocation> deliveryLocations;

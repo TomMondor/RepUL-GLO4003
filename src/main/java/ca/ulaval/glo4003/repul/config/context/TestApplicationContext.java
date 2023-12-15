@@ -43,7 +43,7 @@ import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
@@ -146,10 +146,10 @@ public class TestApplicationContext implements ApplicationContext {
         LOGGER.info("Creating Health resource");
         HealthResource healthResource = new HealthResource();
 
-        NotificationContextInitializer notificationContextInitializer =
-            new NotificationContextInitializer().withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)))
-                .withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL))).withMealKitIdForUser(FIRST_MEAL_KIT_ID, CLIENT_ID)
-                .withMealKitIdForUser(TENTH_MEAL_KIT_ID, CLIENT_ID);
+        NotificationContextInitializer notificationContextInitializer = new NotificationContextInitializer().withDeliveryAccounts(
+                List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL), Map.of(SECOND_DELIVERY_PERSON_ID, SECOND_DELIVERY_PERSON_EMAIL)))
+            .withUserAccounts(List.of(Map.of(CLIENT_ID, CLIENT_EMAIL))).withMealKitIdForUser(FIRST_MEAL_KIT_ID, CLIENT_ID)
+            .withMealKitIdForUser(TENTH_MEAL_KIT_ID, CLIENT_ID);
         notificationContextInitializer.createNotificationService(eventBus);
 
         UserContextInitializer userContextInitializer =
@@ -161,26 +161,24 @@ public class TestApplicationContext implements ApplicationContext {
         UserResource userResource = new UserResource(userContextInitializer.createService());
         AuthGuard authGuard = userContextInitializer.createAuthGuard();
 
-        CookingContextInitializer cookingContextInitializer =
-            new CookingContextInitializer()
-                .withMealKitsForSubscription(List.of(SPORADIC_ORDER), SPORADIC_SUBSCRIPTION_ID, CLIENT_ID, Optional.empty())
-                .withMealKitsForSubscription(List.of(FIRST_MEAL_KIT_ORDER), FIRST_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(SECOND_MEAL_KIT_ORDER), SECOND_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(THIRD_MEAL_KIT_ORDER), THIRD_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(FOURTH_MEAL_KIT_ORDER), FOURTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(FIFTH_MEAL_KIT_ORDER), FIFTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(SIXTH_MEAL_KIT_ORDER), SIXTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(SEVENTH_MEAL_KIT_ORDER), SEVENTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(EIGHTH_MEAL_KIT_ORDER), EIGHTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(NINTH_MEAL_KIT_ORDER), NINTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
-                .withMealKitsForSubscription(List.of(TENTH_MEAL_KIT_ORDER), TENTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON));
+        CookingContextInitializer cookingContextInitializer = new CookingContextInitializer()
+            .withMealKitsForSubscription(List.of(SPORADIC_ORDER), SPORADIC_SUBSCRIPTION_ID, CLIENT_ID, Optional.empty())
+            .withMealKitsForSubscription(List.of(FIRST_MEAL_KIT_ORDER), FIRST_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(SECOND_MEAL_KIT_ORDER), SECOND_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(THIRD_MEAL_KIT_ORDER), THIRD_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(FOURTH_MEAL_KIT_ORDER), FOURTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(FIFTH_MEAL_KIT_ORDER), FIFTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(SIXTH_MEAL_KIT_ORDER), SIXTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(SEVENTH_MEAL_KIT_ORDER), SEVENTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(EIGHTH_MEAL_KIT_ORDER), EIGHTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(NINTH_MEAL_KIT_ORDER), NINTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON))
+            .withMealKitsForSubscription(List.of(TENTH_MEAL_KIT_ORDER), TENTH_SUBSCRIPTION_ID, CLIENT_ID, Optional.of(DeliveryLocationId.VACHON));
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer().withSubscribers(List.of(SUBSCRIBER))
-            .withSubscriptions(List.of(
-                new Subscription(FIRST_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+            .withSubscriptions(List.of(new Subscription(FIRST_SUBSCRIPTION_ID, CLIENT_ID, List.of(FIRST_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
                 new Subscription(SECOND_SUBSCRIPTION_ID, CLIENT_ID, List.of(SECOND_MEAL_KIT_ORDER), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
@@ -209,7 +207,8 @@ public class TestApplicationContext implements ApplicationContext {
         RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriptionService);
         subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, subscriptionService, eventBus);
 
-        DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID))
+        DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer()
+            .withDeliveryPeople(List.of(DELIVERY_PERSON_ID, SECOND_DELIVERY_PERSON_ID))
             .withPendingMealKits(List.of(
                 Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), FIRST_SUBSCRIPTION_ID, FIRST_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),
                 Map.of(new MealKitDto(SUBSCRIBER.getSubscriberId(), SECOND_SUBSCRIPTION_ID, SECOND_MEAL_KIT_ID), A_DELIVERY_LOCATION_ID),

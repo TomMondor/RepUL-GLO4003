@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.repul.delivery.domain;
 
 import java.util.Optional;
 
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 
 public class Locker {
     private final LockerId lockerId;

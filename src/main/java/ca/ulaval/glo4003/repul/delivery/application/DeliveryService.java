@@ -23,8 +23,8 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 
 public class DeliveryService {
     private final DeliverySystemPersister deliverySystemPersister;
@@ -80,11 +80,11 @@ public class DeliveryService {
 
     private void sendMealKitReceivedForDeliveryEvent(Cargo cargo, DeliverySystem deliverySystem) {
         List<MealKitToDeliverDto> mealKitToDeliverDtos = cargo.getMealKits().stream().map(
-            mealKit -> new MealKitToDeliverDto(mealKit.getDeliveryLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())
-        ).toList();
+            mealKit -> new MealKitToDeliverDto(mealKit.getDeliveryLocationId(), mealKit.getLockerId(), mealKit.getMealKitId())).toList();
 
         MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent = new MealKitReceivedForDeliveryEvent(
-            cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeople(), mealKitToDeliverDtos);
+            cargo.getCargoId(), cargo.getKitchenLocation().getLocationId(), deliverySystem.getDeliveryPeople(),
+            mealKitToDeliverDtos);
         eventBus.publish(mealKitReceivedForDeliveryEvent);
     }
 
@@ -130,8 +130,8 @@ public class DeliveryService {
 
         deliverySystemPersister.save(deliverySystem);
 
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(mealKit.toDto(), mealKit.getDeliveryLocationId(),
-            mealKit.getLockerId(), LocalTime.now());
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(
+            mealKit.toDto(), mealKit.getDeliveryLocationId(),  mealKit.getLockerId(), LocalTime.now());
         eventBus.publish(event);
     }
 

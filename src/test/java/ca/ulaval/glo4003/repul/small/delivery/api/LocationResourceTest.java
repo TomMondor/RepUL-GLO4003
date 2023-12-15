@@ -10,7 +10,7 @@ import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.delivery.application.LocationsCatalogService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.DeliveryLocationsPayload;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 
 import jakarta.ws.rs.core.Response;
 

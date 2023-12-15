@@ -1,10 +1,7 @@
 package ca.ulaval.glo4003.repul.delivery.domain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
@@ -15,15 +12,18 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.application.exception.DeliveryPersonNotFoundException;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKit;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.MealKitFactory;
+import ca.ulaval.glo4003.repul.delivery.domain.cargo.CargoFactory;
+import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargos;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
-import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidCargoIdException;
-import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocations;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKitFactory;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKits;
 
 public class DeliverySystem {
-    private final Map<MealKitUniqueIdentifier, MealKit> pendingMealKits = new HashMap<>();
-    private final List<Cargo> cargos = new ArrayList<>();
+    private final MealKits pendingMealKits;
+    private final Cargos cargos;
     private final LocationsCatalog locationsCatalog;
     private final CargoFactory cargoFactory;
     private final MealKitFactory mealKitFactory;
@@ -34,6 +34,8 @@ public class DeliverySystem {
         this.locationsCatalog = locationsCatalog;
         this.cargoFactory = new CargoFactory();
         this.mealKitFactory = new MealKitFactory();
+        this.cargos = new Cargos();
+        this.pendingMealKits = new MealKits();
         this.deliveryLocations = new DeliveryLocations(locationsCatalog.getDeliveryLocations());
     }
 
@@ -41,27 +43,21 @@ public class DeliverySystem {
                                            SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId,
                                            DeliveryLocationId deliveryLocationId) {
         MealKit createdMealKit = mealKitFactory.createMealKit(subscriberId, subscriptionId, mealKitId, deliveryLocationId);
-        pendingMealKits.put(mealKitId, createdMealKit);
+        pendingMealKits.addMealKit(createdMealKit);
     }
 
     public List<Cargo> getCargosReadyToPickUp() {
-        return cargos.stream().filter(Cargo::isReadyToBeDelivered).toList();
+        return cargos.findCargosReadyToPickUp();
     }
 
     public List<Cargo> getCargos() {
-        return cargos;
+        return cargos.getAllCargos();
     }
 
     public Cargo receiveReadyToBeDeliveredMealKits(KitchenLocationId kitchenLocationId, List<MealKitUniqueIdentifier> mealKitIds) {
-        mealKitIds.forEach(mealKitId -> {
-            if (!pendingMealKits.containsKey(mealKitId)) {
-                throw new InvalidMealKitIdException();
-            }
-        });
+        List<MealKit> mealKits = pendingMealKits.removeMealKits(mealKitIds);
 
-        List<MealKit> mealKits = mealKitIds.stream().map(this.pendingMealKits::remove).collect(Collectors.toCollection(ArrayList::new));
-
-        mealKits.forEach(mealKit -> deliveryLocations.assignLocker(mealKit.getDeliveryLocationId(), mealKit));
+        deliveryLocations.assignLockers(mealKits);
 
         mealKits.forEach(MealKit::markAsReadyToBeDelivered);
 
@@ -79,9 +75,7 @@ public class DeliverySystem {
     public List<MealKit> pickupCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
         validateDeliveryPersonExists(deliveryPersonId);
 
-        Cargo cargoToPickUp = getCargo(cargoId);
-
-        return cargoToPickUp.pickupCargo(deliveryPersonId);
+        return cargos.pickupCargo(cargoId, deliveryPersonId);
     }
 
     private void validateDeliveryPersonExists(DeliveryPersonUniqueIdentifier deliveryPersonId) {
@@ -91,15 +85,21 @@ public class DeliverySystem {
     }
 
     public List<MealKit> cancelCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
-        return getCargo(cargoId).cancelCargo(deliveryPersonId);
+        validateDeliveryPersonExists(deliveryPersonId);
+
+        return cargos.cancelPickedUpCargo(cargoId, deliveryPersonId);
     }
 
     public void confirmDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
-        getCargo(cargoId).confirmDelivery(deliveryPersonId, mealKitId);
+        validateDeliveryPersonExists(deliveryPersonId);
+
+        cargos.confirmMealKitDelivery(deliveryPersonId, cargoId, mealKitId);
     }
 
     public MealKit recallDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
-        return getCargo(cargoId).recallDelivery(deliveryPersonId, mealKitId);
+        validateDeliveryPersonExists(deliveryPersonId);
+
+        return cargos.recallMealKitDelivery(deliveryPersonId, cargoId, mealKitId);
     }
 
     public void addDeliveryPerson(DeliveryPersonUniqueIdentifier deliveryPersonId) {
@@ -111,34 +111,17 @@ public class DeliverySystem {
     }
 
     public void moveMealKitFromCargosToPending(MealKitUniqueIdentifier mealKitId) {
-        MealKit mealKitRemovedFromCargo = removeMealKitFromCargos(mealKitId);
+        MealKit mealKitRemovedFromCargo = cargos.extractMealKitFromCargo(mealKitId);
         deliveryLocations.unassignLocker(mealKitRemovedFromCargo);
-        pendingMealKits.put(mealKitId, mealKitRemovedFromCargo);
-    }
-
-    private MealKit removeMealKitFromCargos(MealKitUniqueIdentifier mealKitId) {
-        for (Cargo cargo : cargos) {
-            if (cargo.containsMealKit(mealKitId)) {
-                MealKit mealKit = cargo.removeMealKit(mealKitId);
-                if (cargo.isEmpty()) {
-                    cargos.remove(cargo);
-                }
-                return mealKit;
-            }
-        }
-        throw new InvalidMealKitIdException();
+        pendingMealKits.addMealKit(mealKitRemovedFromCargo);
     }
 
     public MealKit getCargoMealKit(CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
-        return getCargo(cargoId).getMealKit(mealKitId);
+        return cargos.getMealKitFromCargo(cargoId, mealKitId);
     }
 
     public void removeMealKitFromLocker(MealKitUniqueIdentifier mealKitId) {
-        MealKit mealKitRemovedFromCargo = removeMealKitFromCargos(mealKitId);
+        MealKit mealKitRemovedFromCargo = cargos.extractMealKitFromCargo(mealKitId);
         deliveryLocations.unassignLocker(mealKitRemovedFromCargo);
-    }
-
-    private Cargo getCargo(CargoUniqueIdentifier cargoId) {
-        return cargos.stream().filter(cargo -> cargo.getCargoId().equals(cargoId)).findFirst().orElseThrow(InvalidCargoIdException::new);
     }
 }

@@ -9,19 +9,19 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.CargoAlreadyPickedUpException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidDeliveryPersonIdException;
-import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
-import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInCargoException;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKits;
 
 public class Cargo {
     private final CargoUniqueIdentifier cargoId;
-    private final List<MealKit> mealKits;
+    private final MealKits mealKits;
     private final KitchenLocation kitchenLocation;
     private Optional<DeliveryPersonUniqueIdentifier> deliveryPersonId = Optional.empty();
 
     public Cargo(CargoUniqueIdentifier cargoId, KitchenLocation kitchenLocation, List<MealKit> mealKits) {
         this.cargoId = cargoId;
         this.kitchenLocation = kitchenLocation;
-        this.mealKits = mealKits;
+        this.mealKits = new MealKits(mealKits);
     }
 
     public CargoUniqueIdentifier getCargoId() {
@@ -37,7 +37,7 @@ public class Cargo {
     }
 
     public List<MealKit> getMealKits() {
-        return mealKits;
+        return mealKits.getAllMealKits();
     }
 
     public boolean isReadyToBeDelivered() {
@@ -49,8 +49,8 @@ public class Cargo {
             throw new CargoAlreadyPickedUpException();
         }
         this.deliveryPersonId = Optional.of(deliveryPersonId);
-        mealKits.forEach(MealKit::pickupReadyToDeliverMealKit);
-        return mealKits;
+        mealKits.markMealKitsAsPickedUp();
+        return mealKits.getAllMealKits();
     }
 
     public List<MealKit> cancelCargo(DeliveryPersonUniqueIdentifier deliveryPersonId) {
@@ -58,41 +58,30 @@ public class Cargo {
 
         this.deliveryPersonId = Optional.empty();
 
-        List<MealKit> notYetDeliveredMealKits = mealKits.stream().filter(MealKit::isNotAlreadyDelivered).toList();
-        notYetDeliveredMealKits.forEach(MealKit::cancelDelivery);
+        List<MealKit> notYetDeliveredMealKits = mealKits.getMealKitsNotDelivered();
+        notYetDeliveredMealKits.forEach(MealKit::markAsReadyToBeDelivered);
+
         return notYetDeliveredMealKits;
     }
 
     public void confirmDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, MealKitUniqueIdentifier mealKitId) {
         validateIsSameDeliveryPersonId(deliveryPersonId);
 
-        MealKit mealKitToConfirm = mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId))
-            .findFirst().orElseThrow(MealKitNotInCargoException::new);
-
-        mealKitToConfirm.confirmDelivery();
+        mealKits.confirmDelivery(mealKitId);
     }
 
     public MealKit recallDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, MealKitUniqueIdentifier mealKitId) {
         validateIsSameDeliveryPersonId(deliveryPersonId);
 
-        MealKit mealKitToRecall = mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId))
-            .findFirst().orElseThrow(MealKitNotInCargoException::new);
-
-        mealKitToRecall.recallDelivery();
-        return mealKitToRecall;
+        return mealKits.recallDeliveredMealKit(mealKitId);
     }
 
     public boolean containsMealKit(MealKitUniqueIdentifier mealKitId) {
-        return mealKits.stream().anyMatch(mealKit -> mealKit.getMealKitId().equals(mealKitId));
+        return mealKits.containsMealKit(mealKitId);
     }
 
     public MealKit removeMealKit(MealKitUniqueIdentifier mealKitId) {
-        MealKit mealKit = mealKits.stream().filter(currentMealKit -> currentMealKit.getMealKitId().equals(mealKitId))
-            .findFirst().orElseThrow(InvalidMealKitIdException::new);
-
-        mealKits.remove(mealKit);
-
-        return mealKit;
+        return mealKits.removeMealKit(mealKitId);
     }
 
     public boolean isEmpty() {
@@ -105,7 +94,7 @@ public class Cargo {
         }
     }
 
-    public MealKit getMealKit(MealKitUniqueIdentifier mealKitId) {
-        return mealKits.stream().filter(mealKit -> mealKit.getMealKitId().equals(mealKitId)).findFirst().orElseThrow(InvalidMealKitIdException::new);
+    public MealKit findMealKitById(MealKitUniqueIdentifier mealKitId) {
+        return mealKits.findById(mealKitId);
     }
 }

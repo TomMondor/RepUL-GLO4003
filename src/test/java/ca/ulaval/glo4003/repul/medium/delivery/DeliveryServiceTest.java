@@ -18,11 +18,11 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargoPayload;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
 
@@ -35,10 +35,8 @@ public class DeliveryServiceTest {
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new SubscriptionUniqueIdentifier(UUID.randomUUID());
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
-    private static final LocationsCatalog A_LOCATIONS_CATALOG = new LocationsCatalog(
-        List.of(new DeliveryLocation(A_DELIVERY_LOCATION_ID, "vch-1", 10)),
-        List.of(new KitchenLocation(A_KITCHEN_LOCATION_ID, "DESJARDINS"))
-    );
+    private static final LocationsCatalog A_LOCATIONS_CATALOG = new LocationsCatalog(List.of(new DeliveryLocation(A_DELIVERY_LOCATION_ID, "vch-1", 10)),
+        List.of(new KitchenLocation(A_KITCHEN_LOCATION_ID, "DESJARDINS")));
 
     private DeliverySystemPersister deliverySystemPersister;
     private RepULEventBus eventBus;

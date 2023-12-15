@@ -18,11 +18,11 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.LocationsCatalogService;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -89,9 +89,7 @@ public class DeliveryContextInitializer {
             DeliveryLocationId deliveryLocationId = mealKit.get(mealKitDto);
             deliverySystem.createMealKitInPreparation(mealKitDto.subscriberId(), mealKitDto.subscriptionId(), mealKitDto.mealKitId(), deliveryLocationId);
         });
-        cargosToAdd.forEach(cargo ->
-            deliverySystem.receiveReadyToBeDeliveredMealKits(KitchenLocationId.DESJARDINS, cargo)
-        );
+        cargosToAdd.forEach(cargo -> deliverySystem.receiveReadyToBeDeliveredMealKits(KitchenLocationId.DESJARDINS, cargo));
 
         deliverySystemPersister.save(deliverySystem);
     }

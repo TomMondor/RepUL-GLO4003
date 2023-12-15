@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.small.delivery.domain.commons;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

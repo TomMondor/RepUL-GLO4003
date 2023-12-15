@@ -26,11 +26,11 @@ import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEven
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
-import ca.ulaval.glo4003.repul.delivery.domain.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
+import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.InvalidMealKitIdException;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
@@ -39,10 +39,7 @@ import ca.ulaval.glo4003.repul.user.application.event.DeliveryPersonAccountCreat
 
 import com.google.common.eventbus.Subscribe;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeliveryEventHandlerTest {
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID =
@@ -82,8 +79,7 @@ public class DeliveryEventHandlerTest {
 
     @Test
     public void whenHandlingDeliveryPersonAccountCreatedEvent_shouldAddDeliveryPersonAccountToDeliverySystem() {
-        DeliveryPersonAccountCreatedEvent event = new DeliveryPersonAccountCreatedEvent(
-            A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, AN_EMAIL);
+        DeliveryPersonAccountCreatedEvent event = new DeliveryPersonAccountCreatedEvent(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, AN_EMAIL);
 
         eventBus.publish(event);
 
@@ -105,13 +101,12 @@ public class DeliveryEventHandlerTest {
 
     @Test
     public void whenHandlingMealKitConfirmedEvent_shouldAddMealKitToDeliverySystem() {
-        MealKitConfirmedEvent mealKitConfirmedEvent = new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID,
-            A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
+        MealKitConfirmedEvent mealKitConfirmedEvent = new MealKitConfirmedEvent(
+            A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
 
         eventBus.publish(mealKitConfirmedEvent);
 
-        assertDoesNotThrow(() -> deliveryService.createCargo(A_KITCHEN_LOCATION_ID,
-            List.of(A_MEAL_KIT_ID)));
+        assertDoesNotThrow(() -> deliveryService.createCargo(A_KITCHEN_LOCATION_ID, List.of(A_MEAL_KIT_ID)));
     }
 
     @Test
@@ -143,8 +138,7 @@ public class DeliveryEventHandlerTest {
     }
 
     private DeliverySystem createDeliverySystem() {
-        DeliveryLocation deliveryLocation = new DeliveryLocation(A_DELIVERY_LOCATION_ID,
-            "A_NAME", 10);
+        DeliveryLocation deliveryLocation = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "A_NAME", 10);
         KitchenLocation kitchenLocation = new KitchenLocation(A_KITCHEN_LOCATION_ID, "Kitchen");
         LocationsCatalog locationsCatalog = new LocationsCatalog(List.of(deliveryLocation), List.of(kitchenLocation));
         return new DeliverySystem(locationsCatalog);
