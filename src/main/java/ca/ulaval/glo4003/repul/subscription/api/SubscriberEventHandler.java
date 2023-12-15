@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.repul.subscription.api;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
@@ -54,7 +55,7 @@ public class SubscriberEventHandler {
 
     @Subscribe
     public void handleCanceledCargoEvent(CanceledCargoEvent event) {
-        subscriptionService.recallMealKitInDelivery(event.mealKitIds);
+        subscriptionService.recallMealKitInDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
     }
 
     @Subscribe

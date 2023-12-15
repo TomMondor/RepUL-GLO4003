@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.delivery.domain.cargo;
 
 import java.util.Optional;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
@@ -84,5 +85,9 @@ public class MealKit {
 
     public boolean isNotAlreadyDelivered() {
         return status == DeliveryStatus.READY_TO_BE_DELIVERED || status == DeliveryStatus.PENDING || status == DeliveryStatus.IN_DELIVERY;
+    }
+
+    public MealKitDto toDto() {
+        return new MealKitDto(subscriberId, subscriptionId, mealKitId);
     }
 }

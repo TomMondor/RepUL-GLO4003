@@ -3,6 +3,7 @@ package ca.ulaval.glo4003.repul.delivery.application;
 import java.time.LocalTime;
 import java.util.List;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
@@ -116,8 +117,8 @@ public class DeliveryService {
 
         deliverySystemPersister.save(deliverySystem);
 
-        List<MealKitUniqueIdentifier> mealKitIds = mealKits.stream().map(MealKit::getMealKitId).toList();
-        eventBus.publish(new CanceledCargoEvent(mealKitIds));
+        List<MealKitDto> mealKitDtos = mealKits.stream().map(MealKit::toDto).toList();
+        eventBus.publish(new CanceledCargoEvent(mealKitDtos));
     }
 
     public void confirmDelivery(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
