@@ -17,6 +17,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
+import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
@@ -42,6 +43,11 @@ public class CookingContextInitializer {
 
     public CookingContextInitializer withEmptyKitchenPersister(KitchenPersister kitchenPersister) {
         this.kitchenPersister = kitchenPersister;
+        return this;
+    }
+
+    public CookingContextInitializer withCook(Cook cook) {
+        kitchen.hireCook(cook);
         return this;
     }
 

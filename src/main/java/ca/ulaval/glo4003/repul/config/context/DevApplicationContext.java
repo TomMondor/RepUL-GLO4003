@@ -30,6 +30,7 @@ import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
+import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
@@ -53,6 +54,7 @@ public class DevApplicationContext implements ApplicationContext {
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final int PORT = 8080;
     private static final CookUniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
+    private static final Cook A_COOK = new Cook(COOK_ID);
     private static final RegistrationRequest COOK_REGISTRATION_REQUEST =
         new RegistrationRequest("PAUL123", "paul@ulaval.ca", "paul123", "Paul", "1990-01-01", "MAN");
     private static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
@@ -83,7 +85,7 @@ public class DevApplicationContext implements ApplicationContext {
         UserResource userResource = new UserResource(identityManagementContextInitializer.createService());
         AuthGuard authGuard = identityManagementContextInitializer.createAuthGuard();
 
-        CookingContextInitializer cookingContextInitializer = new CookingContextInitializer();
+        CookingContextInitializer cookingContextInitializer = new CookingContextInitializer().withCook(A_COOK);
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);

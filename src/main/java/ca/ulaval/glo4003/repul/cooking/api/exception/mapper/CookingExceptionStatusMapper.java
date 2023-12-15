@@ -4,11 +4,13 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import ca.ulaval.glo4003.repul.cooking.domain.exception.CookingException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidCookIdException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidQuantityUnitException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidQuantityValueException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidRecipeException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitCannotBeSelectedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
@@ -38,6 +40,8 @@ public class CookingExceptionStatusMapper {
         exceptionMapper.put(MealKitNotInSelectionException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotCookedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotForKitchenPickUpException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(InvalidCookIdException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(MealKitCannotBeSelectedException.class, Response.Status.BAD_REQUEST);
 
         exceptionMapper.put(MealKitNotFoundException.class, Response.Status.NOT_FOUND);
     }

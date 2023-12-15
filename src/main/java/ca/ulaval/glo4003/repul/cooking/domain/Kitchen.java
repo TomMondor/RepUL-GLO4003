@@ -11,24 +11,27 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
+import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
+import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cooks;
+import ca.ulaval.glo4003.repul.cooking.domain.mealkit.KitchenMealKits;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKitFactory;
-import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKits;
 
 public class Kitchen {
     private final KitchenLocationId kitchenLocationId;
-    private final MealKits mealKits;
+    private final KitchenMealKits kitchenMealKits;
     private final MealKitFactory mealKitFactory;
+    private final Cooks cooks;
 
     public Kitchen(MealKitFactory mealKitFactory) {
         this.mealKitFactory = mealKitFactory;
-        this.mealKits = new MealKits();
+        this.kitchenMealKits = new KitchenMealKits();
         kitchenLocationId = KitchenLocationId.DESJARDINS;
+        cooks = new Cooks();
+    }
+
+    public void hireCook(Cook cook) {
+        cooks.add(cook);
     }
 
     public KitchenLocationId getKitchenLocationId() {
@@ -44,85 +47,74 @@ public class Kitchen {
         Optional<DeliveryLocationId> deliveryLocationId
     ) {
         MealKit mealKit = mealKitFactory.createMealKit(mealKitId, subscriptionId, subscriberId, type, deliveryDate, deliveryLocationId);
-        mealKits.add(mealKit);
+        kitchenMealKits.add(mealKit);
     }
 
     public List<MealKit> getMealKitsToCook() {
-        return mealKits.getMealKitsToCook();
+        return kitchenMealKits.getMealKitsToCook();
     }
 
     public void select(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> selectedMealKitIds) {
-        verifyMealKitsAreUnassigned(selectedMealKitIds);
+        Cook cook = cooks.get(cookId);
 
-        mealKits.selectMealKitsByCook(cookId, selectedMealKitIds);
+        List<MealKit> mealKitsToSelect = kitchenMealKits.removeMealKitsToSelect(selectedMealKitIds);
+
+        cook.selectMealKits(mealKitsToSelect);
     }
 
     public List<MealKitUniqueIdentifier> getSelection(CookUniqueIdentifier cookId) {
-        return mealKits.getMealKitsIdSelectedByCook(cookId);
+        Cook cook = cooks.get(cookId);
+        return cook.getSelectedMealKitsIds();
     }
 
     public void cancelOneSelected(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        verifyMealKitsInCookSelection(cookId, List.of(mealKitId));
+        Cook cook = cooks.get(cookId);
 
-        mealKits.unselectMealKits(List.of(mealKitId));
+        MealKit unselectedMealKit = cook.unselectMealKit(mealKitId);
+
+        kitchenMealKits.add(unselectedMealKit);
     }
 
     public void cancelAllSelected(CookUniqueIdentifier cookId) {
-        mealKits.unselectMealKitsByCook(cookId);
+        Cook cook = cooks.get(cookId);
+
+        List<MealKit> unselectedMealKits = cook.unselectAllMealKits();
+
+        kitchenMealKits.add(unselectedMealKits);
     }
 
     public MealKit confirmCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        verifyMealKitsInCookSelection(cookId, List.of(mealKitId));
+        Cook cook = cooks.get(cookId);
 
-        return mealKits.confirmMealKitCooked(mealKitId);
+        MealKit cookedMealKit = cook.confirmMealKitAssembled(mealKitId);
+
+        kitchenMealKits.add(cookedMealKit);
+
+        return cookedMealKit;
     }
 
     public List<MealKit> confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
-        verifyMealKitsInCookSelection(cookId, mealKitIds);
+        Cook cook = cooks.get(cookId);
 
-        return mealKits.confirmMealKitsCooked(mealKitIds);
+        List<MealKit> cookedMealKits = cook.confirmMealKitsCooked(mealKitIds);
+
+        kitchenMealKits.add(cookedMealKits);
+
+        return cookedMealKits;
     }
 
     public void recallCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
-        mealKits.recallMealKit(mealKitId, cookId);
+        MealKit mealKit = kitchenMealKits.recall(mealKitId);
+
+        Cook cook = cooks.get(cookId);
+        cook.selectMealKit(mealKit);
     }
 
-    public void removeMealKitsFromKitchen(List<MealKitUniqueIdentifier> mealKitIds) {
-        mealKits.removeMealKits(mealKitIds);
+    public void pickUpMealKitsForDelivery(List<MealKitUniqueIdentifier> mealKitIds) {
+        kitchenMealKits.removeMealKits(mealKitIds);
     }
 
     public MealKit pickupNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
-        MealKit mealKit = mealKits.getMealKit(mealKitId);
-
-        if (!mealKit.isForSubscriber(subscriberId)) {
-            throw new MealKitNotFoundException(mealKitId);
-        } else if (!mealKit.isCooked()) {
-            throw new MealKitNotCookedException();
-        } else if (mealKit.isToBeDelivered()) {
-            throw new MealKitNotForKitchenPickUpException(mealKitId);
-        }
-
-        mealKits.remove(mealKitId);
-        return mealKit;
-    }
-
-    private void verifyMealKitsAreUnassigned(List<MealKitUniqueIdentifier> mealKitIds) {
-        mealKitIds.forEach(this::verifyMealKitIsUnassigned);
-    }
-
-    private void verifyMealKitIsUnassigned(MealKitUniqueIdentifier mealKitId) {
-        MealKit mealKit = mealKits.getMealKit(mealKitId);
-        if (!mealKit.isUnselected()) {
-            throw new MealKitAlreadySelectedException(mealKitId);
-        }
-    }
-
-    private void verifyMealKitsInCookSelection(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
-        List<MealKitUniqueIdentifier> cookSelection = getSelection(cookId);
-        mealKitIds.forEach(mealKitId -> {
-            if (!cookSelection.contains(mealKitId)) {
-                throw new MealKitNotInSelectionException(mealKitId);
-            }
-        });
+        return kitchenMealKits.pickUpNonDeliverableMealKit(subscriberId, mealKitId);
     }
 }

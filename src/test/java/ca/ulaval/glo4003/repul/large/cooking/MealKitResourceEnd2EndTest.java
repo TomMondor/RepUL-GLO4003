@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MealKitResourceEnd2EndTest {
-    private static final ApplicationContext CONTEXT = new TestApplicationContext();
+    private ApplicationContext context;
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private ServerFixture server;
 
@@ -38,7 +38,8 @@ public class MealKitResourceEnd2EndTest {
     public void startServer() throws Exception {
         RestAssured.urlEncodingEnabled = false;
         System.setOut(new PrintStream(outputStream));
-        server = new ServerFixture(CONTEXT);
+        context = new TestApplicationContext();
+        server = new ServerFixture(context);
         server.start();
     }
 
@@ -55,7 +56,7 @@ public class MealKitResourceEnd2EndTest {
         String accountToken = loginAsACook();
 
         Response response = given().contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:toCook");
+            .header("Authorization", "Bearer " + accountToken).get(context.getURI() + "mealKits:toCook");
 
         assertEquals(200, response.getStatusCode());
     }
@@ -65,7 +66,7 @@ public class MealKitResourceEnd2EndTest {
         String accountToken = loginAsACook();
 
         Response response = given().contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:toCook");
+            .header("Authorization", "Bearer " + accountToken).get(context.getURI() + "mealKits:toCook");
         MealKitsPayload responseBody = response.getBody().as(MealKitsPayload.class);
 
         assertFalse(responseBody.mealKits().isEmpty());
@@ -80,7 +81,7 @@ public class MealKitResourceEnd2EndTest {
 
         Response response = given().contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer " + accountToken).body(selectionRequest)
-            .post(CONTEXT.getURI() + "mealKits:select");
+            .post(context.getURI() + "mealKits:select");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -91,7 +92,7 @@ public class MealKitResourceEnd2EndTest {
         selectMealKitsToCook(accountToken, List.of(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString()));
 
         Response response =
-            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:getSelection");
+            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(context.getURI() + "mealKits:getSelection");
 
         assertEquals(200, response.getStatusCode());
     }
@@ -102,7 +103,7 @@ public class MealKitResourceEnd2EndTest {
         selectMealKitsToCook(accountToken, List.of(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString()));
 
         Response response =
-            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:getSelection");
+            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(context.getURI() + "mealKits:getSelection");
         SelectionPayload responseBody = response.getBody().as(SelectionPayload.class);
 
         assertFalse(responseBody.mealKitSelectionIds().isEmpty());
@@ -115,7 +116,7 @@ public class MealKitResourceEnd2EndTest {
         selectMealKitsToCook(accountToken, List.of(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString()));
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID() + ":cancelSelection");
+            .post(context.getURI() + "mealKits/" + TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID() + ":cancelSelection");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -127,7 +128,7 @@ public class MealKitResourceEnd2EndTest {
             List.of(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString(), TestApplicationContext.SECOND_MEAL_KIT_ID.getUUID().toString()));
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits:cancelSelection");
+            .post(context.getURI() + "mealKits:cancelSelection");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -138,7 +139,7 @@ public class MealKitResourceEnd2EndTest {
         selectMealKitsToCook(accountToken, List.of(TestApplicationContext.SECOND_MEAL_KIT_ID.getUUID().toString()));
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.SECOND_MEAL_KIT_ID.getUUID() + ":confirmCooked");
+            .post(context.getURI() + "mealKits/" + TestApplicationContext.SECOND_MEAL_KIT_ID.getUUID() + ":confirmCooked");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -149,7 +150,7 @@ public class MealKitResourceEnd2EndTest {
         selectMealKitsToCook(accountToken, List.of(TestApplicationContext.THIRD_MEAL_KIT_ID.getUUID().toString()));
 
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.THIRD_MEAL_KIT_ID.getUUID() + ":confirmCooked");
+            .post(context.getURI() + "mealKits/" + TestApplicationContext.THIRD_MEAL_KIT_ID.getUUID() + ":confirmCooked");
         String sentMessage = outputStream.toString().trim();
 
         assertTrue(sentMessage.contains("Sending notification to: " + TestApplicationContext.DELIVERY_PERSON_EMAIL));
@@ -165,7 +166,7 @@ public class MealKitResourceEnd2EndTest {
             List.of(TestApplicationContext.FOURTH_MEAL_KIT_ID.getUUID().toString(), TestApplicationContext.FIFTH_MEAL_KIT_ID.getUUID().toString());
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(confirmCookedRequest)
-            .post(CONTEXT.getURI() + "mealKits:confirmCooked");
+            .post(context.getURI() + "mealKits:confirmCooked");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -180,7 +181,7 @@ public class MealKitResourceEnd2EndTest {
             List.of(TestApplicationContext.SIXTH_MEAL_KIT_ID.getUUID().toString(), TestApplicationContext.SEVENTH_MEAL_KIT_ID.getUUID().toString());
 
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(confirmCookedRequest)
-            .post(CONTEXT.getURI() + "mealKits:confirmCooked");
+            .post(context.getURI() + "mealKits:confirmCooked");
         String sentMessage = outputStream.toString().trim();
 
         assertTrue(sentMessage.contains("Sending notification to: " + TestApplicationContext.DELIVERY_PERSON_EMAIL));
@@ -192,7 +193,7 @@ public class MealKitResourceEnd2EndTest {
         selectAndConfirmMealKitsToCook(accountToken, List.of(TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID().toString()));
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID() + ":recallCooked");
+            .post(context.getURI() + "mealKits/" + TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID() + ":recallCooked");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -203,10 +204,10 @@ public class MealKitResourceEnd2EndTest {
         selectAndConfirmMealKitsToCook(accountToken, List.of(TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID().toString()));
 
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID() + ":recallCooked");
+            .post(context.getURI() + "mealKits/" + TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID() + ":recallCooked");
 
         Response response =
-            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(CONTEXT.getURI() + "mealKits:getSelection");
+            given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).get(context.getURI() + "mealKits:getSelection");
         SelectionPayload responseBody = response.getBody().as(SelectionPayload.class);
         assertFalse(responseBody.mealKitSelectionIds().isEmpty());
         assertEquals(TestApplicationContext.EIGHTH_MEAL_KIT_ID.getUUID().toString(), responseBody.mealKitSelectionIds().get(0));
@@ -219,7 +220,7 @@ public class MealKitResourceEnd2EndTest {
         String userAccountToken = loginAsUser();
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + userAccountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":pickUp");
+            .post(context.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":pickUp");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -231,17 +232,17 @@ public class MealKitResourceEnd2EndTest {
         String userAccountToken = loginAsUser();
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + userAccountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":pickUp");
+            .post(context.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":pickUp");
 
         Response recallResponse = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":recallCooked");
+            .post(context.getURI() + "mealKits/" + TestApplicationContext.SPORADIC_MEAL_KIT_ID.getUUID() + ":recallCooked");
         assertEquals(404, recallResponse.getStatusCode());
     }
 
     private String loginAsACook() {
         LoginRequest loginRequest =
             new LoginRequestFixture().withEmail(TestApplicationContext.COOK_EMAIL).withPassword(TestApplicationContext.COOK_PASSWORD).build();
-        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(context.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
     }
@@ -249,7 +250,7 @@ public class MealKitResourceEnd2EndTest {
     private void loginAndCancelAllSelection() {
         String accountToken = loginAsACook();
         Response response = given().contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "mealKits:cancelSelection");
+            .header("Authorization", "Bearer " + accountToken).post(context.getURI() + "mealKits:cancelSelection");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -259,7 +260,7 @@ public class MealKitResourceEnd2EndTest {
         selectionRequest.ids = mealKitIds;
 
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(selectionRequest)
-            .post(CONTEXT.getURI() + "mealKits:select");
+            .post(context.getURI() + "mealKits:select");
     }
 
     private void selectAndConfirmMealKitsToCook(String accountToken, List<String> mealKitIds) {
@@ -269,13 +270,13 @@ public class MealKitResourceEnd2EndTest {
         confirmCookedRequest.ids = mealKitIds;
 
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(confirmCookedRequest)
-            .post(CONTEXT.getURI() + "mealKits:confirmCooked");
+            .post(context.getURI() + "mealKits:confirmCooked");
     }
 
     private String loginAsUser() {
         LoginRequest loginRequest =
             new LoginRequestFixture().withEmail(TestApplicationContext.CLIENT_EMAIL).withPassword(TestApplicationContext.CLIENT_PASSWORD).build();
-        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
+        Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(context.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
     }

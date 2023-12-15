@@ -18,10 +18,11 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitCannotBeSelectedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
@@ -51,6 +52,8 @@ public class KitchenTest {
         recipes.put(MealKitType.STANDARD, List.of());
         RecipesCatalog.getInstance().setRecipes(recipes);
         this.kitchen = new Kitchen(new MealKitFactory());
+        Cook cook = new Cook(A_COOK_ID);
+        this.kitchen.hireCook(cook);
     }
 
     @Test
@@ -72,10 +75,10 @@ public class KitchenTest {
     }
 
     @Test
-    public void givenSelectedMealKit_whenSelect_shouldThrowMealKitAlreadySelectedException() {
+    public void givenSelectedMealKit_whenSelect_shouldThrowMealKitCannotBeSelectedException() {
         addMealKit(A_MEALKIT_ID, true);
 
-        assertThrows(MealKitAlreadySelectedException.class, () -> kitchen.select(A_COOK_ID, List.of(A_MEALKIT_ID)));
+        assertThrows(MealKitCannotBeSelectedException.class, () -> kitchen.select(A_COOK_ID, List.of(A_MEALKIT_ID)));
     }
 
     @Test
@@ -88,8 +91,8 @@ public class KitchenTest {
     }
 
     @Test
-    public void givenInvalidMealKitId_whenSelect_shouldThrowMealKitNotFoundException() {
-        assertThrows(MealKitNotFoundException.class, () -> kitchen.select(A_COOK_ID, List.of(A_MEALKIT_ID)));
+    public void givenInvalidMealKitId_whenSelect_shouldThrowMealKitCannotBeSelectedException() {
+        assertThrows(MealKitCannotBeSelectedException.class, () -> kitchen.select(A_COOK_ID, List.of(A_MEALKIT_ID)));
     }
 
     @Test
@@ -191,7 +194,7 @@ public class KitchenTest {
         addMealKit(A_MEALKIT_ID, true);
         kitchen.confirmCooked(A_COOK_ID, List.of(A_MEALKIT_ID));
 
-        kitchen.removeMealKitsFromKitchen(List.of(A_MEALKIT_ID));
+        kitchen.pickUpMealKitsForDelivery(List.of(A_MEALKIT_ID));
 
         assertThrows(MealKitNotFoundException.class, () -> kitchen.recallCooked(A_COOK_ID, A_MEALKIT_ID));
     }

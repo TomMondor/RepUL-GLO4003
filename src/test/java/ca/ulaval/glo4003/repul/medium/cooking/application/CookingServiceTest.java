@@ -18,12 +18,14 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
+import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKitFactory;
 import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
 
@@ -32,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CookingServiceTest {
     private static final MealKitUniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
-    private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
+    private static final CookUniqueIdentifier A_COOK_ID = TestApplicationContext.COOK_ID;
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
@@ -93,13 +95,13 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void givenSelectedMealKit_whenGivingMealKitToDelivery_shouldRemoveMealKitFromSelection() {
+    public void givenCookedMealKit_whenGivingMealKitToDelivery_shouldRemoveMealKitFromKitchen() {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
-        assertEquals(1, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
+        cookingService.confirmCooked(A_COOK_ID, DEFAULT_MEAL_KIT_ID);
 
         cookingService.giveMealKitsToDelivery(List.of(DEFAULT_MEAL_KIT_ID));
 
-        assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
+        assertThrows(MealKitNotFoundException.class, () -> cookingService.recallCooked(A_COOK_ID, DEFAULT_MEAL_KIT_ID));
     }
 
     @Test
@@ -124,6 +126,7 @@ public class CookingServiceTest {
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {
         Kitchen kitchen = new Kitchen(new MealKitFactory());
+        kitchen.hireCook(TestApplicationContext.cook);
         kitchen.createMealKitInPreparation(DEFAULT_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, A_DELIVERY_LOCATION_ID);
         return kitchen;
     }

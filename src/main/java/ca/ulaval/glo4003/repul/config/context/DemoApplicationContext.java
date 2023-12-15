@@ -28,7 +28,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
@@ -42,6 +41,7 @@ import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
+import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
 import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
 import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
@@ -75,7 +75,8 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(DemoApplicationContext.class);
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
-    private static final UniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
+    private static final CookUniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
+    private static final Cook A_COOK = new Cook(COOK_ID);
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.parse("2023-09-04"), LocalDate.parse("2023-12-15"));
     private static final SubscriberUniqueIdentifier CLIENT_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final RegistrationRequest COOK_REGISTRATION_REQUEST =
@@ -141,9 +142,11 @@ public class DemoApplicationContext implements ApplicationContext {
         AuthGuard authGuard = identityManagementContextInitializer.createAuthGuard();
 
         CookingContextInitializer cookingContextInitializer =
-            new CookingContextInitializer().withMealKitsForSubscription(List.of(FIRST_MEAL_KIT_ORDER, SECOND_MEAL_KIT_ORDER, THIRD_MEAL_KIT_ORDER),
-                FIRST_SUBSCRIPTION.getSubscriptionId(), CLIENT_ID,
-                Optional.of(DeliveryLocationId.DESJARDINS));
+            new CookingContextInitializer()
+                .withMealKitsForSubscription(List.of(FIRST_MEAL_KIT_ORDER, SECOND_MEAL_KIT_ORDER, THIRD_MEAL_KIT_ORDER),
+                    FIRST_SUBSCRIPTION.getSubscriptionId(), CLIENT_ID,
+                    Optional.of(DeliveryLocationId.DESJARDINS))
+                .withCook(A_COOK);
         CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
         MealKitResource mealKitResource = new MealKitResource(cookingService);
         cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
