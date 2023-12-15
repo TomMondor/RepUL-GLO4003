@@ -9,11 +9,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
@@ -120,17 +120,9 @@ public class SubscriberEventHandlerTest {
             .map(orderPayload ->
                 new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
             ).toList();
-        MealKitDto mealKitDto = new MealKitDto(
-            A_SUBSCRIBER_ID,
-            subscriptionId,
-            orderIds.get(0)
-        );
-        MealKitDto otherMealKitDto = new MealKitDto(
-            A_SUBSCRIBER_ID,
-            otherSubscriptionId,
-            orderIds.get(1)
-        );
-        PickedUpCargoEvent event = new PickedUpCargoEvent(List.of(mealKitDto, otherMealKitDto));
+        MealKitDto mealKitDto = new MealKitDto(A_SUBSCRIBER_ID, subscriptionId, orderIds.get(0));
+        MealKitDto anotherMealKitDto = new MealKitDto(A_SUBSCRIBER_ID, otherSubscriptionId, orderIds.get(1));
+        PickedUpCargoEvent event = new PickedUpCargoEvent(List.of(mealKitDto, anotherMealKitDto));
 
         eventBus.publish(event);
 
@@ -146,7 +138,7 @@ public class SubscriberEventHandlerTest {
         subscriptionService.confirmNextMealKitForSubscription(A_SUBSCRIBER_ID, subscriptionId);
         subscriptionService.confirmNextMealKitForSubscription(A_SUBSCRIBER_ID, otherSubscriptionId);
         OrdersPayload ordersPayload = subscriptionService.getCurrentOrders(A_SUBSCRIBER_ID);
-        List<MealKitUniqueIdentifier> orderIds =  ordersPayload.orders().stream()
+        List<MealKitUniqueIdentifier> orderIds = ordersPayload.orders().stream()
             .map(orderPayload ->
                 new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
             ).toList();
@@ -195,17 +187,9 @@ public class SubscriberEventHandlerTest {
             .map(orderPayload ->
                 new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
             ).toList();
-        MealKitDto mealKitDto = new MealKitDto(
-            A_SUBSCRIBER_ID,
-            subscriptionId,
-            orderIds.get(0)
-        );
-        MealKitDto otherMealKitDto = new MealKitDto(
-            A_SUBSCRIBER_ID,
-            otherSubscriptionId,
-            orderIds.get(1)
-        );
-        CanceledCargoEvent event = new CanceledCargoEvent(List.of(mealKitDto, otherMealKitDto));
+        MealKitDto mealKitDto = new MealKitDto(A_SUBSCRIBER_ID, subscriptionId, orderIds.get(0));
+        MealKitDto anotherMealKitDto = new MealKitDto(A_SUBSCRIBER_ID, otherSubscriptionId, orderIds.get(1));
+        CanceledCargoEvent event = new CanceledCargoEvent(List.of(mealKitDto, anotherMealKitDto));
 
         eventBus.publish(event);
 
@@ -223,11 +207,7 @@ public class SubscriberEventHandlerTest {
             .map(orderPayload ->
                 new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
             ).toList().get(0);
-        MealKitDto mealKitDto = new MealKitDto(
-            A_SUBSCRIBER_ID,
-            subscriptionId,
-            orderId
-        );
+        MealKitDto mealKitDto = new MealKitDto(A_SUBSCRIBER_ID, subscriptionId, orderId);
         RecalledDeliveryEvent event = new RecalledDeliveryEvent(mealKitDto, A_LOCKER_ID, A_LOCATION_ID);
 
         eventBus.publish(event);
@@ -245,7 +225,8 @@ public class SubscriberEventHandlerTest {
             .map(orderPayload ->
                 new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
             ).toList().get(0);
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(orderId, A_LOCATION_ID, Optional.of(A_LOCKER_ID), LocalTime.now());
+        MealKitDto mealKitDto = new MealKitDto(A_SUBSCRIBER_ID, subscriptionId, orderId);
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(mealKitDto, A_LOCATION_ID, Optional.of(A_LOCKER_ID), LocalTime.now());
 
         eventBus.publish(event);
 

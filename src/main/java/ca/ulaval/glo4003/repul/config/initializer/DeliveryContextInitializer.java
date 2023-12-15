@@ -9,10 +9,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;

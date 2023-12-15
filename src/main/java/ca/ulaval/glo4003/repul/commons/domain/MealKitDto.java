@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.commons.application;
+package ca.ulaval.glo4003.repul.commons.domain;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;

@@ -1,8 +1,8 @@
 package ca.ulaval.glo4003.repul.delivery.application.event;
 
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEvent;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 
 public class RecalledDeliveryEvent extends RepULEvent {

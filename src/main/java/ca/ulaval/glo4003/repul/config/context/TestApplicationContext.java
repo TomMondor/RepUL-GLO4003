@@ -16,12 +16,12 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationE
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DateParser;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;

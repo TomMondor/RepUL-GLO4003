@@ -7,9 +7,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;

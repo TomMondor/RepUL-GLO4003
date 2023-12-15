@@ -10,10 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;

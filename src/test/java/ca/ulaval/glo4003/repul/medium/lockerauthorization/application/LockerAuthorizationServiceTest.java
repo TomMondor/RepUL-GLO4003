@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
@@ -44,11 +45,12 @@ public class LockerAuthorizationServiceTest {
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final LocalDate A_DATE = LocalDate.now();
     private static final LocalTime A_TIME = LocalTime.now();
+    private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
+    private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT = new ConfirmedDeliveryEvent(
+        A_MEAL_KIT_DTO, A_DELIVERY_LOCATION_ID, Optional.of(A_DELIVERY_LOCKER_ID), A_TIME);
     private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("111222333");
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
-    private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT =
-        new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, Optional.of(A_DELIVERY_LOCKER_ID), A_TIME);
     private static final UserCardAddedEvent
         A_USER_CARD_ADDED_EVENT = new UserCardAddedEvent(AN_ACCOUNT_ID, A_USER_CARD_NUMBER);
     private static final OpenLockerQuery A_OPEN_LOCKER_QUERY = new OpenLockerQuery(A_USER_CARD_NUMBER, A_LOCKER_AUTHORIZATION_LOCKER_ID);

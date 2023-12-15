@@ -2,6 +2,7 @@ package ca.ulaval.glo4003.repul.notification.application;
 
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
@@ -58,9 +59,9 @@ public class NotificationService {
 
     @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent confirmedDeliveryEvent) {
-        NotificationMessage message = messageFactory.createDeliveredMessage(confirmedDeliveryEvent.mealKitId, confirmedDeliveryEvent.deliveryLocationId,
-            confirmedDeliveryEvent.deliveryTime, confirmedDeliveryEvent.lockerId);
-        UserAccount userAccount = userAccountRepository.getAccountByMealKitId(confirmedDeliveryEvent.mealKitId);
+        NotificationMessage message = messageFactory.createDeliveredMessage(confirmedDeliveryEvent.mealKitDto.mealKitId(),
+            confirmedDeliveryEvent.deliveryLocationId, confirmedDeliveryEvent.deliveryTime, confirmedDeliveryEvent.lockerId);
+        UserAccount userAccount = userAccountRepository.getAccountByMealKitId(confirmedDeliveryEvent.mealKitDto.mealKitId());
         notificationSender.send(userAccount, message);
     }
 
@@ -75,10 +76,11 @@ public class NotificationService {
     public void handleMealKitsCookedEvent(MealKitsCookedEvent event) {
         KitchenLocationId kitchenLocationId = KitchenLocationId.valueOf(event.kitchenLocationId);
 
-        for (MealKitCookedDto mealKit: event.mealKits) {
-            if (!mealKit.isToBeDelivered()) {
-                NotificationMessage message = messageFactory.createMealKitAvailableForPickUpMessage(mealKit.mealKitDto().mealKitId(), kitchenLocationId);
-                UserAccount userAccount = userAccountRepository.getAccountByMealKitId(mealKit.mealKitDto().mealKitId());
+        for (MealKitCookedDto mealKitCookedDto : event.mealKits) {
+            if (!mealKitCookedDto.isToBeDelivered()) {
+                MealKitUniqueIdentifier mealKitId = mealKitCookedDto.mealKitDto().mealKitId();
+                NotificationMessage message = messageFactory.createMealKitAvailableForPickUpMessage(mealKitId, kitchenLocationId);
+                UserAccount userAccount = userAccountRepository.getAccountByMealKitId(mealKitId);
                 notificationSender.send(userAccount, message);
             }
         }

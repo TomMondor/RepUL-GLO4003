@@ -3,10 +3,10 @@ package ca.ulaval.glo4003.repul.delivery.application;
 import java.time.LocalTime;
 import java.util.List;
 
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
@@ -130,7 +130,7 @@ public class DeliveryService {
 
         deliverySystemPersister.save(deliverySystem);
 
-        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(mealKit.getMealKitId(), mealKit.getDeliveryLocationId(),
+        ConfirmedDeliveryEvent event = new ConfirmedDeliveryEvent(mealKit.toDto(), mealKit.getDeliveryLocationId(),
             mealKit.getLockerId(), LocalTime.now());
         eventBus.publish(event);
     }

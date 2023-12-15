@@ -10,8 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
@@ -40,17 +40,17 @@ public class LockerAuthorizationEventHandlerTest {
     private static final LocalTime A_TIME = LocalTime.now();
     private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("999999999");
     private static final LockerId A_LOCKER_ID = new LockerId("Id", 2);
+    private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
+    private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT = new ConfirmedDeliveryEvent(
+        A_MEAL_KIT_DTO, A_DELIVERY_LOCATION_ID, Optional.of(A_LOCKER_ID), A_TIME);
+    private static final RecalledDeliveryEvent A_RECALLED_DELIVERY_EVENT = new RecalledDeliveryEvent(
+        A_MEAL_KIT_DTO, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
     private static final ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId A_LOCKER_AUTH_LOCKER_ID =
         new ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId("Id");
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT = new MealKitConfirmedEvent(A_MEAL_KIT_ID,
         A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION = new MealKitConfirmedEvent(
         A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.empty(), A_DATE);
-    private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT = new
-        ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, Optional.of(A_LOCKER_ID), A_TIME);
-    private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
-    private static final RecalledDeliveryEvent A_RECALLED_DELIVERY_EVENT =
-        new RecalledDeliveryEvent(A_MEAL_KIT_DTO, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
     private static final UserCardAddedEvent A_USER_CARD_ADDED_EVENT = new UserCardAddedEvent(A_SUBSCRIBER_ID, A_USER_CARD_NUMBER);
 
     private LockerAuthorizationEventHandler lockerAuthorizationEventHandler;

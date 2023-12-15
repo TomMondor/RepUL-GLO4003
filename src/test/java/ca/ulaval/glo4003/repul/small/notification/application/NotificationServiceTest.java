@@ -11,11 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CargoUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
@@ -76,25 +76,23 @@ public class NotificationServiceTest {
     private static final Optional<LockerId> ANOTHER_LOCKER_ID = Optional.of(new LockerId("ANOTHER_LOCKER_ID", 2));
     private static final MealKitUniqueIdentifier ANOTHER_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final CargoUniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generate();
+    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_VALID_SUBSCRIBER_ACCOUNT_ID, A_VALID_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
+    private static final ConfirmedDeliveryEvent MEAL_KIT_DELIVERED_EVENT = new ConfirmedDeliveryEvent(
+        A_MEALKIT_DTO, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_TIME);
+    private static final MealKitCookedDto A_KITCHEN_PICKUP_MEAL_KIT_DTO = new MealKitCookedDto(A_MEALKIT_DTO, true);
+    private static final MealKitCookedDto A_DELIVERY_PICKUP_MEAL_KIT_DTO = new MealKitCookedDto(A_MEALKIT_DTO, false);
     private static final List<DeliveryPersonUniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS =
         List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
     private static final List<MealKitToDeliverDto> MEAL_KIT_DTOS = List.of(new MealKitToDeliverDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID),
         new MealKitToDeliverDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
-    private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
-        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_DELIVERY_PEOPLE_IDS, MEAL_KIT_DTOS);
-    private static final ConfirmedDeliveryEvent MEAL_KIT_DELIVERED_EVENT =
-        new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_TIME);
+    private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent = new MealKitReceivedForDeliveryEvent(A_CARGO_ID,
+        A_KITCHEN_LOCATION_ID, AVAILABLE_DELIVERY_PEOPLE_IDS, MEAL_KIT_DTOS);
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT = new MealKitConfirmedEvent(A_MEAL_KIT_ID,
         A_VALID_SUBSCRIPTION_ID, A_VALID_SUBSCRIBER_ACCOUNT_ID, MealKitType.STANDARD, Optional.of(A_DELIVERY_LOCATION_ID), LocalDate.now());
-    private static final UserCreatedEvent AN_ACCOUNT_CREATED_EVENT =
-        new UserCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL);
-    private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
-        new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
-    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_VALID_SUBSCRIBER_ACCOUNT_ID, A_VALID_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
-    private static final MealKitCookedDto A_KITCHEN_PICKUP_MEAL_KIT_DTO =
-        new MealKitCookedDto(A_MEALKIT_DTO, true);
-    private static final MealKitCookedDto A_DELIVERY_PICKUP_MEAL_KIT_DTO =
-        new MealKitCookedDto(A_MEALKIT_DTO, false);
+    private static final UserCreatedEvent AN_ACCOUNT_CREATED_EVENT = new UserCreatedEvent(
+        A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL);
+    private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT = new DeliveryPersonAccountCreatedEvent(
+        A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
     private NotificationService notificationService;
 
     @Mock

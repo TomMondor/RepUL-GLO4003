@@ -25,7 +25,7 @@ public class LockerAuthorizationEventHandler {
 
     @Subscribe
     public void handleConfirmedDeliveryEvent(ConfirmedDeliveryEvent confirmedDeliveryEvent) {
-        lockerAuthorizationService.assignLockerToMealKit(confirmedDeliveryEvent.mealKitId, new LockerId(confirmedDeliveryEvent.lockerId.id()));
+        lockerAuthorizationService.assignLockerToMealKit(confirmedDeliveryEvent.mealKitDto.mealKitId(), new LockerId(confirmedDeliveryEvent.lockerId.id()));
     }
 
     @Subscribe
