@@ -4,6 +4,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerAuthorizationSystem;
@@ -19,10 +20,10 @@ public class LockerAuthorizationService {
         this.eventBus = eventBus;
     }
 
-    public void createOrder(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
+    public void createOrder(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId) {
         LockerAuthorizationSystem lockerAuthorizationSystem = lockerAuthorizationSystemRepository.get();
 
-        lockerAuthorizationSystem.createOrder(subscriberId, mealKitId);
+        lockerAuthorizationSystem.createOrder(subscriberId, subscriptionId, mealKitId);
 
         lockerAuthorizationSystemRepository.save(lockerAuthorizationSystem);
     }

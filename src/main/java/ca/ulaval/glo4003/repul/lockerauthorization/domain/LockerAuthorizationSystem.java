@@ -6,6 +6,7 @@ import java.util.Map;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinkedToUserException;
@@ -20,8 +21,8 @@ public class LockerAuthorizationSystem {
         userCardNumberByUser.put(userId, userCardNumber);
     }
 
-    public void createOrder(SubscriberUniqueIdentifier userId, MealKitUniqueIdentifier mealKitId) {
-        orders.put(mealKitId, new Order(userId, mealKitId));
+    public void createOrder(SubscriberUniqueIdentifier userId, SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId) {
+        orders.put(mealKitId, new Order(userId, subscriptionId, mealKitId));
     }
 
     public void assignLocker(UniqueIdentifier mealKitId, LockerId lockerId) {
@@ -36,8 +37,8 @@ public class LockerAuthorizationSystem {
 
     public MealKitUniqueIdentifier authorize(LockerId lockerId, UserCardNumber userCardNumberToValidate) {
         Order order = getOrderByLockerId(lockerId);
-        if (userCardNumberByUser.containsKey(order.getUserId())) {
-            UserCardNumber userCardNumber = userCardNumberByUser.get(order.getUserId());
+        if (userCardNumberByUser.containsKey(order.getSubscriberId())) {
+            UserCardNumber userCardNumber = userCardNumberByUser.get(order.getSubscriberId());
             if (userCardNumber.equals(userCardNumberToValidate)) {
                 removeTakenOrder(order);
             } else {

@@ -130,7 +130,7 @@ public class LockerAuthorizationServiceTest {
 
     @Test
     public void whenCreatingOrder_shouldMakeOrderAvailableToAssignToLocker() {
-        lockerAuthorizationService.createOrder(AN_ACCOUNT_ID, A_MEAL_KIT_ID);
+        lockerAuthorizationService.createOrder(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
 
         assertDoesNotThrow(() -> lockerAuthorizationService.assignLockerToMealKit(A_MEAL_KIT_ID, A_LOCKER_AUTHORIZATION_LOCKER_ID));
     }

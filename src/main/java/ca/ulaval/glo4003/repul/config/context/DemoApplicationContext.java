@@ -169,8 +169,11 @@ public class DemoApplicationContext implements ApplicationContext {
         deliveryContextInitializer.createDeliveryEventHandler(deliveryService, eventBus);
 
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer().withOrders(
-            List.of(Map.entry(CLIENT_ID, FIRST_MEAL_KIT_ORDER.getOrderId()), Map.entry(CLIENT_ID, SECOND_MEAL_KIT_ORDER.getOrderId()),
-                Map.entry(CLIENT_ID, THIRD_MEAL_KIT_ORDER.getOrderId())));
+            List.of(
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, FIRST_SUBSCRIPTION.getSubscriptionId(), FIRST_MEAL_KIT_ORDER.getOrderId())),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, SECOND_SUBSCRIPTION.getSubscriptionId(), SECOND_MEAL_KIT_ORDER.getOrderId())),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, THIRD_SUBSCRIPTION.getSubscriptionId(), THIRD_MEAL_KIT_ORDER.getOrderId()))
+            ));
         LockerAuthorizationService lockerAuthorizationService = lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
         LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(lockerAuthorizationService);
         lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);

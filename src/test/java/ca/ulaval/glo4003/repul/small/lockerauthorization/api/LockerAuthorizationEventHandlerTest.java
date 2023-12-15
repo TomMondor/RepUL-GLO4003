@@ -67,14 +67,14 @@ public class LockerAuthorizationEventHandlerTest {
     public void givenADeliveryLocationIdInEvent_whenHandlingMealKitConfirmedEvent_shouldCallCreateOrderInService() {
         lockerAuthorizationEventHandler.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT);
 
-        verify(lockerAuthorizationService, times(1)).createOrder(A_SUBSCRIBER_ID, A_MEAL_KIT_ID);
+        verify(lockerAuthorizationService, times(1)).createOrder(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
     }
 
     @Test
     public void givenNoDeliveryLocationIdInEvent_whenHandlingMealKitConfirmedEvent_shouldNotCallService() {
         lockerAuthorizationEventHandler.handleMealKitConfirmedEvent(A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION);
 
-        verify(lockerAuthorizationService, times(0)).createOrder(A_SUBSCRIBER_ID, A_MEAL_KIT_ID);
+        verify(lockerAuthorizationService, times(0)).createOrder(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
     }
 
     @Test

@@ -227,9 +227,17 @@ public class TestApplicationContext implements ApplicationContext {
         deliveryContextInitializer.createDeliveryEventHandler(deliveryService, eventBus);
 
         LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer().withOrders(
-            List.of(Map.entry(CLIENT_ID, FIRST_MEAL_KIT_ID), Map.entry(CLIENT_ID, SECOND_MEAL_KIT_ID), Map.entry(CLIENT_ID, THIRD_MEAL_KIT_ID),
-                Map.entry(CLIENT_ID, FOURTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, FIFTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, SIXTH_MEAL_KIT_ID),
-                Map.entry(CLIENT_ID, SEVENTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, EIGHTH_MEAL_KIT_ID), Map.entry(CLIENT_ID, TENTH_MEAL_KIT_ID)));
+            List.of(
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, FIRST_SUBSCRIPTION_ID, FIRST_MEAL_KIT_ID)),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, SECOND_SUBSCRIPTION_ID, SECOND_MEAL_KIT_ID)),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, THIRD_SUBSCRIPTION_ID, THIRD_MEAL_KIT_ID)),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, FOURTH_SUBSCRIPTION_ID, FOURTH_MEAL_KIT_ID)),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, FIFTH_SUBSCRIPTION_ID, FIFTH_MEAL_KIT_ID)),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, SIXTH_SUBSCRIPTION_ID, SIXTH_MEAL_KIT_ID)),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, SEVENTH_SUBSCRIPTION_ID, SEVENTH_MEAL_KIT_ID)),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, EIGHTH_SUBSCRIPTION_ID, EIGHTH_MEAL_KIT_ID)),
+                Map.entry(CLIENT_ID, new MealKitDto(CLIENT_ID, TENTH_SUBSCRIPTION_ID, TENTH_MEAL_KIT_ID))
+            ));
         LockerAuthorizationService lockerAuthorizationService = lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
         LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(lockerAuthorizationService);
         lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
