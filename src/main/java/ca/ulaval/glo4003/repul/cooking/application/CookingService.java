@@ -45,7 +45,7 @@ public class CookingService {
         kitchenPersister.save(kitchen);
     }
 
-    public void giveMealKitToDelivery(List<MealKitUniqueIdentifier> mealKitIds) {
+    public void giveMealKitsToDelivery(List<MealKitUniqueIdentifier> mealKitIds) {
         Kitchen kitchen = kitchenPersister.get();
 
         kitchen.removeMealKitsFromKitchen(mealKitIds);

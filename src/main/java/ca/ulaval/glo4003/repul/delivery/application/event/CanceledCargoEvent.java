@@ -9,6 +9,7 @@ public class CanceledCargoEvent extends RepULEvent {
     public final List<MealKitDto> mealKitDtos;
 
     public CanceledCargoEvent(List<MealKitDto> mealKitDtos) {
+        super();
         this.mealKitDtos = mealKitDtos;
     }
 }

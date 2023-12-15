@@ -223,7 +223,12 @@ public class SubscriberEventHandlerTest {
             .map(orderPayload ->
                 new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
             ).toList().get(0);
-        RecalledDeliveryEvent event = new RecalledDeliveryEvent(orderId, A_LOCKER_ID, A_LOCATION_ID);
+        MealKitDto mealKitDto = new MealKitDto(
+            A_SUBSCRIBER_ID,
+            subscriptionId,
+            orderId
+        );
+        RecalledDeliveryEvent event = new RecalledDeliveryEvent(mealKitDto, A_LOCKER_ID, A_LOCATION_ID);
 
         eventBus.publish(event);
 

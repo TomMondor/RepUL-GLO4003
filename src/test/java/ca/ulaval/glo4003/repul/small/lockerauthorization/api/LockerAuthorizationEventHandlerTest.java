@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
@@ -47,8 +48,9 @@ public class LockerAuthorizationEventHandlerTest {
         A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.empty(), A_DATE);
     private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT = new
         ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, Optional.of(A_LOCKER_ID), A_TIME);
+    private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
     private static final RecalledDeliveryEvent A_RECALLED_DELIVERY_EVENT =
-        new RecalledDeliveryEvent(A_MEAL_KIT_ID, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
+        new RecalledDeliveryEvent(A_MEAL_KIT_DTO, A_LOCKER_ID, A_DELIVERY_LOCATION_ID);
     private static final UserCardAddedEvent A_USER_CARD_ADDED_EVENT = new UserCardAddedEvent(A_SUBSCRIBER_ID, A_USER_CARD_NUMBER);
 
     private LockerAuthorizationEventHandler lockerAuthorizationEventHandler;

@@ -30,7 +30,7 @@ public class LockerAuthorizationEventHandler {
 
     @Subscribe
     public void handleRecalledDeliveryEvent(RecalledDeliveryEvent recalledDeliveryEvent) {
-        lockerAuthorizationService.unassignLocker(recalledDeliveryEvent.mealKitId);
+        lockerAuthorizationService.unassignLocker(recalledDeliveryEvent.mealKitDto.mealKitId());
     }
 
     @Subscribe

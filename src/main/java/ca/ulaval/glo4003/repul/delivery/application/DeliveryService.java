@@ -144,7 +144,7 @@ public class DeliveryService {
         deliverySystemPersister.save(deliverySystem);
 
         DeliveryLocationId deliveryLocationId = mealKit.getDeliveryLocationId();
-        eventBus.publish(new RecalledDeliveryEvent(mealKitId, lockerId, deliveryLocationId));
+        eventBus.publish(new RecalledDeliveryEvent(mealKit.toDto(), lockerId, deliveryLocationId));
 
         return lockerId;
     }

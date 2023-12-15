@@ -97,7 +97,7 @@ public class CookingServiceTest {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
         assertEquals(1, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
 
-        cookingService.giveMealKitToDelivery(List.of(DEFAULT_MEAL_KIT_ID));
+        cookingService.giveMealKitsToDelivery(List.of(DEFAULT_MEAL_KIT_ID));
 
         assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
     }

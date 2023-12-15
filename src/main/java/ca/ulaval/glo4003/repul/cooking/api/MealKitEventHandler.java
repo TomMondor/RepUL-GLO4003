@@ -28,6 +28,6 @@ public class MealKitEventHandler {
 
     @Subscribe
     public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
-        cookingService.giveMealKitToDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
+        cookingService.giveMealKitsToDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
     }
 }

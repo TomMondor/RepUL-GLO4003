@@ -65,6 +65,6 @@ public class SubscriberEventHandler {
 
     @Subscribe
     public void handleRecalledDeliveryEvent(RecalledDeliveryEvent event) {
-        subscriptionService.recallMealKitDelivered(event.mealKitId);
+        subscriptionService.recallMealKitDelivered(event.mealKitDto.mealKitId());
     }
 }
