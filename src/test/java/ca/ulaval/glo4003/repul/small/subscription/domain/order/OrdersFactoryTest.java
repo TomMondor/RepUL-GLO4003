@@ -16,11 +16,11 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.NoOrdersInDesiredPeriodException;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeConfirmedException;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

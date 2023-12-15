@@ -3,7 +3,7 @@ package ca.ulaval.glo4003.repul.small.subscription.domain.subscription;
 import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSemesterCodeException;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

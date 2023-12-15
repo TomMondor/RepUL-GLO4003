@@ -25,11 +25,11 @@ import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriberRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;

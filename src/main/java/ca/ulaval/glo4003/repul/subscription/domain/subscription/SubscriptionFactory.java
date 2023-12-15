@@ -13,22 +13,23 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.application.exception.InvalidSubscriptionTypeException;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.InvalidSubscriptionQueryException;
-import ca.ulaval.glo4003.repul.subscription.domain.exception.SemesterNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semesters;
 
 public class SubscriptionFactory {
     private final UniqueIdentifierFactory<SubscriptionUniqueIdentifier> subscriptionUniqueIdentifierFactory;
     private final OrdersFactory ordersFactory;
-    private final List<Semester> availableSemesters;
+    private final Semesters availableSemesters;
     private final List<DeliveryLocationId> availableDeliveryLocations;
 
     public SubscriptionFactory(UniqueIdentifierFactory<SubscriptionUniqueIdentifier> subscriptionUniqueIdentifierFactory, OrdersFactory ordersFactory,
                                List<Semester> availableSemesters, List<DeliveryLocationId> availableDeliveryLocations) {
         this.subscriptionUniqueIdentifierFactory = subscriptionUniqueIdentifierFactory;
         this.ordersFactory = ordersFactory;
-        this.availableSemesters = availableSemesters;
+        this.availableSemesters = new Semesters(availableSemesters);
         this.availableDeliveryLocations = availableDeliveryLocations;
     }
 
@@ -75,6 +76,6 @@ public class SubscriptionFactory {
     }
 
     private Semester getCurrentSemester(LocalDate currentDate) {
-        return availableSemesters.stream().filter(semester -> semester.includes(currentDate)).findFirst().orElseThrow(SemesterNotFoundException::new);
+        return availableSemesters.findSemesterByDate(currentDate);
     }
 }

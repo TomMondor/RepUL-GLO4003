@@ -11,11 +11,11 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Frequency;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 
 public class SubscriptionFixture {
     private SubscriptionUniqueIdentifier subscriptionId;

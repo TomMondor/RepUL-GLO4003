@@ -29,10 +29,10 @@ import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.InMemorySubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 

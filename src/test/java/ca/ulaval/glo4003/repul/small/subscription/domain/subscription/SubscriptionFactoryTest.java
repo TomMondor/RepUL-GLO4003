@@ -23,18 +23,15 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.exception.SemesterNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Semester;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.SemesterCode;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrdersFactory;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.SemesterCode;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -77,7 +74,7 @@ public class SubscriptionFactoryTest {
         when(ordersFactory.createOrdersInSemester(any(), any(), any(), any())).thenReturn(new Orders(List.of(AN_ORDER)));
         DayOfWeek chosenDayOfWeek = DayOfWeek.from(LocalDate.now().plusDays(3));
         SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_WEEKLY_TYPE, A_SUBSCRIBER_ID,
-            Optional.of(A_VALID_DELIVERY_LOCATION_ID), Optional.of(chosenDayOfWeek),Optional.of(A_MEALKIT_TYPE));
+            Optional.of(A_VALID_DELIVERY_LOCATION_ID), Optional.of(chosenDayOfWeek), Optional.of(A_MEALKIT_TYPE));
 
         Subscription subscription = subscriptionFactory.createSubscription(subscriptionQuery);
 
@@ -96,7 +93,7 @@ public class SubscriptionFactoryTest {
         subscriptionFactory =
             new SubscriptionFactory(subscriptionUniqueIdentifierFactory, ordersFactory, List.of(CURRENT_SEMESTER), List.of());
         SubscriptionQuery subscriptionQuery = new SubscriptionQuery(A_WEEKLY_TYPE, A_SUBSCRIBER_ID,
-            Optional.of(unsupportedDeliveryLocationId), Optional.of(A_WEEKDAY),Optional.of(A_MEALKIT_TYPE));
+            Optional.of(unsupportedDeliveryLocationId), Optional.of(A_WEEKDAY), Optional.of(A_MEALKIT_TYPE));
 
         assertThrows(InvalidLocationIdException.class,
             () -> subscriptionFactory.createSubscription(subscriptionQuery));

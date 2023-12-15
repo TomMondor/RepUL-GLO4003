@@ -14,6 +14,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrderFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.ConfirmedStatus;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
 
 public class Subscription {
     private final SubscriptionUniqueIdentifier subscriptionId;

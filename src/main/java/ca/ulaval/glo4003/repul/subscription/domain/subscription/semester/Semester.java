@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.subscription.domain.subscription;
+package ca.ulaval.glo4003.repul.subscription.domain.subscription.semester;
 
 import java.time.LocalDate;
 
