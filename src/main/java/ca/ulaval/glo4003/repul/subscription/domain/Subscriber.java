@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
@@ -49,11 +49,11 @@ public class Subscriber {
         return subscriptions.get(subscriptionId);
     }
 
-    public Optional<UserCardNumber> getCardNumber() {
+    public Optional<SubscriberCardNumber> getCardNumber() {
         return profile.getCardNumber();
     }
 
-    public void setCardNumber(UserCardNumber cardNumber) {
+    public void setCardNumber(SubscriberCardNumber cardNumber) {
         profile.setCardNumber(cardNumber);
     }
 

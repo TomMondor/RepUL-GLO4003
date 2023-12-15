@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.subscription.AddCardRequestFixture;
@@ -72,6 +72,6 @@ public class AccountResourceTest {
     public void whenAddingCard_shouldAddCardToSubscriber() {
         accountResource.addCard(containerRequestContext, AN_ADD_CARD_REQUEST);
 
-        verify(subscriberService).addCard(SUBSCRIBER_ID, new UserCardNumber(AN_ADD_CARD_REQUEST.cardNumber));
+        verify(subscriberService).addCard(SUBSCRIBER_ID, new SubscriberCardNumber(AN_ADD_CARD_REQUEST.cardNumber));
     }
 }

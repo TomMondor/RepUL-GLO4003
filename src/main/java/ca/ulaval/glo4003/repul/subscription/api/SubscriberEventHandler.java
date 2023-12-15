@@ -52,6 +52,6 @@ public class SubscriberEventHandler {
 
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
-        subscriberService.updateOrderToPickedUp(event.mealKitId);
+        subscriberService.updateOrderToPickedUp(event.mealKitDto.mealKitId());
     }
 }

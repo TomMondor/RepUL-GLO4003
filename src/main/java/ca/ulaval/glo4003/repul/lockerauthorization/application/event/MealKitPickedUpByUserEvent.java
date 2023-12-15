@@ -1,13 +1,13 @@
 package ca.ulaval.glo4003.repul.lockerauthorization.application.event;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEvent;
-import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 
 public class MealKitPickedUpByUserEvent extends RepULEvent {
-    public final MealKitUniqueIdentifier mealKitId;
+    public final MealKitDto mealKitDto;
 
-    public MealKitPickedUpByUserEvent(MealKitUniqueIdentifier mealKitId) {
+    public MealKitPickedUpByUserEvent(MealKitDto mealKitDto) {
         super();
-        this.mealKitId = mealKitId;
+        this.mealKitDto = mealKitDto;
     }
 }

@@ -29,7 +29,7 @@ public class LockerAuthorizationResource {
     @Path("/locker:open")
     public Response openLocker(@NotNull(message = "The body must not be null.") @Valid OpenLockerRequest openLockerRequest) {
         OpenLockerQuery query = OpenLockerQuery.from(
-            openLockerRequest.userCardNumber,
+            openLockerRequest.subscriberCardNumber,
             openLockerRequest.lockerId);
 
         lockerAuthorizationService.openLocker(query);

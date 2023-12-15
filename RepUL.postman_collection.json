@@ -1027,7 +1027,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userCardNumber\": \"123456789\",\n    \"lockerId\": \"Entrée Vachon #1 1\"\n}",
+							"raw": "{\n    \"subscriberCardNumber\": \"123456789\",\n    \"lockerId\": \"Entrée Vachon #1 1\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

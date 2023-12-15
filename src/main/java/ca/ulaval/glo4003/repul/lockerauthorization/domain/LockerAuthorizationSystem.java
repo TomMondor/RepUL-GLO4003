@@ -3,51 +3,52 @@ package ca.ulaval.glo4003.repul.lockerauthorization.domain;
 import java.util.HashMap;
 import java.util.Map;
 
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifier;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinkedToUserException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.OrderNotFoundException;
-import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.UserCardNotAuthorizedException;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.SubscriberCardNotAuthorizedException;
 
 public class LockerAuthorizationSystem {
-    private final Map<UniqueIdentifier, UserCardNumber> userCardNumberByUser = new HashMap<>();
-    private final Map<UniqueIdentifier, Order> orders = new HashMap<>();
+    private final Map<SubscriberUniqueIdentifier, SubscriberCardNumber>
+        subscriberCardNumberBySubscriber = new HashMap<>();
+    private final Map<MealKitUniqueIdentifier, Order> orders = new HashMap<>();
 
-    public void registerSubscriberCardNumber(UniqueIdentifier userId, UserCardNumber userCardNumber) {
-        userCardNumberByUser.put(userId, userCardNumber);
+    public void registerSubscriberCardNumber(SubscriberUniqueIdentifier subscriberId, SubscriberCardNumber subscriberCardNumber) {
+        subscriberCardNumberBySubscriber.put(subscriberId, subscriberCardNumber);
     }
 
-    public void createOrder(SubscriberUniqueIdentifier userId, SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId) {
-        orders.put(mealKitId, new Order(userId, subscriptionId, mealKitId));
+    public void createOrder(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId) {
+        orders.put(mealKitId, new Order(subscriberId, subscriptionId, mealKitId));
     }
 
-    public void assignLocker(UniqueIdentifier mealKitId, LockerId lockerId) {
+    public void assignLocker(MealKitUniqueIdentifier mealKitId, LockerId lockerId) {
         Order order = getOrderFrom(mealKitId);
         order.assignLocker(lockerId);
     }
 
-    public void unassignLocker(UniqueIdentifier mealKitId) {
+    public void unassignLocker(MealKitUniqueIdentifier mealKitId) {
         Order order = getOrderFrom(mealKitId);
         order.unassignLocker();
     }
 
-    public MealKitUniqueIdentifier authorize(LockerId lockerId, UserCardNumber userCardNumberToValidate) {
+    public MealKitDto authorize(LockerId lockerId, SubscriberCardNumber subscriberCardNumberToValidate) {
         Order order = getOrderByLockerId(lockerId);
-        if (userCardNumberByUser.containsKey(order.getSubscriberId())) {
-            UserCardNumber userCardNumber = userCardNumberByUser.get(order.getSubscriberId());
-            if (userCardNumber.equals(userCardNumberToValidate)) {
+        if (subscriberCardNumberBySubscriber.containsKey(order.getSubscriberId())) {
+            SubscriberCardNumber subscriberCardNumber = subscriberCardNumberBySubscriber.get(order.getSubscriberId());
+            if (subscriberCardNumber.equals(subscriberCardNumberToValidate)) {
                 removeTakenOrder(order);
             } else {
-                throw new UserCardNotAuthorizedException();
+                throw new SubscriberCardNotAuthorizedException();
             }
         } else {
             throw new NoCardLinkedToUserException();
         }
-        return order.getMealKitId();
+        return new MealKitDto(order.getSubscriberId(), order.getSubscriptionId(), order.getMealKitId());
     }
 
     private Order getOrderByLockerId(LockerId lockerId) {
@@ -59,7 +60,7 @@ public class LockerAuthorizationSystem {
         orders.remove(order.getMealKitId());
     }
 
-    private Order getOrderFrom(UniqueIdentifier mealKitId) {
+    private Order getOrderFrom(MealKitUniqueIdentifier mealKitId) {
         Order order = orders.get(mealKitId);
         if (order == null) {
             throw new OrderNotFoundException();

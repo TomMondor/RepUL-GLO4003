@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
@@ -36,7 +36,7 @@ public class InMemorySubscriberRepository implements SubscriberRepository {
     }
 
     @Override
-    public boolean cardNumberExists(UserCardNumber cardNumber) {
+    public boolean cardNumberExists(SubscriberCardNumber cardNumber) {
         return subscribers.values().stream()
             .anyMatch(subscriber -> subscriber.getCardNumber().isPresent() && subscriber.getCardNumber().get().equals(cardNumber));
     }

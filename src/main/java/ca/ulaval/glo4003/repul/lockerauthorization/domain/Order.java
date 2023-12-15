@@ -32,6 +32,10 @@ public class Order {
         return subscriberId;
     }
 
+    public SubscriptionUniqueIdentifier getSubscriptionId() {
+        return subscriptionId;
+    }
+
     public MealKitUniqueIdentifier getMealKitId() {
         return mealKitId;
     }

@@ -6,12 +6,12 @@ import java.util.Optional;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.subscription.application.event.SubscriberCardAddedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.ProfilePayload;
@@ -168,17 +168,17 @@ public class SubscriberService {
         subscriberRepository.save(subscriber);
     }
 
-    public void addCard(SubscriberUniqueIdentifier subscriberId, UserCardNumber cardNumber) {
+    public void addCard(SubscriberUniqueIdentifier subscriberId, SubscriberCardNumber cardNumber) {
         Subscriber subscriber = subscriberRepository.getById(subscriberId);
 
         validateCardNumber(cardNumber);
         subscriber.setCardNumber(cardNumber);
 
         subscriberRepository.save(subscriber);
-        eventBus.publish(new UserCardAddedEvent(subscriberId, cardNumber));
+        eventBus.publish(new SubscriberCardAddedEvent(subscriberId, cardNumber));
     }
 
-    private void validateCardNumber(UserCardNumber cardNumber) {
+    private void validateCardNumber(SubscriberCardNumber cardNumber) {
         if (subscriberRepository.cardNumberExists(cardNumber)) {
             throw new CardNumberAlreadyInUseException();
         }

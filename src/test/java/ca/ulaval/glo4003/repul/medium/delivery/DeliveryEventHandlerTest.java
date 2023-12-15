@@ -130,7 +130,8 @@ public class DeliveryEventHandlerTest {
         givenPickUpCargo(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, listener.cargoId);
         assertNotNull(listener.cargoId);
         givenDeliveredMealKit(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, listener.cargoId, A_MEAL_KIT_ID);
-        MealKitPickedUpByUserEvent mealKitPickedUpByUserEvent = new MealKitPickedUpByUserEvent(A_MEAL_KIT_ID);
+        MealKitDto mealKitDto = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
+        MealKitPickedUpByUserEvent mealKitPickedUpByUserEvent = new MealKitPickedUpByUserEvent(mealKitDto);
 
         eventBus.publish(mealKitPickedUpByUserEvent);
 

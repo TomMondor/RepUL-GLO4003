@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.subscription.api;
 
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.api.request.AddCardRequest;
@@ -55,7 +55,7 @@ public class AccountResource {
         SubscriberUniqueIdentifier subscriberId =
             new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generateFrom(context.getProperty(USER_ID_CONTEXT_PROPERTY).toString());
 
-        subscriberService.addCard(subscriberId, new UserCardNumber(addCardRequest.cardNumber));
+        subscriberService.addCard(subscriberId, new SubscriberCardNumber(addCardRequest.cardNumber));
 
         return Response.noContent().build();
     }

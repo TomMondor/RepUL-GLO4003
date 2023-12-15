@@ -5,7 +5,7 @@ import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.LockerId;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.subscription.application.event.SubscriberCardAddedEvent;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -34,7 +34,7 @@ public class LockerAuthorizationEventHandler {
     }
 
     @Subscribe
-    public void handleUserCardAddedEvent(UserCardAddedEvent userCardAddedEvent) {
-        lockerAuthorizationService.registerSubscriberCardNumber(userCardAddedEvent.subscriberId, userCardAddedEvent.userCardNumber);
+    public void handleSubscriberCardAddedEvent(SubscriberCardAddedEvent subscriberCardAddedEvent) {
+        lockerAuthorizationService.registerSubscriberCardNumber(subscriberCardAddedEvent.subscriberId, subscriberCardAddedEvent.subscriberCardNumber);
     }
 }

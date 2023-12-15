@@ -38,7 +38,7 @@ public class LockerAuthorizationResourceTest {
 
     private OpenLockerRequest getLockerOpenRequest() {
         OpenLockerRequest request = new OpenLockerRequest();
-        request.userCardNumber = A_CARD_NUMBER;
+        request.subscriberCardNumber = A_CARD_NUMBER;
         request.lockerId = A_LOCKER_ID;
         return request;
     }

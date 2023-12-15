@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
@@ -55,7 +55,7 @@ public class SubscriberTest {
     private static final Subscription A_SPORADIC_SUBSCRIPTION = new SubscriptionFixture().withFrequency(Optional.empty()).build();
     private static final Subscription ANOTHER_SUBSCRIPTION = new SubscriptionFixture().build();
     private static final SubscriptionUniqueIdentifier AN_INVALID_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
-    private static final UserCardNumber A_CARD_NUMBER = new UserCardNumber("123456789");
+    private static final SubscriberCardNumber A_CARD_NUMBER = new SubscriberCardNumber("123456789");
     private static final Order AN_ACTIVE_ORDER = new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1)).build();
     private static final Order A_FUTURE_ORDER = new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(8)).build();
     private static final Order A_CHANGEABLE_PENDING_ORDER =

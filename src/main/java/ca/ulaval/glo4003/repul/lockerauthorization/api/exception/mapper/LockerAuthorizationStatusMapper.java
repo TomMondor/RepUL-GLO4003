@@ -9,7 +9,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerAuthor
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinkedToUserException;
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.OrderNotFoundException;
-import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.UserCardNotAuthorizedException;
+import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.SubscriberCardNotAuthorizedException;
 
 import jakarta.ws.rs.core.Response;
 
@@ -31,7 +31,7 @@ public class LockerAuthorizationStatusMapper {
 
         exceptionMapper.put(LockerNotAssignedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(NoCardLinkedToUserException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(UserCardNotAuthorizedException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(SubscriberCardNotAuthorizedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidLockerIdException.class, Response.Status.BAD_REQUEST);
     }
 }

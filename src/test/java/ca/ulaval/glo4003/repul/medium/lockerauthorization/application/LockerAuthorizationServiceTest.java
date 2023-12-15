@@ -11,7 +11,7 @@ import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
@@ -29,7 +29,7 @@ import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.NoCardLinked
 import ca.ulaval.glo4003.repul.lockerauthorization.domain.exception.OrderNotFoundException;
 import ca.ulaval.glo4003.repul.lockerauthorization.infrastructure.InMemoryLockerAuthorizationSystemRepository;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.subscription.application.event.SubscriberCardAddedEvent;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,11 +48,11 @@ public class LockerAuthorizationServiceTest {
     private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(AN_ACCOUNT_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
     private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT = new ConfirmedDeliveryEvent(
         A_MEAL_KIT_DTO, A_DELIVERY_LOCATION_ID, Optional.of(A_DELIVERY_LOCKER_ID), A_TIME);
-    private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("111222333");
+    private static final SubscriberCardNumber A_USER_CARD_NUMBER = new SubscriberCardNumber("111222333");
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT =
         new MealKitConfirmedEvent(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, AN_ACCOUNT_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
-    private static final UserCardAddedEvent
-        A_USER_CARD_ADDED_EVENT = new UserCardAddedEvent(AN_ACCOUNT_ID, A_USER_CARD_NUMBER);
+    private static final SubscriberCardAddedEvent
+        A_USER_CARD_ADDED_EVENT = new SubscriberCardAddedEvent(AN_ACCOUNT_ID, A_USER_CARD_NUMBER);
     private static final OpenLockerQuery A_OPEN_LOCKER_QUERY = new OpenLockerQuery(A_USER_CARD_NUMBER, A_LOCKER_AUTHORIZATION_LOCKER_ID);
 
     private RepULEventBus eventBus;

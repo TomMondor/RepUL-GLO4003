@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
@@ -24,8 +24,8 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class InMemorySubscriberRepositoryTest {
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_VALID_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
-    private static final UserCardNumber AN_UNASSIGNED_CARD_NUMBER = new UserCardNumber("987654321");
-    private static final UserCardNumber A_CARD_NUMBER = new UserCardNumber("123456789");
+    private static final SubscriberCardNumber AN_UNASSIGNED_CARD_NUMBER = new SubscriberCardNumber("987654321");
+    private static final SubscriberCardNumber A_CARD_NUMBER = new SubscriberCardNumber("123456789");
 
     private InMemorySubscriberRepository inMemorySubscriberRepository;
     @Mock

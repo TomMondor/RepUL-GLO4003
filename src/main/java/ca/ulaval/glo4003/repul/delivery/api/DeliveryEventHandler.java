@@ -52,6 +52,6 @@ public class DeliveryEventHandler {
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(
         MealKitPickedUpByUserEvent mealKitPickedUpByUserEvent) {
-        deliveryService.removeMealKitFromLocker(mealKitPickedUpByUserEvent.mealKitId);
+        deliveryService.removeMealKitFromLocker(mealKitPickedUpByUserEvent.mealKitDto.mealKitId());
     }
 }

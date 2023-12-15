@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
@@ -24,7 +24,7 @@ import ca.ulaval.glo4003.repul.delivery.domain.LockerId;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationEventHandler;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
-import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.subscription.application.event.SubscriberCardAddedEvent;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,7 +38,7 @@ public class LockerAuthorizationEventHandlerTest {
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.DESJARDINS;
     private static final LocalDate A_DATE = LocalDate.now();
     private static final LocalTime A_TIME = LocalTime.now();
-    private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("999999999");
+    private static final SubscriberCardNumber A_USER_CARD_NUMBER = new SubscriberCardNumber("999999999");
     private static final LockerId A_LOCKER_ID = new LockerId("Id", 2);
     private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
     private static final ConfirmedDeliveryEvent A_CONFIRMED_DELIVERY_EVENT = new ConfirmedDeliveryEvent(
@@ -51,7 +51,8 @@ public class LockerAuthorizationEventHandlerTest {
         A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION = new MealKitConfirmedEvent(
         A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.empty(), A_DATE);
-    private static final UserCardAddedEvent A_USER_CARD_ADDED_EVENT = new UserCardAddedEvent(A_SUBSCRIBER_ID, A_USER_CARD_NUMBER);
+    private static final SubscriberCardAddedEvent
+        A_USER_CARD_ADDED_EVENT = new SubscriberCardAddedEvent(A_SUBSCRIBER_ID, A_USER_CARD_NUMBER);
 
     private LockerAuthorizationEventHandler lockerAuthorizationEventHandler;
 
@@ -92,8 +93,8 @@ public class LockerAuthorizationEventHandlerTest {
     }
 
     @Test
-    public void whenHandlingUserCardAddedEvent_shouldCallRegisterUserCardNumberKitInService() {
-        lockerAuthorizationEventHandler.handleUserCardAddedEvent(A_USER_CARD_ADDED_EVENT);
+    public void whenHandlingSubscriberCardAddedEvent_shouldCallRegisterSubscriberCardNumberKitInService() {
+        lockerAuthorizationEventHandler.handleSubscriberCardAddedEvent(A_USER_CARD_ADDED_EVENT);
 
         verify(lockerAuthorizationService, times(1)).registerSubscriberCardNumber(A_SUBSCRIBER_ID, A_USER_CARD_NUMBER);
     }

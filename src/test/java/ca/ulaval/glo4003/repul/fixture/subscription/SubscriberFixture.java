@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
@@ -20,7 +20,7 @@ public class SubscriberFixture {
     private Birthdate birthdate;
     private Gender gender;
     private Email email;
-    private Optional<UserCardNumber> cardNumber = Optional.empty();
+    private Optional<SubscriberCardNumber> cardNumber = Optional.empty();
 
     public SubscriberFixture() {
         subscriberId = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
@@ -61,7 +61,7 @@ public class SubscriberFixture {
         return this;
     }
 
-    public SubscriberFixture withCardNumber(UserCardNumber cardNumber) {
+    public SubscriberFixture withCardNumber(SubscriberCardNumber cardNumber) {
         this.cardNumber = Optional.of(cardNumber);
         return this;
     }

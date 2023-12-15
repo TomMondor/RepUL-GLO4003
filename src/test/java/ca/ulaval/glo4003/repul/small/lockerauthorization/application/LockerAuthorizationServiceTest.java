@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.lockerauthorization.api.query.OpenLockerQuery;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
@@ -22,8 +22,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class LockerAuthorizationServiceTest {
     private static final LockerId A_LOCKER_CONTEXT_LOCKER_ID = new LockerId("VACHON 1");
-    private static final UserCardNumber A_USER_CARD_NUMBER = new UserCardNumber("123123123");
-    private static final OpenLockerQuery OPEN_LOCKER_QUERY = new OpenLockerQuery(A_USER_CARD_NUMBER, A_LOCKER_CONTEXT_LOCKER_ID);
+    private static final SubscriberCardNumber A_SUBSCRIBER_CARD_NUMBER = new SubscriberCardNumber("123123123");
+    private static final OpenLockerQuery OPEN_LOCKER_QUERY = new OpenLockerQuery(
+        A_SUBSCRIBER_CARD_NUMBER, A_LOCKER_CONTEXT_LOCKER_ID);
 
     @Mock
     private LockerAuthorizationSystem lockerAuthorizationSystem;

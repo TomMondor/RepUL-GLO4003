@@ -13,14 +13,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriberFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
-import ca.ulaval.glo4003.repul.subscription.application.event.UserCardAddedEvent;
+import ca.ulaval.glo4003.repul.subscription.application.event.SubscriberCardAddedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.CardNumberAlreadyInUseException;
 import ca.ulaval.glo4003.repul.subscription.application.payload.ProfilePayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
@@ -44,8 +44,8 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 public class SubscriberServiceTest {
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
-    private static final UserCardNumber AN_UNASSIGNED_CARD_NUMBER = new UserCardNumber("123456789");
-    private static final UserCardNumber AN_ASSIGNED_CARD_NUMBER = new UserCardNumber("987654321");
+    private static final SubscriberCardNumber AN_UNASSIGNED_CARD_NUMBER = new SubscriberCardNumber("123456789");
+    private static final SubscriberCardNumber AN_ASSIGNED_CARD_NUMBER = new SubscriberCardNumber("987654321");
     private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.MONDAY;
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
@@ -130,13 +130,13 @@ public class SubscriberServiceTest {
     }
 
     @Test
-    public void givenUnassignedCardNumber_whenAddingCard_shouldPublishUserCardAddedEvent() {
+    public void givenUnassignedCardNumber_whenAddingCard_shouldPublishSubscriberCardAddedEvent() {
         Subscriber subscriber = new SubscriberFixture().withSubscriberId(A_SUBSCRIBER_ID).build();
         given(subscriberRepository.getById(A_SUBSCRIBER_ID)).willReturn(subscriber);
         given(subscriberRepository.cardNumberExists(AN_UNASSIGNED_CARD_NUMBER)).willReturn(false);
 
         subscriberService.addCard(A_SUBSCRIBER_ID, AN_UNASSIGNED_CARD_NUMBER);
 
-        verify(eventBus).publish(any(UserCardAddedEvent.class));
+        verify(eventBus).publish(any(SubscriberCardAddedEvent.class));
     }
 }

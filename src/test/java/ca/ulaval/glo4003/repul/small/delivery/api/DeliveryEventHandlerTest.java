@@ -59,8 +59,9 @@ public class DeliveryEventHandlerTest {
         A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.empty(), A_DATE);
     private static final RecallCookedMealKitEvent A_RECALL_COOKED_MEAL_KIT_EVENT =
         new RecallCookedMealKitEvent(A_MEAL_KIT_ID);
+    private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
     private static final MealKitPickedUpByUserEvent A_MEAL_KIT_PICKED_UP_BY_USER_EVENT =
-        new MealKitPickedUpByUserEvent(A_MEAL_KIT_ID);
+        new MealKitPickedUpByUserEvent(A_MEAL_KIT_DTO);
 
     private DeliveryEventHandler deliveryEventHandler;
 

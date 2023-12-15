@@ -12,7 +12,7 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
@@ -51,7 +51,7 @@ public class SubscriberServiceTest {
     private static final Gender A_GENDER = Gender.OTHER;
     private static final Email AN_EMAIL = new Email("anEmail@ulaval.ca");
     private static final Email ANOTHER_EMAIL = new Email("anotherEmail@ulaval.ca");
-    private static final UserCardNumber A_CARD_NUMBER = new UserCardNumber("123456789");
+    private static final SubscriberCardNumber A_CARD_NUMBER = new SubscriberCardNumber("123456789");
     private static final DayOfWeek A_DAY_OF_WEEK = DayOfWeek.from(LocalDate.now().plusDays(3));
     private static final MealKitType A_MEALKIT_TYPE = MealKitType.STANDARD;
 

@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
-import ca.ulaval.glo4003.repul.commons.domain.UserCardNumber;
+import ca.ulaval.glo4003.repul.commons.domain.SubscriberCardNumber;
 
 public class Profile {
     private final IDUL idul;
@@ -12,7 +12,7 @@ public class Profile {
     private final Birthdate birthdate;
     private final Gender gender;
     private final Email email;
-    private Optional<UserCardNumber> cardNumber = Optional.empty();
+    private Optional<SubscriberCardNumber> cardNumber = Optional.empty();
 
     public Profile(IDUL idul, Name name, Birthdate birthdate, Gender gender, Email email) {
         this.idul = idul;
@@ -46,11 +46,11 @@ public class Profile {
         return email;
     }
 
-    public Optional<UserCardNumber> getCardNumber() {
+    public Optional<SubscriberCardNumber> getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(UserCardNumber cardNumber) {
+    public void setCardNumber(SubscriberCardNumber cardNumber) {
         this.cardNumber = Optional.of(cardNumber);
     }
 }
