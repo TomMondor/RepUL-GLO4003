@@ -1,5 +1,6 @@
 package ca.ulaval.glo4003.repul.cooking.api;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
@@ -27,6 +28,6 @@ public class MealKitEventHandler {
 
     @Subscribe
     public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
-        cookingService.giveMealKitToDelivery(event.mealKitIds);
+        cookingService.giveMealKitToDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
     }
 }

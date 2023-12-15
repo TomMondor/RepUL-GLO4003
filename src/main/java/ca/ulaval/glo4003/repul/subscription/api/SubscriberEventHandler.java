@@ -50,7 +50,7 @@ public class SubscriberEventHandler {
 
     @Subscribe
     public void handlePickedUpCargoEvent(PickedUpCargoEvent event) {
-        subscriptionService.markMealKitAsInDelivery(event.mealKitIds);
+        subscriptionService.markMealKitAsInDelivery(event.mealKitDtos.stream().map(MealKitDto::mealKitId).toList());
     }
 
     @Subscribe

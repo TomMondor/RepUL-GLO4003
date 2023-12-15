@@ -120,7 +120,17 @@ public class SubscriberEventHandlerTest {
             .map(orderPayload ->
                 new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(orderPayload.orderId())
             ).toList();
-        PickedUpCargoEvent event = new PickedUpCargoEvent(orderIds);
+        MealKitDto mealKitDto = new MealKitDto(
+            A_SUBSCRIBER_ID,
+            subscriptionId,
+            orderIds.get(0)
+        );
+        MealKitDto otherMealKitDto = new MealKitDto(
+            A_SUBSCRIBER_ID,
+            otherSubscriptionId,
+            orderIds.get(1)
+        );
+        PickedUpCargoEvent event = new PickedUpCargoEvent(List.of(mealKitDto, otherMealKitDto));
 
         eventBus.publish(event);
 

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
@@ -35,6 +36,7 @@ public class MealKitEventHandlerTest {
     private static final MealKitUniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, DEFAULT_MEAL_KIT_ID);
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final CookUniqueIdentifier A_COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(1);
@@ -67,7 +69,7 @@ public class MealKitEventHandlerTest {
 
     @Test
     public void whenHandlingPickUpCargoEvent_shouldRemoveMealKitFromKitchen() {
-        PickedUpCargoEvent pickedUpCargoEvent = new PickedUpCargoEvent(List.of(DEFAULT_MEAL_KIT_ID));
+        PickedUpCargoEvent pickedUpCargoEvent = new PickedUpCargoEvent(List.of(A_MEAL_KIT_DTO));
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
 
         eventBus.publish(pickedUpCargoEvent);

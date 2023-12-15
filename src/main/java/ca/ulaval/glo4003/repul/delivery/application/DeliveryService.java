@@ -105,9 +105,9 @@ public class DeliveryService {
     }
 
     private void sendPickedUpCargoEvent(List<MealKit> mealKits) {
-        List<MealKitUniqueIdentifier> mealKitIds = mealKits.stream().map(MealKit::getMealKitId).toList();
+        List<MealKitDto> mealKitDtos = mealKits.stream().map(MealKit::toDto).toList();
 
-        eventBus.publish(new PickedUpCargoEvent(mealKitIds));
+        eventBus.publish(new PickedUpCargoEvent(mealKitDtos));
     }
 
     public void cancelCargo(DeliveryPersonUniqueIdentifier deliveryPersonId, CargoUniqueIdentifier cargoId) {
