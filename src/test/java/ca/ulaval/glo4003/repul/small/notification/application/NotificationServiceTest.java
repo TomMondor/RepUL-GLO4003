@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.IDUL;
@@ -22,6 +23,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
@@ -57,8 +59,6 @@ public class NotificationServiceTest {
         new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final DeliveryPersonUniqueIdentifier ANOTHER_VALID_DELIVERY_ACCOUNT_ID =
         new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
-    private static final DeliveryPersonUniqueIdentifier AN_INVALID_DELIVERY_ACCOUNT_ID =
-        new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final IDUL AN_IDUL = new IDUL("ALMAT69");
     private static final Name A_NAME = new Name("John Doe");
     private static final Birthdate A_BIRTHDATE = new Birthdate(LocalDate.now().minusYears(20));
@@ -78,14 +78,10 @@ public class NotificationServiceTest {
     private static final CargoUniqueIdentifier A_CARGO_ID = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generate();
     private static final List<DeliveryPersonUniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS =
         List.of(A_VALID_DELIVERY_ACCOUNT_ID, ANOTHER_VALID_DELIVERY_ACCOUNT_ID);
-    private static final List<DeliveryPersonUniqueIdentifier> AVAILABLE_DELIVERY_PEOPLE_IDS_WITH_INVALID_ACCOUNT =
-        List.of(A_VALID_DELIVERY_ACCOUNT_ID, AN_INVALID_DELIVERY_ACCOUNT_ID);
     private static final List<MealKitToDeliverDto> MEAL_KIT_DTOS = List.of(new MealKitToDeliverDto(A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_MEAL_KIT_ID),
         new MealKitToDeliverDto(ANOTHER_DELIVERY_LOCATION_ID, ANOTHER_LOCKER_ID, ANOTHER_MEAL_KIT_ID));
     private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEvent =
         new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_DELIVERY_PEOPLE_IDS, MEAL_KIT_DTOS);
-    private static final MealKitReceivedForDeliveryEvent mealKitReceivedForDeliveryEventWithInvalidDeliveryAccount =
-        new MealKitReceivedForDeliveryEvent(A_CARGO_ID, A_KITCHEN_LOCATION_ID, AVAILABLE_DELIVERY_PEOPLE_IDS_WITH_INVALID_ACCOUNT, MEAL_KIT_DTOS);
     private static final ConfirmedDeliveryEvent MEAL_KIT_DELIVERED_EVENT =
         new ConfirmedDeliveryEvent(A_MEAL_KIT_ID, A_DELIVERY_LOCATION_ID, A_LOCKER_ID, A_TIME);
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT = new MealKitConfirmedEvent(A_MEAL_KIT_ID,
@@ -94,10 +90,11 @@ public class NotificationServiceTest {
         new UserCreatedEvent(A_VALID_SUBSCRIBER_ACCOUNT_ID, AN_IDUL, A_NAME, A_BIRTHDATE, A_GENDER, AN_EMAIL);
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(A_VALID_DELIVERY_ACCOUNT_ID, AN_EMAIL);
-    private static final ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto A_KITCHEN_PICKUP_MEAL_KIT_DTO =
-        new ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto(A_MEAL_KIT_ID, true);
-    private static final ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto A_DELIVERY_PICKUP_MEAL_KIT_DTO =
-        new ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto(A_MEAL_KIT_ID, false);
+    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_VALID_SUBSCRIBER_ACCOUNT_ID, A_VALID_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
+    private static final MealKitCookedDto A_KITCHEN_PICKUP_MEAL_KIT_DTO =
+        new MealKitCookedDto(A_MEALKIT_DTO, true);
+    private static final MealKitCookedDto A_DELIVERY_PICKUP_MEAL_KIT_DTO =
+        new MealKitCookedDto(A_MEALKIT_DTO, false);
     private NotificationService notificationService;
 
     @Mock

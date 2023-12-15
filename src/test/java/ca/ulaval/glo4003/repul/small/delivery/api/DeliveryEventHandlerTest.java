@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
@@ -19,7 +20,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
@@ -48,9 +49,10 @@ public class DeliveryEventHandlerTest {
     private static final LocalDate A_DATE = LocalDate.now();
     private static final DeliveryPersonAccountCreatedEvent A_DELIVERY_PERSON_ACCOUNT_CREATED_EVENT =
         new DeliveryPersonAccountCreatedEvent(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, AN_EMAIL);
-    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_MEAL_KIT_ID, true);
+    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
+    private static final MealKitCookedDto A_MEALKIT_COOKED_DTO = new MealKitCookedDto(A_MEALKIT_DTO, true);
     private static final MealKitsCookedEvent A_MEAL_KITS_COOKED_EVENT =
-        new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_DTO));
+        new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_COOKED_DTO));
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT = new MealKitConfirmedEvent(A_MEAL_KIT_ID,
         A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION = new MealKitConfirmedEvent(
@@ -88,8 +90,9 @@ public class DeliveryEventHandlerTest {
 
     @Test
     public void givenMealKitNotForDelivery_whenHandlingMealKitsCookedEvent_shouldOnlyTransferToServiceThoseForDelivery() {
-        MealKitDto mealKitNotForDelivery = new MealKitDto(A_MEAL_KIT_ID, false);
-        MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_DTO, mealKitNotForDelivery));
+        MealKitCookedDto mealKitNotForDelivery = new MealKitCookedDto(A_MEALKIT_DTO, false);
+        MealKitsCookedEvent mealKitsCookedEvent =
+            new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_COOKED_DTO, mealKitNotForDelivery));
 
         deliveryEventHandler.handleMealKitsCookedEvent(mealKitsCookedEvent);
 

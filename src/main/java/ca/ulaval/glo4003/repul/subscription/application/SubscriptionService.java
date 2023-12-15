@@ -10,7 +10,7 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.subscription.application.event.MealKitConfirmedEvent;
 import ca.ulaval.glo4003.repul.subscription.application.exception.SubscriptionNotFoundException;
 import ca.ulaval.glo4003.repul.subscription.application.payload.OrdersPayload;
@@ -64,9 +64,9 @@ public class SubscriptionService {
         subscriptionRepository.save(subscription);
     }
 
-    public void markMealKitAsToDeliver(List<MealKitDto> mealKits) {
-        for (MealKitDto mealKit : mealKits) {
-            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(mealKit.mealKitId());
+    public void markMealKitAsToDeliver(List<MealKitCookedDto> mealKits) {
+        for (MealKitCookedDto mealKit : mealKits) {
+            Subscription subscription = subscriptionRepository.getSubscriptionByOrderId(mealKit.mealKitDto().mealKitId());
             subscription.markCurrentOrderAsToDeliver();
             subscriptionRepository.save(subscription);
         }

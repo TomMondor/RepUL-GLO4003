@@ -15,7 +15,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
@@ -62,7 +61,8 @@ public class CookingServiceTest {
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
         assertEquals(A_KITCHEN_LOCATION_ID.toString(), publishedEvent.kitchenLocationId);
-        assertEquals(List.of(A_UNIQUE_MEAL_KIT_ID), publishedEvent.mealKits.stream().map(MealKitDto::mealKitId).toList());
+        assertEquals(List.of(A_UNIQUE_MEAL_KIT_ID),
+            publishedEvent.mealKits.stream().map(mealKitCookedDto -> mealKitCookedDto.mealKitDto().mealKitId()).toList());
     }
 
     @Test
@@ -76,6 +76,6 @@ public class CookingServiceTest {
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
         assertEquals(A_KITCHEN_LOCATION_ID.toString(), publishedEvent.kitchenLocationId);
-        assertEquals(MANY_MEAL_KIT_IDS, publishedEvent.mealKits.stream().map(MealKitDto::mealKitId).toList());
+        assertEquals(MANY_MEAL_KIT_IDS, publishedEvent.mealKits.stream().map(mealKitCookedDto -> mealKitCookedDto.mealKitDto().mealKitId()).toList());
     }
 }

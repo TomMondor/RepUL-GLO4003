@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
@@ -91,5 +92,9 @@ public class MealKit {
 
     public boolean isToBeDelivered() {
         return isToBeDelivered;
+    }
+
+    public MealKitDto toDto() {
+        return new MealKitDto(subscriberId, subscriptionId, mealKitId);
     }
 }

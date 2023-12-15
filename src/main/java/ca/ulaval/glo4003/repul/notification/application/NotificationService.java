@@ -2,7 +2,7 @@ package ca.ulaval.glo4003.repul.notification.application;
 
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
@@ -75,10 +75,10 @@ public class NotificationService {
     public void handleMealKitsCookedEvent(MealKitsCookedEvent event) {
         KitchenLocationId kitchenLocationId = KitchenLocationId.valueOf(event.kitchenLocationId);
 
-        for (MealKitDto mealKit: event.mealKits) {
+        for (MealKitCookedDto mealKit: event.mealKits) {
             if (!mealKit.isToBeDelivered()) {
-                NotificationMessage message = messageFactory.createMealKitAvailableForPickUpMessage(mealKit.mealKitId(), kitchenLocationId);
-                UserAccount userAccount = userAccountRepository.getAccountByMealKitId(mealKit.mealKitId());
+                NotificationMessage message = messageFactory.createMealKitAvailableForPickUpMessage(mealKit.mealKitDto().mealKitId(), kitchenLocationId);
+                UserAccount userAccount = userAccountRepository.getAccountByMealKitId(mealKit.mealKitDto().mealKitId());
                 notificationSender.send(userAccount, message);
             }
         }

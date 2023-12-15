@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import ca.ulaval.glo4003.repul.commons.application.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.Email;
@@ -19,7 +20,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
@@ -46,16 +47,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DeliveryEventHandlerTest {
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID =
         new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID =
+        new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final DeliveryPersonUniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER =
         new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier ANOTHER_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
-    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_MEAL_KIT_ID, true);
-    private static final MealKitDto ANOTHER_MEALKIT_DTO = new MealKitDto(ANOTHER_MEAL_KIT_ID, true);
-    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID =
-        new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final MealKitDto A_MEALKIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
+    private static final MealKitCookedDto A_MEALKIT_COOKED_DTO = new MealKitCookedDto(A_MEALKIT_DTO, true);
+    private static final MealKitDto ANOTHER_MEALKIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, ANOTHER_MEAL_KIT_ID);
+    private static final MealKitCookedDto ANOTHER_MEALKIT_COOKED_DTO = new MealKitCookedDto(ANOTHER_MEALKIT_DTO, true);
     private static final Email AN_EMAIL = new Email("courriel@ulaval.ca");
     private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
@@ -76,6 +79,7 @@ public class DeliveryEventHandlerTest {
         deliveryEventHandler = new DeliveryEventHandler(deliveryService);
         eventBus.register(deliveryEventHandler);
     }
+
     @Test
     public void whenHandlingDeliveryPersonAccountCreatedEvent_shouldAddDeliveryPersonAccountToDeliverySystem() {
         DeliveryPersonAccountCreatedEvent event = new DeliveryPersonAccountCreatedEvent(
@@ -90,7 +94,8 @@ public class DeliveryEventHandlerTest {
     public void givenConfirmedMealKits_whenHandlingMealKitsCookedEvent_shouldCreateCargo() {
         givenConfirmedMealKit(A_MEAL_KIT_ID);
         givenConfirmedMealKit(ANOTHER_MEAL_KIT_ID);
-        MealKitsCookedEvent mealKitsCookedEvent = new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_DTO, ANOTHER_MEALKIT_DTO));
+        MealKitsCookedEvent mealKitsCookedEvent =
+            new MealKitsCookedEvent(A_KITCHEN_LOCATION_ID.toString(), List.of(A_MEALKIT_COOKED_DTO, ANOTHER_MEALKIT_COOKED_DTO));
 
         eventBus.publish(mealKitsCookedEvent);
 

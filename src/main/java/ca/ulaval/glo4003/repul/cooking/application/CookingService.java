@@ -11,7 +11,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
@@ -129,9 +129,9 @@ public class CookingService {
     }
 
     private void sendMealKitsCookedEvent(List<MealKit> mealKits, Kitchen kitchen) {
-        List<MealKitDto> mealKitDtos = mealKits.stream().map(
-            mealKit -> new MealKitDto(mealKit.getMealKitId(), mealKit.isToBeDelivered())
+        List<MealKitCookedDto> mealKitCookedDtos = mealKits.stream().map(
+            mealKit -> new MealKitCookedDto(mealKit.toDto(), mealKit.isToBeDelivered())
         ).toList();
-        eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().toString(), mealKitDtos));
+        eventBus.publish(new MealKitsCookedEvent(kitchen.getKitchenLocationId().toString(), mealKitCookedDtos));
     }
 }

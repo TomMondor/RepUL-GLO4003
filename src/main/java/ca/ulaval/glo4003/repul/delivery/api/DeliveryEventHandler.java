@@ -4,7 +4,7 @@ import java.util.List;
 
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
-import ca.ulaval.glo4003.repul.cooking.application.event.MealKitDto;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
@@ -37,7 +37,7 @@ public class DeliveryEventHandler {
         KitchenLocationId kitchenLocationId = KitchenLocationId.valueOf(mealKitsCookedEvent.kitchenLocationId);
 
         List<MealKitUniqueIdentifier> mealKitsToDeliver = mealKitsCookedEvent.mealKits.stream()
-            .filter(MealKitDto::isToBeDelivered).map(MealKitDto::mealKitId).toList();
+            .filter(MealKitCookedDto::isToBeDelivered).map(mealKitCookedDto -> mealKitCookedDto.mealKitDto().mealKitId()).toList();
 
         deliveryService.createCargo(kitchenLocationId, mealKitsToDeliver);
     }
