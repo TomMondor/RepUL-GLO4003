@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.delivery.domain.cargo;
+package ca.ulaval.glo4003.repul.delivery.domain.mealkit;
 
 public enum DeliveryStatus {
     PENDING,

@@ -10,7 +10,7 @@ import ca.ulaval.glo4003.repul.subscription.application.event.SubscriberCardAdde
 import com.google.common.eventbus.Subscribe;
 
 public class LockerAuthorizationEventHandler {
-    private LockerAuthorizationService lockerAuthorizationService;
+    private final LockerAuthorizationService lockerAuthorizationService;
 
     public LockerAuthorizationEventHandler(LockerAuthorizationService lockerAuthorizationService) {
         this.lockerAuthorizationService = lockerAuthorizationService;
@@ -19,7 +19,7 @@ public class LockerAuthorizationEventHandler {
     @Subscribe
     public void handleMealKitConfirmedEvent(MealKitConfirmedEvent mealKitConfirmedEvent) {
         if (mealKitConfirmedEvent.deliveryLocationId.isPresent()) {
-            lockerAuthorizationService.createOrder(mealKitConfirmedEvent.subscriberId,mealKitConfirmedEvent.subscriptionId, mealKitConfirmedEvent.mealKitId);
+            lockerAuthorizationService.createOrder(mealKitConfirmedEvent.subscriberId, mealKitConfirmedEvent.subscriptionId, mealKitConfirmedEvent.mealKitId);
         }
     }
 

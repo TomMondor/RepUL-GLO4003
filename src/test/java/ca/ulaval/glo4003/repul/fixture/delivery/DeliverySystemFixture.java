@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.repul.fixture.delivery;
 
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
-import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
+import ca.ulaval.glo4003.repul.delivery.domain.LocationsCatalog;
 
 public class DeliverySystemFixture {
     private LocationsCatalog locationsCatalog;

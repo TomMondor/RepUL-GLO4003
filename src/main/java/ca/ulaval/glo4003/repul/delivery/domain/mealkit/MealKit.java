@@ -7,7 +7,6 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.LockerNotAssignedException;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotDeliveredException;

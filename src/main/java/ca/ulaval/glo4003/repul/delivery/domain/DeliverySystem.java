@@ -12,7 +12,6 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.CargoFactory;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargos;
-import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocations;
 import ca.ulaval.glo4003.repul.delivery.domain.deliveryperson.DeliveryPeople;
@@ -27,21 +26,22 @@ public class DeliverySystem {
     private final LocationsCatalog locationsCatalog;
     private final CargoFactory cargoFactory;
     private final MealKitFactory mealKitFactory;
-    private final DeliveryPeople deliveryPeople = new DeliveryPeople();
+    private final DeliveryPeople deliveryPeople;
     private final DeliveryLocations deliveryLocations;
 
     public DeliverySystem(LocationsCatalog locationsCatalog) {
         this.locationsCatalog = locationsCatalog;
         this.cargoFactory = new CargoFactory();
+        this.deliveryPeople = new DeliveryPeople();
         this.mealKitFactory = new MealKitFactory();
         this.cargosWaitingToBePickedUp = new Cargos();
         this.pendingMealKits = new MealKits();
         this.deliveryLocations = new DeliveryLocations(locationsCatalog.getDeliveryLocations());
     }
 
-    public void createMealKitInPreparation(SubscriberUniqueIdentifier subscriberId,
-                                           SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId,
-                                           DeliveryLocationId deliveryLocationId) {
+    public void createPendingMealKit(SubscriberUniqueIdentifier subscriberId,
+                                     SubscriptionUniqueIdentifier subscriptionId, MealKitUniqueIdentifier mealKitId,
+                                     DeliveryLocationId deliveryLocationId) {
         MealKit createdMealKit = mealKitFactory.createMealKit(subscriberId, subscriptionId, mealKitId, deliveryLocationId);
         pendingMealKits.addMealKit(createdMealKit);
     }
@@ -99,7 +99,7 @@ public class DeliverySystem {
         return deliveryPeople.getDeliveryPeopleIds();
     }
 
-    public void moveMealKitFromCargosToPending(MealKitUniqueIdentifier mealKitId) {
+    public void recallMealKitToPending(MealKitUniqueIdentifier mealKitId) {
         MealKit mealKitRemovedFromCargo = cargosWaitingToBePickedUp.extractMealKitFromCargo(mealKitId);
 
         deliveryLocations.unassignLocker(mealKitRemovedFromCargo);
@@ -107,10 +107,10 @@ public class DeliverySystem {
         pendingMealKits.addMealKit(mealKitRemovedFromCargo);
     }
 
-    public MealKit getCargoMealKit(CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
+    public MealKit findMealKit(CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
         DeliveryPerson deliveryPerson = deliveryPeople.findDeliveryPersonThatHasCargoWithCargoId(cargoId);
 
-        return deliveryPerson.getMealKitFromCargo(cargoId, mealKitId);
+        return deliveryPerson.findMealkitFromCargo(cargoId, mealKitId);
     }
 
     public void removeMealKitFromLocker(MealKitUniqueIdentifier mealKitId) {

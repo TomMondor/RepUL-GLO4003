@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.delivery.domain.catalog;
+package ca.ulaval.glo4003.repul.delivery.domain;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidLocationException;
-import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 
 public class LocationsCatalog {

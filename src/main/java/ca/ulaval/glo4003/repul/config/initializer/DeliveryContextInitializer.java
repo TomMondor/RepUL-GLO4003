@@ -21,7 +21,7 @@ import ca.ulaval.glo4003.repul.delivery.application.LocationsCatalogService;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
-import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
+import ca.ulaval.glo4003.repul.delivery.domain.LocationsCatalog;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
 
@@ -87,7 +87,7 @@ public class DeliveryContextInitializer {
         pendingMealKitsToAdd.forEach(mealKit -> {
             MealKitDto mealKitDto = mealKit.keySet().iterator().next();
             DeliveryLocationId deliveryLocationId = mealKit.get(mealKitDto);
-            deliverySystem.createMealKitInPreparation(mealKitDto.subscriberId(), mealKitDto.subscriptionId(), mealKitDto.mealKitId(), deliveryLocationId);
+            deliverySystem.createPendingMealKit(mealKitDto.subscriberId(), mealKitDto.subscriptionId(), mealKitDto.mealKitId(), deliveryLocationId);
         });
         cargosToAdd.forEach(cargo -> deliverySystem.receiveReadyToBeDeliveredMealKits(KitchenLocationId.DESJARDINS, cargo));
 

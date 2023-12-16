@@ -42,11 +42,11 @@ public class DeliveryService {
         deliverySystemPersister.save(deliverySystem);
     }
 
-    public void createMealKitInPreparation(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId,
-                                           MealKitUniqueIdentifier mealKitId, DeliveryLocationId deliveryLocationId) {
+    public void createPendingMealKit(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId,
+                                     MealKitUniqueIdentifier mealKitId, DeliveryLocationId deliveryLocationId) {
         DeliverySystem deliverySystem = deliverySystemPersister.get();
 
-        deliverySystem.createMealKitInPreparation(subscriberId, subscriptionId, mealKitId, deliveryLocationId);
+        deliverySystem.createPendingMealKit(subscriberId, subscriptionId, mealKitId, deliveryLocationId);
 
         deliverySystemPersister.save(deliverySystem);
     }
@@ -64,7 +64,7 @@ public class DeliveryService {
     public void recallMealKit(MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemPersister.get();
 
-        deliverySystem.moveMealKitFromCargosToPending(mealKitId);
+        deliverySystem.recallMealKitToPending(mealKitId);
 
         deliverySystemPersister.save(deliverySystem);
     }
@@ -114,7 +114,7 @@ public class DeliveryService {
 
         deliverySystem.confirmDelivery(deliveryPersonId, cargoId, mealKitId);
 
-        MealKit mealKit = deliverySystem.getCargoMealKit(cargoId, mealKitId);
+        MealKit mealKit = deliverySystem.findMealKit(cargoId, mealKitId);
 
         deliverySystemPersister.save(deliverySystem);
 

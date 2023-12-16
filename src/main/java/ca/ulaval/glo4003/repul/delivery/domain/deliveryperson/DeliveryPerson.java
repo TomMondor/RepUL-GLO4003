@@ -35,7 +35,7 @@ public class DeliveryPerson {
         cargo.confirmDelivery(mealKitId);
     }
 
-    public MealKit getMealKitFromCargo(CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
+    public MealKit findMealkitFromCargo(CargoUniqueIdentifier cargoId, MealKitUniqueIdentifier mealKitId) {
         Cargo cargo = cargos.findById(cargoId);
         return cargo.findMealKitById(mealKitId);
     }

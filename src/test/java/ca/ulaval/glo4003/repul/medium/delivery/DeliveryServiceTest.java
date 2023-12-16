@@ -20,7 +20,7 @@ import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
-import ca.ulaval.glo4003.repul.delivery.domain.catalog.LocationsCatalog;
+import ca.ulaval.glo4003.repul.delivery.domain.LocationsCatalog;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.exception.MealKitNotInDeliveryException;
 import ca.ulaval.glo4003.repul.delivery.infrastructure.InMemoryDeliverySystemPersister;
@@ -79,7 +79,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void givenDeliveredMealKit_whenRecallDelivery_shouldBeAbleToReconfirmMealKit() {
+    public void givenDeliveredMealKit_whenRecallingDelivery_shouldBeAbleToReconfirmMealKit() {
         givenDeliveryPerson(A_DELIVERY_PERSON_ACCOUNT_ID);
         givenConfirmedMealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
@@ -95,7 +95,7 @@ public class DeliveryServiceTest {
 
     private void givenConfirmedMealKit(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId,
                                        MealKitUniqueIdentifier mealKitId) {
-        deliveryService.createMealKitInPreparation(subscriberId, subscriptionId, mealKitId, A_DELIVERY_LOCATION_ID);
+        deliveryService.createPendingMealKit(subscriberId, subscriptionId, mealKitId, A_DELIVERY_LOCATION_ID);
     }
 
     private void givenCookedMealKit(MealKitUniqueIdentifier mealKitId) {

@@ -11,9 +11,9 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.delivery.application.payload.MealKitPayload;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.DeliveryLocations;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.DeliveryStatus;
 import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

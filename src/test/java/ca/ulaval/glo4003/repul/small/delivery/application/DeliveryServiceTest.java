@@ -29,8 +29,8 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystem;
 import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.KitchenLocation;
 import ca.ulaval.glo4003.repul.delivery.domain.cargo.Cargo;
-import ca.ulaval.glo4003.repul.delivery.domain.cargo.DeliveryStatus;
 import ca.ulaval.glo4003.repul.delivery.domain.deliverylocation.locker.LockerId;
+import ca.ulaval.glo4003.repul.delivery.domain.mealkit.DeliveryStatus;
 import ca.ulaval.glo4003.repul.delivery.domain.mealkit.MealKit;
 import ca.ulaval.glo4003.repul.fixture.delivery.MealKitFixture;
 
@@ -50,14 +50,14 @@ public class DeliveryServiceTest {
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID =
         new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
-    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
-    private static final KitchenLocation A_KITCHEN_LOCATION = new KitchenLocation(A_KITCHEN_LOCATION_ID, "Vachon");
     private static final MealKit A_MEAL_KIT =
         new MealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, A_DELIVERY_LOCATION_ID, DeliveryStatus.PENDING);
-    private static final Cargo A_CARGO = new Cargo(A_CARGO_UNIQUE_IDENTIFIER, A_KITCHEN_LOCATION, new ArrayList<>(List.of(A_MEAL_KIT)));
-    private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final MealKit A_DELIVERED_MEAL_KIT =
         new MealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, A_DELIVERY_LOCATION_ID, DeliveryStatus.DELIVERED);
+    private static final KitchenLocationId A_KITCHEN_LOCATION_ID = KitchenLocationId.DESJARDINS;
+    private static final KitchenLocation A_KITCHEN_LOCATION = new KitchenLocation(A_KITCHEN_LOCATION_ID, "Vachon");
+    private static final Cargo A_CARGO = new Cargo(A_CARGO_UNIQUE_IDENTIFIER, A_KITCHEN_LOCATION, new ArrayList<>(List.of(A_MEAL_KIT)));
+    private static final Optional<LockerId> A_LOCKER_ID = Optional.of(new LockerId("some id", 1));
     private static final MealKit A_MEAL_KIT_WITH_LOCKER = new MealKitFixture().withLockerId(A_LOCKER_ID).build();
     private static final DeliveryPersonUniqueIdentifier A_DELIVERY_PERSON_UNIQUE_IDENTIFIER =
         new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom(A_DELIVERY_PERSON_ID);
@@ -95,7 +95,7 @@ public class DeliveryServiceTest {
 
     @Test
     public void whenConfirmDelivery_shouldPublishConfirmedDeliveryEvent() {
-        when(mockDeliverySystem.getCargoMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
+        when(mockDeliverySystem.findMealKit(any(), any())).thenReturn(A_MEAL_KIT_WITH_LOCKER);
 
         deliveryService.confirmDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER);
 
@@ -103,7 +103,7 @@ public class DeliveryServiceTest {
     }
 
     @Test
-    public void wheRecallDelivery_shouldPublishRecalledDeliveryEvent() {
+    public void whenRecallingDelivery_shouldPublishRecalledDeliveryEvent() {
         when(mockDeliverySystem.recallDelivery(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER, A_CARGO_UNIQUE_IDENTIFIER, A_MEAL_KIT_UNIQUE_IDENTIFIER)).thenReturn(
             A_DELIVERED_MEAL_KIT);
         A_DELIVERED_MEAL_KIT.assignLocker(A_LOCKER_ID);
