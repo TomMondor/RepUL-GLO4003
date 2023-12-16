@@ -34,7 +34,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.SubscriberFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriberRepository;
 import ca.ulaval.glo4003.repul.subscription.domain.SubscriptionType;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmation;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmationDto;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
@@ -141,10 +141,10 @@ public class SubscriberServiceTest {
 
     @Test
     public void givenSporadicSubscription_whenConfirming_shouldSendMealKitConfirmedEvent() {
-        ProcessConfirmation processConfirmation = mock(ProcessConfirmation.class);
-        given(processConfirmation.confirmedOrders()).willReturn(List.of(AN_ORDER));
+        ProcessConfirmationDto processConfirmationDto = mock(ProcessConfirmationDto.class);
+        given(processConfirmationDto.confirmedOrders()).willReturn(List.of(AN_ORDER));
         given(subscriberRepository.getById(A_SUBSCRIBER_ID)).willReturn(mockSubscriber);
-        given(mockSubscriber.confirm(A_SUBSCRIPTION.getSubscriptionId(), orderFactory, paymentService)).willReturn(Optional.of(processConfirmation));
+        given(mockSubscriber.confirm(A_SUBSCRIPTION.getSubscriptionId(), orderFactory, paymentService)).willReturn(Optional.of(processConfirmationDto));
 
         subscriberService.confirm(A_SUBSCRIBER_ID, A_SUBSCRIPTION.getSubscriptionId());
 
@@ -153,10 +153,10 @@ public class SubscriberServiceTest {
 
     @Test
     public void whenProcessingOrders_shouldSendMealKitConfirmedEvent() {
-        ProcessConfirmation processConfirmation = mock(ProcessConfirmation.class);
-        given(processConfirmation.confirmedOrders()).willReturn(List.of(AN_ORDER));
+        ProcessConfirmationDto processConfirmationDto = mock(ProcessConfirmationDto.class);
+        given(processConfirmationDto.confirmedOrders()).willReturn(List.of(AN_ORDER));
         given(subscriberRepository.getAll()).willReturn(List.of(mockSubscriber));
-        given(mockSubscriber.processOrders(paymentService)).willReturn(List.of(processConfirmation));
+        given(mockSubscriber.processOrders(paymentService)).willReturn(List.of(processConfirmationDto));
 
         subscriberService.processOrders();
 

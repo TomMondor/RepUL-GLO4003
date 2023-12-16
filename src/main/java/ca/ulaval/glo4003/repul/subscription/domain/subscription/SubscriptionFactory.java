@@ -53,9 +53,9 @@ public class SubscriptionFactory {
         Semester semester = getCurrentSemester(today);
         LocalDate semesterEndDate = semester.endDate();
         Orders orders = ordersFactory.createOrdersInSemester(today, semesterEndDate, dayOfWeek, mealKitType);
-        Optional<Frequency> frequency = Optional.of(new Frequency(dayOfWeek));
+        Optional<WeeklyOccurence> weeklyOccurence = Optional.of(new WeeklyOccurence(dayOfWeek));
 
-        return new Subscription(subscriptionUniqueIdentifierFactory.generate(), orders, frequency, Optional.of(deliveryLocationId), today, semester,
+        return new Subscription(subscriptionUniqueIdentifierFactory.generate(), orders, weeklyOccurence, Optional.of(deliveryLocationId), today, semester,
             mealKitType);
     }
 

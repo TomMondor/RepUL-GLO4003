@@ -13,7 +13,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Profile;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmation;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmationDto;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscriptions;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
@@ -61,8 +61,8 @@ public class Subscriber {
         return subscriptions.getCurrentOrders();
     }
 
-    public Optional<ProcessConfirmation> confirm(SubscriptionUniqueIdentifier subscriptionUniqueIdentifier, OrderFactory orderFactory,
-                                                 PaymentService paymentService) {
+    public Optional<ProcessConfirmationDto> confirm(SubscriptionUniqueIdentifier subscriptionUniqueIdentifier, OrderFactory orderFactory,
+                                                    PaymentService paymentService) {
         return subscriptions.confirm(subscriptionUniqueIdentifier, subscriberId, orderFactory, paymentService);
     }
 
@@ -70,7 +70,7 @@ public class Subscriber {
         subscriptions.decline(subscriptionId);
     }
 
-    public List<ProcessConfirmation> processOrders(PaymentService paymentService) {
+    public List<ProcessConfirmationDto> processOrders(PaymentService paymentService) {
         return subscriptions.processOrders(subscriberId, paymentService);
     }
 

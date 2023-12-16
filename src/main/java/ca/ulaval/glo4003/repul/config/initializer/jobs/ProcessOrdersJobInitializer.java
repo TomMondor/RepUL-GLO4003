@@ -23,8 +23,6 @@ public class ProcessOrdersJobInitializer implements JobInitializer {
     }
 
     public void launchJob() {
-        Scheduler scheduler = getScheduler();
-
         JobDetail job = getJobDetail();
         Trigger trigger = getTrigger(job);
 

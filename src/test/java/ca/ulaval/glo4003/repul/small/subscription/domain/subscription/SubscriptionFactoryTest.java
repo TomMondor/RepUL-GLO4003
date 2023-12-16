@@ -83,7 +83,7 @@ public class SubscriptionFactoryTest {
         Subscription subscription = subscriptionFactory.createSubscription(subscriptionQuery);
 
         assertEquals(A_UNIQUE_SUBSCRIPTION_IDENTIFIER, subscription.getSubscriptionId());
-        assertEquals(DayOfWeek.from(chosenDayOfWeek), subscription.getFrequency().get().dayOfWeek());
+        assertEquals(DayOfWeek.from(chosenDayOfWeek), subscription.getWeeklyOccurence().get().dayOfWeek());
         assertEquals(A_VALID_DELIVERY_LOCATION_ID, subscription.getDeliveryLocationId().get());
         assertEquals(LocalDate.now(), subscription.getStartDate());
         assertEquals(CURRENT_SEMESTER, subscription.getSemester());
@@ -154,12 +154,12 @@ public class SubscriptionFactoryTest {
     }
 
     @Test
-    public void whenCreatingSporadicSubscription_shouldCreateSubscriptionWithoutDeliveryLocationAndFrequency() {
+    public void whenCreatingSporadicSubscription_shouldCreateSubscriptionWithoutDeliveryLocationAndWeeklyOccurence() {
         when(subscriptionUniqueIdentifierFactory.generate()).thenReturn(A_UNIQUE_SUBSCRIPTION_IDENTIFIER);
 
         Subscription subscription = subscriptionFactory.createSubscription(A_SPORADIC_SUBSCRIPTION_QUERY);
 
-        assertFalse(subscription.getFrequency().isPresent());
+        assertFalse(subscription.getWeeklyOccurence().isPresent());
         assertFalse(subscription.getDeliveryLocationId().isPresent());
     }
 

@@ -25,7 +25,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
 import ca.ulaval.glo4003.repul.subscription.domain.query.SubscriptionQuery;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmation;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmationDto;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.SubscriptionFactory;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
@@ -93,7 +93,7 @@ public class SubscriberService {
     public void confirm(SubscriberUniqueIdentifier subscriberId, SubscriptionUniqueIdentifier subscriptionId) {
         Subscriber subscriber = subscriberRepository.getById(subscriberId);
 
-        Optional<ProcessConfirmation> processedSporadic = subscriber.confirm(subscriptionId, orderFactory, paymentService);
+        Optional<ProcessConfirmationDto> processedSporadic = subscriber.confirm(subscriptionId, orderFactory, paymentService);
 
         subscriberRepository.save(subscriber);
 
@@ -112,7 +112,7 @@ public class SubscriberService {
 
     public void processOrders() {
         for (Subscriber subscriber : subscriberRepository.getAll()) {
-            List<ProcessConfirmation> confirmedOrders = subscriber.processOrders(paymentService);
+            List<ProcessConfirmationDto> confirmedOrders = subscriber.processOrders(paymentService);
 
             subscriberRepository.save(subscriber);
 
@@ -120,8 +120,8 @@ public class SubscriberService {
         }
     }
 
-    private void sendMealKitConfirmedEvents(SubscriberUniqueIdentifier subscriberId, List<ProcessConfirmation> confirmedOrders) {
-        for (ProcessConfirmation confirmation : confirmedOrders) {
+    private void sendMealKitConfirmedEvents(SubscriberUniqueIdentifier subscriberId, List<ProcessConfirmationDto> confirmedOrders) {
+        for (ProcessConfirmationDto confirmation : confirmedOrders) {
             for (Order confirmedOrder : confirmation.confirmedOrders()) {
                 MealKitConfirmedEvent event =
                     new MealKitConfirmedEvent(confirmedOrder.getOrderId(), confirmation.subscriptionId(), subscriberId, confirmedOrder.getMealKitType(),

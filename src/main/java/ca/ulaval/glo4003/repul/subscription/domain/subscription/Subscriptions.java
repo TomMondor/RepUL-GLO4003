@@ -33,8 +33,8 @@ public class Subscriptions {
         return subscriptions.values().stream().map(Subscription::getCurrentOrder).filter(Optional::isPresent).map(Optional::get).toList();
     }
 
-    public Optional<ProcessConfirmation> confirm(SubscriptionUniqueIdentifier subscriptionUniqueIdentifier, SubscriberUniqueIdentifier subscriberId,
-                                                 OrderFactory orderFactory, PaymentService paymentService) {
+    public Optional<ProcessConfirmationDto> confirm(SubscriptionUniqueIdentifier subscriptionUniqueIdentifier, SubscriberUniqueIdentifier subscriberId,
+                                                    OrderFactory orderFactory, PaymentService paymentService) {
         Subscription subscription = get(subscriptionUniqueIdentifier);
 
         return subscription.confirm(subscriberId, orderFactory, paymentService);
@@ -46,8 +46,8 @@ public class Subscriptions {
         subscription.decline();
     }
 
-    public List<ProcessConfirmation> processOrders(SubscriberUniqueIdentifier subscriberId, PaymentService paymentService) {
-        List<ProcessConfirmation> confirmedOrders = new ArrayList<>();
+    public List<ProcessConfirmationDto> processOrders(SubscriberUniqueIdentifier subscriberId, PaymentService paymentService) {
+        List<ProcessConfirmationDto> confirmedOrders = new ArrayList<>();
         subscriptions.values().forEach(subscription -> confirmedOrders.add(subscription.processOrders(subscriberId, paymentService)));
 
         return confirmedOrders;

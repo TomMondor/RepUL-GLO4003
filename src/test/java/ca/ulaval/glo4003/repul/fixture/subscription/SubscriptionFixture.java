@@ -10,8 +10,8 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.WeeklyOccurence;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
@@ -20,7 +20,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semeste
 public class SubscriptionFixture {
     private SubscriptionUniqueIdentifier subscriptionId;
     private List<Order> orders;
-    private Optional<Frequency> frequency;
+    private Optional<WeeklyOccurence> weeklyOccurence;
     private Optional<DeliveryLocationId> deliveryLocationId;
     private LocalDate startDate;
     private Semester semester;
@@ -29,7 +29,7 @@ public class SubscriptionFixture {
     public SubscriptionFixture() {
         subscriptionId = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
         orders = new ArrayList<>();
-        frequency = Optional.of(new Frequency(DayOfWeek.FRIDAY));
+        weeklyOccurence = Optional.of(new WeeklyOccurence(DayOfWeek.FRIDAY));
         deliveryLocationId = Optional.of(DeliveryLocationId.VACHON);
         startDate = LocalDate.now();
         semester = new Semester(new SemesterCode("A23"), startDate.minusMonths(1), startDate.plusMonths(2));
@@ -51,8 +51,8 @@ public class SubscriptionFixture {
         return this;
     }
 
-    public SubscriptionFixture withFrequency(Optional<Frequency> frequency) {
-        this.frequency = frequency;
+    public SubscriptionFixture withWeeklyOccurence(Optional<WeeklyOccurence> weeklyOccurence) {
+        this.weeklyOccurence = weeklyOccurence;
         return this;
     }
 
@@ -82,6 +82,6 @@ public class SubscriptionFixture {
     }
 
     public Subscription build() {
-        return new Subscription(subscriptionId, new Orders(orders), frequency, deliveryLocationId, startDate, semester, mealKitType);
+        return new Subscription(subscriptionId, new Orders(orders), weeklyOccurence, deliveryLocationId, startDate, semester, mealKitType);
     }
 }

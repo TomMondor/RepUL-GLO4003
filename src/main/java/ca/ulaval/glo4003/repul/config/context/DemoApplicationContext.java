@@ -64,8 +64,8 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.WeeklyOccurence;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
@@ -100,18 +100,18 @@ public class DemoApplicationContext implements ApplicationContext {
     private static final Order THIRD_MEAL_KIT_ORDER =
         new Order(new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate(), MealKitType.STANDARD, LocalDate.now().plusDays(1),
             OrderStatus.IN_PREPARATION);
-    private static final Optional<Frequency> OPTIONAL_OF_A_WEEKLY_FREQUENCY = Optional.of(new Frequency(LocalDate.now().getDayOfWeek().plus(1)));
+    private static final Optional<WeeklyOccurence> OPTIONAL_OF_A_WEEKLY_OCCURENCE = Optional.of(new WeeklyOccurence(LocalDate.now().getDayOfWeek().plus(1)));
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final Optional<DeliveryLocationId> OPTIONAL_OF_A_DELIVERY_LOCATION_ID = Optional.of(A_DELIVERY_LOCATION_ID);
     private static final Subscription FIRST_SUBSCRIPTION =
         new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), new Orders(List.of(FIRST_MEAL_KIT_ORDER)),
-            OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
+            OPTIONAL_OF_A_WEEKLY_OCCURENCE, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final Subscription SECOND_SUBSCRIPTION =
         new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), new Orders(List.of(SECOND_MEAL_KIT_ORDER)),
-            OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
+            OPTIONAL_OF_A_WEEKLY_OCCURENCE, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final Subscription THIRD_SUBSCRIPTION =
         new Subscription(new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate(), new Orders(List.of(THIRD_MEAL_KIT_ORDER)),
-            OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
+            OPTIONAL_OF_A_WEEKLY_OCCURENCE, OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD);
     private static final int PORT = 8080;
     private static final String DELIVERY_PERSON_EMAIL =
         ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL").isBlank() ? "roger@ulaval.ca" : ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL");

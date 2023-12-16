@@ -19,17 +19,17 @@ import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semeste
 public class Subscription {
     private final SubscriptionUniqueIdentifier subscriptionId;
     private final Orders orders;
-    private final Optional<Frequency> frequency;
+    private final Optional<WeeklyOccurence> weeklyOccurence;
     private final Optional<DeliveryLocationId> deliveryLocationId;
     private final LocalDate startDate;
     private final Semester semester;
     private final MealKitType mealKitType;
 
-    public Subscription(SubscriptionUniqueIdentifier subscriptionId, Orders orders, Optional<Frequency> frequency,
+    public Subscription(SubscriptionUniqueIdentifier subscriptionId, Orders orders, Optional<WeeklyOccurence> weeklyOccurence,
                         Optional<DeliveryLocationId> deliveryLocationId, LocalDate startDate, Semester semester, MealKitType mealKitType) {
         this.subscriptionId = subscriptionId;
         this.orders = orders;
-        this.frequency = frequency;
+        this.weeklyOccurence = weeklyOccurence;
         this.deliveryLocationId = deliveryLocationId;
         this.startDate = startDate;
         this.semester = semester;
@@ -40,8 +40,8 @@ public class Subscription {
         return subscriptionId;
     }
 
-    public Optional<Frequency> getFrequency() {
-        return frequency;
+    public Optional<WeeklyOccurence> getWeeklyOccurence() {
+        return weeklyOccurence;
     }
 
     public Optional<DeliveryLocationId> getDeliveryLocationId() {
@@ -64,7 +64,7 @@ public class Subscription {
         return orders.getCurrent();
     }
 
-    public Optional<ProcessConfirmation> confirm(SubscriberUniqueIdentifier subscriberId, OrderFactory orderFactory, PaymentService paymentService) {
+    public Optional<ProcessConfirmationDto> confirm(SubscriberUniqueIdentifier subscriberId, OrderFactory orderFactory, PaymentService paymentService) {
         if (isSporadic()) {
             return Optional.of(confirmSporadicOrder(subscriberId, orderFactory, paymentService));
         }
@@ -74,14 +74,14 @@ public class Subscription {
     }
 
     private boolean isSporadic() {
-        return frequency.isEmpty();
+        return weeklyOccurence.isEmpty();
     }
 
     private void confirmCurrentOrder() {
         orders.confirmCurrent();
     }
 
-    private ProcessConfirmation confirmSporadicOrder(SubscriberUniqueIdentifier subscriberId, OrderFactory orderFactory, PaymentService paymentService) {
+    private ProcessConfirmationDto confirmSporadicOrder(SubscriberUniqueIdentifier subscriberId, OrderFactory orderFactory, PaymentService paymentService) {
         Order order = orderFactory.createSporadicOrder(semester, mealKitType);
 
         order.changeStatus(new ConfirmedStatus(order));
@@ -89,17 +89,17 @@ public class Subscription {
 
         orders.add(order);
 
-        return new ProcessConfirmation(subscriptionId, deliveryLocationId, List.of(order));
+        return new ProcessConfirmationDto(subscriptionId, deliveryLocationId, List.of(order));
     }
 
     public void decline() {
         orders.declineCurrent();
     }
 
-    public ProcessConfirmation processOrders(SubscriberUniqueIdentifier subscriberId, PaymentService paymentService) {
+    public ProcessConfirmationDto processOrders(SubscriberUniqueIdentifier subscriberId, PaymentService paymentService) {
         List<Order> confirmedOrders = orders.process(subscriberId, isSporadic(), paymentService);
 
-        return new ProcessConfirmation(subscriptionId, deliveryLocationId, confirmedOrders);
+        return new ProcessConfirmationDto(subscriptionId, deliveryLocationId, confirmedOrders);
     }
 
     public boolean hasOrder(MealKitUniqueIdentifier orderId) {

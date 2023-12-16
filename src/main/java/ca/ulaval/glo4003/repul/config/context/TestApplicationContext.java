@@ -63,8 +63,8 @@ import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.WeeklyOccurence;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Orders;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
@@ -111,7 +111,6 @@ public class TestApplicationContext implements ApplicationContext {
     public static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     public static final Optional<DeliveryLocationId> OPTIONAL_OF_A_DELIVERY_LOCATION_ID = Optional.of(A_DELIVERY_LOCATION_ID);
     public static final DeliveryLocation A_DELIVERY_LOCATION = new DeliveryLocation(A_DELIVERY_LOCATION_ID, "Entrée Vachon #1", 30);
-    private static Cook cook = new Cook(COOK_ID);
     private static final Order FIRST_MEAL_KIT_ORDER =
         new Order(FIRST_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
     private static final Order SECOND_MEAL_KIT_ORDER =
@@ -133,7 +132,7 @@ public class TestApplicationContext implements ApplicationContext {
     private static final Order TENTH_MEAL_KIT_ORDER =
         new Order(TENTH_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
     private static final Order SPORADIC_ORDER = new Order(SPORADIC_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
-    private static final Optional<Frequency> OPTIONAL_OF_A_WEEKLY_FREQUENCY = Optional.of(new Frequency(LocalDate.now().getDayOfWeek()));
+    private static final Optional<WeeklyOccurence> OPTIONAL_OF_A_WEEKLY_OCCURENCE = Optional.of(new WeeklyOccurence(LocalDate.now().getDayOfWeek()));
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusWeeks(10));
     private static final RegistrationRequest CLIENT_REGISTRATION_REQUEST =
         new RegistrationRequest("ALEXA123", CLIENT_EMAIL, CLIENT_PASSWORD, "Alexandra", "1999-01-01", "WOMAN");
@@ -149,6 +148,7 @@ public class TestApplicationContext implements ApplicationContext {
         new RegistrationRequest("JOHN456", SECOND_DELIVERY_PERSON_EMAIL, SECOND_DELIVERY_PERSON_PASSWORD, "John", "1973-05-24", "MAN");
     private static final Logger LOGGER = LoggerFactory.getLogger(TestApplicationContext.class);
     private static final int PORT = 8081;
+    private static Cook cook = new Cook(COOK_ID);
 
     public TestApplicationContext() {
         LocalTime openingTime = LocalTime.of(9, 0);
@@ -201,29 +201,29 @@ public class TestApplicationContext implements ApplicationContext {
 
         SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer().withSubscribers(List.of(SUBSCRIBER))
             .withSubscriptionsForSubscriber(List.of(
-                new Subscription(FIRST_SUBSCRIPTION_ID, new Orders(List.of(FIRST_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(FIRST_SUBSCRIPTION_ID, new Orders(List.of(FIRST_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(SECOND_SUBSCRIPTION_ID, new Orders(List.of(SECOND_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SECOND_SUBSCRIPTION_ID, new Orders(List.of(SECOND_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(THIRD_SUBSCRIPTION_ID, new Orders(List.of(THIRD_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(THIRD_SUBSCRIPTION_ID, new Orders(List.of(THIRD_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(FOURTH_SUBSCRIPTION_ID, new Orders(List.of(FOURTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(FOURTH_SUBSCRIPTION_ID, new Orders(List.of(FOURTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(FIFTH_SUBSCRIPTION_ID, new Orders(List.of(FIFTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(FIFTH_SUBSCRIPTION_ID, new Orders(List.of(FIFTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(SIXTH_SUBSCRIPTION_ID, new Orders(List.of(SIXTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SIXTH_SUBSCRIPTION_ID, new Orders(List.of(SIXTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(SEVENTH_SUBSCRIPTION_ID, new Orders(List.of(SEVENTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SEVENTH_SUBSCRIPTION_ID, new Orders(List.of(SEVENTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(EIGHTH_SUBSCRIPTION_ID, new Orders(List.of(EIGHTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(EIGHTH_SUBSCRIPTION_ID, new Orders(List.of(EIGHTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(EIGHTH_SUBSCRIPTION_ID, new Orders(List.of(EIGHTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(EIGHTH_SUBSCRIPTION_ID, new Orders(List.of(EIGHTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(SPORADIC_SUBSCRIPTION_ID, new Orders(List.of(SPORADIC_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(SPORADIC_SUBSCRIPTION_ID, new Orders(List.of(SPORADIC_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(NINTH_SUBSCRIPTION_ID, new Orders(List.of(SPORADIC_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY, OPTIONAL_OF_A_DELIVERY_LOCATION_ID,
+                new Subscription(NINTH_SUBSCRIPTION_ID, new Orders(List.of(SPORADIC_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE, OPTIONAL_OF_A_DELIVERY_LOCATION_ID,
                     LocalDate.now(), A_SEMESTER, MealKitType.STANDARD),
-                new Subscription(TENTH_SUBSCRIPTION_ID, new Orders(List.of(TENTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
+                new Subscription(TENTH_SUBSCRIPTION_ID, new Orders(List.of(TENTH_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_OCCURENCE,
                     OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD)), CLIENT_ID);
         SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);

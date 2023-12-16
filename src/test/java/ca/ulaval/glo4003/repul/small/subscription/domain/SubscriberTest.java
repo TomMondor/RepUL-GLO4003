@@ -31,7 +31,7 @@ import ca.ulaval.glo4003.repul.subscription.domain.exception.OrderCannotBeDeclin
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Birthdate;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Gender;
 import ca.ulaval.glo4003.repul.subscription.domain.profile.Name;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmation;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.ProcessConfirmationDto;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.OrderFactory;
@@ -58,7 +58,7 @@ public class SubscriberTest {
     private static final Gender A_GENDER = Gender.OTHER;
     private static final Email AN_EMAIL = new Email("anEmail@ulaval.ca");
     private static final Subscription A_SUBSCRIPTION = new SubscriptionFixture().build();
-    private static final Subscription A_SPORADIC_SUBSCRIPTION = new SubscriptionFixture().withFrequency(Optional.empty()).build();
+    private static final Subscription A_SPORADIC_SUBSCRIPTION = new SubscriptionFixture().withWeeklyOccurence(Optional.empty()).build();
     private static final Subscription ANOTHER_SUBSCRIPTION = new SubscriptionFixture().build();
     private static final SubscriptionUniqueIdentifier AN_INVALID_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberCardNumber A_CARD_NUMBER = new SubscriberCardNumber("123456789");
@@ -198,7 +198,7 @@ public class SubscriberTest {
             new SubscriptionFixture().withOrders(List.of(A_CHANGEABLE_CONFIRMED_ORDER)).build();
         subscriber.addSubscription(aSubscription);
 
-        Optional<ProcessConfirmation> processConfirmation =
+        Optional<ProcessConfirmationDto> processConfirmation =
             subscriber.confirm(aSubscription.getSubscriptionId(), orderFactory, paymentService);
 
         assertFalse(processConfirmation.isPresent());
@@ -334,7 +334,7 @@ public class SubscriberTest {
         given(orderFactory.createSporadicOrder(any(), any())).willReturn(order);
         subscriber.addSubscription(A_SPORADIC_SUBSCRIPTION);
 
-        Optional<ProcessConfirmation> processConfirmation =
+        Optional<ProcessConfirmationDto> processConfirmation =
             subscriber.confirm(A_SPORADIC_SUBSCRIPTION.getSubscriptionId(), orderFactory, paymentService);
 
         assertEquals(order.getOrderId(), processConfirmation.get().confirmedOrders().get(0).getOrderId());
@@ -498,9 +498,9 @@ public class SubscriberTest {
             new SubscriptionFixture().withOrders(List.of(A_NON_CHANGEABLE_CONFIRMED_ORDER)).build();
         subscriber.addSubscription(aSubscriptionWithNonChangeableConfirmedOrder);
 
-        List<ProcessConfirmation> processConfirmations = subscriber.processOrders(paymentService);
+        List<ProcessConfirmationDto> processConfirmationDtos = subscriber.processOrders(paymentService);
 
-        assertEquals(A_NON_CHANGEABLE_CONFIRMED_ORDER.getOrderId(), processConfirmations.get(0).confirmedOrders().get(0).getOrderId());
+        assertEquals(A_NON_CHANGEABLE_CONFIRMED_ORDER.getOrderId(), processConfirmationDtos.get(0).confirmedOrders().get(0).getOrderId());
     }
 
     @Test

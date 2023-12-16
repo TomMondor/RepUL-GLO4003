@@ -7,7 +7,7 @@ import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 
-public record ProcessConfirmation(
+public record ProcessConfirmationDto(
     SubscriptionUniqueIdentifier subscriptionId,
     Optional<DeliveryLocationId> deliveryLocationId,
     List<Order> confirmedOrders

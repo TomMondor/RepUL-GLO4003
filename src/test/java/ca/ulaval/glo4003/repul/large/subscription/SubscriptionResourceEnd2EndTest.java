@@ -125,7 +125,7 @@ public class SubscriptionResourceEnd2EndTest {
             responseBody.subscriptions().stream().filter(subscription -> subscription.subscriptionId().equals(subscriptionId)).findFirst();
 
         assertTrue(createdSubscriptionResponse.isPresent());
-        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, createdSubscriptionResponse.get().frequency());
+        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, createdSubscriptionResponse.get().weeklyOccurence());
         assertEquals(A_SUBSCRIPTION_REQUEST.locationId, createdSubscriptionResponse.get().deliveryLocationId());
         assertEquals(A_SUBSCRIPTION_REQUEST.mealKitType, createdSubscriptionResponse.get().mealKitType());
         assertEquals(LocalDate.now().toString(), createdSubscriptionResponse.get().startDate());
@@ -152,7 +152,7 @@ public class SubscriptionResourceEnd2EndTest {
         SubscriptionPayload responseBody = response.getBody().as(SubscriptionPayload.class);
 
         assertEquals(subscriptionId, responseBody.subscriptionId());
-        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, responseBody.frequency());
+        assertEquals(A_SUBSCRIPTION_REQUEST.dayOfWeek, responseBody.weeklyOccurence());
         assertEquals(A_SUBSCRIPTION_REQUEST.locationId, responseBody.deliveryLocationId());
         assertEquals(A_SUBSCRIPTION_REQUEST.mealKitType, responseBody.mealKitType());
         assertEquals(LocalDate.now().toString(), responseBody.startDate());

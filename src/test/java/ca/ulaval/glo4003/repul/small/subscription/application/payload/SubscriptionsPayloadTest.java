@@ -15,8 +15,8 @@ import ca.ulaval.glo4003.repul.fixture.subscription.OrderFixture;
 import ca.ulaval.glo4003.repul.fixture.subscription.SubscriptionFixture;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionPayload;
 import ca.ulaval.glo4003.repul.subscription.application.payload.SubscriptionsPayload;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.Frequency;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.Subscription;
+import ca.ulaval.glo4003.repul.subscription.domain.subscription.WeeklyOccurence;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.status.OrderStatus;
 import ca.ulaval.glo4003.repul.subscription.domain.subscription.semester.Semester;
@@ -31,7 +31,7 @@ public class SubscriptionsPayloadTest {
     private static final MealKitType ORDER_MEALKIT_TYPE = MealKitType.STANDARD;
     private static final Order ORDER =
         new OrderFixture().withMealKitType(ORDER_MEALKIT_TYPE).withDeliveryDate(ORDER_DELIVERY_DATE).withOrderStatus(ORDER_STATUS).build();
-    private static final Frequency SUBSCRIPTION_FREQUENCY = new Frequency(DayOfWeek.MONDAY);
+    private static final WeeklyOccurence SUBSCRIPTION_WEEKLY_OCCURENCE = new WeeklyOccurence(DayOfWeek.MONDAY);
     private static final DeliveryLocationId LOCATION_ID = DeliveryLocationId.VACHON;
     private static final LocalDate SUBSCRIPTION_START_DATE = LocalDate.now();
     private static final Semester SEMESTER = new Semester(new SemesterCode("A23"), SUBSCRIPTION_START_DATE, SUBSCRIPTION_START_DATE.minusYears(1));
@@ -40,10 +40,11 @@ public class SubscriptionsPayloadTest {
     @Test
     public void whenUsingFrom_shouldReturnCorrectSubscriptionsPayload() {
         SubscriptionsPayload expectedSubscriptionsPayload = new SubscriptionsPayload(List.of(
-            new SubscriptionPayload(SUBSCRIPTION_ID.getUUID().toString(), SUBSCRIPTION_FREQUENCY.dayOfWeek().toString(), LOCATION_ID.toString(),
+            new SubscriptionPayload(SUBSCRIPTION_ID.getUUID().toString(), SUBSCRIPTION_WEEKLY_OCCURENCE.dayOfWeek().toString(), LOCATION_ID.toString(),
                 SUBSCRIPTION_START_DATE.toString(), SUBSCRIPTION_MEALKIT_TYPE.toString(), SEMESTER.toString())));
         Subscription subscription =
-            new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER)).withFrequency(Optional.of(SUBSCRIPTION_FREQUENCY))
+            new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
+                .withWeeklyOccurence(Optional.of(SUBSCRIPTION_WEEKLY_OCCURENCE))
                 .withPickUpLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE).withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER)
                 .build();
 
