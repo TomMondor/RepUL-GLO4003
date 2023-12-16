@@ -16,6 +16,7 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.Config;
+import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.IdentityManagementContextInitializer;
@@ -44,6 +45,8 @@ public class DemoApplicationContext implements ApplicationContext {
 
     @Override
     public ResourceConfig initializeResourceConfig() {
+        EnvParser.setFilename(".env");
+
         RepULEventBus eventBus = new GuavaEventBus();
         SeedFactory seedFactory = new DemoSeedFactory();
 
