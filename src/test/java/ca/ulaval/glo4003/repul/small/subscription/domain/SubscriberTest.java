@@ -1,9 +1,12 @@
 package ca.ulaval.glo4003.repul.small.subscription.domain;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +48,9 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class SubscriberTest {
-    public static final Order A_PASSED_ORDER = new OrderFixture().withDeliveryDate(LocalDate.now().minusDays(1)).build();
+    public static final int DAYS_TO_CONFIRM = 2;
+    public static final Order A_PASSED_ORDER = new OrderFixture()
+        .withDeliveryDate(LocalDate.now().minusDays(1)).build();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final IDUL AN_IDUL = new IDUL("ALMAT69");
     private static final Name A_NAME = new Name("John Doe");
@@ -60,15 +65,20 @@ public class SubscriberTest {
     private static final Order AN_ACTIVE_ORDER = new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1)).build();
     private static final Order A_FUTURE_ORDER = new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(8)).build();
     private static final Order A_CHANGEABLE_PENDING_ORDER =
-        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(Config.DAYS_TO_CONFIRM + 1)).withOrderStatus(OrderStatus.PENDING).build();
+        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(DAYS_TO_CONFIRM + 1))
+            .withOrderStatus(OrderStatus.PENDING).build();
     private static final Order A_NON_CHANGEABLE_PENDING_ORDER =
-        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1)).withOrderStatus(OrderStatus.PENDING).build();
+        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1))
+            .withOrderStatus(OrderStatus.PENDING).build();
     private static final Order A_CHANGEABLE_CONFIRMED_ORDER =
-        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(Config.DAYS_TO_CONFIRM + 1)).withOrderStatus(OrderStatus.CONFIRMED).build();
+        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(DAYS_TO_CONFIRM + 1))
+            .withOrderStatus(OrderStatus.CONFIRMED).build();
     private static final Order A_NON_CHANGEABLE_CONFIRMED_ORDER =
-        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1)).withOrderStatus(OrderStatus.CONFIRMED).build();
+        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1))
+            .withOrderStatus(OrderStatus.CONFIRMED).build();
     private static final Order A_CHANGEABLE_DECLINED_ORDER =
-        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(Config.DAYS_TO_CONFIRM + 1)).withOrderStatus(OrderStatus.DECLINED).build();
+        new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(DAYS_TO_CONFIRM + 1))
+            .withOrderStatus(OrderStatus.DECLINED).build();
     private static final Order A_NON_CHANGEABLE_DECLINED_ORDER =
         new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(1)).withOrderStatus(OrderStatus.DECLINED).build();
     private static final Order AN_IN_PREPARATION_ORDER =
@@ -84,6 +94,12 @@ public class SubscriberTest {
     private PaymentService paymentService;
 
     private Subscriber subscriber;
+
+    @BeforeAll
+    public static void setupConfig() {
+        LocalTime openingTime = LocalTime.of(9, 0);
+        Config.initialize(openingTime, Duration.ofDays(DAYS_TO_CONFIRM));
+    }
 
     @BeforeEach
     public void createSubscriber() {
@@ -338,7 +354,8 @@ public class SubscriberTest {
     @Test
     public void givenSubscriptionWithPendingOrder_whenDeclining_shouldUpdateStatusToDeclined() {
         Order aChangeablePendingOrder =
-            new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(Config.DAYS_TO_CONFIRM + 1)).withOrderStatus(OrderStatus.PENDING).build();
+            new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(DAYS_TO_CONFIRM + 1))
+                .withOrderStatus(OrderStatus.PENDING).build();
         Subscription aSubscriptionWithPendingOrder =
             new SubscriptionFixture().withOrders(List.of(aChangeablePendingOrder)).build();
         subscriber.addSubscription(aSubscriptionWithPendingOrder);
@@ -428,7 +445,8 @@ public class SubscriberTest {
     @Test
     public void givenSubscriptionWithChangeablePendingOrder_whenProcessingOrders_shouldNotProcessOrder() {
         Order aChangeablePendingOrder =
-            new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(Config.DAYS_TO_CONFIRM + 1)).withOrderStatus(OrderStatus.PENDING).build();
+            new OrderFixture().withDeliveryDate(LocalDate.now().plusDays(DAYS_TO_CONFIRM + 1))
+                .withOrderStatus(OrderStatus.PENDING).build();
         Subscription aSubscriptionWithPendingOrder =
             new SubscriptionFixture().withOrders(List.of(aChangeablePendingOrder)).build();
         subscriber.addSubscription(aSubscriptionWithPendingOrder);

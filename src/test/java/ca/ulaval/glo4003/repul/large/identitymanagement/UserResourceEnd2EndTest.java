@@ -20,12 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserResourceEnd2EndTest {
-    private static final String ACCOUNT_EMAIL = "myAccountEmail@ulaval.ca";
-    private static final String ACCOUNT_PASSWORD = "secret123";
-    private static final String ACCOUNT_IDUL = "almat69";
-    private static final String ACCOUNT_NAME = "Bob Math";
-    private static final String ACCOUNT_BIRTHDATE = "1969-04-20";
-    private static final String ACCOUNT_GENDER = "MAN";
     private static final ApplicationContext CONTEXT = new TestApplicationContext();
 
     private ServerFixture server;

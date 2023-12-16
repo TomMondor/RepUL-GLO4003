@@ -71,7 +71,13 @@ Par exemple, sous Mac/Linux: `./start.sh --test`.
 ### Démarrer le projet en mode Demo et spécification
 
 Comme les requis font en sorte qu'on ne peut confirmer une commande dans un délai de 48h, un contexte de démonstration a été créé afin
-de pouvoir tester les parties demandant une boîte-repas confirmée.
+de pouvoir tester les parties demandant une boîte-repas confirmée. Des boîtes-repas prêtes à être confirmées sont donc préexistantes dans ce contexte.
+
+De plus, le mode démo permet aussi de tester la boucle complète de création d'un abonnement jusqu'à la livraison. À partir du lancement de l'application, vous aurez 2 minutes pour créer un abonnement et confirmer la commande.
+La CRON job roulera éventuellement (tous les 30 secondes en mode démo) et la commande sera poussée dans le contexte du cuisiner, où elle pourra être préparée, puis livrée par Roger.
+Il est important que la date de livraison de cet abonnement soit pour demain. Par exemple, si nous sommes vendredi, il faut que la date
+de livraison indiquée dans la création de l'abonnement soit samedi. La raison est que dans le contexte du cuisinier, Paul peut seulement
+préparer les commandes à livrer demain. Ainsi, le 48h de délai de confirmation n'est plus de 48h, mais plutôt un temps plus court pour les besoins de la démonstration.
 
 Pour lancer l'application en mode demo, exécuter start.sh ou start.bat en ajoutant l'argument de ligne de commande "--demo".
 

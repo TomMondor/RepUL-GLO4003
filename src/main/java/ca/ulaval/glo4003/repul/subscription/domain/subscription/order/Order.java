@@ -80,7 +80,8 @@ public class Order {
     }
 
     public LocalDateTime getMaximumModificationDateTime() {
-        return LocalDateTime.of(deliveryDate.minusDays(Config.DAYS_TO_CONFIRM), Config.OPENING_TIME);
+        LocalDateTime deliveryDateTime = LocalDateTime.of(deliveryDate, Config.getInstance().getOpeningTime());
+        return deliveryDateTime.minus(Config.getInstance().getDurationToConfirm());
     }
 
     public void confirm() {

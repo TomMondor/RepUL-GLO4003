@@ -1,6 +1,8 @@
 package ca.ulaval.glo4003.repul.config.context;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +17,6 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.CatchallExceptionMap
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
-import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DateParser;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
@@ -30,14 +31,16 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
+import ca.ulaval.glo4003.repul.config.Config;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.IdentityManagementContextInitializer;
-import ca.ulaval.glo4003.repul.config.initializer.JobInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
+import ca.ulaval.glo4003.repul.config.initializer.jobs.JobInitializer;
+import ca.ulaval.glo4003.repul.config.initializer.jobs.ProcessOrdersJobInitializer;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
@@ -54,7 +57,6 @@ import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizati
 import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
-import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.domain.Subscriber;
@@ -148,6 +150,12 @@ public class TestApplicationContext implements ApplicationContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestApplicationContext.class);
     private static final int PORT = 8081;
 
+    public TestApplicationContext() {
+        LocalTime openingTime = LocalTime.of(9, 0);
+        Duration durationToConfirm = Duration.ofDays(2);
+        Config.initialize(openingTime, durationToConfirm);
+    }
+
     @Override
     public ResourceConfig initializeResourceConfig() {
         EnvParser.setFilename(".envExample");
@@ -220,7 +228,7 @@ public class TestApplicationContext implements ApplicationContext {
         SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriberService);
-        RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriberService);
+
         subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, eventBus);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer()
@@ -259,8 +267,9 @@ public class TestApplicationContext implements ApplicationContext {
         lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 
-        JobInitializer jobInitializer = new JobInitializer().withJob(processConfirmationForTheDayJob);
-        jobInitializer.launchJobs();
+        String everyDayAt9AM = "0 0 9 ? * *";
+        JobInitializer processOrdersJob = new ProcessOrdersJobInitializer(subscriberService, everyDayAt9AM);
+        processOrdersJob.launchJob();
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {

@@ -1,5 +1,7 @@
 package ca.ulaval.glo4003.repul.config.context;
 
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -13,21 +15,22 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.CatchallExceptionMap
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
-import ca.ulaval.glo4003.repul.commons.api.jobs.RepULJob;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
+import ca.ulaval.glo4003.repul.config.Config;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
 import ca.ulaval.glo4003.repul.config.env.EnvParserFactory;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.IdentityManagementContextInitializer;
-import ca.ulaval.glo4003.repul.config.initializer.JobInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
+import ca.ulaval.glo4003.repul.config.initializer.jobs.JobInitializer;
+import ca.ulaval.glo4003.repul.config.initializer.jobs.ProcessOrdersJobInitializer;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
@@ -44,7 +47,6 @@ import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
 import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
 import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
-import ca.ulaval.glo4003.repul.subscription.api.jobs.ProcessConfirmationForTheDayJob;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
@@ -62,6 +64,12 @@ public class DevApplicationContext implements ApplicationContext {
         ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL").isBlank() ? "roger@ulaval.ca" : ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL");
     private static final RegistrationRequest DELIVERY_PERSON_REGISTRATION_EMAIL =
         new RegistrationRequest("ROGER456", DELIVERY_PERSON_EMAIL, "roger123", "Roger", "1973-04-24", "MAN");
+
+    public DevApplicationContext() {
+        LocalTime openingTime = LocalTime.of(9, 0);
+        Duration durationToConfirm = Duration.ofDays(2);
+        Config.initialize(openingTime, durationToConfirm);
+    }
 
     @Override
     public ResourceConfig initializeResourceConfig() {
@@ -94,7 +102,7 @@ public class DevApplicationContext implements ApplicationContext {
         SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus, paymentService);
         AccountResource accountResource = new AccountResource(subscriberService);
         SubscriptionResource subscriptionResource = new SubscriptionResource(subscriberService);
-        RepULJob processConfirmationForTheDayJob = new ProcessConfirmationForTheDayJob(subscriberService);
+
         subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, eventBus);
 
         DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID));
@@ -109,8 +117,9 @@ public class DevApplicationContext implements ApplicationContext {
         lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
         ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
 
-        JobInitializer jobInitializer = new JobInitializer().withJob(processConfirmationForTheDayJob);
-        jobInitializer.launchJobs();
+        String everyDayAt9AM = "0 0 9 ? * *";
+        JobInitializer processOrdersJob = new ProcessOrdersJobInitializer(subscriberService, everyDayAt9AM);
+        processOrdersJob.launchJob();
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {
