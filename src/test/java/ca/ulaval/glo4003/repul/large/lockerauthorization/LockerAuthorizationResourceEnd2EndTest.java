@@ -12,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
 import ca.ulaval.glo4003.repul.config.env.EnvParser;
+import ca.ulaval.glo4003.repul.config.seed.cooking.TestCookingSeed;
+import ca.ulaval.glo4003.repul.config.seed.identitymanagement.TestIdentityManagementSeed;
+import ca.ulaval.glo4003.repul.config.seed.lockerauthorization.TestLockerAuthorizationSeed;
 import ca.ulaval.glo4003.repul.cooking.api.request.SelectionRequest;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargoPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
@@ -52,8 +55,8 @@ public class LockerAuthorizationResourceEnd2EndTest {
     @Test
     public void whenOpeningLocker_shouldReturn204() {
         addCardToUserAccount(A_USER_CARD_NUMBER);
-        cookMealKit(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString());
-        String lockerId = deliverMealKit(TestApplicationContext.FIRST_MEAL_KIT_ID.getUUID().toString());
+        cookMealKit(TestCookingSeed.FIRST_MEAL_KIT_ID.getUUID().toString());
+        String lockerId = deliverMealKit(TestCookingSeed.FIRST_MEAL_KIT_ID.getUUID().toString());
         OpenLockerRequest openLockerRequest = new OpenLockerRequestFixture().withSubscriberCardNumber(A_USER_CARD_NUMBER).withLockerId(lockerId).build();
 
         Response response = given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + apiKey).body(openLockerRequest)
@@ -64,7 +67,7 @@ public class LockerAuthorizationResourceEnd2EndTest {
 
     private String login() {
         LoginRequest loginRequest =
-            new LoginRequestFixture().withEmail(TestApplicationContext.CLIENT_EMAIL).withPassword(TestApplicationContext.CLIENT_PASSWORD).build();
+            new LoginRequestFixture().withEmail(TestIdentityManagementSeed.CLIENT_EMAIL).withPassword(TestIdentityManagementSeed.CLIENT_PASSWORD).build();
         Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
@@ -80,7 +83,7 @@ public class LockerAuthorizationResourceEnd2EndTest {
 
     private void cookMealKit(String mealKitId) {
         LoginRequest loginRequest =
-            new LoginRequestFixture().withEmail(TestApplicationContext.COOK_EMAIL).withPassword(TestApplicationContext.COOK_PASSWORD).build();
+            new LoginRequestFixture().withEmail(TestIdentityManagementSeed.COOK_EMAIL).withPassword(TestIdentityManagementSeed.COOK_PASSWORD).build();
         Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
         String accountToken = loginResponse.getBody().as(LoginResponse.class).token();
 
@@ -94,9 +97,8 @@ public class LockerAuthorizationResourceEnd2EndTest {
     }
 
     private String deliverMealKit(String mealKitId) {
-        LoginRequest loginRequest =
-            new LoginRequestFixture().withEmail(TestApplicationContext.DELIVERY_PERSON_EMAIL).withPassword(TestApplicationContext.DELIVERY_PERSON_PASSWORD)
-                .build();
+        LoginRequest loginRequest = new LoginRequestFixture().withEmail(TestIdentityManagementSeed.DELIVERY_PERSON_EMAIL)
+            .withPassword(TestIdentityManagementSeed.DELIVERY_PERSON_PASSWORD).build();
         Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
         String accountToken = loginResponse.getBody().as(LoginResponse.class).token();
 
@@ -106,7 +108,7 @@ public class LockerAuthorizationResourceEnd2EndTest {
             .filter(cargo -> cargo.mealKitsPayload().stream().anyMatch(mealKitPayload -> mealKitPayload.mealKitId().equals(mealKitId))).findFirst().get();
         String cargoId = cargoResponse.cargoId();
         MealKitPayload mealKitResponse = cargoResponse.mealKitsPayload().stream().filter(mealKit -> mealKit.mealKitId().equals(mealKitId)).findFirst().get();
-        String lockerId = TestApplicationContext.A_DELIVERY_LOCATION.getName() + " " + mealKitResponse.lockerNumber();
+        String lockerId = TestLockerAuthorizationSeed.A_DELIVERY_LOCATION.getName() + " " + mealKitResponse.lockerNumber();
         pickUpCargo(accountToken, cargoId);
 
         given().header("Authorization", "Bearer " + accountToken).post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + mealKitId + ":confirm");

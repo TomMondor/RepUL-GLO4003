@@ -5,75 +5,66 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
-import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
-import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
-import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
+import ca.ulaval.glo4003.repul.config.seed.Seed;
+import ca.ulaval.glo4003.repul.config.seed.SeedFactory;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
+import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
-import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
-import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
-import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKitFactory;
 import ca.ulaval.glo4003.repul.cooking.domain.recipe.Recipe;
 import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
-import ca.ulaval.glo4003.repul.subscription.domain.subscription.order.Order;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class CookingContextInitializer {
+public class CookingContextInitializer implements ContextInitializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(CookingContextInitializer.class);
     private static final String STANDARD_MEALKIT_FILE_PATH = "src/main/resources/standard-meal-box.json";
     private static final String RECIPES_FIELD_NAME_IN_JSON = "recipes";
-    private final Kitchen kitchen;
-    private KitchenPersister kitchenPersister = new InMemoryKitchenPersister();
+    private final RepULEventBus eventBus;
+    private final SeedFactory seedFactory;
+    private final KitchenPersister kitchenPersister = new InMemoryKitchenPersister();
 
-    public CookingContextInitializer() {
+    public CookingContextInitializer(RepULEventBus eventBus, SeedFactory seedFactory) {
+        this.eventBus = eventBus;
+        this.seedFactory = seedFactory;
+    }
+
+    @Override
+    public void initialize(ResourceConfig resourceConfig) {
         RecipesCatalog.getInstance().setRecipes(getRecipes());
-        kitchen = new Kitchen(new MealKitFactory());
+        CookingService cookingService = new CookingService(kitchenPersister, eventBus);
+        MealKitResource mealKitResource = new MealKitResource(cookingService);
+        createMealKitEventHandler(cookingService);
+        populate();
+
+        final AbstractBinder binder = new AbstractBinder() {
+            @Override
+            protected void configure() {
+                bind(mealKitResource).to(MealKitResource.class);
+            }
+        };
+
+        resourceConfig.register(binder);
     }
 
-    public CookingContextInitializer withEmptyKitchenPersister(KitchenPersister kitchenPersister) {
-        this.kitchenPersister = kitchenPersister;
-        return this;
+    private void populate() {
+        Seed seed = seedFactory.createCookingSeed(kitchenPersister);
+        seed.populate();
     }
 
-    public CookingContextInitializer withCook(Cook cook) {
-        kitchen.hireCook(cook);
-        return this;
-    }
-
-    public CookingContextInitializer withMealKitsForSubscription(List<Order> orders, SubscriptionUniqueIdentifier subscriptionId,
-                                                                 SubscriberUniqueIdentifier subscriberId,
-                                                                 Optional<DeliveryLocationId> deliveryLocationId) {
-        orders.forEach(order ->
-            kitchen.createMealKitInPreparation(order.getOrderId(), subscriptionId, subscriberId, order.getMealKitType(), order.getDeliveryDate(),
-                deliveryLocationId)
-        );
-        return this;
-    }
-
-    public CookingService createCookingService(RepULEventBus eventBus) {
-        LOGGER.info("Creating cooking service");
-        initializeKitchen(kitchenPersister);
-        return new CookingService(kitchenPersister, eventBus);
-    }
-
-    public void createMealKitEventHandler(CookingService cookingService, RepULEventBus eventBus) {
+    private void createMealKitEventHandler(CookingService cookingService) {
         MealKitEventHandler mealKitEventHandler = new MealKitEventHandler(cookingService);
         eventBus.register(mealKitEventHandler);
-    }
-
-    private void initializeKitchen(KitchenPersister kitchenPersister) {
-        kitchenPersister.save(kitchen);
     }
 
     private Map<MealKitType, List<Recipe>> getRecipes() {

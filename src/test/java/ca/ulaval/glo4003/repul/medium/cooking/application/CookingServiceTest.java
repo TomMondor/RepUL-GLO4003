@@ -18,7 +18,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
-import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
+import ca.ulaval.glo4003.repul.config.seed.identitymanagement.TestIdentityManagementSeed;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CookingServiceTest {
     private static final MealKitUniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
     private static final MealKitUniqueIdentifier A_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
-    private static final CookUniqueIdentifier A_COOK_ID = TestApplicationContext.COOK_ID;
+    private static final CookUniqueIdentifier A_COOK_ID = TestIdentityManagementSeed.COOK_ID;
     private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitType A_MEAL_KIT_TYPE = MealKitType.STANDARD;
@@ -129,7 +129,7 @@ public class CookingServiceTest {
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {
         Kitchen kitchen = new Kitchen(new MealKitFactory());
-        kitchen.hireCook(new Cook(TestApplicationContext.COOK_ID));
+        kitchen.hireCook(new Cook(TestIdentityManagementSeed.COOK_ID));
         kitchen.createMealKitInPreparation(DEFAULT_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, A_DELIVERY_LOCATION_ID);
         return kitchen;
     }

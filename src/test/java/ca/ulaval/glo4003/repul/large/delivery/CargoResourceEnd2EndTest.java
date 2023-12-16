@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import ca.ulaval.glo4003.repul.config.context.ApplicationContext;
 import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
+import ca.ulaval.glo4003.repul.config.seed.cooking.TestCookingSeed;
+import ca.ulaval.glo4003.repul.config.seed.identitymanagement.TestIdentityManagementSeed;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargoPayload;
 import ca.ulaval.glo4003.repul.delivery.application.payload.CargosPayload;
 import ca.ulaval.glo4003.repul.fixture.commons.ServerFixture;
@@ -81,7 +83,7 @@ public class CargoResourceEnd2EndTest {
         pickUpCargo(accountToken, cargoId);
 
         Response response = given().header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.getUUID().toString() + ":confirm");
+            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestCookingSeed.TENTH_MEAL_KIT_ID.getUUID().toString() + ":confirm");
 
         assertEquals(204, response.getStatusCode());
     }
@@ -94,23 +96,22 @@ public class CargoResourceEnd2EndTest {
         confirmDelivery(accountToken, cargoId);
 
         Response response = given().header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.getUUID().toString() + ":recall");
+            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestCookingSeed.TENTH_MEAL_KIT_ID.getUUID().toString() + ":recall");
 
         assertEquals(200, response.getStatusCode());
     }
 
     private String loginAsADeliveryPerson() {
-        LoginRequest loginRequest =
-            new LoginRequestFixture().withEmail(TestApplicationContext.DELIVERY_PERSON_EMAIL).withPassword(TestApplicationContext.DELIVERY_PERSON_PASSWORD)
-                .build();
+        LoginRequest loginRequest = new LoginRequestFixture().withEmail(TestIdentityManagementSeed.DELIVERY_PERSON_EMAIL)
+            .withPassword(TestIdentityManagementSeed.DELIVERY_PERSON_PASSWORD).build();
         Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).when().post(CONTEXT.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
     }
 
     private String loginAsADifferentDeliveryPerson() {
-        LoginRequest loginRequest = new LoginRequestFixture().withEmail(TestApplicationContext.SECOND_DELIVERY_PERSON_EMAIL)
-            .withPassword(TestApplicationContext.SECOND_DELIVERY_PERSON_PASSWORD).build();
+        LoginRequest loginRequest = new LoginRequestFixture().withEmail(TestIdentityManagementSeed.SECOND_DELIVERY_PERSON_EMAIL)
+            .withPassword(TestIdentityManagementSeed.SECOND_DELIVERY_PERSON_PASSWORD).build();
         Response loginResponse = given().contentType(MediaType.APPLICATION_JSON).body(loginRequest).post(CONTEXT.getURI() + "users:login");
 
         return loginResponse.getBody().as(LoginResponse.class).token();
@@ -129,6 +130,6 @@ public class CargoResourceEnd2EndTest {
 
     private void confirmDelivery(String accountToken, String cargoId) {
         given().header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestApplicationContext.TENTH_MEAL_KIT_ID.getUUID().toString() + ":confirm");
+            .post(CONTEXT.getURI() + "cargos/" + cargoId + "/mealKits/" + TestCookingSeed.TENTH_MEAL_KIT_ID.getUUID().toString() + ":confirm");
     }
 }

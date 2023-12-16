@@ -17,7 +17,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
-import ca.ulaval.glo4003.repul.config.context.TestApplicationContext;
+import ca.ulaval.glo4003.repul.config.seed.identitymanagement.TestIdentityManagementSeed;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitEventHandler;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
@@ -40,7 +40,7 @@ public class MealKitEventHandlerTest {
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID = new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
     private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, DEFAULT_MEAL_KIT_ID);
     private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
-    private static final CookUniqueIdentifier A_COOK_ID = TestApplicationContext.COOK_ID;
+    private static final CookUniqueIdentifier A_COOK_ID = TestIdentityManagementSeed.COOK_ID;
     private static final LocalDate A_DELIVERY_DATE = LocalDate.now().plusDays(1);
 
     private MealKitEventHandler mealKitEventHandler;
@@ -81,15 +81,9 @@ public class MealKitEventHandlerTest {
 
     private Kitchen createKitchenWithAnUnselectedMealKit() {
         Kitchen kitchen = new Kitchen(new MealKitFactory());
-        kitchen.hireCook(new Cook(TestApplicationContext.COOK_ID));
-        kitchen.createMealKitInPreparation(
-            DEFAULT_MEAL_KIT_ID,
-            A_SUBSCRIPTION_ID,
-            A_SUBSCRIBER_ID,
-            A_MEAL_KIT_TYPE,
-            A_DELIVERY_DATE,
-            Optional.of(A_DELIVERY_LOCATION_ID)
-        );
+        kitchen.hireCook(new Cook(TestIdentityManagementSeed.COOK_ID));
+        kitchen.createMealKitInPreparation(DEFAULT_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE,
+            Optional.of(A_DELIVERY_LOCATION_ID));
         return kitchen;
     }
 }

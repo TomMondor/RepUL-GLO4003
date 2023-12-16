@@ -2,8 +2,6 @@ package ca.ulaval.glo4003.repul.config.context;
 
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -16,54 +14,24 @@ import ca.ulaval.glo4003.repul.commons.api.exception.mapper.ConstraintViolationE
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.NotFoundExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.api.exception.mapper.RepULExceptionMapper;
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
-import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
-import ca.ulaval.glo4003.repul.commons.domain.uid.DeliveryPersonUniqueIdentifier;
-import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.config.Config;
-import ca.ulaval.glo4003.repul.config.env.EnvParser;
-import ca.ulaval.glo4003.repul.config.env.EnvParserFactory;
 import ca.ulaval.glo4003.repul.config.initializer.CookingContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.DeliveryContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.IdentityManagementContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.LockerAuthorizationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.NotificationContextInitializer;
 import ca.ulaval.glo4003.repul.config.initializer.SubscriptionContextInitializer;
-import ca.ulaval.glo4003.repul.config.initializer.jobs.JobInitializer;
-import ca.ulaval.glo4003.repul.config.initializer.jobs.ProcessOrdersJobInitializer;
-import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
-import ca.ulaval.glo4003.repul.cooking.application.CookingService;
-import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
-import ca.ulaval.glo4003.repul.delivery.api.CargoResource;
-import ca.ulaval.glo4003.repul.delivery.api.LocationResource;
-import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
+import ca.ulaval.glo4003.repul.config.seed.DevSeedFactory;
+import ca.ulaval.glo4003.repul.config.seed.SeedFactory;
 import ca.ulaval.glo4003.repul.health.api.HealthResource;
-import ca.ulaval.glo4003.repul.identitymanagement.api.UserResource;
-import ca.ulaval.glo4003.repul.identitymanagement.api.request.RegistrationRequest;
-import ca.ulaval.glo4003.repul.identitymanagement.middleware.AuthGuard;
-import ca.ulaval.glo4003.repul.lockerauthorization.api.LockerAuthorizationResource;
-import ca.ulaval.glo4003.repul.lockerauthorization.application.LockerAuthorizationService;
-import ca.ulaval.glo4003.repul.lockerauthorization.middleware.ApiKeyGuard;
 import ca.ulaval.glo4003.repul.notification.infrastructure.EmailNotificationSender;
-import ca.ulaval.glo4003.repul.subscription.api.AccountResource;
-import ca.ulaval.glo4003.repul.subscription.api.SubscriptionResource;
-import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 import ca.ulaval.glo4003.repul.subscription.domain.PaymentService;
 import ca.ulaval.glo4003.repul.subscription.infrastructure.LogPaymentService;
 
 public class DevApplicationContext implements ApplicationContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(DevApplicationContext.class);
-    private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final int PORT = 8080;
-    private static final CookUniqueIdentifier COOK_ID = new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generate();
-    private static final Cook A_COOK = new Cook(COOK_ID);
-    private static final RegistrationRequest COOK_REGISTRATION_REQUEST =
-        new RegistrationRequest("PAUL123", "paul@ulaval.ca", "paul123", "Paul", "1990-01-01", "MAN");
-    private static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID = new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generate();
-    private static final String DELIVERY_PERSON_EMAIL =
-        ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL").isBlank() ? "roger@ulaval.ca" : ENV_PARSER.readVariable("DELIVERY_PERSON_EMAIL");
-    private static final RegistrationRequest DELIVERY_PERSON_REGISTRATION_EMAIL =
-        new RegistrationRequest("ROGER456", DELIVERY_PERSON_EMAIL, "roger123", "Roger", "1973-04-24", "MAN");
 
     public DevApplicationContext() {
         LocalTime openingTime = LocalTime.of(9, 0);
@@ -74,71 +42,47 @@ public class DevApplicationContext implements ApplicationContext {
     @Override
     public ResourceConfig initializeResourceConfig() {
         RepULEventBus eventBus = new GuavaEventBus();
+        SeedFactory seedFactory = new DevSeedFactory();
+
+        ResourceConfig resourceConfig = new ResourceConfig();
 
         LOGGER.info("Creating Health resource");
         HealthResource healthResource = new HealthResource();
 
         NotificationContextInitializer notificationContextInitializer =
-            new NotificationContextInitializer().withNotificationSender(new EmailNotificationSender())
-                .withDeliveryAccounts(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_EMAIL)));
-        notificationContextInitializer.createNotificationService(eventBus);
+            new NotificationContextInitializer(new EmailNotificationSender(), eventBus, seedFactory);
+        notificationContextInitializer.initialize(resourceConfig);
 
         PaymentService paymentService = new LogPaymentService();
 
-        IdentityManagementContextInitializer identityManagementContextInitializer =
-            new IdentityManagementContextInitializer(eventBus)
-                .withCooks(List.of(Map.of(COOK_ID, COOK_REGISTRATION_REQUEST)))
-                .withShippers(List.of(Map.of(DELIVERY_PERSON_ID, DELIVERY_PERSON_REGISTRATION_EMAIL)));
+        IdentityManagementContextInitializer identityManagementContextInitializer = new IdentityManagementContextInitializer(eventBus, seedFactory);
+        identityManagementContextInitializer.initialize(resourceConfig);
 
-        UserResource userResource = new UserResource(identityManagementContextInitializer.createService());
-        AuthGuard authGuard = identityManagementContextInitializer.createAuthGuard();
-
-        CookingContextInitializer cookingContextInitializer = new CookingContextInitializer().withCook(A_COOK);
-        CookingService cookingService = cookingContextInitializer.createCookingService(eventBus);
-        MealKitResource mealKitResource = new MealKitResource(cookingService);
-        cookingContextInitializer.createMealKitEventHandler(cookingService, eventBus);
-
-        SubscriptionContextInitializer subscriptionContextInitializer = new SubscriptionContextInitializer();
-        SubscriberService subscriberService = subscriptionContextInitializer.createSubscriberService(eventBus, paymentService);
-        AccountResource accountResource = new AccountResource(subscriberService);
-        SubscriptionResource subscriptionResource = new SubscriptionResource(subscriberService);
-
-        subscriptionContextInitializer.createSubscriberEventHandler(subscriberService, eventBus);
-
-        DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer().withDeliveryPeople(List.of(DELIVERY_PERSON_ID));
-        DeliveryService deliveryService = deliveryContextInitializer.createDeliveryService(eventBus);
-        CargoResource cargoResource = new CargoResource(deliveryService);
-        LocationResource locationResource = new LocationResource(deliveryContextInitializer.createLocationsCatalogService());
-        deliveryContextInitializer.createDeliveryEventHandler(deliveryService, eventBus);
-
-        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer();
-        LockerAuthorizationService lockerAuthorizationService = lockerAuthorizationContextInitializer.createLockerAuthorizationService(eventBus);
-        LockerAuthorizationResource lockerAuthorizationResource = new LockerAuthorizationResource(lockerAuthorizationService);
-        lockerAuthorizationContextInitializer.createLockerAuthorizationEventHandler(lockerAuthorizationService, eventBus);
-        ApiKeyGuard apiKeyGuard = lockerAuthorizationContextInitializer.createApiKeyGuard();
+        CookingContextInitializer cookingContextInitializer = new CookingContextInitializer(eventBus, seedFactory);
+        cookingContextInitializer.initialize(resourceConfig);
 
         String everyDayAt9AM = "0 0 9 ? * *";
-        JobInitializer processOrdersJob = new ProcessOrdersJobInitializer(subscriberService, everyDayAt9AM);
-        processOrdersJob.launchJob();
+        SubscriptionContextInitializer subscriptionContextInitializer =
+            new SubscriptionContextInitializer(eventBus, paymentService, new DevSeedFactory(), everyDayAt9AM);
+        subscriptionContextInitializer.initialize(resourceConfig);
+
+        DeliveryContextInitializer deliveryContextInitializer = new DeliveryContextInitializer(eventBus, seedFactory);
+        deliveryContextInitializer.initialize(resourceConfig);
+
+        LockerAuthorizationContextInitializer lockerAuthorizationContextInitializer = new LockerAuthorizationContextInitializer(eventBus, seedFactory);
+        lockerAuthorizationContextInitializer.initialize(resourceConfig);
 
         // Setup resource config
         final AbstractBinder binder = new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(healthResource).to(HealthResource.class);
-                bind(userResource).to(UserResource.class);
-                bind(accountResource).to(AccountResource.class);
-                bind(mealKitResource).to(MealKitResource.class);
-                bind(cargoResource).to(CargoResource.class);
-                bind(locationResource).to(LocationResource.class);
-                bind(subscriptionResource).to(SubscriptionResource.class);
-                bind(lockerAuthorizationResource).to(LockerAuthorizationResource.class);
             }
         };
 
-        return new ResourceConfig().packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
-            .register(authGuard).register(apiKeyGuard).register(new CatchallExceptionMapper()).register(new NotFoundExceptionMapper())
-            .register(new RepULExceptionMapper()).register(new ConstraintViolationExceptionMapper());
+        return resourceConfig.packages("ca.ulaval.glo4003.repul").property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true).register(binder)
+            .register(new CatchallExceptionMapper()).register(new NotFoundExceptionMapper()).register(new RepULExceptionMapper())
+            .register(new ConstraintViolationExceptionMapper());
     }
 
     @Override
