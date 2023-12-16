@@ -59,6 +59,7 @@ public class SubscriberTest {
     private static final Email AN_EMAIL = new Email("anEmail@ulaval.ca");
     private static final Subscription A_SUBSCRIPTION = new SubscriptionFixture().build();
     private static final Subscription A_SPORADIC_SUBSCRIPTION = new SubscriptionFixture().withWeeklyOccurence(Optional.empty()).build();
+    private static final Subscription ANOTHER_SPORADIC_SUBSCRIPTION = new SubscriptionFixture().withWeeklyOccurence(Optional.empty()).build();
     private static final Subscription ANOTHER_SUBSCRIPTION = new SubscriptionFixture().build();
     private static final SubscriptionUniqueIdentifier AN_INVALID_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberCardNumber A_CARD_NUMBER = new SubscriberCardNumber("123456789");
@@ -311,11 +312,25 @@ public class SubscriberTest {
     @Test
     public void givenSporadicSubscription_whenConfirming_shouldCreateNewOrder() {
         given(orderFactory.createSporadicOrder(any(), any())).willReturn(new OrderFixture().build());
-        subscriber.addSubscription(A_SPORADIC_SUBSCRIPTION);
+        Subscription sporadicSubscription = new SubscriptionFixture().withWeeklyOccurence(Optional.empty()).build();
 
-        subscriber.confirm(A_SPORADIC_SUBSCRIPTION.getSubscriptionId(), orderFactory, paymentService);
+        subscriber.addSubscription(sporadicSubscription);
+
+        subscriber.confirm(sporadicSubscription.getSubscriptionId(), orderFactory, paymentService);
 
         assertEquals(1, subscriber.getCurrentOrders().size());
+    }
+
+    @Test
+    public void givenSporadicSubscription_whenConfirmingTwice_shouldCreateNewOrder() {
+        given(orderFactory.createSporadicOrder(any(), any())).willReturn(new OrderFixture().build());
+        Subscription sporadicSubscription = new SubscriptionFixture().withWeeklyOccurence(Optional.empty()).build();
+        subscriber.addSubscription(sporadicSubscription);
+
+        subscriber.confirm(sporadicSubscription.getSubscriptionId(), orderFactory, paymentService);
+        subscriber.confirm(sporadicSubscription.getSubscriptionId(), orderFactory, paymentService);
+
+        assertEquals(2, subscriber.getCurrentOrders().size());
     }
 
     @Test

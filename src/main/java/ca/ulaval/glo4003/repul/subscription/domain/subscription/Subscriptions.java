@@ -22,7 +22,7 @@ public class Subscriptions {
     }
 
     public Subscription get(SubscriptionUniqueIdentifier subscriptionId) {
-        return Optional.ofNullable(subscriptions.get(subscriptionId)).orElseThrow(() -> new SubscriptionNotFoundException());
+        return Optional.ofNullable(subscriptions.get(subscriptionId)).orElseThrow(SubscriptionNotFoundException::new);
     }
 
     public List<Subscription> getAll() {
@@ -30,7 +30,17 @@ public class Subscriptions {
     }
 
     public List<Order> getCurrentOrders() {
-        return subscriptions.values().stream().map(Subscription::getCurrentOrder).filter(Optional::isPresent).map(Optional::get).toList();
+        List<Order> currentOrders = new ArrayList<>();
+        for (Subscription subscription : subscriptions.values()) {
+            if (subscription.isSporadic()) {
+                List<Order> subscriptionCurrentOrders = subscription.getCurrentOrders();
+                currentOrders.addAll(subscriptionCurrentOrders);
+            } else {
+                Optional<Order> subscriptionCurrentOrder = subscription.getCurrentOrder();
+                subscriptionCurrentOrder.ifPresent(currentOrders::add);
+            }
+        }
+        return currentOrders;
     }
 
     public Optional<ProcessConfirmationDto> confirm(SubscriptionUniqueIdentifier subscriptionUniqueIdentifier, SubscriberUniqueIdentifier subscriberId,

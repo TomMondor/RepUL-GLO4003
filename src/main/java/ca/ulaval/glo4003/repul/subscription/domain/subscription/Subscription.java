@@ -64,6 +64,10 @@ public class Subscription {
         return orders.getCurrent();
     }
 
+    public List<Order> getCurrentOrders() {
+        return orders.getCurrents();
+    }
+
     public Optional<ProcessConfirmationDto> confirm(SubscriberUniqueIdentifier subscriberId, OrderFactory orderFactory, PaymentService paymentService) {
         if (isSporadic()) {
             return Optional.of(confirmSporadicOrder(subscriberId, orderFactory, paymentService));
@@ -73,7 +77,7 @@ public class Subscription {
         return Optional.empty();
     }
 
-    private boolean isSporadic() {
+    public boolean isSporadic() {
         return weeklyOccurence.isEmpty();
     }
 

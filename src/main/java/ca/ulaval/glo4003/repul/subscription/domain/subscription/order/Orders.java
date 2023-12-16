@@ -32,6 +32,10 @@ public class Orders {
         return orders.stream().filter(Order::isActive).findFirst();
     }
 
+    public List<Order> getCurrents() {
+        return orders.stream().filter(Order::isActive).toList();
+    }
+
     public List<Order> getAll() {
         return List.copyOf(orders);
     }
