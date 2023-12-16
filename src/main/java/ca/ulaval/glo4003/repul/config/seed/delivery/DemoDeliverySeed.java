@@ -11,8 +11,6 @@ import ca.ulaval.glo4003.repul.delivery.domain.DeliverySystemPersister;
 import ca.ulaval.glo4003.repul.delivery.domain.LocationsCatalog;
 
 public class DemoDeliverySeed extends DeliverySeed {
-    private static final MealKitUniqueIdentifier FIRST_MEAL_KIT_ID =
-        new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("6be93d65-47ae-44fe-bd4f-a62272a39e37");
     private static final DeliveryPersonUniqueIdentifier DELIVERY_PERSON_ID =
         new UniqueIdentifierFactory<>(DeliveryPersonUniqueIdentifier.class).generateFrom("08d87ed8-147b-4b1a-bd58-e7955e7c4344");
     private static final SubscriptionUniqueIdentifier FIRST_SUBSCRIPTION_ID =
@@ -21,6 +19,8 @@ public class DemoDeliverySeed extends DeliverySeed {
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom("4ba3561d-8ef6-4f8c-a7dc-2e9ebfd23597");
     private static final SubscriptionUniqueIdentifier THIRD_SUBSCRIPTION_ID =
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom("9d20441d-9d21-4004-a865-3c35800065f2");
+    private static final MealKitUniqueIdentifier FIRST_MEAL_KIT_ID =
+        new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("6be93d65-47ae-44fe-bd4f-a62272a39e37");
     private static final MealKitUniqueIdentifier SECOND_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("39fed158-8b44-4a72-a176-a177012c9c40");
     private static final MealKitUniqueIdentifier THIRD_MEAL_KIT_ID =
