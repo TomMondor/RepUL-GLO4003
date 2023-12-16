@@ -57,9 +57,10 @@ public class SubscriptionResourceTest {
         List.of(new OrderPayload(AN_ORDER_ID.toString(), A_MEAL_KIT_TYPE.toString(), AN_ORDER_DELIVERY_DATE.toString(), AN_ORDER_STATUS.toString())));
     private static final String PATH_TO_API = "/api/subscriptions/";
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("H24"), LocalDate.now().minusMonths(3), LocalDate.now().plusMonths(3));
+    private static final String A_SUBSCRIPTION_TYPE = "WEEKLY";
     private static final SubscriptionPayload A_SUBSCRIPTION_PAYLOAD =
         new SubscriptionPayload(A_SUBSCRIPTION_ID.getUUID().toString(), DayOfWeek.MONDAY.toString(), DeliveryLocationId.VACHON.toString(),
-            LocalDate.now().toString(), MealKitType.STANDARD.toString(), A_SEMESTER.toString());
+            LocalDate.now().toString(), MealKitType.STANDARD.toString(), A_SUBSCRIPTION_TYPE, A_SEMESTER.toString());
 
     private SubscriptionResource subscriptionResource;
 

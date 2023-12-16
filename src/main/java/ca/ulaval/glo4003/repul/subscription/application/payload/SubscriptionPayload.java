@@ -8,6 +8,7 @@ public record SubscriptionPayload(
     String deliveryLocationId,
     String startDate,
     String mealKitType,
+    String subscriptionType,
     String semester
 ) {
 
@@ -16,6 +17,7 @@ public record SubscriptionPayload(
             (subscription.getWeeklyOccurence().get().dayOfWeek().toString()) : "Sporadic";
         String deliveryLocationId = (subscription.getDeliveryLocationId().isPresent()) ?
             (subscription.getDeliveryLocationId().get().toString()) : "In kitchen pick up";
+        String subscriptionType = (subscription.isSporadic()) ? "SPORADIC" : "WEEKLY";
 
         return new SubscriptionPayload(
             subscription.getSubscriptionId().getUUID().toString(),
@@ -23,6 +25,7 @@ public record SubscriptionPayload(
             deliveryLocationId,
             subscription.getStartDate().toString(),
             subscription.getMealKitType().toString(),
+            subscriptionType,
             subscription.getSemester().toString()
         );
     }

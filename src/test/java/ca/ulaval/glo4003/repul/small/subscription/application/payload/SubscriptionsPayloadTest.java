@@ -36,14 +36,14 @@ public class SubscriptionsPayloadTest {
     private static final LocalDate SUBSCRIPTION_START_DATE = LocalDate.now();
     private static final Semester SEMESTER = new Semester(new SemesterCode("A23"), SUBSCRIPTION_START_DATE, SUBSCRIPTION_START_DATE.minusYears(1));
     private static final MealKitType SUBSCRIPTION_MEALKIT_TYPE = MealKitType.STANDARD;
+    private static final String SUBSCRIPTION_TYPE = "WEEKLY";
 
     @Test
     public void whenUsingFrom_shouldReturnCorrectSubscriptionsPayload() {
         SubscriptionsPayload expectedSubscriptionsPayload = new SubscriptionsPayload(List.of(
             new SubscriptionPayload(SUBSCRIPTION_ID.getUUID().toString(), SUBSCRIPTION_WEEKLY_OCCURENCE.dayOfWeek().toString(), LOCATION_ID.toString(),
-                SUBSCRIPTION_START_DATE.toString(), SUBSCRIPTION_MEALKIT_TYPE.toString(), SEMESTER.toString())));
-        Subscription subscription =
-            new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
+                SUBSCRIPTION_START_DATE.toString(), SUBSCRIPTION_MEALKIT_TYPE.toString(), SUBSCRIPTION_TYPE, SEMESTER.toString())));
+        Subscription subscription = new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
                 .withWeeklyOccurence(Optional.of(SUBSCRIPTION_WEEKLY_OCCURENCE))
                 .withPickUpLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE).withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER)
                 .build();

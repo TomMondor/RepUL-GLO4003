@@ -44,6 +44,7 @@ public class SubscriptionPayloadTest {
             LOCATION_ID.get().toString(),
             SUBSCRIPTION_START_DATE.toString(),
             SUBSCRIPTION_MEALKIT_TYPE.toString(),
+            "WEEKLY",
             SEMESTER.toString()
         );
         Subscription subscription = new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
@@ -56,36 +57,18 @@ public class SubscriptionPayloadTest {
     }
 
     @Test
-    public void givenNoWeeklyOccurence_whenUsingFrom_shouldReturnSubscriptionPayloadWithCustomString() {
+    public void givenNoWeeklyOccurrenceAndNoDeliveryLocationId_whenUsingFrom_shouldReturnSubscriptionPayloadWithCustomStrings() {
         SubscriptionPayload expectedSubscriptionPayload = new SubscriptionPayload(
             SUBSCRIPTION_ID.getUUID().toString(),
             "Sporadic",
-            LOCATION_ID.get().toString(),
-            SUBSCRIPTION_START_DATE.toString(),
-            SUBSCRIPTION_MEALKIT_TYPE.toString(),
-            SEMESTER.toString()
-        );
-        Subscription subscription = new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
-            .withWeeklyOccurence(Optional.empty()).withPickUpLocationId(LOCATION_ID).withStartDate(SUBSCRIPTION_START_DATE)
-            .withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER).build();
-
-        SubscriptionPayload actualSubscriptionPayload = SubscriptionPayload.from(subscription);
-
-        assertEquals(expectedSubscriptionPayload, actualSubscriptionPayload);
-    }
-
-    @Test
-    public void givenNoDeliveryLocationId_whenUsingFrom_shouldReturnSubscriptionPayloadWithCustomString() {
-        SubscriptionPayload expectedSubscriptionPayload = new SubscriptionPayload(
-            SUBSCRIPTION_ID.getUUID().toString(),
-            SUBSCRIPTION_WEEKLY_OCCURENCE.get().dayOfWeek().toString(),
             "In kitchen pick up",
             SUBSCRIPTION_START_DATE.toString(),
             SUBSCRIPTION_MEALKIT_TYPE.toString(),
+            "SPORADIC",
             SEMESTER.toString()
         );
         Subscription subscription = new SubscriptionFixture().withSubscriptionId(SUBSCRIPTION_ID).withOrders(List.of(ORDER))
-            .withWeeklyOccurence(SUBSCRIPTION_WEEKLY_OCCURENCE).withPickUpLocationId(Optional.empty()).withStartDate(SUBSCRIPTION_START_DATE)
+            .withWeeklyOccurence(Optional.empty()).withPickUpLocationId(Optional.empty()).withStartDate(SUBSCRIPTION_START_DATE)
             .withMealKitType(SUBSCRIPTION_MEALKIT_TYPE).withSemester(SEMESTER).build();
 
         SubscriptionPayload actualSubscriptionPayload = SubscriptionPayload.from(subscription);
