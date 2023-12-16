@@ -29,6 +29,8 @@ public class DemoNotificationSeed extends NotificationSeed {
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("39fed158-8b44-4a72-a176-a177012c9c40");
     private static final MealKitUniqueIdentifier THIRD_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("d955a8bc-126e-47a3-965f-7e84167b4d33");
+    private static final MealKitUniqueIdentifier SPORADIC_MEAL_KIT_ID =
+        new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("9995a8bc-126e-47a3-965f-7e84167b4999");
 
     public DemoNotificationSeed(UserAccountRepository userAccountRepository, DeliveryPersonAccountRepository deliveryPersonAccountRepository) {
         super(userAccountRepository, deliveryPersonAccountRepository);
@@ -45,6 +47,7 @@ public class DemoNotificationSeed extends NotificationSeed {
         clientAccount.addMealKit(FIRST_MEAL_KIT_ID);
         clientAccount.addMealKit(SECOND_MEAL_KIT_ID);
         clientAccount.addMealKit(THIRD_MEAL_KIT_ID);
+        clientAccount.addMealKit(SPORADIC_MEAL_KIT_ID);
         userAccountRepository.save(clientAccount);
     }
 

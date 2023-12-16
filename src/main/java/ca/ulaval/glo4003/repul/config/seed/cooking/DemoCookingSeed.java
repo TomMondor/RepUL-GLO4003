@@ -26,12 +26,16 @@ public class DemoCookingSeed extends CookingSeed {
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom("4ba3561d-8ef6-4f8c-a7dc-2e9ebfd23597");
     private static final SubscriptionUniqueIdentifier THIRD_SUBSCRIPTION_ID =
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom("9d20441d-9d21-4004-a865-3c35800065f2");
+    private static final SubscriptionUniqueIdentifier SPORADIC_SUBSCRIPTION_ID =
+        new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom("1235a8bc-126e-47a3-965f-7e84167b4123");
     private static final MealKitUniqueIdentifier FIRST_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("6be93d65-47ae-44fe-bd4f-a62272a39e37");
     private static final MealKitUniqueIdentifier SECOND_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("39fed158-8b44-4a72-a176-a177012c9c40");
     private static final MealKitUniqueIdentifier THIRD_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("d955a8bc-126e-47a3-965f-7e84167b4d33");
+    private static final MealKitUniqueIdentifier SPORADIC_MEAL_KIT_ID =
+        new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("9995a8bc-126e-47a3-965f-7e84167b4999");
 
     public DemoCookingSeed(KitchenPersister kitchenPersister) {
         super(kitchenPersister);
@@ -56,5 +60,7 @@ public class DemoCookingSeed extends CookingSeed {
             Optional.of(DeliveryLocationId.VACHON));
         kitchen.createMealKitInPreparation(THIRD_MEAL_KIT_ID, THIRD_SUBSCRIPTION_ID, CLIENT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1),
             Optional.of(DeliveryLocationId.VACHON));
+        kitchen.createMealKitInPreparation(SPORADIC_MEAL_KIT_ID, SPORADIC_SUBSCRIPTION_ID, CLIENT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1),
+            Optional.empty());
     }
 }

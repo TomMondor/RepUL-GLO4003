@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import ca.ulaval.glo4003.repul.commons.application.RepULEventBus;
 import ca.ulaval.glo4003.repul.commons.domain.DeliveryLocationId;
+import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.uid.CookUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
@@ -19,6 +20,7 @@ import ca.ulaval.glo4003.repul.cooking.application.payload.SelectionPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
+import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserInKitchenEvent;
 
 public class CookingService {
     private final KitchenPersister kitchenPersister;
@@ -123,9 +125,11 @@ public class CookingService {
     public void pickUpNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {
         Kitchen kitchen = kitchenPersister.get();
 
-        kitchen.pickUpNonDeliverableMealKit(subscriberId, mealKitId);
+        MealKit mealKit = kitchen.pickUpNonDeliverableMealKit(subscriberId, mealKitId);
 
         kitchenPersister.save(kitchen);
+
+        eventBus.publish(new MealKitPickedUpByUserInKitchenEvent(new MealKitDto(subscriberId, mealKit.getSubscriptionId(), mealKitId)));
     }
 
     private void sendMealKitsCookedEvent(List<MealKit> mealKits, Kitchen kitchen) {

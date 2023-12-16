@@ -40,12 +40,16 @@ public class DemoSubscriptionSeed extends SubscriptionSeed {
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom("4ba3561d-8ef6-4f8c-a7dc-2e9ebfd23597");
     public static final SubscriptionUniqueIdentifier THIRD_SUBSCRIPTION_ID =
         new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom("9d20441d-9d21-4004-a865-3c35800065f2");
+    public static final SubscriptionUniqueIdentifier SPORADIC_SUBSCRIPTION_ID =
+        new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generateFrom("1235a8bc-126e-47a3-965f-7e84167b4123");
     public static final MealKitUniqueIdentifier FIRST_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("6be93d65-47ae-44fe-bd4f-a62272a39e37");
     public static final MealKitUniqueIdentifier SECOND_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("39fed158-8b44-4a72-a176-a177012c9c40");
     public static final MealKitUniqueIdentifier THIRD_MEAL_KIT_ID =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("d955a8bc-126e-47a3-965f-7e84167b4d33");
+    public static final MealKitUniqueIdentifier SPORADIC_MEAL_KIT_ID =
+        new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom("9995a8bc-126e-47a3-965f-7e84167b4999");
     private static final EnvParser ENV_PARSER = EnvParserFactory.getEnvParser(".env");
     private static final String CLIENT_EMAIL =
         ENV_PARSER.readVariable("CLIENT_EMAIL").isBlank() ? "alexandra@ulaval.ca" : ENV_PARSER.readVariable("CLIENT_EMAIL");
@@ -57,6 +61,8 @@ public class DemoSubscriptionSeed extends SubscriptionSeed {
         new Order(SECOND_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
     private static final Order THIRD_MEAL_KIT_ORDER =
         new Order(THIRD_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
+    private static final Order SPORADIC_MEAL_KIT_ORDER =
+        new Order(SPORADIC_MEAL_KIT_ID, MealKitType.STANDARD, LocalDate.now().plusDays(1), OrderStatus.IN_PREPARATION);
     private static final Optional<WeeklyOccurence> OPTIONAL_OF_A_WEEKLY_FREQUENCY = Optional.of(new WeeklyOccurence(LocalDate.now().getDayOfWeek()));
     private static final Semester A_SEMESTER = new Semester(new SemesterCode("A23"), LocalDate.now(), LocalDate.now().plusWeeks(10));
 
@@ -80,5 +86,7 @@ public class DemoSubscriptionSeed extends SubscriptionSeed {
             OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD));
         subscriber.addSubscription(new Subscription(THIRD_SUBSCRIPTION_ID, new Orders(List.of(THIRD_MEAL_KIT_ORDER)), OPTIONAL_OF_A_WEEKLY_FREQUENCY,
             OPTIONAL_OF_A_DELIVERY_LOCATION_ID, LocalDate.now(), A_SEMESTER, MealKitType.STANDARD));
+        subscriber.addSubscription(new Subscription(SPORADIC_SUBSCRIPTION_ID, new Orders(List.of(SPORADIC_MEAL_KIT_ORDER)), Optional.empty(),
+            Optional.empty(), LocalDate.now(), A_SEMESTER, MealKitType.STANDARD));
     }
 }

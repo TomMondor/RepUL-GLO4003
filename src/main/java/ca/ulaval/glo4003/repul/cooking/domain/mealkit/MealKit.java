@@ -42,6 +42,10 @@ public class MealKit {
         return dateOfReceipt;
     }
 
+    public SubscriptionUniqueIdentifier getSubscriptionId() {
+        return subscriptionId;
+    }
+
     public boolean isForSubscriber(SubscriberUniqueIdentifier subscriberId) {
         return this.subscriberId.equals(subscriberId);
     }

@@ -2,11 +2,13 @@ package ca.ulaval.glo4003.repul.subscription.api;
 
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
+import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.ConfirmedDeliveryEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.PickedUpCargoEvent;
 import ca.ulaval.glo4003.repul.delivery.application.event.RecalledDeliveryEvent;
 import ca.ulaval.glo4003.repul.identitymanagement.application.event.UserCreatedEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
+import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserInKitchenEvent;
 import ca.ulaval.glo4003.repul.subscription.application.SubscriberService;
 
 import com.google.common.eventbus.Subscribe;
@@ -44,5 +46,19 @@ public class SubscriberEventHandler {
     @Subscribe
     public void handleMealKitPickedUpByUserEvent(MealKitPickedUpByUserEvent event) {
         subscriberService.updateOrderToPickedUp(event.mealKitDto);
+    }
+
+    @Subscribe
+    public void handleMealKitPickedUpByUserInKitchenEvent(MealKitPickedUpByUserInKitchenEvent event) {
+        subscriberService.updateOrderToPickedUp(event.mealKitDto);
+    }
+
+    @Subscribe
+    public void handleMealKitCookedEvent(MealKitsCookedEvent event) {
+        event.mealKits.forEach(mealKitCookedDto -> {
+            if (!mealKitCookedDto.isToBeDelivered()) {
+                subscriberService.updateOrderToReadyToPickUp(mealKitCookedDto.mealKitDto());
+            }
+        });
     }
 }
