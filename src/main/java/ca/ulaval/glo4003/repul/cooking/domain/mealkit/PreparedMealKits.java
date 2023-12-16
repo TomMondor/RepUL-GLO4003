@@ -7,16 +7,16 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 
-public class CookedMealKits extends KitchenMealKits {
-    public CookedMealKits() {
+public class PreparedMealKits extends KitchenMealKits {
+    public PreparedMealKits() {
         super();
     }
 
-    public MealKit recall(MealKitUniqueIdentifier mealKitId) {
+    public MealKit unconfirm(MealKitUniqueIdentifier mealKitId) {
         MealKit mealKit = getMealKit(mealKitId);
         mealKits.remove(mealKitId);
 
-        mealKit.recall();
+        mealKit.unconfirmPreparation();
         return mealKit;
     }
 

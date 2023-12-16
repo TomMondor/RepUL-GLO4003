@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ca.ulaval.glo4003.repul.commons.domain.MealKitType;
 import ca.ulaval.glo4003.repul.commons.domain.exception.InvalidMealKitTypeException;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Recipe;
 
 public class RecipesCatalog {
     private static RecipesCatalog instance;

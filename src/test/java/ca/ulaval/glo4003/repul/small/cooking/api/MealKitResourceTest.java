@@ -11,8 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ca.ulaval.glo4003.repul.cooking.api.MealKitResource;
 import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
-import ca.ulaval.glo4003.repul.cooking.domain.Ingredient;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Ingredient;
 import ca.ulaval.glo4003.repul.fixture.cooking.IngredientFixture;
 import ca.ulaval.glo4003.repul.fixture.cooking.MealKitFixture;
 import ca.ulaval.glo4003.repul.fixture.cooking.RecipeFixture;
@@ -37,10 +37,10 @@ public class MealKitResourceTest {
     }
 
     @Test
-    public void whenGettingMealKitsToCook_shouldReturn200OkWithToCookResponse() {
-        when(cookingService.getMealKitsToCook()).thenReturn(MEAL_KITS_PAYLOAD);
+    public void whenGettingMealKitsToPrepare_shouldReturn200OkWithToMealKitsPayload() {
+        when(cookingService.getMealKitsToPrepare()).thenReturn(MEAL_KITS_PAYLOAD);
 
-        Response response = mealKitResource.getMealKitsToCook();
+        Response response = mealKitResource.getMealKitsToPrepare();
 
         assertEquals(response.getStatus(), 200);
         assertEquals(response.getEntity(), MEAL_KITS_PAYLOAD);

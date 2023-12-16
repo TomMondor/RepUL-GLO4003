@@ -3,18 +3,18 @@ package ca.ulaval.glo4003.repul.cooking.application.payload;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.ulaval.glo4003.repul.cooking.domain.Ingredient;
-import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKit;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Ingredient;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Recipe;
 
 public record MealKitsPayload(
     List<MealKitPayload> mealKits,
     List<IngredientPayload> totalIngredients
 ) {
-    public static MealKitsPayload from(List<MealKit> mealKitsToCook) {
+    public static MealKitsPayload from(List<MealKit> mealKitsToPrepare) {
         return new MealKitsPayload(
-            mealKitsToCook.stream().map(MealKitPayload::from).toList(),
-            combineIngredients(mealKitsToCook)
+            mealKitsToPrepare.stream().map(MealKitPayload::from).toList(),
+            combineIngredients(mealKitsToPrepare)
         );
     }
 

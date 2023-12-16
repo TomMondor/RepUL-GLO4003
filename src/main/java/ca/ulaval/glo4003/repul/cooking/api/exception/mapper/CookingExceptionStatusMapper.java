@@ -11,10 +11,10 @@ import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidRecipeException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.KitchenNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitAlreadySelectedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitCannotBeSelectedException;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotInSelectionException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotPreparedException;
 
 import jakarta.ws.rs.core.Response;
 
@@ -38,7 +38,7 @@ public class CookingExceptionStatusMapper {
         exceptionMapper.put(InvalidRecipeException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitAlreadySelectedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotInSelectionException.class, Response.Status.BAD_REQUEST);
-        exceptionMapper.put(MealKitNotCookedException.class, Response.Status.BAD_REQUEST);
+        exceptionMapper.put(MealKitNotPreparedException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitNotForKitchenPickUpException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(InvalidCookIdException.class, Response.Status.BAD_REQUEST);
         exceptionMapper.put(MealKitCannotBeSelectedException.class, Response.Status.BAD_REQUEST);

@@ -13,7 +13,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
-import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.UnconfirmPreparationMealKitEvent;
 import ca.ulaval.glo4003.repul.cooking.application.payload.MealKitsPayload;
 import ca.ulaval.glo4003.repul.cooking.application.payload.SelectionPayload;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
@@ -53,11 +53,11 @@ public class CookingService {
         kitchenPersister.save(kitchen);
     }
 
-    public MealKitsPayload getMealKitsToCook() {
+    public MealKitsPayload getMealKitsToPrepare() {
         Kitchen kitchen = kitchenPersister.get();
-        List<MealKit> mealKitsToCook = kitchen.getMealKitsToCook();
+        List<MealKit> mealKitsToPrepare = kitchen.getMealKitsToPrepare();
 
-        return MealKitsPayload.from(mealKitsToCook);
+        return MealKitsPayload.from(mealKitsToPrepare);
     }
 
     public void select(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> selectedMealKitIds) {
@@ -90,34 +90,34 @@ public class CookingService {
         kitchenPersister.save(kitchen);
     }
 
-    public void confirmCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
+    public void confirmPreparation(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
         Kitchen kitchen = kitchenPersister.get();
 
-        MealKit mealKit = kitchen.confirmCooked(cookId, mealKitId);
+        MealKit mealKit = kitchen.confirmPreparation(cookId, mealKitId);
 
         kitchenPersister.save(kitchen);
 
         sendMealKitsCookedEvent(List.of(mealKit), kitchen);
     }
 
-    public void confirmCooked(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
+    public void confirmPreparation(CookUniqueIdentifier cookId, List<MealKitUniqueIdentifier> mealKitIds) {
         Kitchen kitchen = kitchenPersister.get();
 
-        List<MealKit> mealKits = kitchen.confirmCooked(cookId, mealKitIds);
+        List<MealKit> mealKits = kitchen.confirmPreparation(cookId, mealKitIds);
 
         kitchenPersister.save(kitchen);
 
         sendMealKitsCookedEvent(mealKits, kitchen);
     }
 
-    public void recallCooked(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
+    public void unconfirmPreparation(CookUniqueIdentifier cookId, MealKitUniqueIdentifier mealKitId) {
         Kitchen kitchen = kitchenPersister.get();
 
-        kitchen.recallCooked(cookId, mealKitId);
+        kitchen.unconfirmPreparation(cookId, mealKitId);
 
         kitchenPersister.save(kitchen);
 
-        eventBus.publish(new RecallCookedMealKitEvent(mealKitId));
+        eventBus.publish(new UnconfirmPreparationMealKitEvent(mealKitId));
     }
 
     public void pickUpNonDeliverableMealKit(SubscriberUniqueIdentifier subscriberId, MealKitUniqueIdentifier mealKitId) {

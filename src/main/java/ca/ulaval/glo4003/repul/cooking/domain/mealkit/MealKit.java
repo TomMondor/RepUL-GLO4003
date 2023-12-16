@@ -7,8 +7,8 @@ import ca.ulaval.glo4003.repul.commons.domain.MealKitDto;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriberUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
-import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
-import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotCookedException;
+import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotPreparedException;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Recipe;
 
 public class MealKit {
     private final MealKitUniqueIdentifier mealKitId;
@@ -17,7 +17,7 @@ public class MealKit {
     private final LocalDate dateOfReceipt;
     private final List<Recipe> recipes;
     private final boolean isToBeDelivered;
-    private boolean isCooked;
+    private boolean isPrepared;
 
     public MealKit(MealKitUniqueIdentifier mealKitId, SubscriptionUniqueIdentifier subscriptionId, SubscriberUniqueIdentifier subscriberId,
                    LocalDate dateOfReceipt, List<Recipe> recipes, boolean isToBeDelivered) {
@@ -26,7 +26,7 @@ public class MealKit {
         this.subscriberId = subscriberId;
         this.dateOfReceipt = dateOfReceipt;
         this.recipes = recipes;
-        this.isCooked = false;
+        this.isPrepared = false;
         this.isToBeDelivered = isToBeDelivered;
     }
 
@@ -51,23 +51,23 @@ public class MealKit {
         return dateOfReceipt.isEqual(tomorrow);
     }
 
-    public boolean isToCookToday() {
-        return !isCooked() && isDeliveryTomorrow();
+    public boolean isToPrepareToday() {
+        return !isPrepared() && isDeliveryTomorrow();
     }
 
-    public void setCooked() {
-        this.isCooked = true;
+    public void confirmPreparation() {
+        this.isPrepared = true;
     }
 
-    public void recall() {
-        if (!isCooked()) {
-            throw new MealKitNotCookedException();
+    public void unconfirmPreparation() {
+        if (!isPrepared()) {
+            throw new MealKitNotPreparedException();
         }
-        this.isCooked = false;
+        this.isPrepared = false;
     }
 
-    public boolean isCooked() {
-        return isCooked;
+    public boolean isPrepared() {
+        return isPrepared;
     }
 
     public boolean isToBeDelivered() {

@@ -46,10 +46,10 @@ public class DeliveryServiceTest {
     private static final CargoUniqueIdentifier A_CARGO_UNIQUE_IDENTIFIER = new UniqueIdentifierFactory<>(CargoUniqueIdentifier.class).generateFrom(A_CARGO_ID);
     private static final MealKitUniqueIdentifier A_MEAL_KIT_UNIQUE_IDENTIFIER =
         new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(A_MEAL_KIT_ID);
-    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
+    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
     private static final SubscriberUniqueIdentifier A_SUBSCRIBER_ID =
         new UniqueIdentifierFactory<>(SubscriberUniqueIdentifier.class).generate();
-    private static final SubscriptionUniqueIdentifier A_SUBSCRIPTION_ID = new UniqueIdentifierFactory<>(SubscriptionUniqueIdentifier.class).generate();
+    private static final DeliveryLocationId A_DELIVERY_LOCATION_ID = DeliveryLocationId.VACHON;
     private static final MealKit A_MEAL_KIT =
         new MealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_UNIQUE_IDENTIFIER, A_DELIVERY_LOCATION_ID, DeliveryStatus.PENDING);
     private static final MealKit A_DELIVERED_MEAL_KIT =

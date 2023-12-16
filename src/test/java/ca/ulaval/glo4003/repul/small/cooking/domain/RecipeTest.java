@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.cooking.domain.Ingredient;
-import ca.ulaval.glo4003.repul.cooking.domain.Quantity;
-import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidRecipeException;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Ingredient;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Quantity;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Recipe;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

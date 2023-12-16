@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.repul.small.cooking.domain;
 
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.cooking.domain.Ingredient;
-import ca.ulaval.glo4003.repul.cooking.domain.Quantity;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Ingredient;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Quantity;
 import ca.ulaval.glo4003.repul.fixture.cooking.IngredientFixture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

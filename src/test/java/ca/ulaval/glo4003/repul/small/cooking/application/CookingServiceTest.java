@@ -53,10 +53,10 @@ public class CookingServiceTest {
     @Test
     public void whenConfirmCooked_shouldPublishMealKitsCookedEvent() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
-        when(kitchen.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID)).thenReturn(MATCHING_MEAL_KIT);
+        when(kitchen.confirmPreparation(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID)).thenReturn(MATCHING_MEAL_KIT);
         ArgumentCaptor<MealKitsCookedEvent> eventCaptor = ArgumentCaptor.forClass(MealKitsCookedEvent.class);
 
-        cookingService.confirmCooked(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
+        cookingService.confirmPreparation(A_COOK_ID, A_UNIQUE_MEAL_KIT_ID);
 
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();
@@ -68,10 +68,10 @@ public class CookingServiceTest {
     @Test
     public void whenConfirmCookedWithMultipleIds_shouldPublishMealKitsCookedEvent() {
         when(kitchen.getKitchenLocationId()).thenReturn(A_KITCHEN_LOCATION_ID);
-        when(kitchen.confirmCooked(A_COOK_ID, MANY_MEAL_KIT_IDS)).thenReturn(MATCHING_MEAL_KITS);
+        when(kitchen.confirmPreparation(A_COOK_ID, MANY_MEAL_KIT_IDS)).thenReturn(MATCHING_MEAL_KITS);
         ArgumentCaptor<MealKitsCookedEvent> eventCaptor = ArgumentCaptor.forClass(MealKitsCookedEvent.class);
 
-        cookingService.confirmCooked(A_COOK_ID, MANY_MEAL_KIT_IDS);
+        cookingService.confirmPreparation(A_COOK_ID, MANY_MEAL_KIT_IDS);
 
         verify(eventBus).publish(eventCaptor.capture());
         MealKitsCookedEvent publishedEvent = eventCaptor.getValue();

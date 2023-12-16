@@ -86,7 +86,7 @@ public class LockerAuthorizationEventHandlerTest {
     }
 
     @Test
-    public void whenHandlingRecalledDeliveryEvent_shouldCallRecallMealKitInService() {
+    public void whenHandlingRecalledDeliveryEvent_shouldUnassignLocker() {
         lockerAuthorizationEventHandler.handleRecalledDeliveryEvent(A_RECALLED_DELIVERY_EVENT);
 
         verify(lockerAuthorizationService, times(1)).unassignLocker(A_MEAL_KIT_ID);

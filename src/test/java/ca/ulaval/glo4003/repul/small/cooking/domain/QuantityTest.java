@@ -2,11 +2,13 @@ package ca.ulaval.glo4003.repul.small.cooking.domain;
 
 import org.junit.jupiter.api.Test;
 
-import ca.ulaval.glo4003.repul.cooking.domain.Quantity;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidQuantityUnitException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.InvalidQuantityValueException;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Quantity;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class QuantityTest {
     private static final int INVALID_VALUE = -1;

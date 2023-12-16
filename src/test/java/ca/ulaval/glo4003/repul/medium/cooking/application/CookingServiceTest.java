@@ -23,14 +23,16 @@ import ca.ulaval.glo4003.repul.cooking.application.CookingService;
 import ca.ulaval.glo4003.repul.cooking.domain.Cook.Cook;
 import ca.ulaval.glo4003.repul.cooking.domain.Kitchen;
 import ca.ulaval.glo4003.repul.cooking.domain.KitchenPersister;
-import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
 import ca.ulaval.glo4003.repul.cooking.domain.RecipesCatalog;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotForKitchenPickUpException;
 import ca.ulaval.glo4003.repul.cooking.domain.exception.MealKitNotFoundException;
 import ca.ulaval.glo4003.repul.cooking.domain.mealkit.MealKitFactory;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Recipe;
 import ca.ulaval.glo4003.repul.cooking.infrastructure.InMemoryKitchenPersister;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CookingServiceTest {
     private static final MealKitUniqueIdentifier DEFAULT_MEAL_KIT_ID = new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generate();
@@ -56,7 +58,7 @@ public class CookingServiceTest {
     }
 
     @Test
-    public void whenSelectingMealKitsToCook_shouldPersistSelection() {
+    public void whenSelectingMealKitsToPrepare_shouldPersistSelection() {
         assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
 
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
@@ -90,7 +92,7 @@ public class CookingServiceTest {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
         assertEquals(1, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
 
-        cookingService.confirmCooked(A_COOK_ID, DEFAULT_MEAL_KIT_ID);
+        cookingService.confirmPreparation(A_COOK_ID, DEFAULT_MEAL_KIT_ID);
 
         assertEquals(0, cookingService.getSelection(A_COOK_ID).mealKitSelectionIds().size());
     }
@@ -98,11 +100,11 @@ public class CookingServiceTest {
     @Test
     public void givenCookedMealKit_whenGivingMealKitToDelivery_shouldRemoveMealKitFromKitchen() {
         cookingService.select(A_COOK_ID, List.of(DEFAULT_MEAL_KIT_ID));
-        cookingService.confirmCooked(A_COOK_ID, DEFAULT_MEAL_KIT_ID);
+        cookingService.confirmPreparation(A_COOK_ID, DEFAULT_MEAL_KIT_ID);
 
         cookingService.giveMealKitsToDelivery(List.of(DEFAULT_MEAL_KIT_ID));
 
-        assertThrows(MealKitNotFoundException.class, () -> cookingService.recallCooked(A_COOK_ID, DEFAULT_MEAL_KIT_ID));
+        assertThrows(MealKitNotFoundException.class, () -> cookingService.unconfirmPreparation(A_COOK_ID, DEFAULT_MEAL_KIT_ID));
     }
 
     @Test
@@ -110,7 +112,7 @@ public class CookingServiceTest {
         cookingService.createMealKitInPreparation(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, Optional.empty());
         cookingService.select(A_COOK_ID, List.of(A_MEAL_KIT_ID));
 
-        cookingService.confirmCooked(A_COOK_ID, A_MEAL_KIT_ID);
+        cookingService.confirmPreparation(A_COOK_ID, A_MEAL_KIT_ID);
 
         assertDoesNotThrow(() -> cookingService.pickUpNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEAL_KIT_ID));
     }
@@ -120,7 +122,7 @@ public class CookingServiceTest {
         cookingService.createMealKitInPreparation(A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, A_DELIVERY_DATE, A_DELIVERY_LOCATION_ID);
         cookingService.select(A_COOK_ID, List.of(A_MEAL_KIT_ID));
 
-        cookingService.confirmCooked(A_COOK_ID, A_MEAL_KIT_ID);
+        cookingService.confirmPreparation(A_COOK_ID, A_MEAL_KIT_ID);
 
         assertThrows(MealKitNotForKitchenPickUpException.class, () -> cookingService.pickUpNonDeliverableMealKit(A_SUBSCRIBER_ID, A_MEAL_KIT_ID));
     }

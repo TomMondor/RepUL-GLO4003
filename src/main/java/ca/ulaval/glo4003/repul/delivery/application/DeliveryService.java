@@ -61,7 +61,7 @@ public class DeliveryService {
         sendMealKitReceivedForDeliveryEvent(cargo, deliverySystem);
     }
 
-    public void recallMealKit(MealKitUniqueIdentifier mealKitId) {
+    public void recallMealKitToPending(MealKitUniqueIdentifier mealKitId) {
         DeliverySystem deliverySystem = deliverySystemPersister.get();
 
         deliverySystem.recallMealKitToPending(mealKitId);

@@ -22,7 +22,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.commons.infrastructure.GuavaEventBus;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
-import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.UnconfirmPreparationMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.delivery.application.event.MealKitReceivedForDeliveryEvent;
@@ -113,13 +113,13 @@ public class DeliveryEventHandlerTest {
     }
 
     @Test
-    public void givenMealKitInCargo_whenHandlingRecallCookedMealKitEvent_shouldRemoveMealKitFromCargo() {
+    public void givenMealKitInCargo_whenHandlingUnconfirmPreparationMealKitEvent_shouldRemoveMealKitFromCargo() {
         givenDeliveryPerson(A_DELIVERY_PERSON_UNIQUE_IDENTIFIER);
         givenConfirmedMealKit(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
         givenCookedMealKit(A_MEAL_KIT_ID);
-        RecallCookedMealKitEvent recallCookedMealKitEvent = new RecallCookedMealKitEvent(A_MEAL_KIT_ID);
+        UnconfirmPreparationMealKitEvent unconfirmPreparationMealKitEvent = new UnconfirmPreparationMealKitEvent(A_MEAL_KIT_ID);
 
-        eventBus.publish(recallCookedMealKitEvent);
+        eventBus.publish(unconfirmPreparationMealKitEvent);
 
         assertEquals(0, deliveryService.getCargosReadyToPickUp().cargoPayloads().size());
     }

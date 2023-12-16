@@ -6,7 +6,7 @@ import ca.ulaval.glo4003.repul.commons.domain.KitchenLocationId;
 import ca.ulaval.glo4003.repul.commons.domain.uid.MealKitUniqueIdentifier;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
-import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.UnconfirmPreparationMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.identitymanagement.application.event.DeliveryPersonAccountCreatedEvent;
 import ca.ulaval.glo4003.repul.lockerauthorization.application.event.MealKitPickedUpByUserEvent;
@@ -45,8 +45,8 @@ public class DeliveryEventHandler {
     }
 
     @Subscribe
-    public void handleRecallCookedMealKitEvent(RecallCookedMealKitEvent recallCookedMealKitEvent) {
-        deliveryService.recallMealKit(recallCookedMealKitEvent.mealKitId);
+    public void handleUnconfirmPreparationMealKitEvent(UnconfirmPreparationMealKitEvent unconfirmPreparationMealKitEvent) {
+        deliveryService.recallMealKitToPending(unconfirmPreparationMealKitEvent.mealKitId);
     }
 
     @Subscribe

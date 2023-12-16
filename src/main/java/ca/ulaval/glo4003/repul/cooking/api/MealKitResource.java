@@ -41,9 +41,9 @@ public class MealKitResource {
     @GET
     @Secure
     @Roles(Role.COOK)
-    @Path("/mealKits:toCook")
-    public Response getMealKitsToCook() {
-        MealKitsPayload mealKitsPayload = cookingService.getMealKitsToCook();
+    @Path("/mealKits:toPrepare")
+    public Response getMealKitsToPrepare() {
+        MealKitsPayload mealKitsPayload = cookingService.getMealKitsToPrepare();
 
         return Response.ok(mealKitsPayload).build();
     }
@@ -105,12 +105,12 @@ public class MealKitResource {
     @POST
     @Secure
     @Roles(Role.COOK)
-    @Path("/mealKits/{mealKitId}:confirmCooked")
-    public Response confirmCooked(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
+    @Path("/mealKits/{mealKitId}:confirmPreparation")
+    public Response confirmPreparation(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
         CookUniqueIdentifier cookId =
             new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        cookingService.confirmCooked(cookId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
+        cookingService.confirmPreparation(cookId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
 
         return Response.noContent().build();
     }
@@ -118,13 +118,13 @@ public class MealKitResource {
     @POST
     @Secure
     @Roles(Role.COOK)
-    @Path("/mealKits:confirmCooked")
-    public Response confirmCooked(@Context ContainerRequestContext context,
-                                  @NotNull(message = "The body must not be null.") @Valid ConfirmCookedRequest confirmCookedRequest) {
+    @Path("/mealKits:confirmPreparation")
+    public Response confirmPreparation(@Context ContainerRequestContext context,
+                                       @NotNull(message = "The body must not be null.") @Valid ConfirmCookedRequest confirmCookedRequest) {
         CookUniqueIdentifier cookId =
             new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        cookingService.confirmCooked(cookId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(confirmCookedRequest.ids));
+        cookingService.confirmPreparation(cookId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(confirmCookedRequest.ids));
 
         return Response.noContent().build();
     }
@@ -132,12 +132,12 @@ public class MealKitResource {
     @POST
     @Secure
     @Roles(Role.COOK)
-    @Path("/mealKits/{mealKitId}:recallCooked")
-    public Response recallCooked(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
+    @Path("/mealKits/{mealKitId}:unconfirmPreparation")
+    public Response unconfirmPreparation(@Context ContainerRequestContext context, @PathParam("mealKitId") String mealKitId) {
         CookUniqueIdentifier cookId =
             new UniqueIdentifierFactory<>(CookUniqueIdentifier.class).generateFrom(context.getProperty(ACCOUNT_ID_CONTEXT_PROPERTY).toString());
 
-        cookingService.recallCooked(cookId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
+        cookingService.unconfirmPreparation(cookId, new UniqueIdentifierFactory<>(MealKitUniqueIdentifier.class).generateFrom(mealKitId));
 
         return Response.noContent().build();
     }

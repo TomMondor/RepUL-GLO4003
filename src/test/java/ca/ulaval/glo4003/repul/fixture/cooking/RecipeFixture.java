@@ -2,8 +2,8 @@ package ca.ulaval.glo4003.repul.fixture.cooking;
 
 import java.util.List;
 
-import ca.ulaval.glo4003.repul.cooking.domain.Ingredient;
-import ca.ulaval.glo4003.repul.cooking.domain.Recipe;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Ingredient;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Recipe;
 
 public class RecipeFixture {
     private String name;

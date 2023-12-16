@@ -90,7 +90,7 @@ public class LockerAuthorizationResourceEnd2EndTest {
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken).body(selectionRequest)
             .post(CONTEXT.getURI() + "mealKits:select");
         given().contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + accountToken)
-            .post(CONTEXT.getURI() + "mealKits/" + mealKitId + ":confirmCooked");
+            .post(CONTEXT.getURI() + "mealKits/" + mealKitId + ":confirmPreparation");
     }
 
     private String deliverMealKit(String mealKitId) {

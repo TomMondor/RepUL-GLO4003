@@ -1,7 +1,7 @@
 package ca.ulaval.glo4003.repul.fixture.cooking;
 
-import ca.ulaval.glo4003.repul.cooking.domain.Ingredient;
-import ca.ulaval.glo4003.repul.cooking.domain.Quantity;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Ingredient;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Quantity;
 
 public class IngredientFixture {
     private String name;

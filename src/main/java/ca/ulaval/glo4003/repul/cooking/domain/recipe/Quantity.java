@@ -1,4 +1,4 @@
-package ca.ulaval.glo4003.repul.cooking.domain;
+package ca.ulaval.glo4003.repul.cooking.domain.recipe;
 
 import java.util.Objects;
 import java.util.regex.Matcher;

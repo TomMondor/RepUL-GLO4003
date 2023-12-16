@@ -10,8 +10,8 @@ public class ToPrepareMealKits extends KitchenMealKits {
         super();
     }
 
-    public List<MealKit> getMealKitsToCook() {
-        return mealKits.values().stream().filter(MealKit::isToCookToday).toList();
+    public List<MealKit> getMealKitsToPrepare() {
+        return mealKits.values().stream().filter(MealKit::isToPrepareToday).toList();
     }
 
     public List<MealKit> removeMealKitsToSelect(List<MealKitUniqueIdentifier> mealKitIds) {
@@ -27,7 +27,7 @@ public class ToPrepareMealKits extends KitchenMealKits {
     }
 
     private void verifyMealKitCanBeSelected(MealKitUniqueIdentifier mealKitId) {
-        if (!mealKits.containsKey(mealKitId) || !mealKits.get(mealKitId).isToCookToday()) {
+        if (!mealKits.containsKey(mealKitId) || !mealKits.get(mealKitId).isToPrepareToday()) {
             throw new MealKitCannotBeSelectedException(mealKitId);
         }
     }

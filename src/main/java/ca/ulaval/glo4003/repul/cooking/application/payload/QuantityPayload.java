@@ -1,6 +1,6 @@
 package ca.ulaval.glo4003.repul.cooking.application.payload;
 
-import ca.ulaval.glo4003.repul.cooking.domain.Quantity;
+import ca.ulaval.glo4003.repul.cooking.domain.recipe.Quantity;
 
 public record QuantityPayload(
     double value,

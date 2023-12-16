@@ -44,11 +44,11 @@ public class Cook {
         return selectedMealKits.unselectMealKits(selectedMealKits.getIds());
     }
 
-    public MealKit confirmMealKitAssembled(MealKitUniqueIdentifier mealKitId) {
-        return selectedMealKits.confirmMealKitAssembled(mealKitId);
+    public MealKit confirmMealKitPrepared(MealKitUniqueIdentifier mealKitId) {
+        return selectedMealKits.confirmMealKitPrepared(mealKitId);
     }
 
-    public List<MealKit> confirmMealKitsCooked(List<MealKitUniqueIdentifier> mealKitIds) {
-        return selectedMealKits.confirmMealKitsCooked(mealKitIds);
+    public List<MealKit> confirmMealKitsPrepared(List<MealKitUniqueIdentifier> mealKitIds) {
+        return selectedMealKits.confirmMealKitsPrepared(mealKitIds);
     }
 }

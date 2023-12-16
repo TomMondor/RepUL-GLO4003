@@ -22,7 +22,7 @@ import ca.ulaval.glo4003.repul.commons.domain.uid.SubscriptionUniqueIdentifier;
 import ca.ulaval.glo4003.repul.commons.domain.uid.UniqueIdentifierFactory;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitCookedDto;
 import ca.ulaval.glo4003.repul.cooking.application.event.MealKitsCookedEvent;
-import ca.ulaval.glo4003.repul.cooking.application.event.RecallCookedMealKitEvent;
+import ca.ulaval.glo4003.repul.cooking.application.event.UnconfirmPreparationMealKitEvent;
 import ca.ulaval.glo4003.repul.delivery.api.DeliveryEventHandler;
 import ca.ulaval.glo4003.repul.delivery.application.DeliveryService;
 import ca.ulaval.glo4003.repul.identitymanagement.application.event.DeliveryPersonAccountCreatedEvent;
@@ -57,8 +57,8 @@ public class DeliveryEventHandlerTest {
         A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.of(A_DELIVERY_LOCATION_ID), A_DATE);
     private static final MealKitConfirmedEvent A_MEAL_KIT_CONFIRMED_EVENT_WITHOUT_DELIVERY_LOCATION = new MealKitConfirmedEvent(
         A_MEAL_KIT_ID, A_SUBSCRIPTION_ID, A_SUBSCRIBER_ID, A_MEAL_KIT_TYPE, Optional.empty(), A_DATE);
-    private static final RecallCookedMealKitEvent A_RECALL_COOKED_MEAL_KIT_EVENT =
-        new RecallCookedMealKitEvent(A_MEAL_KIT_ID);
+    private static final UnconfirmPreparationMealKitEvent A_UNCONFIRM_PREPARATION_MEAL_KIT_EVENT =
+        new UnconfirmPreparationMealKitEvent(A_MEAL_KIT_ID);
     private static final MealKitDto A_MEAL_KIT_DTO = new MealKitDto(A_SUBSCRIBER_ID, A_SUBSCRIPTION_ID, A_MEAL_KIT_ID);
     private static final MealKitPickedUpByUserEvent A_MEAL_KIT_PICKED_UP_BY_USER_EVENT =
         new MealKitPickedUpByUserEvent(A_MEAL_KIT_DTO);
@@ -118,10 +118,10 @@ public class DeliveryEventHandlerTest {
     }
 
     @Test
-    public void whenHandlingRecallCookedMealKitEvent_shouldCallRecallMealKitInService() {
-        deliveryEventHandler.handleRecallCookedMealKitEvent(A_RECALL_COOKED_MEAL_KIT_EVENT);
+    public void whenHandlingUnconfirmPreparationMealKitEvent_shouldUnconfirmPreparation() {
+        deliveryEventHandler.handleUnconfirmPreparationMealKitEvent(A_UNCONFIRM_PREPARATION_MEAL_KIT_EVENT);
 
-        verify(deliveryService, times(1)).recallMealKit(A_MEAL_KIT_ID);
+        verify(deliveryService, times(1)).recallMealKitToPending(A_MEAL_KIT_ID);
     }
 
     @Test

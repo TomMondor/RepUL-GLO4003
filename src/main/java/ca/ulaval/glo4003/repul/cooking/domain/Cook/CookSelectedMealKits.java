@@ -31,21 +31,21 @@ public class CookSelectedMealKits {
         return unselectedMealKits;
     }
 
-    public MealKit confirmMealKitAssembled(MealKitUniqueIdentifier mealKitId) {
+    public MealKit confirmMealKitPrepared(MealKitUniqueIdentifier mealKitId) {
         verifyMealKitIsSelected(mealKitId);
         MealKit mealKit = selectedMealKits.get(mealKitId);
-        mealKit.setCooked();
+        mealKit.confirmPreparation();
 
         selectedMealKits.remove(mealKitId);
         return mealKit;
     }
 
-    public List<MealKit> confirmMealKitsCooked(List<MealKitUniqueIdentifier> mealKitIds) {
+    public List<MealKit> confirmMealKitsPrepared(List<MealKitUniqueIdentifier> mealKitIds) {
         mealKitIds.forEach(this::verifyMealKitIsSelected);
         List<MealKit> mealKits = new ArrayList<>();
         mealKitIds.forEach(mealKitId -> {
             MealKit mealKit = selectedMealKits.get(mealKitId);
-            mealKit.setCooked();
+            mealKit.confirmPreparation();
             mealKits.add(mealKit);
 
             selectedMealKits.remove(mealKitId);
