@@ -1,5 +1,19 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/E16L_9U-)
+
 # Rep-UL 🥡
+
+## Contexte
+
+Ce _repository_ est une copie de celui utilisé pour le projet Rep-UL réalisé dans le cadre du cours GLO-4003, Architecture logicielle, à l'Université Laval. Il s'agit d'un API permettant la gestion d'un service de livraison de repas, conçue en portant attention aux bonnes pratiques d'architecture et de test. Mes amis et collègues, qui ont participé à concevoir cet API, sont crédités ci-dessous.
+
+### Contributeurs
+
+- [Christophe Duchesne](https://github.com/cduchesne1)
+- [Jonathan Bessette](https://github.com/JoBess7)
+- [Nathan Paquet](https://github.com/NathPaquet)
+- [Alexandre Mathieu](https://github.com/alexmathieu22)
+- [Alexandre Aubut](https://github.com/alexaubut)
+- [Antony Martel](https://github.com/Anto2223)
+
 
 ## Qu'est-ce que c'est?
 
