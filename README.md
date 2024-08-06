@@ -3,7 +3,7 @@
 
 ## Contexte
 
-Ce _repository_ est une copie de celui utilisé pour le projet Rep-UL réalisé dans le cadre du cours GLO-4003, Architecture logicielle, à l'Université Laval. Il s'agit d'un API permettant la gestion d'un service de livraison de repas, conçue en portant attention aux bonnes pratiques d'architecture et de test. Mes amis et collègues, qui ont participé à concevoir cet API, sont crédités ci-dessous.
+Ce _repository_ est une copie de celui utilisé pour le projet Rep-UL réalisé dans le cadre du cours GLO-4003, Architecture logicielle, à l'Université Laval. Il s'agit d'une API permettant la gestion d'un service de livraison de repas, conçue en portant attention aux bonnes pratiques d'architecture et de test. Mes amis et collègues, qui ont participé à concevoir cet API, sont crédités ci-dessous.
 
 ### Contributeurs
 
